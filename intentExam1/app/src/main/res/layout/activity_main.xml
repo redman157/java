@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="20dp"
+    android:layout_height="match_parent"
+    android:background="#FF9800"
+    android:orientation="vertical">
+
+    <ImageView
+        android:contentDescription="@string/app_name"
+        android:id="@+id/imgQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/chim1" />
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/textCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="30dp"
+        android:textColor="#FFFFFF"
+        android:background="#000000"
+        android:text="0"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="#3949AB"
+        android:gravity="center"
+        android:text="Chọn Hình Phía Dưới"
+        android:textColor="#FFE600"
+        android:textSize="30dp" />
+
+    <ImageView
+        android:contentDescription="@string/app_name"
+        android:id="@+id/imgReply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/dauhoi"/>
+</LinearLayout>

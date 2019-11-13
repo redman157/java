@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/_7sdp"
+    android:background="#fff"
+    android:paddingRight="@dimen/_7sdp"
+    android:paddingBottom="@dimen/_10sdp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:paddingTop="@dimen/_3sdp"
+            android:textColor="#FC9404"
+            android:paddingBottom="@dimen/_5sdp"
+            android:textSize="@dimen/_12sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:text="@string/please_give_your_comments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="10"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <androidx.cardview.widget.CardView
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/cardImgAvatarPost"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    app:cardCornerRadius="@dimen/_15sdp">
+
+                    <ImageView
+                        android:id="@+id/imgAvatarPostComment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="3"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/phamson" />
+                </androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/textNameAvatarPostComment"
+                    android:layout_below="@id/cardImgAvatarPost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_centerHorizontal="true"
+                    android:text="Phạm Sơn"
+                    android:textColor="#79DBE7"
+                    android:textSize="@dimen/_12sdp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8">
+
+                <LinearLayout
+                    android:minHeight="@dimen/_60sdp"
+                    android:id="@+id/lineCommentPostFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="20dp"
+
+
+                    android:background="@drawable/custom_post_fragment"
+                    android:orientation="vertical"
+                    android:paddingBottom="7dp">
+
+                    <TextView
+                        android:layout_marginRight="@dimen/_5sdp"
+                        android:textSize="@dimen/_12sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:textColor="#999999"
+                        android:backgroundTint="#999999"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:scrollbars="vertical"
+                        android:gravity="left"
+
+                        android:hint="@string/send_the_infomation" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"/>
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:padding="@dimen/_5sdp"
+            android:id="@+id/btnAllCommentPost"
+            android:layout_width="wrap_content"
+            android:text="@string/all"
+            android:textSize="@dimen/_11sdp"
+            android:textAllCaps="false"
+            android:minHeight="@dimen/_20sdp"
+            android:textColor="@color/white"
+            android:background="@drawable/custom_button_all_gitfexchange_grey"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:padding="@dimen/_5sdp"
+            android:id="@+id/btnNewCommentPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button_new_arrial_giftexchange_white"
+            android:minHeight="@dimen/_20sdp"
+            android:text="@string/new_info"
+            android:textAllCaps="false"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/_11sdp" />
+
+        <Button
+            android:padding="@dimen/_5sdp"
+            android:minHeight="@dimen/_20sdp"
+            android:background="@drawable/custom_button_popularity_gitfexchange_white"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/_11sdp"
+            android:paddingRight="@dimen/_5sdp"
+            android:textAllCaps="false"
+            android:paddingLeft="@dimen/_5sdp"
+            android:text="@string/suggestions"
+            android:id="@+id/btnSuggestCommentPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/textTitleMyPostFragment"
+        android:paddingBottom="@dimen/_1sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:paddingLeft="@dimen/_7sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/all"
+        android:textSize="@dimen/_15sdp"
+        android:textColor="#FC9404"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/refreshPostIdea"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcViewAllCommentPost"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+        <ProgressBar
+            android:id="@+id/progressLoadData"
+            android:visibility="visible"
+            android:scaleX="0.10"
+            android:scaleY="0.10"
+            android:textColor="@color/tablayout_orange"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+</LinearLayout>

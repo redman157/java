@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="company_coin">20sp</dimen>
+    <dimen name="title_fragment">20sp</dimen>
+    <dimen name="my_page">40dp</dimen>
+    <dimen name="post_favorate">-12dp</dimen>
+    <dimen name="post_custom">-23dp</dimen>
+</resources>

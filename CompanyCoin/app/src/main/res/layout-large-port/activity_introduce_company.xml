@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    android:background="#fff"
+    tools:context=".activity.IntroduceCompanyActivity">
+
+    <RelativeLayout
+        android:layout_weight="0.75"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <TextView
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="About Company"
+            android:textColor="#000"
+            android:textSize="@dimen/_14sdp" />
+
+        <LinearLayout
+            android:layout_alignParentRight="true"
+            android:id="@+id/linearMyPage"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_marginTop="@dimen/_7sdp"
+                android:id="@+id/mypageIntroduceCompany"
+                android:adjustViewBounds="true"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:src="@drawable/ic_account_box_black_24dp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_backIntroduceCompany"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:src="@drawable/backfoward" />
+    </RelativeLayout>
+    <ScrollView
+        android:layout_weight="9"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="FEATURES"
+                android:textStyle="bold"
+                android:textSize="@dimen/_15sdp"
+                android:textColor="#fff"
+                android:paddingLeft="@dimen/_15sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:background="#B384FF"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:paddingTop="@dimen/_5sdp"
+                android:text="Introduce feature"
+                android:paddingLeft="@dimen/_15sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:textSize="@dimen/_13sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcViewFeature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/_15sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp" />
+
+            <TextView
+                android:text="OUR LEADER"
+                android:textStyle="bold"
+                android:textSize="@dimen/_15sdp"
+                android:textColor="#fff"
+                android:paddingLeft="@dimen/_15sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#0001CF"/>
+            <TextView
+                android:paddingTop="@dimen/_5sdp"
+                android:text="Introduce Our Leader"
+                android:paddingLeft="@dimen/_15sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:textSize="@dimen/_13sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:paddingLeft="@dimen/_15sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:layout_gravity="center"
+                android:id="@+id/rcViewOurLeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

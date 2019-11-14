@@ -8,31 +8,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.CandleStickChart;
-import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -152,6 +141,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private List<User> listUser;
+    private CandleDataSet dataSet;
+    private CandleData data;
+    private ArrayList<CandleEntry> candleEntries;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,10 +166,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         initChart();
-        CandleDataSet set1 = getCandleDataSet();
+        dataSet = initCandleDataSet();
 
         // create a data object with the datasets
-        CandleData data = getCandleData(set1);
+        CandleData data = initCandleData(dataSet);
 
         // set data
 
@@ -186,41 +178,67 @@ public class MainActivity extends AppCompatActivity {
         candleStickChart.invalidate();
     }
 
-    private CandleData getCandleData(CandleDataSet set1) {
-        CandleData data = null;
+    private CandleData initCandleData(CandleDataSet dataSet) {
         if (data == null){
-            data = new CandleData(set1);
+            data = new CandleData(dataSet);
         }
         data.notifyDataChanged();
         return data;
     }
 
-    private CandleDataSet getCandleDataSet() {
-        ArrayList<CandleEntry> yValsCandleStick = getCandleEntries();
-
-
-        CandleDataSet set1 = new CandleDataSet(yValsCandleStick, "DataSet 1");
-
-        set1.setColor(Color.rgb(80, 80, 80));
-        set1.setShadowColor(getResources().getColor(R.color.blue));
-        set1.setShadowWidth(0.8f);
-        set1.setDecreasingColor(getResources().getColor(R.color.read));
-        set1.setDecreasingPaintStyle(Paint.Style.FILL);
-        set1.setIncreasingColor(getResources().getColor(R.color.green));
-        set1.setIncreasingPaintStyle(Paint.Style.FILL);
-        set1.setNeutralColor(Color.LTGRAY);
-        set1.setDrawValues(false);
-        return set1;
+    private CandleDataSet initCandleDataSet() {
+        addDataSet();
+        return initDataSet();
     }
 
-    private ArrayList<CandleEntry> getCandleEntries() {
-        ArrayList<CandleEntry> yValsCandleStick= new ArrayList<>();
-        yValsCandleStick.add(new CandleEntry(0, 225.0f, 219.84f, 224.94f, 221.07f));
-        yValsCandleStick.add(new CandleEntry(1, 228.35f, 222.57f, 223.52f, 226.41f));
-        yValsCandleStick.add(new CandleEntry(2, 226.84f,  222.52f, 225.75f, 223.84f));
-        yValsCandleStick.add(new CandleEntry(3, 222.95f, 217.27f, 222.15f, 217.88f));
-        return yValsCandleStick;
+    private void addDataSet() {
+        if (candleEntries == null) {
+            candleEntries = new ArrayList<>();
+            candleEntries.add(new CandleEntry(0, 225.0f, 219.84f, 224.94f, 221.07f));
+            candleEntries.add(new CandleEntry(1, 228.35f, 222.57f, 223.52f, 226.41f));
+            candleEntries.add(new CandleEntry(2, 226.84f,  222.52f, 225.75f, 223.84f));
+            candleEntries.add(new CandleEntry(3, 222.95f, 217.27f, 222.15f, 217.88f));
+        }
+//        setData();
     }
+
+    private CandleDataSet initDataSet() {
+        if (this.dataSet == null) {
+            dataSet = new CandleDataSet(candleEntries, "DataSet 1");
+        }
+
+        dataSet.setColor(Color.rgb(80, 80, 80));
+
+        dataSet.setShadowColor(getResources().getColor(R.color.blue));
+        dataSet.setShadowWidth(0.8f);
+
+        dataSet.setDecreasingColor(getResources().getColor(R.color.read));
+        dataSet.setDecreasingPaintStyle(Paint.Style.FILL);
+
+        dataSet.setIncreasingColor(getResources().getColor(R.color.green));
+        dataSet.setIncreasingPaintStyle(Paint.Style.FILL);
+
+        dataSet.setNeutralColor(Color.LTGRAY);
+        dataSet.setDrawValues(false);
+        return dataSet;
+    }
+
+
+    private void setData(float x, float shadowH, float shadowL, float open, float close) {
+        CandleEntry entry = new CandleEntry(x, shadowH, shadowL, open,close);
+        candleEntries.add(entry);
+    }
+/*
+    private ArrayList<CandleEntry> limitData(ArrayList<CandleEntry> limitList){
+        ArrayList<CandleEntry> tempList = new ArrayList<>();
+        if (limitList.size() > 70){
+            // nhận data
+
+            limitList.clear();
+
+        }
+    }*/
+
 
     private void initChart() {
         candleStickChart = findViewById(R.id.chart1);
@@ -245,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
 
         Legend l = candleStickChart.getLegend();
         l.setEnabled(false);
-
     }
 
 }

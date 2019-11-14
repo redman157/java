@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -21,6 +22,10 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.CandleData;
 import com.github.mikephil.charting.data.CandleDataSet;
 import com.github.mikephil.charting.data.CandleEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -135,15 +140,17 @@ class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 }
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnChartGestureListener {
     private CandleStickChart candleStickChart;
     private Adapter adapter;
+    private boolean moveToLastEntry = true;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private List<User> listUser;
     private CandleDataSet dataSet;
     private CandleData data;
     private ArrayList<CandleEntry> candleEntries;
+    private CandleEntry entry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,18 +173,47 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         initChart();
-        dataSet = initCandleDataSet();
+        addEntry();
 
-        // create a data object with the datasets
-        CandleData data = initCandleData(dataSet);
 
-        // set data
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
 
-        candleStickChart.setData(data);
-        candleStickChart.notifyDataSetChanged();
-        candleStickChart.invalidate();
+        if (thread != null) {
+            thread.interrupt();
+        }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (thread != null) {
+            thread.interrupt();
+        }
+    }
+
+    private void addEntry(){
+        dataSet = initCandleDataSet();
+        // create a data object with the datasets
+        CandleData data = initCandleData(dataSet);
+        data.notifyDataChanged();
+        // set data
+        candleStickChart.setData(data);
+        candleStickChart.getDescription().setEnabled(false);
+        candleStickChart.setOnChartGestureListener(this);
+        candleStickChart.notifyDataSetChanged();
+        // limit the number of visible entries
+        candleStickChart.setVisibleXRangeMaximum(10);
+        // candleStickChart.setVisibleYRange(30, AxisDependency.LEFT);
+
+        if (moveToLastEntry) {
+            // move to the latest entry
+            candleStickChart.moveViewToX(data.getEntryCount());
+        }
+        candleStickChart.invalidate();
+    }
     private CandleData initCandleData(CandleDataSet dataSet) {
         if (data == null){
             data = new CandleData(dataSet);
@@ -188,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
     private CandleDataSet initCandleDataSet() {
         addDataSet();
-        return initDataSet();
+        return createSet();
     }
 
     private void addDataSet() {
@@ -198,14 +234,31 @@ public class MainActivity extends AppCompatActivity {
             candleEntries.add(new CandleEntry(1, 228.35f, 222.57f, 223.52f, 226.41f));
             candleEntries.add(new CandleEntry(2, 226.84f,  222.52f, 225.75f, 223.84f));
             candleEntries.add(new CandleEntry(3, 222.95f, 217.27f, 222.15f, 217.88f));
+            candleEntries.add(new CandleEntry(4, 225.0f, 219.84f, 224.94f, 221.07f));
+            candleEntries.add(new CandleEntry(5, 228.35f, 222.57f, 223.52f, 226.41f));
+            candleEntries.add(new CandleEntry(6, 226.84f,  222.52f, 225.75f, 223.84f));
+            candleEntries.add(new CandleEntry(7, 222.95f, 217.27f, 222.15f, 217.88f));
+            candleEntries.add(new CandleEntry(8, 225.0f, 219.84f, 224.94f, 221.07f));
+            candleEntries.add(new CandleEntry(9, 228.35f, 222.57f, 223.52f, 226.41f));
+            candleEntries.add(new CandleEntry(10, 226.84f,  222.52f, 225.75f, 223.84f));
+            candleEntries.add(new CandleEntry(11, 222.95f, 217.27f, 222.15f, 217.88f));
+            candleEntries.add(new CandleEntry(12, 225.0f, 219.84f, 224.94f, 221.07f));
         }
 //        setData();
     }
 
-    private CandleDataSet initDataSet() {
+    private CandleDataSet createSet() {
         if (this.dataSet == null) {
             dataSet = new CandleDataSet(candleEntries, "DataSet 1");
         }
+
+        dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        dataSet.setColor(ColorTemplate.getHoloBlue());
+
+        dataSet.setHighLightColor(Color.rgb(244, 117, 117));
+        dataSet.setValueTextColor(Color.WHITE);
+        dataSet.setValueTextSize(9f);
+        dataSet.setDrawValues(false);
 
         dataSet.setColor(Color.rgb(80, 80, 80));
 
@@ -220,12 +273,13 @@ public class MainActivity extends AppCompatActivity {
 
         dataSet.setNeutralColor(Color.LTGRAY);
         dataSet.setDrawValues(false);
+
         return dataSet;
     }
 
 
     private void setData(float x, float shadowH, float shadowL, float open, float close) {
-        CandleEntry entry = new CandleEntry(x, shadowH, shadowL, open,close);
+        entry = new CandleEntry(x, shadowH, shadowL, open,close);
         candleEntries.add(entry);
     }
 /*
@@ -242,7 +296,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void initChart() {
         candleStickChart = findViewById(R.id.chart1);
+//        candleStickChart.setOnChartValueSelectedListener(entry);
+        // enable touch gestures
+        candleStickChart.setTouchEnabled(true);
+        // enable scaling and dragging
+        candleStickChart.setDragEnabled(true);
+        candleStickChart.setScaleEnabled(true);
+        candleStickChart.setDrawGridBackground(false);
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        candleStickChart.setPinchZoom(false);
+
+        candleStickChart.setBackgroundColor(Color.LTGRAY);
+
         candleStickChart.setHighlightPerDragEnabled(true);
+
         candleStickChart.setDrawBorders(true);
         candleStickChart.setBorderColor(getResources().getColor(R.color.colorPrimaryDark));
 
@@ -265,4 +333,78 @@ public class MainActivity extends AppCompatActivity {
         l.setEnabled(false);
     }
 
+    private Thread thread;
+    private void feedMultipe(){
+        if (thread != null) {
+            thread.interrupt();
+        }
+        final Runnable runnable = new Runnable() {
+
+            @Override
+            public void run() {
+                addEntry();
+            }
+        };
+
+        thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                for (int i = 0; i < 100000; i++) {
+
+                    // Don't generate garbage runnables inside the loop.
+                    runOnUiThread(runnable);
+
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        thread.start();
+    }
+
+    @Override
+    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+        moveToLastEntry = false;
+    }
+
+    @Override
+    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+    }
+
+    @Override
+    public void onChartLongPressed(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartDoubleTapped(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartSingleTapped(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+
+    }
+
+    @Override
+    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+
+    }
+
+    @Override
+    public void onChartTranslate(MotionEvent me, float dX, float dY) {
+
+    }
 }

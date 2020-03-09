@@ -33,7 +33,9 @@ public class Constants {
 
         String excludeShortSounds = "excludeShortSounds";
         String excludeWhatsAppSounds = "excludeWhatsAppSounds";
-
+        String song_position = "song_position";
+        String repeat = "repeat";
+        String persistentNotificationPref = "persistentNotificationPref";
         String AUDIO_SESSION_ID =  "AUDIO_SESSION_ID";
         String MUSIC_ID = "musicID";
         String TITLE = "title";

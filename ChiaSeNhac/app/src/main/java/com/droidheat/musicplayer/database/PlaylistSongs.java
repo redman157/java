@@ -1,6 +1,5 @@
 package com.droidheat.musicplayer.database;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -50,20 +49,21 @@ public class PlaylistSongs {
 
     public long addRow(long j, SongModel songModel) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(Database.PLAYSONG.TITLE, songModel.getTitle());
-        contentValues.put(Database.PLAYSONG.PLAYLIST_ID, Long.toString(j));
-        contentValues.put(Database.PLAYSONG.PATH, songModel.getPath());
-        contentValues.put(Database.PLAYSONG.ARTIST, songModel.getArtist());
-        contentValues.put(Database.PLAYSONG.ALBUM, songModel.getAlbum());
-        contentValues.put(Database.PLAYSONG.NAME, songModel.getFileName());
-        contentValues.put(Database.PLAYSONG.DURATION, songModel.getDuration());
-        contentValues.put(Database.PLAYSONG.ALBUM_ID, songModel.getAlbumID());
-        return this.database.insert(Database.PLAYSONG.TABLE_NAME, "NULL", contentValues);
+        contentValues.put(Database.PLAYSONGS.TITLE, songModel.getTitle());
+        contentValues.put(Database.PLAYSONGS.PLAYLIST_ID, Long.toString(j));
+        contentValues.put(Database.PLAYSONGS.PATH, songModel.getPath());
+        contentValues.put(Database.PLAYSONGS.ARTIST, songModel.getArtist());
+        contentValues.put(Database.PLAYSONGS.ALBUM, songModel.getAlbum());
+        contentValues.put(Database.PLAYSONGS.NAME, songModel.getFileName());
+        contentValues.put(Database.PLAYSONGS.DURATION, songModel.getDuration());
+        contentValues.put(Database.PLAYSONGS.ALBUM_ID, songModel.getAlbumID());
+        return this.database.insert(Database.PLAYSONGS.TABLE_NAME, "NULL", contentValues);
     }
 
     public ArrayList<SongModel> getAllRows(int id) {
-        String where = Database.PLAYSONG.PLAYLIST_ID+"="+id;
-        Cursor query = this.database.query(Database.PLAYSONG.TABLE_NAME, Database.PLAYSONG.ALL_KEYS, where, null, null, null, null);
+        String db_PlayList = Database.PLAYSONGS.PLAYLIST_ID+"="+id;
+        Cursor query = database.query(Database.PLAYSONGS.TABLE_NAME, Database.PLAYSONGS.ALL_KEYS,
+                db_PlayList, null, null, null, null);
         ArrayList<SongModel> arrayList = new ArrayList<>();
         if (query.moveToFirst()) {
             do {
@@ -89,7 +89,7 @@ public class PlaylistSongs {
         String album= "";
         String artist="";
         String path="";
-        Cursor query = this.database.query(true, Database.PLAYSONG.TABLE_NAME, Database.PLAYSONG.ALL_KEYS, Database.PLAYSONG.SQL_CONTROL_ROW_SONG+id, null, null, null, null, null);
+        Cursor query = this.database.query(true, Database.PLAYSONGS.TABLE_NAME, Database.PLAYSONGS.ALL_KEYS, Database.PLAYSONGS.SQL_CONTROL_ROW_SONG+id, null, null, null, null, null);
         String title = null;
         if (query != null) {
             query.moveToFirst();
@@ -114,16 +114,16 @@ public class PlaylistSongs {
     }
 
     public boolean deleteRow(long columnId, long playListId) {
-        String where = Database.PLAYSONG.COLUMN_NAME_ID+"="+columnId+" AND "+ Database.PLAYSONG.PLAYLIST_ID+"="+playListId;
+        String where = Database.PLAYSONGS.COLUMN_NAME_ID+"="+columnId+" AND "+ Database.PLAYSONGS.PLAYLIST_ID+"="+playListId;
 
-        return this.database.delete(Database.PLAYSONG.TABLE_NAME, where, null) != 0;
+        return this.database.delete(Database.PLAYSONGS.TABLE_NAME, where, null) != 0;
     }
 
     public boolean deleteRowByPath(String row) {
-        String rowPath = Database.PLAYSONG.PATH+"="+row;
+        String rowPath = Database.PLAYSONGS.PATH+"="+row;
 
         try {
-            if (this.database.delete(Database.PLAYSONG.TABLE_NAME, rowPath.toString(), null) != 0) {
+            if (this.database.delete(Database.PLAYSONGS.TABLE_NAME, rowPath.toString(), null) != 0) {
                 return true;
             }
             return false;
@@ -133,7 +133,7 @@ public class PlaylistSongs {
     }
 
     public int getCount(long id) {
-        String getCount = "SELECT * FROM "+ Database.PLAYSONG.TABLE_NAME+ " WHERE "+ Database.PLAYSONG.PLAYLIST_ID+ "="+id;
+        String getCount = "SELECT * FROM "+ Database.PLAYSONGS.TABLE_NAME+ " WHERE "+ Database.PLAYSONGS.PLAYLIST_ID+ "="+id;
         Cursor rawQuery = this.database.rawQuery(getCount, null);
         int count = rawQuery.getCount();
         rawQuery.close();
@@ -143,7 +143,7 @@ public class PlaylistSongs {
     public boolean deleteAll(int i) {
         try {
             Cursor allRowsCursor = getAllRowsCursor();
-            long columnIndexOrThrow = (long) allRowsCursor.getColumnIndexOrThrow(Database.PLAYSONG.COLUMN_NAME_ID);
+            long columnIndexOrThrow = (long) allRowsCursor.getColumnIndexOrThrow(Database.PLAYSONGS.COLUMN_NAME_ID);
             if (allRowsCursor.moveToFirst()) {
                 do {
                     deleteRow(allRowsCursor.getLong((int) columnIndexOrThrow), (long) i);
@@ -157,7 +157,7 @@ public class PlaylistSongs {
     }
 
     public Cursor getAllRowsCursor() {
-        Cursor query = this.database.query(true, Database.PLAYSONG.TABLE_NAME, Database.PLAYSONG.ALL_KEYS, null, null, null, null, null, null);
+        Cursor query = this.database.query(true, Database.PLAYSONGS.TABLE_NAME, Database.PLAYSONGS.ALL_KEYS, null, null, null, null, null, null);
         if (query != null) {
             query.moveToFirst();
         }

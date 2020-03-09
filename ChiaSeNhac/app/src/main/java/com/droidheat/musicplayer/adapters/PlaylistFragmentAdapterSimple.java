@@ -17,10 +17,10 @@ import java.util.HashMap;
 
 /* renamed from: com.droidheat.musicplayer.ui.adapters.PlaylistFragmentAdapterSimple */
 public class PlaylistFragmentAdapterSimple extends BaseAdapter {
-    private ArrayList<HashMap<String, String>> data = this.songsUtils.getAllPlayLists();
+    private ArrayList<HashMap<String, String>> data;
     private LayoutInflater inflater;
     private SongsUtils songsUtils;
-
+    private Context context;
     /* renamed from: com.droidheat.musicplayer.ui.adapters.PlaylistFragmentAdapterSimple$ViewHolder */
     private static class ViewHolder {
         public TextView text;
@@ -39,8 +39,12 @@ public class PlaylistFragmentAdapterSimple extends BaseAdapter {
 
     @SuppressLint("WrongConstant")
     public PlaylistFragmentAdapterSimple(Context context) {
-        this.songsUtils = new SongsUtils((Activity) context);
-        this.inflater = (LayoutInflater) context.getSystemService("layout_inflater");
+        this.context = context;
+        this.songsUtils = SongsUtils.getInstance();
+        this.songsUtils.setContext(context);
+        data = this.songsUtils.getAllPlayLists();
+        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
     }
 
     public void notifyDataSetChanged() {
@@ -49,6 +53,9 @@ public class PlaylistFragmentAdapterSimple extends BaseAdapter {
         this.data = this.songsUtils.getAllPlayLists();
     }
 
+    /**
+     * ***** What is the size of Passed Arraylist Size ***********
+     */
     public int getCount() {
         if (this.data.size() <= 0) {
             return 1;

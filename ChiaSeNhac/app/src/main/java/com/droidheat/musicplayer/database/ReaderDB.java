@@ -42,7 +42,7 @@ public class ReaderDB extends SQLiteOpenHelper {
     public void onCreate( SQLiteDatabase database) {
         switch (getDATABASE_NAME()){
             case Constants.VALUE.PLAYLISTSONGS_DB:
-                database.execSQL(Database.PLAYSONG.SQL_CREATE_ENTRIES);
+                database.execSQL(Database.PLAYSONGS.SQL_CREATE_ENTRIES);
                 break;
             case Constants.VALUE.PLAYLIST_DB:
                 database.execSQL(Database.PLAYLIST.SQL_CREATE_ENTRIES);
@@ -74,7 +74,7 @@ public class ReaderDB extends SQLiteOpenHelper {
                 onCreate(database);
                 break;
             case Constants.VALUE.PLAYLISTSONGS_DB:
-                database.execSQL(Database.PLAYSONG.SQL_DELETE_ENTRIES);
+                database.execSQL(Database.PLAYSONGS.SQL_DELETE_ENTRIES);
                 onCreate(database);
                 break;
         }

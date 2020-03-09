@@ -12,11 +12,11 @@ import java.util.ArrayList;
 
 public class CategorySongs {
 
-    Context context;
+    private Context context;
 
     /* renamed from: db */
-    SQLiteDatabase database;
-    ReaderDB myDBHelper;
+    private SQLiteDatabase database;
+    private ReaderDB myDBHelper;
 
 
     private static CategorySongs instance;
@@ -71,23 +71,23 @@ public class CategorySongs {
         String[] allKeys = Database.CATEGORY.ALL_KEYS;
         String votes = Database.CATEGORY.VOTES+ " DESC";
 
-        Cursor query = sQLiteDatabase.query(tableName, allKeys, row,
-                null, null, null, votes.toString());
+        Cursor cursor = sQLiteDatabase.query(tableName, allKeys, row,
+                null, null, null, votes);
         ArrayList<SongModel> models = new ArrayList<>();
-        if (query.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 SongModel model = new SongModel();
-                model.setTitle(query.getString(3));
-                model.setPath(query.getString(4));
-                model.setArtist(query.getString(5));
-                model.setAlbum(query.getString(6));
-                model.setFileName(query.getString(7));
-                model.setDuration(query.getString(8));
-                model.setAlbumID(query.getString(9));
+                model.setTitle(cursor.getString(3));
+                model.setPath(cursor.getString(4));
+                model.setArtist(cursor.getString(5));
+                model.setAlbum(cursor.getString(6));
+                model.setFileName(cursor.getString(7));
+                model.setDuration(cursor.getString(8));
+                model.setAlbumID(cursor.getString(9));
                 models.add(model);
-            } while (query.moveToNext());
+            } while (cursor.moveToNext());
         }
-        query.close();
+        cursor.close();
         return models;
     }
 
@@ -194,18 +194,19 @@ public class CategorySongs {
         if (query != null) {
             query.close();
         }
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Database.CATEGORY.CATEGORY, category);
-        contentValues.put(Database.CATEGORY.VOTES, Integer.valueOf(id));
-        contentValues.put(Constants.PREFERENCES.TITLE, title);
-        contentValues.put(Constants.PREFERENCES.PATH, path);
-        contentValues.put(Constants.PREFERENCES.ARTIST, artist);
-        contentValues.put(Constants.PREFERENCES.ALBUM, album);
-        contentValues.put(Constants.PREFERENCES.NAME, name);
-        contentValues.put(Constants.PREFERENCES.DURATION, duration);
-        contentValues.put(Constants.PREFERENCES.ALBUMID, albumId);
-        contentValues.put(Database.CATEGORY.FAKE_PATH, dropInvalidString(path));
-        if (this.database.update(Database.CATEGORY.TABLE_NAME, contentValues, update, null) != 0) {
+
+        ContentValues values = new ContentValues();
+        values.put(Database.CATEGORY.CATEGORY, category);
+        values.put(Database.CATEGORY.VOTES, Integer.valueOf(id));
+        values.put(Constants.PREFERENCES.TITLE, title);
+        values.put(Constants.PREFERENCES.PATH, path);
+        values.put(Constants.PREFERENCES.ARTIST, artist);
+        values.put(Constants.PREFERENCES.ALBUM, album);
+        values.put(Constants.PREFERENCES.NAME, name);
+        values.put(Constants.PREFERENCES.DURATION, duration);
+        values.put(Constants.PREFERENCES.ALBUMID, albumId);
+        values.put(Database.CATEGORY.FAKE_PATH, dropInvalidString(path));
+        if (this.database.update(Database.CATEGORY.TABLE_NAME, values, update, null) != 0) {
             return true;
         }
         return false;

@@ -56,49 +56,56 @@ public class FavouriteList {
         return this.database.insert(Database.FAVOURITE.TABLE_NAME, "NULL", contentValues);
     }
 
+
+    /*
+     * Returns ArrayList Hashmap of all Rows
+     */
     public ArrayList<SongModel> getAllRows() {
-        SQLiteDatabase sQLiteDatabase = this.database;
-        String str = Database.FAVOURITE.TABLE_NAME;
-        String[] strArr = Database.FAVOURITE.ALL_KEYS;
-        StringBuilder sb = new StringBuilder();
-        sb.append(Database.FAVOURITE.COLUMN_NAME_ID);
-        sb.append(" DESC");
-        Cursor query = sQLiteDatabase.query(str, strArr, null, null, null, null, sb.toString());
-        ArrayList<SongModel> arrayList = new ArrayList<>();
-        if (query.moveToFirst()) {
+
+
+        String db_Favourite = Database.FAVOURITE.COLUMN_NAME_ID+" DESC";
+
+        Cursor cursor = database.query(Database.FAVOURITE.TABLE_NAME,
+                Database.FAVOURITE.ALL_KEYS, null, null, null, null, db_Favourite);
+        ArrayList<SongModel> profilesArray = new ArrayList<>();
+        if (cursor.moveToFirst()) {
             do {
-                SongModel songModel = new SongModel();
-                songModel.setTitle(query.getString(1));
-                songModel.setPath(query.getString(2));
-                songModel.setArtist(query.getString(3));
-                songModel.setAlbum(query.getString(4));
-                songModel.setFileName(query.getString(5));
-                songModel.setDuration(query.getString(6));
-                songModel.setAlbumID(query.getString(7));
-                arrayList.add(songModel);
-            } while (query.moveToNext());
+                SongModel song = new SongModel();
+                song.setTitle(cursor.getString(1));
+                song.setPath(cursor.getString(2));
+                song.setArtist(cursor.getString(3));
+                song.setAlbum(cursor.getString(4));
+                song.setFileName(cursor.getString(5));
+                song.setDuration(cursor.getString(6));
+                song.setAlbumID(cursor.getString(7));
+                profilesArray.add(song);
+            } while (cursor.moveToNext());
         }
-        query.close();
-        return arrayList;
+        cursor.close();
+        return profilesArray;
     }
 
+    /*
+     * Get Row
+     */
     public SongModel getRow(long rowId) {
         String title = null, path = null, artist = null, album = null, name = null, duration = null, albumid = null;
         String where = Database.FAVOURITE.COLUMN_NAME_ID +"="+rowId;
-        Cursor query = database.query(
+        Cursor cursor = database.query(
                 true, Database.FAVOURITE.TABLE_NAME, Database.FAVOURITE.ALL_KEYS,
                 where, null, null, null, null, null);
-        if (query != null) {
-            query.moveToFirst();
-            title = query.getString(1);
-            path = query.getString(2);
-            artist = query.getString(3);
-            album = query.getString(4);
-            name = query.getString(5);
-            duration = query.getString(6);
-            albumid = query.getString(7);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            title = cursor.getString(1);
+            path = cursor.getString(2);
+            artist = cursor.getString(3);
+            album = cursor.getString(4);
+            name = cursor.getString(5);
+            duration = cursor.getString(6);
+            albumid = cursor.getString(7);
         }
-        query.close();
+        cursor.close();
+
         SongModel songModel = new SongModel();
         songModel.setTitle(title);
         songModel.setPath(path);
@@ -110,9 +117,11 @@ public class FavouriteList {
         return songModel;
     }
 
+    /*
+     * Delete a Row
+     */
     private boolean deleteRow(long rowId) {
         String delete = Database.FAVOURITE.COLUMN_NAME_ID +"="+rowId;
-
         return this.database.delete(Database.FAVOURITE.TABLE_NAME, delete, null) != 0;
     }
 
@@ -143,20 +152,22 @@ public class FavouriteList {
             return false;
         }
     }
-
+    /*
+     * Get All Rows Cursor
+     */
+    // Return all data in the database.
     private Cursor getAllRowsCursor() {
-        Cursor query = this.database.query(true,
+        Cursor cursor = this.database.query(true,
                 Database.FAVOURITE.TABLE_NAME, Database.FAVOURITE.ALL_KEYS,
                 null, null, null, null, null, null);
-        if (query != null) {
-            query.moveToFirst();
+        if (cursor != null) {
+            cursor.moveToFirst();
         }
-        return query;
+        return cursor;
     }
 
     public boolean updateRow(HashMap<String, String> list, int id) {
         String where = Database.FAVOURITE.COLUMN_NAME_ID + "="+id;
-
 
         /*
          * CHANGE 4:

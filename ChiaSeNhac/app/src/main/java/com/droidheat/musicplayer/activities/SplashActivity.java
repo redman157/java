@@ -31,7 +31,7 @@ public class SplashActivity extends AppCompatActivity {
     private boolean sync = false;
     private ProgressBar progressBar;
     private TextView textSync;
-
+    private SongsUtils songsUtils;
 
     /* access modifiers changed from: protected */
     @SuppressLint({"SetTextI18n"})
@@ -95,10 +95,11 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void setTextStatus() {
-        SongsUtils songsUtils;
+        songsUtils = SongsUtils.getInstance();
         if (getIntent().getBooleanExtra(Constants.VALUE.SYNC, false)) {
 
-            new SongsUtils(this).sync();
+            songsUtils.setContext(this);
+            songsUtils.sync();
             textSync.setText("Syncing..");
             this.sync = true;
         } else {

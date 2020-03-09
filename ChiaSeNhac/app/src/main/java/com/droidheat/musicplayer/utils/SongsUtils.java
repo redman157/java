@@ -86,6 +86,13 @@ public class SongsUtils {
 
     private SongsUtils() {
 
+    }
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
         this.sharedPrefsUtils = new SharedPrefsUtils(getContext());
         grabIfEmpty();
         if (queue.isEmpty()) {
@@ -99,13 +106,6 @@ public class SongsUtils {
                 Log.d(TAG, "Unable to retrieve data while queue is empty.");
             }
         }
-    }
-    public Context getContext() {
-        return context;
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
     }
 
 

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.cardview.widget.CardView
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginLeft="@dimen/_8sdp"
+        android:layout_marginRight="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
+        android:background="@drawable/custom_edit_stoken"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_8sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:textColor="#EA6C9F"
+                android:id="@+id/textItemTittleNotification"
+
+                android:textSize="@dimen/_12sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/iconItemNotification"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_below="@id/textItemTittleNotification"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="@dimen/_7sdp"
+                />
+
+            <TextView
+                android:id="@+id/textItemNameSendNotification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textItemTittleNotification"
+                android:layout_marginLeft="@dimen/_7sdp"
+                android:layout_marginTop="@dimen/_7sdp"
+                android:layout_toRightOf="@id/iconItemNotification"
+                android:textSize="@dimen/_10sdp" />
+
+            <TextView
+                android:layout_below="@id/textItemNameSendNotification"
+                android:layout_toRightOf="@id/iconItemNotification"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:textColor="#F58717"
+                android:textSize="@dimen/_10sdp"
+                android:id="@+id/textItemMessageNotification"
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>

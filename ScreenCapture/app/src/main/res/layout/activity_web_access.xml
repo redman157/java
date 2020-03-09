@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    tools:context=".WebAccessActivity">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.75"
+        android:orientation="horizontal"
+        android:background="#1976D2"
+        android:weightSum="10">
+        <Button
+            android:id="@+id/btnBack"
+
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="back"
+            android:background="#00796B"
+            android:paddingLeft="8dp"
+            android:gravity="center"
+            android:drawableLeft="@drawable/left"/>
+
+        <View
+            android:layout_weight="5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"/>
+        <ImageButton
+            android:id="@+id/ibScreen"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:src="@drawable/photo"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:background="#00796B"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+    <FrameLayout
+        android:id="@+id/flWeb"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9.25"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <WebView
+            android:id="@+id/wvHome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never" />
+
+        <include
+            android:id="@+id/layout_loading"
+            layout="@layout/layout_loading"
+            android:visibility="visible" />
+    </FrameLayout>
+</LinearLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:padding="@dimen/_20sdp"
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="10">
+
+        <ImageView
+            android:src="@drawable/ic_folder_mypage"
+            android:id="@+id/imgItemHowtoget"
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:layout_height="@dimen/_90sdp"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="7"
+            android:weightSum="10"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+            <TextView
+                android:gravity="center"
+                android:id="@+id/textitemTitleHowToGet"
+                android:layout_weight="4"
+                android:textColor="#ED9404"
+                android:textSize="@dimen/_20sdp"
+                android:text="Check-in On Time"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+            <TextView
+                android:text="Nội dung check in on create_at là gì thế nhỉ"
+                android:id="@+id/textItemDescriptionHowtoget"
+                android:layout_weight="6"
+                android:textSize="@dimen/_15sdp"
+                android:layout_width="wrap_content"
+                android:paddingLeft="@dimen/_4sdp"
+                android:layout_height="0dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

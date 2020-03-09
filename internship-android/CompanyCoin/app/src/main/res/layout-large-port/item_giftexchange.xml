@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#fff"
+
+    android:layout_margin="@dimen/_5sdp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_toRightOf="@+id/imgItemGiftExchange"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginLeft="@dimen/_40sdp"
+
+            android:id="@+id/textRecommendGiftExchange"
+            android:layout_width="wrap_content"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="#fff"
+            android:background="#ff00"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/imgItemGiftExchange"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_120sdp"
+            android:src="@drawable/oreo" />
+        <TextView
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_3sdp"
+            android:paddingLeft="@dimen/_20sdp"
+            android:textColor="#fff"
+            android:background="#CF2B2A"
+            android:text="@string/pepsi"
+            android:textSize="@dimen/_13sdp"
+            android:layout_below="@+id/imgItemGiftExchange"
+            android:id="@+id/textGiftName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:paddingBottom="@dimen/_5sdp"
+            android:paddingLeft="@dimen/_20sdp"
+            android:textColor="#fff"
+            android:background="#CF2B2A"
+            android:textSize="@dimen/_11sdp"
+            android:text="@string/intro_pepsi"
+            android:layout_below="@+id/textGiftName"
+            android:id="@+id/textIntroduceGift"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_marginBottom="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_below="@id/textIntroduceGift"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/_7sdp"
+            android:paddingBottom="@dimen/_7sdp"
+            android:background="@drawable/custom_button"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:id="@+id/linearGiftItemExchange">
+            <TextView
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/_13sdp"
+                android:gravity="center"
+                android:textColor="#fff"
+                android:text="@string/exchange_with"
+                />
+            <TextView
+                android:layout_below="@+id/imgItemGiftExchange"
+                android:layout_gravity="center"
+                android:text="10 Coin"
+                android:gravity="center"
+                android:textSize="@dimen/_13sdp"
+                android:textColor="#fff"
+                android:id="@+id/textItemGiftExchangeCoin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_below="@+id/linearGiftItemExchange"
+            android:layout_gravity="center"
+            android:text="@string/remaining"
+            android:layout_centerHorizontal="true"
+            android:textSize="@dimen/_13sdp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textItemGiftExchangeRemain"
+            />
+    </RelativeLayout>
+    <View
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"/>
+</LinearLayout>

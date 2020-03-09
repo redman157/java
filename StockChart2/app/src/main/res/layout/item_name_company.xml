@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_marginLeft="@dimen/_5sdp"
+    android:layout_marginRight="@dimen/_5sdp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="@dimen/_300sdp"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:weightSum="10">
+        <TextView
+            android:text="VNM"
+            android:layout_weight="7"
+            android:id="@+id/txtItemCompanyCode"
+            android:layout_width="0dp"
+            android:textSize="@dimen/_12sdp"
+            android:textColor="#383636"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:text="Đang giao dịch"
+            android:gravity="center"
+            android:id="@+id/txtItemCompanyStatus"
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+        <TextView
+            android:text="Vinamilk"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="#383636"
+            android:layout_weight="7"
+            android:id="@+id/txtItemCompanyName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/txtItemCompanyPrice"
+                android:textSize="@dimen/_10sdp"
+                android:text="129.5"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:weightSum="10"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_weight="2"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/up_green"
+                    android:layout_width="@dimen/_16sdp"
+                    android:layout_height="@dimen/_16sdp"/>
+                <TextView
+                    android:textSize="@dimen/_9sdp"
+                    android:layout_weight="8"
+                    android:text="0.7 (0.5)"
+                    android:textColor="#ff00"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+    <View
+        android:id="@+id/viewItemCompanycode"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:background="#696969"
+        android:layout_width="@dimen/_300sdp"
+        android:layout_height="1dp"/>
+</LinearLayout>

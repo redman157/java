@@ -1,0 +1,139 @@
+<resources>
+    <string name="app_name">CompanyCoin</string>
+    <string name="username">会社メールアドレス</string>
+    <string name="password">パスワード</string>
+    <string name="login">ログイン</string>
+    <string name="forget">パスワードを忘 れ た場合はこちら?</string>
+
+    <string name="pick_coin">コインを選ぶ</string>
+    <string name="redeem_gift">ギフトを引き換える</string>
+
+    <string name="view_change">交換可能なギフトを見る</string>
+    <string name="priceGift">1コインで交換</string>
+    <string name="coin">コイン</string>
+    <string name="menu_name" translatable="false">サービス名</string>
+    <string name="menu_bag">私のかばん</string>
+    <string name="coca_cola">コカコーラ 500ml</string>
+    <string name="remaining">残る</string>
+    <string name="view">投稿リストを表示</string>
+    <string name="content">コインを様々な食べ物と交換することができます。Yartのような冷たいものがあれば幸せです</string>
+    <string name="day">2019年7月7日</string>
+    <string name="rank">ランキング</string>
+    <string name="mypage">マイページ</string>
+    <string name="company_name">会社のコイン</string>
+    <string name="home">ホーム</string>
+    <string name="gift_exchange">ギフト交換</string>
+    <string name="notifications">通知</string>
+    <string name="send_coins">コインを送る</string>
+    <string name="opinional_post">フィードバック</string>
+
+    <!-- fragment thứ 2  -->
+    <string name="good_morning">おはようございます</string>
+    <string name="lets_do">今日も頑張りましょう</string>
+    <string name="check_in">チェックイン</string>
+    <string name="plus_coin">+1 コイン</string>
+    <!-- activity mypage  -->
+    <string name="my_page">マイページ</string>
+    <string name="change_password">パスワードを変更する</string>
+    <string name="transaction_history">取引履歴</string>
+    <string name="ranking">ランキング</string>
+    <string name="term_of_use">利用規約</string>
+    <string name="privacy_policy">個人情報保護方針</string>
+    <string name="information">情報</string>
+    <string name="sign_out">サインアウト</string>
+    <string name="notification">通知</string>
+    <!-- activity giftName priceGift-->
+    <string name="all">すべて</string>
+    <string name="new_arrival">新参者</string>
+    <string name="popularity">人気</string>
+    <string name="exchange_with">と交換</string>
+    <string name="oreo">オレオ</string>
+    <string name="pepsi">ペプシ</string>
+    <string name="chocopie">チョコパイ</string>
+    <string name="adidas">アディダス</string>
+    <string name="true_milk">TH True milk</string>
+    <string name="intro_oreo">オレオは、英国などの一部の国で、100を超えるさまざまな国で利用できます。</string>
+    <string name="intro_pepsi">ペプシはペプシコが製造する炭酸清涼飲料です。 1893年に最初に作成および開発された</string>
+    <string name="intro_adidas">Adidas AGは多国籍企業で、ヘルツォーゲンアウラッハに設立され、本社を置いています。</string>
+    <string name="intro_truemilk">ハイテク産業規模で適用された自己制約生産プロセスを備えた酪農栽培集中システム</string>
+    <string name="intro_chocopie">チョコピーは、マシュマロの詰め物とチョコレートの覆いが付いたケーキの2つの小さな丸い層で構成されるスナックケーキです</string>
+    <string name="do_not_exchange">交換しないでください</string>
+    <string name="num_of_coin_after">交換後のコインの数：</string>
+    <string name="work">パスワードを変更する</string>
+    <string name="overall_usage">全体的な使用履歴</string>
+    <string name="how_to_get">取得する方法</string>
+    <string name="sender">送信者</string>
+    <string name="type">タイプ</string>
+    <string name="receiver">受信機</string>
+    <string name="number_of_coins">コインの数</string>
+    <string name="status">状態</string>
+    <string name="create_at">時間</string>
+    <string name="done">完了</string>
+    <!-- reset password activity -->
+    <string name="please_enter_your_register_email">登録したメールアドレスを入力してください</string>
+    <string name="send">送る</string>
+    <string name="return_to_login">ログイン画面に戻る</string>
+
+    <!-- gop ý kiến-->
+    <string name="please_give_your_comments">コメントをお願いします</string>
+    <string name="suggestions">提案</string>
+    <string name="new_info">新着</string>
+    <string name="send_the_infomation">あなたが世界と共有したい情報やアイデアを送ってください</string>
+    <string name="suggest_comment">提案コメント</string>
+    <string name="please_enter_your_comments">ここにコメントを入力してください</string>
+    <string name="email_is_required">メールが必要です</string>
+    <string name="token_is_required">トークンが必要です</string>
+    <string name="me">私</string>
+    <string name="view_all">すべてのランクを見る</string>
+
+    <string name="introduce_company">紹介会社</string>
+    <string name="qna">Q&amp;A</string>
+    <string name="how_to_use">使い方</string>
+    <string name="check_pass">パスワードが必要です</string>
+
+    <string name="rememberme">" 私を覚えてますか"</string>
+    <string name="back_to_login">ログインに戻る</string>
+    <string name="remainin">残り</string>
+    <string name="items">アイテム</string>
+    <string name="sec_ago">二回前</string>
+    <string name="minute_ago">分前</string>
+    <string name="hour_ago">一時間前</string>
+    <string name="day_ago">日前</string>
+    <string name="week_ago">一週間前</string>
+    <string name="token">Token</string>
+    <string name="note">メッセージ</string>
+    <string name="input_coin">送信コインを受け入れてください</string>
+    <string name="cur_pass">現在のパスワード</string>
+    <string name="new_pass">新しいパスワード</string>
+    <string name="comfirm_new_pass">新しいパスワードを確認</string>
+    <string name="do_you_want_logout">ログアウトしますか？</string>
+    <string name="yes">はい</string>
+    <string name="no">番号</string>
+    <string name="back_login">ログインに戻る</string>
+    <string name="feedback">フィードバック</string>
+    <string name="post">転記</string>
+    <string name="check_content">コンテンツは30文字を超える必要があります</string>
+    <string name="please_enter_content">内容を入力してください</string>
+    <string name="please_comment_check">" コメントには30を超える署名が必要です"</string>
+    <string name="please_check_box">チェックボックスが必要です</string>
+    <string name="password_must">パスワードには8文字が必要です</string>
+    <string name="password_confirmation">新しいパスワードの確認が必要です</string>
+    <string name="new_password">新しいパスワードが必要です</string>
+    <string name="new_password_must">新しいパスワードの確認には8文字を含める必要があります</string>
+    <string name="compare_password">新しいパスワードが新しいパスワードと一致する必要があることを確認します</string>
+    <string name="login_faild">ログインに失敗しました、メールまたはパスワードが間違っています</string>
+    <string name="exit_application">アプリケーションを終了しますか？</string>
+
+    <string name="handbook">ハンドブック</string>
+    <string name="sendcoinsuccess">コインを正常に転送する</string>
+    <string name="sendcoinagain">コインを他の人に転送し続ける</string>
+    <string name="career">キャリア</string>
+    <string name="backmypage">私のページに戻る</string>
+    <string name="changepasssuccess">パスワード変更の成功</string>
+
+    <string name="switchlanguage">言語を切り替える</string>
+    <string name="language">日本人</string>
+    <string name="japanese">日本人</string>
+    <string name="english">英語</string>
+
+</resources>

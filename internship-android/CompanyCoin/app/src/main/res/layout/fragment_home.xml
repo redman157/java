@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragmentHome"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:background="#ff00"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff"
+            android:orientation="vertical"
+            tools:context=".activity.HomeActivity">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FBCFA2"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/imgCard"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_165sdp"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginLeft="@dimen/_20sdp"
+                            android:minHeight="@dimen/_160sdp"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/card" />
+
+                        <ImageView
+                            android:id="@+id/imgFlag"
+                            android:layout_width="@dimen/_30sdp"
+                            android:layout_height="@dimen/_48sdp"
+                            android:layout_marginLeft="@dimen/_45sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:src="@drawable/flag" />
+                        <TextView
+                            android:layout_above="@+id/linearCoinHomeFragment"
+                            android:layout_width="match_parent"
+                            android:id="@+id/textHistoryHomeFragment"
+                            android:layout_alignLeft="@+id/imgFlag"
+                            android:layout_alignRight="@id/imgFlag"
+                            android:layout_marginBottom="@dimen/_2sdp"
+
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_12sdp"
+                            android:gravity="center"
+                            android:layout_height="match_parent"/>
+                        <LinearLayout
+                            android:id="@+id/linearCoinHomeFragment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignLeft="@id/imgFlag"
+                            android:layout_alignRight="@id/imgFlag"
+                            android:layout_alignBottom="@id/imgFlag"
+                            android:layout_marginLeft="@dimen/_2sdp"
+                            android:layout_marginRight="@dimen/_2sdp"
+                            android:layout_marginBottom="@dimen/_9sdp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="@string/coin"
+                                android:layout_marginBottom="@dimen/_3sdp"
+                                android:textColor="#ffff"
+                                android:textSize="@dimen/_8sdp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/textNameCompanyHomeFragment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignRight="@+id/imgCard"
+                            android:layout_marginTop="@dimen/_15sdp"
+                            android:layout_marginRight="@dimen/_35sdp"
+                            android:text="JVC"
+                            android:textColor="#ffff"
+                            android:textSize="@dimen/_30sdp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="@dimen/_60sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:layout_alignRight="@id/imgCard"
+                            android:layout_alignBottom="@+id/imgCard"
+                            android:layout_marginRight="@dimen/_35sdp"
+
+                            android:layout_marginBottom="@dimen/_20sdp"
+                            android:src="@drawable/icon_logo_white" />
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/imgAvata"
+                            android:layout_width="@dimen/_50sdp"
+                            android:layout_height="@dimen/_50sdp"
+                            android:layout_alignTop="@id/imgCard"
+                            android:layout_marginLeft="@dimen/_45sdp"
+                            android:layout_marginTop="@dimen/_75sdp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="@dimen/_5sdp"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:scaleType="fitXY"
+                                    android:id="@+id/imgAvataCardHomeFragment"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                     />
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/textName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_76sdp"
+                            android:layout_toRightOf="@+id/imgAvata"
+                            android:text="Name"
+                            android:textColor="#fff"
+                            android:textSize="@dimen/_10sdp" />
+
+                        <TextView
+                            android:id="@+id/textInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/textName"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_toRightOf="@+id/imgAvata"
+                            android:textColor="#000"
+                            android:textSize="@dimen/_10sdp" />
+
+                        <TextView
+                            android:id="@+id/textCoin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/textInfo"
+                            android:layout_marginLeft="13dp"
+                            android:layout_toRightOf="@+id/imgAvata"
+                            android:text="@string/coin"
+                            android:textColor="#fff"
+                            android:textSize="@dimen/_10sdp" />
+
+                        <TextView
+                            android:id="@+id/textNumCoin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/textCoin"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_toRightOf="@+id/imgAvata"
+                            android:textSize="@dimen/_10sdp"
+                            android:textColor="#000" />
+                    </RelativeLayout>
+                </FrameLayout>
+
+                <Button
+                    android:id="@+id/btnSendCoinHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:layout_marginBottom="@dimen/_15sdp"
+                    android:background="@drawable/custom_pickcoins"
+                    android:minWidth="@dimen/_248sdp"
+                    android:minHeight="@dimen/_28sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:text="@string/pick_coin"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/_11sdp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#DC1464"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/_1sdp"
+                android:paddingBottom="@dimen/_1sdp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginLeft="@dimen/_12sdp"
+                    android:gravity="left|center"
+                    android:text="@string/redeem_gift"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/_12sdp" />
+
+
+            </LinearLayout>
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_100sdp" />
+
+            <LinearLayout
+                android:id="@+id/layoutDots"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_25sdp"
+                android:gravity="center"
+                android:orientation="horizontal" />
+
+            <Button
+                android:id="@+id/btnGiftExchangeHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_15sdp"
+                android:background="@drawable/custom_pickcoins"
+                android:gravity="center"
+                android:minWidth="@dimen/_250sdp"
+
+                android:minHeight="@dimen/_20sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:text="@string/view_change"
+                android:textColor="#fff"
+                android:textSize="@dimen/_11sdp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#B483FF"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/_1sdp"
+                android:paddingBottom="@dimen/_1sdp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_marginLeft="@dimen/_12sdp"
+                    android:gravity="left|center"
+                    android:text="@string/post"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/_12sdp" />
+            </LinearLayout>
+
+            <androidx.viewpager.widget.ViewPager
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:paddingRight="@dimen/_8sdp"
+                android:paddingLeft="@dimen/_8sdp"
+                android:id="@+id/view_pager_post"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp" />
+
+            <LinearLayout
+                android:id="@+id/layoutDotsPost"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:orientation="horizontal" />
+
+            <Button
+                android:id="@+id/btnAllCommentHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:layout_marginBottom="@dimen/_18sdp"
+                android:background="@drawable/custom_pickcoins"
+                android:gravity="center"
+                android:minWidth="@dimen/_250sdp"
+                android:minHeight="@dimen/_25sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:text="@string/view"
+                android:textColor="#fff"
+                android:textSize="@dimen/_10sdp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#0001CF"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/_1sdp"
+                android:paddingBottom="@dimen/_1sdp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginLeft="@dimen/_12sdp"
+                    android:gravity="left|center"
+                    android:text="@string/rank"
+
+                    android:textColor="#fff"
+                    android:textSize="@dimen/_12sdp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcView"
+                android:layout_width="match_parent"
+                android:fillViewport="true"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnAllRankHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:background="@drawable/custom_pickcoins"
+                android:gravity="center"
+                android:minWidth="@dimen/_250sdp"
+                android:minHeight="@dimen/_30sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:text="@string/view_all"
+                android:textColor="#fff"
+                android:textSize="@dimen/_10sdp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

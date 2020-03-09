@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="imgHinh" type="id" />
+    <item name="edtUser" type="id"/>
+    <item name="edtPass" type="id"/>
+    <item name="cBox" type="id"/>
+    <item name="txtForget" type="id"/>
+    <item name="btnLogin" type="id"/>
+    <item name="txtAccount" type="id"/>
+    <item name="txtCreate" type="id"/>
+</resources>

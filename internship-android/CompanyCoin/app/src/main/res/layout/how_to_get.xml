@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff">
+    <RelativeLayout
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/img_backHowToGet"
+            android:layout_width="32dp"
+            android:layout_height="20dp"
+            android:adjustViewBounds="true"
+            android:background="@null"
+            android:src="@drawable/backfoward" />
+
+        <TextView
+
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:paddingRight="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="@string/how_to_get"
+            android:textSize="18sp"
+            android:textColor="#53B48D" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"/>
+    <TextView
+        android:layout_marginTop="13dp"
+        android:paddingLeft="15dp"
+        android:id="@+id/textTitleHowToGet"
+        android:text="How to get coins?"
+        android:textColor="#DD1464"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:layout_marginTop="10dp"
+        android:paddingLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:id="@+id/textInfoHowToGet"
+        android:text="asdasdasasdasdasdasdasdas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="15dp"
+        android:id="@+id/rcHowToGet"
+        android:layout_marginLeft="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

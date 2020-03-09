@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:background="#fff"
+    android:layout_width="wrap_content"
+    android:weightSum="10"
+    android:layout_margin="@dimen/_10sdp"
+    android:id="@+id/itemSliderPostFragment"
+    android:layout_height="@dimen/_80sdp">
+    <LinearLayout
+        android:layout_marginLeft="@dimen/_4sdp"
+        android:layout_marginRight="@dimen/_4sdp"
+        android:id="@+id/linear1"
+        android:layout_weight="2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <androidx.cardview.widget.CardView
+            app:cardCornerRadius="@dimen/_15sdp"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_gravity="center">
+            <ImageView
+                android:scaleType="fitXY"
+                android:id="@+id/imgItemPostHome"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/textItemNamePostHome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Phạm Thị Phương Anh"
+            android:textColor="#79DBE7"
+            android:textSize="@dimen/_9sdp" />
+    </LinearLayout>
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="8"
+        >
+        <RelativeLayout
+            android:id="@+id/relativeIdeaItem"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/lineComment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/buble_idea"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/textDayPostHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/day"
+                    android:textSize="@dimen/_11sdp" />
+
+                <TextView
+                    android:id="@+id/textPostingPostHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:textColor="#ffff"
+                    android:autoLink="web"
+                    android:textColorLink="#2196f3"
+                    android:text="@string/content"
+                    android:maxLines="3"
+                    android:ems="20"
+                    android:ellipsize="end"
+                    android:textSize="@dimen/_8sdp" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/lineFavoriteGopY"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignRight="@id/lineComment"
+                android:layout_marginRight="@dimen/_50sdp"
+                android:layout_below="@id/lineComment"
+                android:layout_marginTop="@dimen/post_favorate"
+                android:background="@drawable/custom_comment_postfragment"
+                android:orientation="horizontal"
+
+                android:weightSum="10"
+                >
+
+                <ImageView
+                    android:id="@+id/imgHeartGopY"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:layout_weight="3"
+                    android:paddingLeft="@dimen/_2sdp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_favorite_gray" />
+
+                <TextView
+                    android:id="@+id/textReactionPostHomeGopY"
+                    android:layout_width="0dp"
+
+                    android:layout_height="match_parent"
+                    android:layout_weight="7"
+                    android:gravity="center|left"
+                    android:paddingLeft="@dimen/_2sdp"
+                    android:text="7"
+                    android:textColor="#999"
+                    android:textSize="@dimen/_12sdp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lineLike"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignRight="@id/lineComment"
+                android:layout_marginRight="@dimen/_5sdp"
+
+                android:layout_below="@id/lineComment"
+                android:background="@drawable/custom_like"
+                android:layout_marginTop="@dimen/post_favorate"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textTokenPostHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:text="+0 Coin"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/_12sdp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </FrameLayout>
+</LinearLayout>

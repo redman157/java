@@ -1,4 +1,4 @@
-package com.droidheat.musicplayer.utils;
+package com.droidheat.musicplayer.manager;
 
 import android.content.Context;
 import android.widget.Toast;
@@ -17,8 +17,8 @@ public class CommonUtils {
     }
 
     /* Code decompiled incorrectly, please refer to instructions dump. */
-    public int accentColor(SharedPrefsUtils sharedPrefsUtils) {
-        switch (sharedPrefsUtils.readSharedPrefsString("accentColor", "pink")) {
+    public int accentColor(SharedPrefsManager sharedPrefsManager) {
+        switch (sharedPrefsManager.getString("accentColor", "pink")) {
             case "green":
                 return R.color.green;
             case "orange":

@@ -1,7 +1,6 @@
 package com.droidheat.musicplayer.adapters;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.droidheat.musicplayer.R;
-import com.droidheat.musicplayer.utils.SongsUtils;
+import com.droidheat.musicplayer.manager.SongsManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +18,7 @@ import java.util.HashMap;
 public class PlaylistFragmentAdapterSimple extends BaseAdapter {
     private ArrayList<HashMap<String, String>> data;
     private LayoutInflater inflater;
-    private SongsUtils songsUtils;
+    private SongsManager songsManager;
     private Context context;
     /* renamed from: com.droidheat.musicplayer.ui.adapters.PlaylistFragmentAdapterSimple$ViewHolder */
     private static class ViewHolder {
@@ -40,9 +39,9 @@ public class PlaylistFragmentAdapterSimple extends BaseAdapter {
     @SuppressLint("WrongConstant")
     public PlaylistFragmentAdapterSimple(Context context) {
         this.context = context;
-        this.songsUtils = SongsUtils.getInstance();
-        this.songsUtils.setContext(context);
-        data = this.songsUtils.getAllPlayLists();
+        this.songsManager = SongsManager.getInstance();
+        this.songsManager.setContext(context);
+        data = this.songsManager.getAllPlayLists();
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
     }
@@ -50,7 +49,7 @@ public class PlaylistFragmentAdapterSimple extends BaseAdapter {
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
         this.data.clear();
-        this.data = this.songsUtils.getAllPlayLists();
+        this.data = this.songsManager.getAllPlayLists();
     }
 
     /**

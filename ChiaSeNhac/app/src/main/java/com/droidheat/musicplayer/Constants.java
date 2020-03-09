@@ -35,6 +35,10 @@ public class Constants {
         String excludeWhatsAppSounds = "excludeWhatsAppSounds";
         String song_position = "song_position";
         String repeat = "repeat";
+        String turnEqualizer = "turnEqualizer";
+        String currentEqProfile = "currentEqProfile";
+        String bassLevel = "bassLevel";
+        String vzLevel = "vzLevel";
         String persistentNotificationPref = "persistentNotificationPref";
         String AUDIO_SESSION_ID =  "AUDIO_SESSION_ID";
         String MUSIC_ID = "musicID";

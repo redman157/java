@@ -1,7 +1,6 @@
-package com.droidheat.musicplayer.utils;
+package com.droidheat.musicplayer.manager;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -58,7 +57,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-public class SongsUtils {
+public class SongsManager {
     private static ArrayList<HashMap<String, String>> albums = new ArrayList<>();
     private static ArrayList<HashMap<String, String>> artists = new ArrayList<>();
     private static ArrayList<SongModel> mainList = new ArrayList<>();
@@ -67,7 +66,7 @@ public class SongsUtils {
     /* access modifiers changed from: private */
     private Context context;
     /* access modifiers changed from: private */
-    public SharedPrefsUtils sharedPrefsUtils;
+    public SharedPrefsManager prefsManager;
     private PlaylistSongs playlistSongs;
     private FavouriteList favouriteList;
     private CategorySongs categorySongs;
@@ -75,16 +74,16 @@ public class SongsUtils {
 
 
     @SuppressLint("StaticFieldLeak")
-    private static SongsUtils instance;
+    private static SongsManager instance;
 
-    public static SongsUtils getInstance() {
+    public static SongsManager getInstance() {
         if (instance == null){
-            instance = new SongsUtils();
+            instance = new SongsManager();
         }
         return instance;
     }
 
-    private SongsUtils() {
+    private SongsManager() {
 
     }
     public Context getContext() {
@@ -93,15 +92,17 @@ public class SongsUtils {
 
     public void setContext(Context context) {
         this.context = context;
-        this.sharedPrefsUtils = new SharedPrefsUtils(getContext());
+
+        this.prefsManager = new SharedPrefsManager();
+        this.prefsManager.setContext(context);
         grabIfEmpty();
         if (queue.isEmpty()) {
             try {
                 Type type = new TypeToken<ArrayList<SongModel>>() {
                 }.getType();
-                ArrayList<SongModel> restoreData = new Gson().fromJson(sharedPrefsUtils.readSharedPrefsString("key", null), type);
+                ArrayList<SongModel> restoreData = new Gson().fromJson(prefsManager.getString("key", null), type);
                 replaceQueue(restoreData);
-                Log.d(TAG, "Retrieved queue from storage in SongsUtils. " + restoreData.size() + " mainList!");
+                Log.d(TAG, "Retrieved queue from storage in SongsManager. " + restoreData.size() + " mainList!");
             } catch (Exception e) {
                 Log.d(TAG, "Unable to retrieve data while queue is empty.");
             }
@@ -110,12 +111,12 @@ public class SongsUtils {
 
 
     public int getCurrentMusicID() {
-        int musicID = this.sharedPrefsUtils.readSharedPrefsInt(Constants.PREFERENCES.MUSIC_ID, 0);
+        int musicID = this.prefsManager.getInteger(Constants.PREFERENCES.MUSIC_ID, 0);
         return (musicID > -1) ? musicID: 0;
     }
 
     public void setCurrentMusicID(int id) {
-        this.sharedPrefsUtils.writeSharedPrefs(Constants.PREFERENCES.MUSIC_ID, id);
+        this.prefsManager.setInteger(Constants.PREFERENCES.MUSIC_ID, id);
     }
 
     public ArrayList<SongModel> queue() {
@@ -129,7 +130,7 @@ public class SongsUtils {
 
     public ArrayList<SongModel> allSongs() {
         grabIfEmpty();
-        ArrayList<SongModel> songs = new ArrayList<>(SongsUtils.mainList);
+        ArrayList<SongModel> songs = new ArrayList<>(SongsManager.mainList);
         Collections.sort(songs, new Comparator<SongModel>() {
             public int compare(SongModel songModel, SongModel songModel2) {
                 return songModel.getTitle().compareTo(songModel2.getTitle());
@@ -140,7 +141,7 @@ public class SongsUtils {
 
     public ArrayList<SongModel> newSongs() {
         grabIfEmpty();
-        ArrayList<SongModel> songs = new ArrayList<>(SongsUtils.mainList);
+        ArrayList<SongModel> songs = new ArrayList<>(SongsManager.mainList);
         Collections.reverse(songs);
         return songs;
     }
@@ -357,7 +358,7 @@ public class SongsUtils {
             try {
                 new Thread(new Runnable() {
                     public void run() {
-                        sharedPrefsUtils.writeSharedPrefs("key", new Gson().toJson(list));
+                        prefsManager.setString("key", new Gson().toJson(list));
                     }
                 }).start();
             } catch (Exception e) {
@@ -475,7 +476,7 @@ public class SongsUtils {
         });
         imageView.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
-                SongsUtils.this.addPlayListDialog(playlistFragmentAdapterSimple);
+                SongsManager.this.addPlayListDialog(playlistFragmentAdapterSimple);
             }
         });
         listView.setAdapter(playlistFragmentAdapterSimple);
@@ -493,21 +494,21 @@ public class SongsUtils {
 
         final EditText editText = dialog.findViewById(R.id.editText);
         Context context2 = this.getContext();
-        editText.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context2, new CommonUtils(context2).accentColor(this.sharedPrefsUtils))));
+        editText.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context2, new CommonUtils(context2).accentColor(this.prefsManager))));
         ((InputMethodManager) this.getContext().getSystemService(Constants.VALUE.INPUT_METHOD)).showSoftInput(editText, 1);
         Button button = dialog.findViewById(R.id.btnCreate);
         Context context3 = this.getContext();
-        button.setTextColor(ContextCompat.getColor(context3, new CommonUtils(context3).accentColor(this.sharedPrefsUtils)));
+        button.setTextColor(ContextCompat.getColor(context3, new CommonUtils(context3).accentColor(this.prefsManager)));
         button.setOnClickListener(new OnClickListener() {
             public void onClick(View view) {
                 String obj = editText.getText().toString();
                 if (!obj.isEmpty()) {
-                    SongsUtils.this.addPlaylist(obj);
+                    SongsManager.this.addPlaylist(obj);
                     playlistFragmentAdapterSimple.notifyDataSetChanged();
                     dialog.cancel();
                     return;
                 }
-                Toast.makeText(SongsUtils.this.getContext(), "Please enter playlist NAME.", 0).show();
+                Toast.makeText(SongsManager.this.getContext(), "Please enter playlist NAME.", 0).show();
             }
         });
         ( dialog.findViewById(R.id.btnCancel)).setOnClickListener(new OnClickListener() {
@@ -612,8 +613,8 @@ public class SongsUtils {
     private void grabData() {
         String[] STAR = {"*"};
 
-        boolean excludeShortSounds = sharedPrefsUtils.readSharedPrefsBoolean(Constants.PREFERENCES.excludeShortSounds, false);
-        boolean excludeWhatsApp = sharedPrefsUtils.readSharedPrefsBoolean(Constants.PREFERENCES.excludeWhatsAppSounds, false);
+        boolean excludeShortSounds = prefsManager.getBoolean(Constants.PREFERENCES.excludeShortSounds, false);
+        boolean excludeWhatsApp = prefsManager.getBoolean(Constants.PREFERENCES.excludeWhatsAppSounds, false);
 
         Cursor cursor;
         Uri uri = Media.EXTERNAL_CONTENT_URI;

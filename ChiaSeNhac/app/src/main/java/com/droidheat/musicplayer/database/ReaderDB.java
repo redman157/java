@@ -7,10 +7,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.droidheat.musicplayer.Constants;
 
 public class ReaderDB extends SQLiteOpenHelper {
-    private String DATABASE_NAME;
+    private static String databaseName;
     private Context context;
 
-
+    private String TAG = "READERDB_LOG";
     public static final int DATABASE_VERSION = 1;
 
     private static ReaderDB instance;
@@ -21,15 +21,16 @@ public class ReaderDB extends SQLiteOpenHelper {
 
     static ReaderDB newInstance(Context context, String DATABASE_NAME){
         instance = new ReaderDB(context, DATABASE_NAME);
+        databaseName = DATABASE_NAME;
         return instance;
     }
 
     public String getDATABASE_NAME() {
-        return DATABASE_NAME;
+        return databaseName;
     }
 
     public void setDATABASE_NAME(String DATABASE_NAME) {
-        this.DATABASE_NAME = DATABASE_NAME;
+        this.databaseName = DATABASE_NAME;
     }
 
     private ReaderDB(Context context, String DATABASE_NAME) {
@@ -40,7 +41,7 @@ public class ReaderDB extends SQLiteOpenHelper {
 
 
     public void onCreate( SQLiteDatabase database) {
-        switch (getDATABASE_NAME()){
+        switch (databaseName){
             case Constants.VALUE.PLAYLISTSONGS_DB:
                 database.execSQL(Database.PLAYSONGS.SQL_CREATE_ENTRIES);
                 break;
@@ -60,7 +61,7 @@ public class ReaderDB extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase database, int i, int i2) {
-        switch (DATABASE_NAME){
+        switch (databaseName){
             case Constants.VALUE.FAVS_DB:
                 database.execSQL(Database.FAVOURITE.SQL_DELETE_ENTRIES);
                 onCreate(database);
@@ -82,7 +83,7 @@ public class ReaderDB extends SQLiteOpenHelper {
     }
 
     public void onDowngrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
-        switch (DATABASE_NAME){
+        switch (databaseName){
             case Constants.VALUE.PLAYLIST_DB:
             case Constants.VALUE.PLAYLISTSONGS_DB:
                 onUpgrade(sQLiteDatabase, i, i2);

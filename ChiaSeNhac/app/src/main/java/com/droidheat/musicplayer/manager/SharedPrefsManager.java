@@ -15,7 +15,7 @@ public class SharedPrefsManager {
 
     public void setContext(Context context) {
         this.context = context;
-        this.preferences = context.getSharedPreferences("MY_DATA", Context.MODE_PRIVATE);
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public SharedPrefsManager() {

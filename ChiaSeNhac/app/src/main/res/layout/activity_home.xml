@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:mContext=".ui.activities.HomeActivity">
+    tools:mContext=".activities.HomeActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="64dp">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:id="@+id/toolbar"/>
 
-        <android.support.v4.view.ViewPager
+        <androidx.viewpager.widget.ViewPager
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/fragment"
+
             android:id="@+id/viewPager"
             android:layout_below="@+id/toolbar"/>
 
-        <fragment
+       <!-- <fragment
             android:id="@+id/fragment"
             android:name="com.droidheat.musicplayer.ui.fragments.MusicDockFragment"
             class="com.droidheat.musicplayer.ui.fragments.MusicDockFragment"
@@ -31,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            tools:layout="@layout/fragment_music_dock"/>
+            tools:layout="@layout/fragment_music_dock"/>-->
 
     </RelativeLayout>
 
@@ -52,4 +53,4 @@
         app:labelVisibilityMode="labeled"
         />
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

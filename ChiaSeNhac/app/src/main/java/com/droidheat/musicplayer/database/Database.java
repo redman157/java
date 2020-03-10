@@ -20,7 +20,7 @@ public class Database {
                 {COLUMN_NAME_ID, CATEGORY, VOTES, TITLE, PATH, ARTIST, ALBUM, NAME, DURATION, ALBUM_ID, FAKE_PATH};
         String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + TABLE_NAME + " (" +
-                        COLUMN_NAME_ID + " INTEGER PRIMARY Database AUTOINCREMENT" + COMMA_SEP +
+                        COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                         CATEGORY + TEXT_TYPE + COMMA_SEP +
                         VOTES + " INTEGER " + COMMA_SEP +
                         TITLE + TEXT_TYPE + COMMA_SEP +
@@ -56,7 +56,7 @@ public class Database {
             {COLUMN_NAME_ID, TITLE, PATH, ARTIST, ALBUM, NAME, DURATION, ALBUM_ID};
         String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + TABLE_NAME + " (" +
-                    COLUMN_NAME_ID + " INTEGER PRIMARY Database AUTOINCREMENT" + COMMA_SEP +
+                    COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                     TITLE + TEXT_TYPE + COMMA_SEP +
                     PATH + TEXT_TYPE + COMMA_SEP +
                     ARTIST + TEXT_TYPE + COMMA_SEP +
@@ -67,7 +67,7 @@ public class Database {
                     ");";
         String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + TABLE_NAME;
-        String SQL_QUERY_LIST = "SELECT  * FROM " + TABLE_NAME;
+        String SQL_QUERY_LIST = "SELECT * FROM " + TABLE_NAME;
         String SQL_CONTROL_ROW_LIST = PLAYLIST.COLUMN_NAME_ID+"=";
         String SQL_SEARCH_LIST = PLAYLIST.TITLE+"==";
         String SQL_CONTROL_ROW_SONG = PLAYSONGS.COLUMN_NAME_ID+"=";
@@ -78,15 +78,16 @@ public class Database {
         String TITLE = "title";
         String COLUMN_NAME_ID = "id";
         String COMMA_SEP = ",";
+
         String[] ALL_KEYS = {PLAYLIST.COLUMN_NAME_ID, PLAYLIST.TITLE};
         String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + TABLE_NAME + " (" +
-                        COLUMN_NAME_ID + " INTEGER PRIMARY Database AUTOINCREMENT" + COMMA_SEP +
+                        COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
                         TITLE + TEXT_TYPE +
                         ");";
         String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
-        String SQL_QUERY_LIST = "SELECT  * FROM " + TABLE_NAME;
+        String SQL_QUERY_LIST = "SELECT * FROM " + TABLE_NAME;
         String SQL_CONTROL_ROW_LIST = PLAYLIST.COLUMN_NAME_ID+"=";
         String SQL_SEARCH_LIST = PLAYLIST.TITLE+"==";
         String SQL_CONTROL_ROW_SONG = PLAYSONGS.COLUMN_NAME_ID+"=";

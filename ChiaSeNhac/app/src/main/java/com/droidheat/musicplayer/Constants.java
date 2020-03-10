@@ -9,7 +9,7 @@ public class Constants {
         String SYNC = "sync";
         String TASK = "task";
 
-        String PLAYLIST_DB = "Playlist.db";
+        String PLAYLIST_DB = "playlist.db";
         String CATEGORIES_DB = "categories.db";
         String FAVS_DB = "Favs.db";
         String PLAYLISTSONGS_DB = "playlistsongs.db";

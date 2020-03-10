@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.droidheat.musicplayer.Constants;
 
@@ -13,7 +14,7 @@ import java.util.HashMap;
 public class Playlist {
 
     private Context context;
-
+    private String TAG = "PLAYLISTLOG";
     /* renamed from: db */
     private SQLiteDatabase database;
     private ReaderDB myDBHelper;
@@ -41,7 +42,9 @@ public class Playlist {
     }
 
     public Playlist close() {
+
         this.myDBHelper.close();
+
         return this;
     }
 
@@ -69,9 +72,9 @@ public class Playlist {
     }
 
     public int getCount() {
-        Cursor rawQuery = this.database.rawQuery(Database.PLAYLIST.SQL_QUERY_LIST, null);
-        int count = rawQuery.getCount();
-        rawQuery.close();
+        Cursor cursor = database.rawQuery(Database.PLAYLIST.SQL_QUERY_LIST, null);
+        int count = cursor.getCount();
+        cursor.close();
         return count;
     }
 
@@ -93,22 +96,22 @@ public class Playlist {
         return hashMap;
     }
 
-    public boolean deleteRow(long id) {
+    public boolean deleteRow(long rowId) {
 
         return this.database.delete(Database.PLAYLIST.TABLE_NAME,
-                Database.PLAYLIST.SQL_CONTROL_ROW_LIST +id, null) != 0;
+                Database.PLAYLIST.SQL_CONTROL_ROW_LIST +rowId, null) != 0;
     }
 
     public boolean deleteAll() {
         try {
-            Cursor allRowsCursor = getAllRowsCursor();
-            long columnIndexOrThrow = (long) allRowsCursor.getColumnIndexOrThrow(Database.PLAYLIST.COLUMN_NAME_ID);
-            if (allRowsCursor.moveToFirst()) {
+            Cursor cursor = getAllRowsCursor();
+            long rowId = (long) cursor.getColumnIndexOrThrow(Database.PLAYLIST.COLUMN_NAME_ID);
+            if (cursor.moveToFirst()) {
                 do {
-                    deleteRow(allRowsCursor.getLong((int) columnIndexOrThrow));
-                } while (allRowsCursor.moveToNext());
+                    deleteRow(cursor.getLong((int) rowId));
+                } while (cursor.moveToNext());
             }
-            allRowsCursor.close();
+            cursor.close();
             return true;
         } catch (Exception unused) {
             return false;

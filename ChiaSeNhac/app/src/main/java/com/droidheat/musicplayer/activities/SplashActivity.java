@@ -11,7 +11,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -21,8 +20,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.droidheat.musicplayer.PerformBackgroundTasks;
-import com.droidheat.musicplayer.database.Database;
 import com.droidheat.musicplayer.database.Playlist;
 import com.droidheat.musicplayer.manager.CommonUtils;
 import com.droidheat.musicplayer.Constants;
@@ -35,7 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-public class SplashActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     private String TAG = "SplashActivityLog";
     private boolean sync = false;
@@ -85,7 +82,7 @@ public class SplashActivity extends AppCompatActivity {
                 alertDialog.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ActivityCompat.requestPermissions(SplashActivity.this,
+                        ActivityCompat.requestPermissions(MainActivity.this,
                                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                                 1);
                     }
@@ -124,12 +121,12 @@ public class SplashActivity extends AppCompatActivity {
         builder.setMessage("For music player to work we need your permission to access files on your device.");
         builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
-                ActivityCompat.requestPermissions(SplashActivity.this, new String[]{"android.permission.READ_EXTERNAL_STORAGE"}, 1);
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{"android.permission.READ_EXTERNAL_STORAGE"}, 1);
             }
         });
         builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
-                SplashActivity.this.finish();
+                MainActivity.this.finish();
             }
         });
         builder.show();
@@ -153,12 +150,12 @@ public class SplashActivity extends AppCompatActivity {
         @Override
         protected Long doInBackground(String... params) {
             SongsManager mSongsManager = SongsManager.getInstance();
-            mSongsManager.setContext(SplashActivity.this);
+            mSongsManager.setContext(MainActivity.this);
 
             ArrayList<HashMap<String,String>> artists = mSongsManager.artists();
             if (artists.size() > 0) {
                 SharedPrefsManager prefsManager = new SharedPrefsManager();
-                prefsManager.setContext(SplashActivity.this);
+                prefsManager.setContext(MainActivity.this);
                 (prefsManager).getString(Constants.PREFERENCES.HOME_ARTIST,
                         artists.get((new Random()).nextInt(artists.size())).get("artist"));
             }
@@ -166,7 +163,7 @@ public class SplashActivity extends AppCompatActivity {
             try {
                 // -- Creating Playlist
                 Playlist playlist = Playlist.getInstance();
-                playlist.newRenderDB(SplashActivity.this, Constants.VALUE.PLAYLIST_DB);
+                playlist.newRenderDB(MainActivity.this, Constants.VALUE.PLAYLIST_DB);
                 playlist.open();
                 if (playlist.getCount() == 0) {
                     mSongsManager.addPlaylist("Playlist 1");
@@ -319,7 +316,7 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Long aLong) {
-            startActivity(new Intent(SplashActivity.this,
+            startActivity(new Intent(MainActivity.this,
                     HomeActivity.class));
             finish();
         }

@@ -34,9 +34,11 @@ public class Playlist {
     public void newRenderDB(Context context, String database){
         this.context = context;
         this.myDBHelper = ReaderDB.newInstance(context, database);
+//        this.myDBHelper = new ReaderDB(context, database);
     }
 
     public Playlist open() {
+
         this.database = this.myDBHelper.getWritableDatabase();
         return this;
     }

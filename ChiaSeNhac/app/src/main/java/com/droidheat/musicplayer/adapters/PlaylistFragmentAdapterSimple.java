@@ -20,7 +20,7 @@ public class PlaylistFragmentAdapterSimple extends BaseAdapter {
     private LayoutInflater inflater;
     private SongsManager songsManager;
     private Context context;
-    /* renamed from: com.droidheat.musicplayer.ui.adapters.PlaylistFragmentAdapterSimple$ViewHolder */
+    /* renamed from: com.droidheat.musicplayer.ui.adapters.PlaylistFragmentAdapterSimple$initView */
     private static class ViewHolder {
         public TextView text;
 

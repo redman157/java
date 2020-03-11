@@ -1,5 +1,7 @@
 package com.droidheat.musicplayer;
 
+import java.util.Timer;
+
 public class Constants {
     public @interface MANIFESTS {
         String READ_EXTERNAL_STORAGE  = "android.permission.READ_EXTERNAL_STORAGE";
@@ -30,7 +32,7 @@ public class Constants {
 
     public @interface PREFERENCES{
         String HOME_ARTIST = "HOME_ARTIST";
-
+        String accentColor = "accentColor";
         String excludeShortSounds = "excludeShortSounds";
         String excludeWhatsAppSounds = "excludeWhatsAppSounds";
         String song_position = "song_position";
@@ -61,5 +63,24 @@ public class Constants {
         String ACTION_REPEAT = "com.droidheat.musicplayer.action.REPEAT";
         String ACTION_TRACK_NEXT = "com.droidheat.musicplayer.action.TRACK_NEXT";
         String ACTION_TRACK_PREV = "com.droidheat.musicplayer.action.TRACK_PREV";
+    }
+
+    public @interface COLOR{
+        String orange = "orange";
+        String red = "red";
+        String cyan = "cyan";
+        String green = "green";
+        String yellow = "yellow";
+        String pink = "pink";
+        String purple = "purple";
+        String grey = "grey";
+    }
+
+    public @interface MENU{
+        String Sync_Music = "Sync Music";
+        String Set_Sleep_Timer = "Set Sleep Timer";
+        String Change_Theme = "Change Theme";
+        String Equalizer = "Equalizer";
+        String Settings = "Settings";
     }
 }

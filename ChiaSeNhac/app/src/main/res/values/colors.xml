@@ -12,7 +12,7 @@
     <color name="transparent">#00000000</color>
     <color name="black">#000</color>
     <color name="blackSubtitle">#77000000</color>
-
+    <color name="blackGrey">#FF000000</color>
     <!-- Accent Colors -->
 
     <color name="orange">#ff7043</color>

@@ -30,7 +30,8 @@ public class FavouriteList {
 
     public void newRenderDB(Context context, String database){
         this.context = context;
-        this.myDBHelper = ReaderDB.newInstance(context,database );
+        this.myDBHelper = ReaderDB.newInstance(context, database);
+//        this.myDBHelper = new ReaderDB(context, database);
     }
 
     public FavouriteList open() {

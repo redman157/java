@@ -34,7 +34,7 @@ public class Database {
                         ");";
         String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
-        String SQL_QUERY_LIST = "SELECT  * FROM " + TABLE_NAME;
+        String SQL_QUERY_LIST = "SELECT * FROM " + TABLE_NAME;
         String SQL_CONTROL_ROW_LIST = PLAYLIST.COLUMN_NAME_ID+"=";
         String SQL_SEARCH_LIST = PLAYLIST.TITLE+"==";
         String SQL_CONTROL_ROW_SONG = PLAYSONGS.COLUMN_NAME_ID+"=";
@@ -107,7 +107,7 @@ public class Database {
         String DURATION = "DURATION";
         String[] ALL_KEYS = new String[]
                 {COLUMN_NAME_ID, PLAYLIST_ID, TITLE, PATH, ARTIST, ALBUM, NAME, DURATION, ALBUM_ID};
-        String SQL_QUERY_LIST = "SELECT  * FROM " + TABLE_NAME;
+        String SQL_QUERY_LIST = "SELECT * FROM " + TABLE_NAME;
         String SQL_CONTROL_ROW_LIST = PLAYLIST.COLUMN_NAME_ID+"=";
         String SQL_SEARCH_LIST = PLAYLIST.TITLE+"==";
         String SQL_CONTROL_ROW_SONG = PLAYSONGS.COLUMN_NAME_ID+"=";

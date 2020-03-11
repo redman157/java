@@ -10,6 +10,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
@@ -48,7 +49,7 @@ public class SplashActivity extends AppCompatActivity {
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.activity_splash);
-        if ((getIntent().getFlags() & 4194304) != 0) {
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();
             return;
         }
@@ -187,10 +188,11 @@ public class SplashActivity extends AppCompatActivity {
 
                 if (mPlaylist.getCount() == 0) {
                     mSongsManager.addPlaylist("Playlist 1");
-                    Log.d(TAG, "vào đây");
+
                 }
+
                 mPlaylist.close();
-                Log.d(TAG, "vào đây");
+
 
                 if (IsSync) {
 
@@ -343,10 +345,10 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Long aLong) {
-          /*  startActivity(new Intent(SplashActivity.this,
+            startActivity(new Intent(SplashActivity.this,
                     HomeActivity.class));
-            finish();*/
-            Log.d("BBB", "DONE");
+            finish();
+
         }
     }
 }

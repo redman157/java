@@ -32,8 +32,9 @@ public class PlaylistSongs {
     public void newRenderDB(Context context, String database){
         this.allPlaylistDB = Playlist.getInstance();
         this.context = context;
-        this.allPlaylistDB.newRenderDB(context,Constants.VALUE.PLAYLISTSONGS_DB);
-        myDBHelper = ReaderDB.newInstance(context, database);
+        this.allPlaylistDB.newRenderDB(context,database);
+        this.myDBHelper = ReaderDB.newInstance(context, database);
+//        this.myDBHelper = new ReaderDB(context, database);
 
     }
 

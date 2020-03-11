@@ -358,7 +358,7 @@ public class SongsManager {
 
     void removePlaylistSong(int id, ArrayList<SongModel> newlist) {
         PlaylistSongs db =  PlaylistSongs.getInstance();
-        db.newRenderDB(context, Constants.VALUE.PLAYLIST_DB);
+        db.newRenderDB(context, Constants.VALUE.PLAYLISTSONGS_DB);
         db.open();
         db.deleteAll(id);
         for (int i = 0; i < newlist.size(); i++) {

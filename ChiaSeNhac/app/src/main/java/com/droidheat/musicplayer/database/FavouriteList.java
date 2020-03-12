@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.droidheat.musicplayer.models.SongModel;
 import java.util.ArrayList;
@@ -28,9 +29,9 @@ public class FavouriteList {
     private FavouriteList() {
     }
 
-    public void newRenderDB(Context context, String database){
+    public void newRenderDB(Context context){
         this.context = context;
-        this.myDBHelper = ReaderDB.newInstance(context, database);
+        this.myDBHelper = new ReaderDB(context);
 //        this.myDBHelper = new ReaderDB(context, database);
     }
 
@@ -200,5 +201,31 @@ public class FavouriteList {
         contentValues.put(albumId, list.get(albumId));
 
         return this.database.update(Database.FAVOURITE.TABLE_NAME, contentValues, where, null) != 0;
+    }
+
+    public class ReaderDB extends SQLiteOpenHelper {
+        // If you change the database schema, you must increment the database version.
+        public static final int DATABASE_VERSION = 3;
+        public static final String DATABASE_NAME = "categories.db";
+
+        public ReaderDB(Context context) {
+            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        }
+
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL(Database.FAVOURITE.SQL_CREATE_ENTRIES);
+        }
+
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            // This database is only a cache for online data, so its upgrade policy is
+            // to simply to discard the data and start over
+            db.execSQL(Database.FAVOURITE.SQL_DELETE_ENTRIES);
+            onCreate(db);
+        }
+
+        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            onUpgrade(db, oldVersion, newVersion);
+        }
+
     }
 }

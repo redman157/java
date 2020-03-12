@@ -1,5 +1,7 @@
 package com.droidheat.musicplayer.models;
 
+import android.graphics.Bitmap;
+
 public class SongModel {
     private String Album;
     private String AlbumID;
@@ -8,7 +10,7 @@ public class SongModel {
     private String Name;
     private String Path;
     private String Title;
-
+    private Bitmap bitmap;
     public boolean equals(Object obj) {
         boolean matches = false;
         if (!(obj instanceof SongModel)) {
@@ -19,6 +21,14 @@ public class SongModel {
             matches = true;
         }
         return matches;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 
     public void setTitle(String str) {

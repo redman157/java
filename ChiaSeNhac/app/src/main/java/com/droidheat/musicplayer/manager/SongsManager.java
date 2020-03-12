@@ -11,6 +11,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadata;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
 
@@ -215,6 +219,17 @@ public class SongsManager {
         return songs;
     }
 
+    public ArrayList<SongModel> artistSongs(String artist) {
+        ArrayList<SongModel> songs = new ArrayList<>();
+        ArrayList<SongModel> list = new ArrayList<>(mainList);
+        Collections.reverse(list);
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getArtist().contains(artist)) {
+                songs.add(list.get(i));
+            }
+        }
+        return songs;
+    }
     public ArrayList<HashMap<String, String>> artists() {
         String SPLIT_EXPRESSION = ";,,;,;;";
         ArrayList<HashMap<String, String>> list = new ArrayList<>();
@@ -293,17 +308,7 @@ public class SongsManager {
         return list;
     }
 
-    public ArrayList<SongModel> artistSongs(String artist) {
-        ArrayList<SongModel> songs = new ArrayList<>();
-        ArrayList<SongModel> list = new ArrayList<>(mainList);
-        Collections.reverse(list);
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getArtist().contains(artist)) {
-                songs.add(list.get(i));
-            }
-        }
-        return songs;
-    }
+
 
     /*
      * Playlists
@@ -311,7 +316,7 @@ public class SongsManager {
 
     public ArrayList<HashMap<String, String>> getAllPlayLists() {
         Playlist db =  Playlist.getInstance();
-        db.newRenderDB(context, Constants.VALUE.PLAYLIST_DB);
+        db.newRenderDB(context);
         db.open();
         ArrayList<HashMap<String, String>> list = new ArrayList<>();
         if (db.getCount() > 0) {
@@ -323,7 +328,7 @@ public class SongsManager {
 
     public HashMap<String, String> getPlaylist(int ID) {
         Playlist db =  Playlist.getInstance();
-        db.newRenderDB(context, Constants.VALUE.PLAYLIST_DB);
+        db.newRenderDB(context);
         db.open();
         HashMap<String, String> hash = db.getRow(ID);
         db.close();
@@ -332,7 +337,7 @@ public class SongsManager {
 
     public void addPlaylist(String name) {
         Playlist db =  Playlist.getInstance();
-        db.newRenderDB(context, Constants.VALUE.PLAYLIST_DB);
+        db.newRenderDB(context);
         db.open();
         db.addRow(name);
         db.close();
@@ -340,7 +345,7 @@ public class SongsManager {
 
     boolean ifPlaylistPresent(String name) {
         Playlist db =  Playlist.getInstance();
-        db.newRenderDB(context, Constants.VALUE.PLAYLIST_DB);
+        db.newRenderDB(context);
         db.open();
         boolean result = db.searchPlaylist(name);
         db.close();
@@ -349,7 +354,7 @@ public class SongsManager {
 
     void deletePlaylist(int id) {
         Playlist db =  Playlist.getInstance();
-        db.newRenderDB(context, Constants.VALUE.PLAYLIST_DB);
+        db.newRenderDB(context);
         db.open();
         db.deleteRow(id);
         db.close();
@@ -358,7 +363,7 @@ public class SongsManager {
 
     void removePlaylistSong(int id, ArrayList<SongModel> newlist) {
         PlaylistSongs db =  PlaylistSongs.getInstance();
-        db.newRenderDB(context, Constants.VALUE.PLAYLISTSONGS_DB);
+        db.newRenderDB(context);
         db.open();
         db.deleteAll(id);
         for (int i = 0; i < newlist.size(); i++) {
@@ -371,7 +376,7 @@ public class SongsManager {
     public ArrayList<SongModel> playlistSongs(int playlistID) {
         ArrayList<SongModel> list = new ArrayList<>();
         PlaylistSongs db = PlaylistSongs.getInstance();
-        db.newRenderDB(context, Constants.VALUE.PLAYLISTSONGS_DB);
+        db.newRenderDB(context);
         db.open();
         if (db.getCount(playlistID) > 0) {
             list = db.getAllRows(playlistID);
@@ -382,7 +387,7 @@ public class SongsManager {
 
     public void updatePlaylistSongs(int playlistID, ArrayList<SongModel> newList) {
         PlaylistSongs db = PlaylistSongs.getInstance();
-        db.newRenderDB(context, Constants.VALUE.PLAYLISTSONGS_DB);
+        db.newRenderDB(context);
         db.open();
         db.deleteAll(playlistID);
         for (int i = 0; i < newList.size(); i++) {
@@ -394,7 +399,7 @@ public class SongsManager {
     public ArrayList<SongModel>favouriteSongs() {
         ArrayList<SongModel> list;
         FavouriteList db = FavouriteList.getInstance();
-        db.newRenderDB(context, Constants.VALUE.FAVS_DB);
+        db.newRenderDB(context);
         db.open();
         list = new ArrayList<>(db.getAllRows());
         db.close();
@@ -403,7 +408,7 @@ public class SongsManager {
 
     public boolean addToFavouriteSongs(SongModel row) {
         FavouriteList db = FavouriteList.getInstance();
-        db.newRenderDB(context, Constants.VALUE.FAVS_DB);
+        db.newRenderDB(context);
         db.open();
         db.addRow(row);
         db.close();
@@ -413,7 +418,7 @@ public class SongsManager {
 
     public void updateFavouritesList(ArrayList<SongModel> newFavList) {
         FavouriteList db = FavouriteList.getInstance();
-        db.newRenderDB(context, Constants.VALUE.FAVS_DB);
+        db.newRenderDB(context);
         db.open();
         db.deleteAll();
         Collections.reverse(newFavList);
@@ -426,16 +431,18 @@ public class SongsManager {
     public ArrayList<SongModel> mostPlayedSongs() {
         ArrayList<SongModel> list;
         CategorySongs db = CategorySongs.getInstance();
-        db.newRenderDB(context, Constants.VALUE.CATEGORIES_DB);
+        db.newRenderDB(context);
         db.open();
         list = db.getAllRows(1);
         db.close();
         return list;
     }
 
+
+
     public void updateMostPlayedList(ArrayList<SongModel> newList) {
         CategorySongs db = CategorySongs.getInstance();
-        db.newRenderDB(context, Constants.VALUE.CATEGORIES_DB);
+        db.newRenderDB(context);
         db.open();
         db.deleteAll(1);
         for (int i = 0; i < newList.size(); i++) {
@@ -598,7 +605,7 @@ public class SongsManager {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PlaylistSongs db = PlaylistSongs.getInstance();
-                db.newRenderDB(context, Constants.VALUE.PLAYLISTSONGS_DB);
+                db.newRenderDB(context);
                 db.open();
                 int playListID = Integer.parseInt(Objects.requireNonNull(getAllPlayLists().get(position).get("ID")));
                 for (int i = 0; i < arrayList.size(); i++) {
@@ -679,7 +686,7 @@ public class SongsManager {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PlaylistSongs db = PlaylistSongs.getInstance();
-                db.newRenderDB(context, Constants.VALUE.PLAYLISTSONGS_DB);
+                db.newRenderDB(context);
                 db.open();
                 int playListID = Integer.parseInt(Objects.requireNonNull(getAllPlayLists().get(position).get("ID")));
                 if (!db.getAllRows(playListID).contains(hash)) {
@@ -755,8 +762,8 @@ public class SongsManager {
         }
     }
 
-    public void shufflePlay(ArrayList<SongModel> array) {
-        ArrayList<SongModel> data = new ArrayList<>(array);
+    public void shufflePlay(ArrayList<SongModel> songs) {
+        ArrayList<SongModel> data = new ArrayList<>(songs);
         if (data.size() > 0) {
             Collections.shuffle(data);
             play(0, data);
@@ -867,6 +874,8 @@ public class SongsManager {
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         cursor = context.getContentResolver().query(uri, STAR, selection, null, null);
 
+        MediaMetadataRetriever mediaMetadata = new MediaMetadataRetriever ();
+
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
@@ -878,6 +887,8 @@ public class SongsManager {
                     if (currentDuration > ((excludeShortSounds) ? 60000 : 0)) {
                         if (!excludeWhatsApp || !cursor.getString(cursor
                                 .getColumnIndex(MediaStore.Audio.Media.ALBUM)).equals("WhatsApp Audio")) {
+
+
                             String songName = cursor
                                     .getString(
                                             cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
@@ -891,11 +902,18 @@ public class SongsManager {
                             String albumName = cursor.getString(cursor
                                     .getColumnIndex(MediaStore.Audio.Media.ALBUM));
 
+
                             String albumID = cursor
                                     .getString(
                                             cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
                                     );
+
+                          /*  File file = new File(path);
+                            mediaMetadata.setDataSource(file.getPath());
+                            byte [] data = mediaMetadata.getEmbeddedPicture();
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);*/
                             Log.d("SongsManagerConsole", songName);
+
                             TimeZone tz = TimeZone.getTimeZone("UTC");
                             SimpleDateFormat df = new SimpleDateFormat("mm:ss", Locale.getDefault());
                             df.setTimeZone(tz);
@@ -910,13 +928,14 @@ public class SongsManager {
                             songModel.setAlbumID(albumID);
                             songModel.setPath(path);
                             songModel.setDuration(time);
-
+//                            songModel.setBitmap(bitmap);
                             mainList.add(songModel);
                         }
                     }
                 }
                 while (cursor.moveToNext());
             }
+            setMainList(mainList);
             cursor.close();
         }
     }

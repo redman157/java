@@ -8,19 +8,14 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-    private ArrayList<Fragment> fragments;
-    public ViewPagerAdapter(@NonNull FragmentManager fm) {
-        super(fm);
+    private ArrayList<Fragment> fragments = new ArrayList<>();
+    public ViewPagerAdapter(@NonNull FragmentManager manager) {
+        super(manager);
     }
 
-    public ArrayList<Fragment> getFragments() {
-        return fragments;
+    public void addFragment(Fragment fragment) {
+        fragments.add(fragment);
     }
-
-    public void setFragments(ArrayList<Fragment> fragments) {
-        this.fragments = fragments;
-    }
-
     @NonNull
     @Override
     public Fragment getItem(int position) {

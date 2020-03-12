@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,6 +31,7 @@ import com.droidheat.musicplayer.fragments.ArtistGridFragment;
 import com.droidheat.musicplayer.fragments.HomeFragment;
 import com.droidheat.musicplayer.fragments.PlaylistFragment;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
+import com.droidheat.musicplayer.manager.SongsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -48,7 +51,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private OptionMenuAdapter mOptionMenuAdapter;
     private String tag = "BBB";
     private RecyclerView rc_OptionMenu;
-    private ;
+    private BottomNavigationView mNavigationView;
     private ArrayList<Fragment> mFragments;
     private ArrayList<String> mMenus;
     private ViewPagerAdapter mViewPagerAdapter;
@@ -72,19 +75,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mMenus.add(Constants.MENU.Settings);
     }
     private void setupViewPager(ViewPager viewPager){
-        final BottomNavigationView mNavigationView = findViewById(R.id.nav_view);
 
-        mNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        mFragments = new ArrayList<>();
-        mFragments.add(new HomeFragment());
-        mFragments.add(new AllSongsFragment());
-        mFragments.add(new AlbumGridFragment());
-        mFragments.add(new ArtistGridFragment());
-        mFragments.add(new PlaylistFragment());
-        mViewPagerAdapter.setFragments(mFragments);
+
+        mViewPagerAdapter.addFragment(new HomeFragment());
+        mViewPagerAdapter.addFragment(new AllSongsFragment());
+        mViewPagerAdapter.addFragment(new AlbumGridFragment());
+        mViewPagerAdapter.addFragment(new ArtistGridFragment());
+        mViewPagerAdapter.addFragment(new PlaylistFragment());
 
         viewPager.setAdapter(mViewPagerAdapter);
+        viewPager.setCurrentItem(0);
+        viewPager.addOnPageChangeListener(this);
+        viewPager.setOnClickListener(this);
     }
     private void initView() {
 //        view_LayoutMenu = findViewById(R.id.layout_menu);
@@ -93,12 +96,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         rc_OptionMenu = findViewById(R.id.rc_OptionMenu);
         rc_OptionMenu.setVisibility(View.GONE);
 
-
+        mNavigationView = findViewById(R.id.nav_view);
+        mNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         mViewPager_Home = findViewById(R.id.vp_Home);
         setupViewPager(mViewPager_Home);
-        mViewPager_Home.setCurrentItem(0);
-        mViewPager_Home.addOnPageChangeListener(this);
+
 
 
     }
@@ -147,6 +150,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, TimerActivity.class));
                 break;
             case Constants.MENU.Sync_Music:
+                finish();
                 startActivity(new Intent(this, SplashActivity.class).putExtra("sync", true));
                 break;
             case Constants.MENU.Settings:
@@ -251,21 +255,32 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.menu_item:
-                Log.d("BBB", "menu_item");
+
                 if (!isHide){
+                    Animation fadeIn = AnimationUtils.loadAnimation(HomeActivity.this,R.anim.fadein);
+                    rc_OptionMenu.setAnimation(fadeIn);
                     rc_OptionMenu.setVisibility(View.VISIBLE);
                     isHide = true;
                 }else if (isHide){
+                    Animation fadeOut = AnimationUtils.loadAnimation(HomeActivity.this,
+                            R.anim.fadeout);
+                    rc_OptionMenu.setAnimation(fadeOut);
                     rc_OptionMenu.setVisibility(View.GONE);
                     isHide = false;
                 }
                 break;
             case R.id.menu_search:
-                Log.d("BBB", "menu_search");
                 Intent intent = new Intent(this, SearchActivity.class);
                 startActivity(intent);
                 break;
-
+            case R.id.vp_Home:
+                if (rc_OptionMenu.getVisibility() == View.GONE){
+                    Animation fadeIn = AnimationUtils.loadAnimation(HomeActivity.this,R.anim.fadein);
+                    rc_OptionMenu.setAnimation(fadeIn);
+                    rc_OptionMenu.setVisibility(View.VISIBLE);
+                    isHide = true;
+                }
+                break;
         }
     }
 
@@ -277,8 +292,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onPageSelected(int position) {
-        mNavigationView.getMenu().getItem(currentViewPagerPosition).setCheckable(false);
-        mNavigationView.getMenu().getItem(position).setCheckable(true);
+        mNavigationView.getMenu().getItem(currentViewPagerPosition).setChecked(false);
+        mNavigationView.getMenu().getItem(position).setChecked(true);
         currentViewPagerPosition = position;
     }
 

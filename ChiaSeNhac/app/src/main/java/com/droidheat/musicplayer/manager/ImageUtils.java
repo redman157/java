@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-class ImageUtils {
+public class ImageUtils {
 
     private Context context;
-    ImageUtils(Context context) {
+    public ImageUtils(Context context) {
         this.context = context;
     }
 
@@ -42,7 +42,7 @@ class ImageUtils {
      * (converted from string in this app)
      */
 
-    void getImageByPicasso(String albumId, ImageView imageView) {
+    public void getImageByPicasso(String albumId, ImageView imageView) {
         try {
             Picasso.get().load(getSongUri(Long.parseLong(albumId)))
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(context, R.drawable.ic_music_note_black_24dp)))
@@ -52,7 +52,7 @@ class ImageUtils {
         catch (Exception ignored) {}
     }
 
-    void getImageByPicasso(ArrayList<SongModel> arrayList, ImageView imageView) {
+    public void getImageByPicasso(ArrayList<SongModel> arrayList, ImageView imageView) {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < arrayList.size(); i++) {
             list.add(arrayList.get(i).getAlbumID());
@@ -61,7 +61,7 @@ class ImageUtils {
         getImageByPicasso(list, imageView, 0, list.size() - 1);
     }
 
-    void getImageByPicasso(final List albumIds, final ImageView imageView) {
+    public void getImageByPicasso(final List albumIds, final ImageView imageView) {
         try {
             final int i = 0;
             final int max = albumIds.size()-1;
@@ -89,7 +89,7 @@ class ImageUtils {
         catch (Exception ignored) {}
     }
 
-    void getSmallImageByPicasso(String albumID, ImageView imageView) {
+    public void getSmallImageByPicasso(String albumID, ImageView imageView) {
         try {
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(context, R.drawable.ic_music_note_black_24dp)))
@@ -99,7 +99,7 @@ class ImageUtils {
         catch (Exception ignored) {}
     }
 
-    void getFullImageByPicasso(String albumID, ImageView imageView) {
+    public void getFullImageByPicasso(String albumID, ImageView imageView) {
         try {
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(context, R.drawable.ic_music_note_black_24dp)))
@@ -107,7 +107,7 @@ class ImageUtils {
         catch (Exception ignored) {}
     }
 
-    void getFullImageByPicasso(final List albumIds, final ImageView imageView) {
+    public void getFullImageByPicasso(final List albumIds, final ImageView imageView) {
         try {
             final int i = 0;
             final int max = albumIds.size()-1;
@@ -133,7 +133,7 @@ class ImageUtils {
         catch (Exception ignored) {}
     }
 
-    Bitmap getAlbumArt(Long albumId) {
+    public Bitmap getAlbumArt(Long albumId) {
         Bitmap albumArtBitMap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         try {
@@ -163,7 +163,7 @@ class ImageUtils {
         return getDefaultAlbumArtEfficiently();
     }
 
-    private void getFullImageByPicasso(final List albumSongs, final ImageView imageView, final int i, final int max) {
+    public  void getFullImageByPicasso(final List albumSongs, final ImageView imageView, final int i, final int max) {
         try {
             if (i < max) Picasso.get().load(getSongUri(Long.parseLong(albumSongs.get(i).toString())))
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(context, R.drawable.ic_music_note_black_24dp)))
@@ -185,7 +185,7 @@ class ImageUtils {
         catch (Exception ignored) {}
     }
 
-    private void getImageByPicasso(final List albumSongs, final ImageView imageView, final int i, final int max) {
+    public  void getImageByPicasso(final List albumSongs, final ImageView imageView, final int i, final int max) {
         try {
             if (i < max) Picasso.get().load(getSongUri(Long.parseLong(albumSongs.get(i).toString())))
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(context, R.drawable.ic_music_note_black_24dp)))
@@ -209,13 +209,13 @@ class ImageUtils {
         catch (Exception ignored) {}
     }
 
-    private Bitmap getDefaultAlbumArtEfficiently() {
+    public  Bitmap getDefaultAlbumArtEfficiently() {
 
         return BitmapFactory.decodeResource(context.getResources(),
                 R.drawable.ic_music_notes_padded);
     }
 
-    private Uri getSongUri(Long albumID) {
+    public  Uri getSongUri(Long albumID) {
         return ContentUris.withAppendedId(Uri
                 .parse("content://media/external/audio/albumart"), albumID);
     }

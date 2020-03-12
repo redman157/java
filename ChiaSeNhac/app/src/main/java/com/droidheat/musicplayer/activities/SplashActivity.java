@@ -16,6 +16,7 @@ import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -183,7 +184,7 @@ public class SplashActivity extends AppCompatActivity {
                 // -- Creating Playlist
                 Playlist mPlaylist = Playlist.getInstance();
 
-                mPlaylist.newRenderDB(SplashActivity.this, Constants.VALUE.PLAYLIST_DB);
+                mPlaylist.newRenderDB(SplashActivity.this);
                 mPlaylist.open();
 
                 if (mPlaylist.getCount() == 0) {
@@ -345,10 +346,21 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Long aLong) {
+            CountDownTimer count = new CountDownTimer(1000,3000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                }
+            };
+//            count.start();
             startActivity(new Intent(SplashActivity.this,
                     HomeActivity.class));
             finish();
-
         }
     }
 }

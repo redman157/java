@@ -856,7 +856,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
         try {
             path = path.trim();
             CategorySongs mCategorySongs = CategorySongs.getInstance();
-            mCategorySongs.newRenderDB(this, Constants.VALUE.CATEGORIES_DB);
+            mCategorySongs.newRenderDB(this);
             mCategorySongs.open();
             if (mCategorySongs.checkRow(path)){
                 mCategorySongs.updateRow(path);

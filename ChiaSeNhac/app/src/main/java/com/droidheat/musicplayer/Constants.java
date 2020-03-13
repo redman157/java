@@ -31,6 +31,7 @@ public class Constants {
     }
 
     public @interface PREFERENCES{
+        String state = "state";
         String HOME_ARTIST = "HOME_ARTIST";
         String accentColor = "accentColor";
         String excludeShortSounds = "excludeShortSounds";

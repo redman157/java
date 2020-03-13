@@ -76,7 +76,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     private final String TAG = "PlaybackServiceConsole";
 
     private MediaPlayer mMediaPlayer;
-    private MediaSessionCompat mMediaSessionCompat;
+    public static MediaSessionCompat mMediaSessionCompat;
     private PlaybackStateCompat.Builder mPlaybackStateBuilder;
     private SharedPrefsManager mSharedPrefsManager;
     private SongsManager mSongsManager;
@@ -286,40 +286,44 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
             MediaButtonReceiver.handleIntent(mMediaSessionCompat, intent);
 
             Log.d(TAG, "Intent received.");
-            switch (Objects.requireNonNull(intent.getAction())){
-                case Constants.ACTION.ACTION_PLAY:
-                    resetMediaPlayerPosition();
-                    processPlayRequest();
-                    break;
+            String action = intent.getAction();
+            Log.d(TAG, action== null? "null": "khac null");
+            if (action != null) {
+                switch (action) {
+                    case Constants.ACTION.ACTION_PLAY:
+                        resetMediaPlayerPosition();
+                        processPlayRequest();
+                        break;
 
-                case Constants.ACTION.ACTION_PLAY_PAUSE:
-                    resetMediaPlayerPosition();
-                    processPlayPause();
-                    break;
-                case Constants.ACTION.ACTION_TRACK_PREV:
-                    processPrevRequest();
-                    break;
-                case Constants.ACTION.ACTION_TRACK_NEXT:
-                    processNextRequest();
-                    break;
-                case Constants.ACTION.ACTION_REPEAT:
+                    case Constants.ACTION.ACTION_PLAY_PAUSE:
+                        resetMediaPlayerPosition();
+                        processPlayPause();
+                        break;
+                    case Constants.ACTION.ACTION_TRACK_PREV:
+                        processPrevRequest();
+                        break;
+                    case Constants.ACTION.ACTION_TRACK_NEXT:
+                        processNextRequest();
+                        break;
+                    case Constants.ACTION.ACTION_REPEAT:
 //                    musicWidgetsReset();
-                    break;
-                case Constants.ACTION.ACTION_CLOSE:
-                    if (!mSharedPrefsManager.getBoolean(
-                            Constants.PREFERENCES.persistentNotificationPref, false)) {
-                        processCloseRequest();
-                    } else {
-                        processPauseRequest();
+                        break;
+                    case Constants.ACTION.ACTION_CLOSE:
+                        if (!mSharedPrefsManager.getBoolean(
+                                Constants.PREFERENCES.persistentNotificationPref, false)) {
+                            processCloseRequest();
+                        } else {
+                            processPauseRequest();
+                        }
+                        break;
+                    case Constants.ACTION.ACTION_PERSISTENT_NOTIFICATION:
+                        if (mPlaybackStateBuilder.build().getState() != PlaybackStateCompat.STATE_PLAYING) {
+                            showPausedNotification();
+                        }
+                        break;
+                    default: {
+                        initNotification();
                     }
-                    break;
-                case Constants.ACTION.ACTION_PERSISTENT_NOTIFICATION:
-                    if (mPlaybackStateBuilder.build().getState() != PlaybackStateCompat.STATE_PLAYING) {
-                        showPausedNotification();
-                    }
-                    break;
-                default: {
-                    initNotification();
                 }
             }
         }

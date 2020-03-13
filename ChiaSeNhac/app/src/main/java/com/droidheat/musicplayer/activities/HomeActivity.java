@@ -14,9 +14,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -56,11 +58,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<String> mMenus;
     private ViewPagerAdapter mViewPagerAdapter;
     private boolean isHide = false;
-
+    private FrameLayout fl_Home;
+    private LinearLayout ll_PlayMusic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         initMenu();
         initView();
         assignView();
@@ -91,6 +95,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
     private void initView() {
 //        view_LayoutMenu = findViewById(R.id.layout_menu);
+        ll_PlayLists = findViewById(R.id.ll_StatusPlayMusic);
         menu_Item = findViewById(R.id.menu_item);
         menu_Search = findViewById(R.id.menu_search);
         rc_OptionMenu = findViewById(R.id.rc_OptionMenu);

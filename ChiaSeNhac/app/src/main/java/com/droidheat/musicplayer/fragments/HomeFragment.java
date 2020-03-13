@@ -48,6 +48,7 @@ public class HomeFragment extends Fragment {
 
             mAdderAdapter.setNewsongs(mNewSongs);
             mRc_Recently_Add.setAdapter(mAdderAdapter);
+            mRc_Recently_Add.setNestedScrollingEnabled(false);
             mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(getContext(),
                     LinearLayoutManager.VERTICAL, false));
 

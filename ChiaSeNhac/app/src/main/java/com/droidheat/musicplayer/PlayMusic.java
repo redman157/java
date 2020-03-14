@@ -11,6 +11,7 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+import android.widget.SeekBar;
 
 import androidx.core.content.ContextCompat;
 
@@ -21,6 +22,8 @@ public class PlayMusic {
         void getState(PlaybackStateCompat stateCompat);
         void getMetadataCompat(MediaMetadataCompat compat);
     }
+
+    public SeekBar mSbLeftTime;
     private CallBackListener callBackListener;
     public void setCallBack(CallBackListener callBackListener){
         this.callBackListener = callBackListener;
@@ -46,16 +49,16 @@ public class PlayMusic {
     }
 
     public void initMediaBrowser(){
-
         mMediaBrowser = new MediaBrowserCompat(activity,
                 new ComponentName(activity, MusicPlayback.class), mConnectionCallback, null);
     }
+
     public MediaBrowserCompat.ConnectionCallback mConnectionCallback =
             new MediaBrowserCompat.ConnectionCallback() {
                 @Override
                 public void onConnected() {
-
                     Log.d(tag, "onConnected");
+
                     try {
                         connectToSession(mMediaBrowser.getSessionToken());
                         ContextCompat.startForegroundService(getActivity(),
@@ -89,6 +92,9 @@ public class PlayMusic {
         MediaControllerCompat.setMediaController(getActivity(), mMediaController);
         mMediaController.registerCallback(mCallback);
         PlaybackStateCompat state = mMediaController.getPlaybackState();
+        if (mSbLeftTime != null){
+
+        }
         callBackListener.getMetadataCompat(mMediaController.getMetadata());
         callBackListener.getState(state);
         /*setMediaMetadataCompat(mMediaController.getMetadata());
@@ -150,5 +156,13 @@ public class PlayMusic {
 
     public void setActivity(Activity activity) {
         this.activity = activity;
+    }
+
+    public SeekBar getSeekBar() {
+        return mSbLeftTime;
+    }
+
+    public void setSeekBar(SeekBar mSbLeftTime) {
+        this.mSbLeftTime = mSbLeftTime;
     }
 }

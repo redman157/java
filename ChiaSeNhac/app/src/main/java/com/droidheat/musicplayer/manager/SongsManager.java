@@ -124,7 +124,6 @@ public class SongsManager {
         }
     }
 
-
     public int getCurrentMusicID() {
         return prefsManager.getInteger("musicID", 0);
     }
@@ -915,7 +914,7 @@ public class SongsManager {
                             Log.d("SongsManagerConsole", songName);
 
                             TimeZone tz = TimeZone.getTimeZone("UTC");
-                            SimpleDateFormat df = new SimpleDateFormat("mm:ss", Locale.getDefault());
+                            SimpleDateFormat df = new SimpleDateFormat("mm : ss", Locale.getDefault());
                             df.setTimeZone(tz);
                             String time = String.valueOf(df.format(currentDuration));
 
@@ -928,6 +927,7 @@ public class SongsManager {
                             songModel.setAlbumID(albumID);
                             songModel.setPath(path);
                             songModel.setDuration(time);
+                            songModel.setTime(currentDuration);
 //                            songModel.setBitmap(bitmap);
                             mainList.add(songModel);
                         }

@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.droidheat.musicplayer.IndexMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.ViewOnClick;
 import com.droidheat.musicplayer.adapters.RecentlyAdderAdapter;
@@ -22,20 +23,31 @@ import com.droidheat.musicplayer.models.SongModel;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements RecentlyAdderAdapter.SetOnClick {
     private RecyclerView mRc_Recently_Add;
     private RecentlyAdderAdapter mAdderAdapter;
     private ArrayList<SongModel> mNewSongs;
     private View view;
+    private int index;
     private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
     private ImageUtils mImageUtils;
+    private IndexMusic indexMusic;
 
+    public static HomeFragment newInstance() {
+        HomeFragment fragment = new HomeFragment();
+        return fragment;
+    }
+    public void SetIndexMusic(IndexMusic indexMusic){
+        this.indexMusic = indexMusic;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mImageUtils = new ImageUtils(getContext());
-        mAdderAdapter = new RecentlyAdderAdapter(SongsManager.getInstance().getMainList(), getContext());
+
+        mAdderAdapter = new RecentlyAdderAdapter(SongsManager.getInstance().newSongs(), getContext());
+        mAdderAdapter.SetOnClickItem(this);
         mNewSongs = SongsManager.getInstance().newSongs();
     }
 
@@ -46,7 +58,6 @@ public class HomeFragment extends Fragment {
             view = inflater.inflate(R.layout.fragment_home, null);
             initView();
 
-            mAdderAdapter.setNewsongs(mNewSongs);
             mRc_Recently_Add.setAdapter(mAdderAdapter);
             mRc_Recently_Add.setNestedScrollingEnabled(false);
             mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(getContext(),
@@ -69,5 +80,12 @@ public class HomeFragment extends Fragment {
     private void assignView(){
         mImg_Shuffle_All.setOnClickListener(new ViewOnClick(mImg_Shuffle_All.getId()));
     }
+
+    @Override
+    public void getCurrentSong(int index) {
+        this.index = index;
+
+    }
+
 
 }

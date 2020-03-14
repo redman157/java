@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.droidheat.musicplayer.Constants;
+import com.droidheat.musicplayer.IndexMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.OptionMenuAdapter;
 import com.droidheat.musicplayer.adapters.ViewPagerAdapter;
@@ -114,8 +115,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void assignView(){
         mOptionMenuAdapter = new OptionMenuAdapter(mMenus, this);
         mOptionMenuAdapter.setSetOnClick(this);
-        rc_OptionMenu.setAdapter(mOptionMenuAdapter);
 
+        rc_OptionMenu.setAdapter(mOptionMenuAdapter);
         rc_OptionMenu.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         menu_Item.setOnClickListener(this);
@@ -306,4 +307,5 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onPageScrollStateChanged(int state) {
 
     }
+
 }

@@ -10,7 +10,8 @@ public class Constants {
     public @interface VALUE {
         String SYNC = "sync";
         String TASK = "task";
-
+        String NEW_SONGS = "new_songs";
+        String ALL_SONGS = "all_songs";
         String PLAYLIST_DB = "playlist.db";
         String CATEGORIES_DB = "categories.db";
         String FAVS_DB = "Favs.db";

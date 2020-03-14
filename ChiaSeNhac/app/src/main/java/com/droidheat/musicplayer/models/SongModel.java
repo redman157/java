@@ -11,6 +11,7 @@ public class SongModel {
     private String Path;
     private String Title;
     private Bitmap bitmap;
+    private int time;
     public boolean equals(Object obj) {
         boolean matches = false;
         if (!(obj instanceof SongModel)) {
@@ -21,6 +22,14 @@ public class SongModel {
             matches = true;
         }
         return matches;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
     }
 
     public Bitmap getBitmap() {

@@ -7,10 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.droidheat.musicplayer.R;
@@ -23,19 +22,19 @@ import java.util.ArrayList;
 public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdapter.ItemViewHolder> {
     private final Context context;
     private ArrayList<SongModel> items;
-    private ArrayList<SongModel> newsongs;
+
     public RecentlyAdderAdapter(ArrayList<SongModel> items, Context context) {
         this.items = items;
         this.context = context;
 
     }
 
-    public ArrayList<SongModel> getNewsongs() {
-        return newsongs;
+    private SetOnClick SetOnClick;
+    public void SetOnClickItem(SetOnClick SetOnClick) {
+        this.SetOnClick = SetOnClick;
     }
-
-    public void setNewsongs(ArrayList<SongModel> newsongs) {
-        this.newsongs = newsongs;
+    public interface SetOnClick {
+        void getCurrentSong(int index);
     }
 
     @Override
@@ -49,10 +48,23 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
     }
 
     @Override
-    public void onBindViewHolder(ItemViewHolder holder, int position) {
-        SongModel item = newsongs.get(position);
+    public void onBindViewHolder(ItemViewHolder holder, final int position) {
+        SongModel item;
+        if (items == SongsManager.getInstance().newSongs()){
+            item = SongsManager.getInstance().newSongs().get(position);
+        }else {
+            item = items.get(position);
+        }
 
-        holder.set(item);
+        if (item != null) {
+            holder.set(item);
+            holder.mL_Recently_Add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SetOnClick.getCurrentSong(position);
+                }
+            });
+        }
     }
 
     @Override
@@ -66,28 +78,29 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
 
 
     public class ItemViewHolder extends RecyclerView.ViewHolder  {
-        private ImageView img_Music;
-        private TextView txt_Name, txt_Artist;
-        private TextView txt_Time;
-        private Button btn_Menu;
-
+        private ImageView mImgMusic;
+        private TextView mTextName, mTextArtist;
+        private TextView mTextTime;
+        private Button mBtnMenu;
+        private LinearLayout mL_Recently_Add;
         public ItemViewHolder(View itemView) {
             super(itemView);
-            txt_Artist = itemView.findViewById(R.id.item_text_artist_recently_add);
-            img_Music = itemView.findViewById(R.id.item_img_recently_add);
-            btn_Menu = itemView.findViewById(R.id.item_btn_menu_recently_add);
-            txt_Name = itemView.findViewById(R.id.item_text_title_recently_add);
-            txt_Time = itemView.findViewById(R.id.item_text_time_recently_add);
+            mL_Recently_Add = itemView.findViewById(R.id.item_ll_Recently_Add);
+            mTextArtist = itemView.findViewById(R.id.item_text_artist_recently_add);
+            mImgMusic = itemView.findViewById(R.id.item_img_recently_add);
+            mBtnMenu = itemView.findViewById(R.id.item_btn_menu_recently_add);
+            mTextName = itemView.findViewById(R.id.item_text_title_recently_add);
+            mTextTime = itemView.findViewById(R.id.item_text_time_recently_add);
         }
 
-        public void set(SongModel song) {
+        public void set(final SongModel song) {
             //UI setting code
-            txt_Name.setText(song.getTitle());
-            txt_Artist.setText(song.getArtist());
-            txt_Time.setText(song.getDuration());
-            img_Music.setClipToOutline(true);
+            mTextName.setText(song.getTitle());
+            mTextArtist.setText(song.getArtist());
+            mTextTime.setText(song.getDuration());
+            mImgMusic.setClipToOutline(true);
 
-            (new ImageUtils(context)).getSmallImageByPicasso(song.getAlbumID(), img_Music);
+            (new ImageUtils(context)).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);
 
         }
     }

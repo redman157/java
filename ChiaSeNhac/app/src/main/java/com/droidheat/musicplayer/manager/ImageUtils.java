@@ -28,18 +28,18 @@ public class ImageUtils {
         this.context = context;
     }
 
-    /*
-     * @params: imageView is the ImageView where image should go
-     * @params: arrayList is list of SongModel object with each having getAlbumID()
-     * @params: albumIds is List<String> of album ids
-     *
-     * Three ways to grab album art -
-     * 1. getImageByPicasso(String albumId, ImageView imageView)
-     * 2. getImageByPicasso(ArrayList<SongModel> arrayList, ImageView imageView)
-     * 3. getImageByPicasso(final List albumIds, final ImageView imageView)
-     *
-     * Also grab Bitmap with - getAlbumArt(Long albumId) where albumId is a long variable
-     * (converted from string in this app)
+        /*
+         * @params: imageView is the ImageView where image should go
+         * @params: arrayList is list of SongModel object with each having getAlbumID()
+         * @params: albumIds is List<String> of album ids
+         *
+         * Three ways to grab album art -
+         * 1. getImageByPicasso(String albumId, ImageView imageView)
+         * 2. getImageByPicasso(ArrayList<SongModel> arrayList, ImageView imageView)
+         * 3. getImageByPicasso(final List albumIds, final ImageView imageView)
+         *
+         * Also grab Bitmap with - getAlbumArt(Long albumId) where albumId is a long variable
+         * (converted from string in this app)
      */
 
     public void getImageByPicasso(String albumId, ImageView imageView) {

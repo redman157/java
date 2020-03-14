@@ -1,13 +1,9 @@
 package com.droidheat.musicplayer.fragments;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,13 +19,14 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.droidheat.musicplayer.Constants;
+import com.droidheat.musicplayer.IndexMusic;
 import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.activities.PlayActivity;
 import com.droidheat.musicplayer.manager.SongsManager;
-import com.droidheat.musicplayer.services.MusicPlayback;
 
-public class MusicDockFragment extends Fragment implements View.OnClickListener, PlayMusic.CallBackListener {
+public class MusicDockFragment extends Fragment implements View.OnClickListener, PlayMusic.CallBackListener, IndexMusic {
     private View view;
     private Button mBtnTitle;
     private ImageView mImgArt;
@@ -38,11 +35,19 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
     private PlayMusic mPlayMusic;
     private SongsManager mSongsManager;
     private MediaBrowserCompat mMediaBrowser;
-    public static MusicDockFragment newInstance() {
+    private int mCurrentMusic = -3;
+    public static MusicDockFragment newInstance(String type, int Index) {
 
         Bundle args = new Bundle();
 
         MusicDockFragment fragment = new MusicDockFragment();
+        if (type.equals(Constants.VALUE.NEW_SONGS)) {
+            args.putInt(type, Index);
+        }else if (type.equals(Constants.VALUE.ALL_SONGS)){
+            args.putInt(type, Index);
+        }else {
+            Log.d("MusicDockFragmentLog", "null");
+        }
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,6 +55,8 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        HomeFragment.newInstance().SetIndexMusic(this);
+
         mPlayMusic = PlayMusic.getInstance();
         mSongsManager = SongsManager.getInstance();
         mSongsManager.setContext(getActivity());
@@ -76,12 +83,13 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
             initView();
             assignView();
         }
+        if (mCurrentMusic == -3){
+            mPlayMusic.setCallBack(this);
+            mPlayMusic.initMediaBrowser();
+        }
 
-        mPlayMusic.setCallBack(this);
-        mPlayMusic.initMediaBrowser();
 
         return view;
-
     }
 
     private void initView() {
@@ -100,7 +108,10 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fm_btn_title:
-                startActivity(new Intent(getActivity(), PlayActivity.class));
+                Intent intent = new Intent(getActivity(), PlayActivity.class);
+
+                startActivity(intent);
+
                 break;
         }
     }
@@ -148,5 +159,11 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
         mTextTitle.setText(compat.getText(MediaMetadataCompat.METADATA_KEY_TITLE));
         mTextArtists.setText(compat.getText(MediaMetadataCompat.METADATA_KEY_ARTIST));
         mImgArt.setImageBitmap(compat.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART));
+
+    }
+
+    @Override
+    public void getIndex(int current) {
+
     }
 }

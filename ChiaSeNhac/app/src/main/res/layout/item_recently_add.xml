@@ -3,6 +3,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:weightSum="10"
+    android:id="@+id/item_ll_Recently_Add"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <androidx.cardview.widget.CardView

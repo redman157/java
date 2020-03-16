@@ -58,7 +58,7 @@ public class Constants {
         String NAME = "NAME";
         String DURATION = "DURATION";
         String ALBUMID = "ALBUMID";
-        String RAW_PATH = "RAW_PATH";
+        String RAW_PATH = "raw_path";
         String DURATION_IN_MS = " DURATION_IN_MS";
     }
 

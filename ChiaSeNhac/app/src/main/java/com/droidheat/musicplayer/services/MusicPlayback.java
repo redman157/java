@@ -887,16 +887,21 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     public void addVoteToTrack(String path){
         try {
             path = path.trim();
+            Log.d(TAG, "addVoteToTrack: "+path );
             CategorySongs mCategorySongs = CategorySongs.getInstance();
+            Log.d(TAG, "a" );
             mCategorySongs.newRenderDB(getApplicationContext());
+            Log.d(TAG, "b" );
             mCategorySongs.open();
+            Log.d(TAG, "Check Row: "+mCategorySongs.checkRow(path));
             if (mCategorySongs.checkRow(path)){
+
                 mCategorySongs.updateRow(path);
             }else {
                 mCategorySongs.addRow(1, mSongsManager.queue().get(mSongsManager.getCurrentMusicID()));
             }
         }catch (Exception e) {
-
+            e.printStackTrace();
             Log.d(TAG, "addVoteToTrack crashed.");
             Log.d(TAG, e.getMessage());
         }
@@ -934,8 +939,8 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
          * We reset this location to zero when we start playing a new song
          */
         if (mPlaybackStateBuilder.build().getState() == PlaybackStateCompat.STATE_NONE &&
-            mSharedPrefsManager.getString("raw_path","").equals(
-                    mSongsManager.queue()
+            mSharedPrefsManager.getString(Constants.PREFERENCES.RAW_PATH,"")
+                    .equals(mSongsManager.queue()
                             .get(mSongsManager.getCurrentMusicID())
                             .getPath())){
             mMediaSessionCompat.getController()

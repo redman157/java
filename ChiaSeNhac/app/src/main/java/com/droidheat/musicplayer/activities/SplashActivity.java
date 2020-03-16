@@ -76,7 +76,8 @@ public class SplashActivity extends AppCompatActivity {
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE);
 
-        if (permissionCheck == PermissionChecker.PERMISSION_DENIED || permissionCheck != PermissionChecker.PERMISSION_GRANTED) {
+        if (permissionCheck == PermissionChecker.PERMISSION_DENIED
+                || permissionCheck != PermissionChecker.PERMISSION_GRANTED) {
             // No explanation needed, we can request the permission.
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);

@@ -33,12 +33,12 @@ public class CategorySongs {
 
     public void newRenderDB(Context context){
         this.context = context;
-        this.myDBHelper = new ReaderDB(context);
+        this.myDBHelper = new ReaderDB(this.context);
 //        this.myDBHelper = new ReaderDB(context, database);
     }
 
     public CategorySongs open() {
-        this.database = this.myDBHelper.getWritableDatabase();
+        database = this.myDBHelper.getWritableDatabase();
         return this;
     }
 

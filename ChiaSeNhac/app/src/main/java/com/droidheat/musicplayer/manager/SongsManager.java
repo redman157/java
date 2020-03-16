@@ -872,7 +872,7 @@ public class SongsManager {
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         cursor = context.getContentResolver().query(uri, STAR, selection, null, null);
-
+        Log.d(TAG, "Uri: "+uri.getPath() + " ==== Selection: "+ selection+ " ====== Cursor: "+cursor.getCount());
         MediaMetadataRetriever mediaMetadata = new MediaMetadataRetriever ();
 
         if (cursor != null) {
@@ -911,7 +911,7 @@ public class SongsManager {
                             mediaMetadata.setDataSource(file.getPath());
                             byte [] data = mediaMetadata.getEmbeddedPicture();
                             Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);*/
-                            Log.d("SongsManagerConsole", songName);
+//                            Log.d("SongsManagerConsole", songName);
 
                             TimeZone tz = TimeZone.getTimeZone("UTC");
                             SimpleDateFormat df = new SimpleDateFormat("mm : ss", Locale.getDefault());

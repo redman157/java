@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.droidheat.musicplayer.ChangeMusic;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.IndexMusic;
 import com.droidheat.musicplayer.R;
@@ -32,6 +33,7 @@ import com.droidheat.musicplayer.fragments.AlbumGridFragment;
 import com.droidheat.musicplayer.fragments.AllSongsFragment;
 import com.droidheat.musicplayer.fragments.ArtistGridFragment;
 import com.droidheat.musicplayer.fragments.HomeFragment;
+import com.droidheat.musicplayer.fragments.MusicDockFragment;
 import com.droidheat.musicplayer.fragments.PlaylistFragment;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongsManager;
@@ -59,12 +61,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<String> mMenus;
     private ViewPagerAdapter mViewPagerAdapter;
     private boolean isHide = false;
-    private FrameLayout fl_Home;
-    private LinearLayout ll_PlayMusic;
+    private int position;
+    private SharedPrefsManager prefsManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        // khởi tạo màn hình chính là home ta cần check position để gán sẵn vị trí luôn
+
 
         initMenu();
         initView();
@@ -83,7 +87,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        mViewPagerAdapter.addFragment(new HomeFragment());
+        mViewPagerAdapter.addFragment(new HomeFragment(this));
         mViewPagerAdapter.addFragment(new AllSongsFragment());
         mViewPagerAdapter.addFragment(new AlbumGridFragment());
         mViewPagerAdapter.addFragment(new ArtistGridFragment());
@@ -107,8 +111,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         mViewPager_Home = findViewById(R.id.vp_Home);
         setupViewPager(mViewPager_Home);
-
-
 
     }
 

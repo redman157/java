@@ -221,7 +221,7 @@ public class SplashActivity extends AppCompatActivity {
                                                     " so lets change broken song with lasted");
                                             mPlayListSongs.remove(item);
                                             mPlayListSongs.add(item, mSongsManager.allSongs().get(fItem));
-                                            Log.d(TAG, "Playlist: index doesn't change and we changed broken song. All good!");
+                                            Log.d(TAG, "Playlist: position doesn't change and we changed broken song. All good!");
                                             isFound = true;
                                             fItem = mSongsManager.allSongs().size();
                                         }
@@ -270,7 +270,7 @@ public class SplashActivity extends AppCompatActivity {
                                                 " so lets change broken song with lasted");
                                         mFavSongs.remove(j);
                                         mFavSongs.add(j, mSongsManager.allSongs().get(i));
-                                        Log.d(TAG, "Favourites: index doesn't change and we changed broken song. All good");
+                                        Log.d(TAG, "Favourites: position doesn't change and we changed broken song. All good");
                                         isFound = true;
                                         i = mSongsManager.allSongs().size();
                                     }
@@ -309,7 +309,7 @@ public class SplashActivity extends AppCompatActivity {
                                                 " so lets change broken song with lasted");
                                         mostPlayed.remove(j);
                                         mostPlayed.add(j, mSongsManager.allSongs().get(i));
-                                        Log.d(TAG, "MostPlayed: index doesn't change and we changed broken song. All good!");
+                                        Log.d(TAG, "MostPlayed: position doesn't change and we changed broken song. All good!");
                                         isFound = true;
                                         i = mSongsManager.allSongs().size();
                                     }

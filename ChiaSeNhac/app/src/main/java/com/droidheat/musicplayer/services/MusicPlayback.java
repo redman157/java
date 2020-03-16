@@ -45,10 +45,10 @@ import androidx.media.session.MediaButtonReceiver;
 
 import com.droidheat.musicplayer.BuildNotification;
 import com.droidheat.musicplayer.Constants;
+import com.droidheat.musicplayer.MusicWidget4x1;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.activities.HomeActivity;
 import com.droidheat.musicplayer.database.CategorySongs;
-import com.droidheat.musicplayer.database.Database;
 import com.droidheat.musicplayer.manager.CommonUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongsManager;
@@ -57,10 +57,11 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 public class MusicPlayback extends MediaBrowserServiceCompat implements
-        MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener, MediaPlayer.OnPreparedListener{
+        MediaPlayer.OnCompletionListener,
+        AudioManager.OnAudioFocusChangeListener,
+        MediaPlayer.OnPreparedListener{
 
     // Available PlayBackStates
     //  STATE_NONE = 0;
@@ -73,7 +74,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
      Private
      ----------------------------------------------------------------*******/
 
-    private final String TAG = "PlaybackServiceConsole";
+    private final String TAG = "NNN";
 
     private MediaPlayer mMediaPlayer;
     public static MediaSessionCompat mMediaSessionCompat;
@@ -84,13 +85,14 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     private  Equalizer mEqualizer;
     private BassBoost mBassBoost;
     private Virtualizer mVirtualizer;
+    private boolean autoPaused = false;
 
     private int currentMediaPlayer = 0; // 0 - mMediaPlayer; 1 - mMediaPlayer2
     private int crossfadeDuration = 3000; // 3 seconds
     private Handler mHandler;
     private boolean isAutoPaused = false;
     private final int NOTIFICATION_ID = 34213134;
-
+    private int resumePosition;
     /******* ---------------------------------------------------------------
      Service Methods and Intents
      ----------------------------------------------------------------*******/
@@ -98,19 +100,25 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
         super();
     }
 
+
     @Override
     public void onCreate() {
         super.onCreate();
-        mSharedPrefsManager = new SharedPrefsManager();
-        mSharedPrefsManager.setContext(this);
-        mSongsManager = SongsManager.getInstance();
-        mSongsManager.setContext(this);
-//        mHandler = new Handler();
 
+//        mHandler = new Handler();
+        try {
+            mSharedPrefsManager = new SharedPrefsManager();
+            mSharedPrefsManager.setContext(this);
+            mSongsManager = SongsManager.getInstance();
+            mSongsManager.setContext(this);
+            checkErrorInPrefs();
+        }catch (Exception e){
+            e.printStackTrace();
+            stopSelf();
+        }
          /*
          Initialize
          */
-        checkErrorInPrefs();
         initMediaPlayer();
         initMediaSession();
         initNoisyReceiver();
@@ -123,23 +131,36 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     }
 
     private void initMediaPlayer(){
+
+
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setVolume(1.0f, 1.0f);
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setOnPreparedListener(this);
+
+         /* mMediaPlayer.setOnErrorListener(this);
+        mMediaPlayer.setOnSeekCompleteListener(this);
+        mMediaPlayer.setOnInfoListener(this);*/
+
+        mMediaPlayer.reset();
+
+
     }
 
-    private void resetMediaPlayer(){
+
+
+    private void flushMediaPlayer(){
         if (mPlaybackStateBuilder.build().getState() == PlaybackStateCompat.STATE_PLAYING ||
                 mPlaybackStateBuilder.build().getState() == PlaybackStateCompat.STATE_PAUSED){
             mMediaPlayer.reset();
         }
+
     }
 
     private void setMediaPlayer(String path){
-        resetMediaPlayer();
+        flushMediaPlayer();
         File file = new File(path);
         if (file.exists()){
             try {
@@ -163,7 +184,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     private void initMediaSession(){
         ComponentName mediaButtonReceiver = new ComponentName(getApplicationContext(),
                 MediaButtonReceiver.class);
-        mMediaSessionCompat =new MediaSessionCompat(getApplicationContext(),"TAG",
+        mMediaSessionCompat = new MediaSessionCompat(getApplicationContext(),"TAG",
                 mediaButtonReceiver, null);
         mMediaSessionCompat.setCallback(mMediaSessionCallback);
         mMediaSessionCompat.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
@@ -234,7 +255,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
         @Override
         public void onSkipToQueueItem(long id) {
             super.onSkipToQueueItem(id);
-            doPushPlay((int) id);
+                doPushPlay((int) id);
         }
 
         @Override
@@ -463,7 +484,9 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
 
     private void processNextRequest(){
         resetMediaPlayerPosition();
+//        flushMediaPlayer();
         int musicID = mSongsManager.getCurrentMusicID();
+
 
         if (musicID + 1 != mSongsManager.queue().size()){
             musicID++;
@@ -515,6 +538,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
         if (mPlaybackStateBuilder.build().getState() == PlaybackStateCompat.STATE_PLAYING){
             mMediaSessionCompat.setActive(false);
             mMediaPlayer.pause();
+            resumePosition = mMediaPlayer.getCurrentPosition();
             mSharedPrefsManager.setInteger(Constants.PREFERENCES.song_position, mMediaPlayer.getCurrentPosition());
             setMediaPlaybackState(PlaybackStateCompat.STATE_PAUSED);
             showPausedNotification();
@@ -645,7 +669,9 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
 
     private void createChannel(){
         if(Build.VERSION.SDK_INT > 26) {
-            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager mNotificationManager =
+                    ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE));
+
             // The id of the channel.
             String id = "channel_music_playback";
             // The user-visible name of the channel.
@@ -660,12 +686,14 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
 
             mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             assert mNotificationManager != null;
+
+
             mNotificationManager.createNotificationChannel(mChannel);
         }
     }
 
     private void showPlayingNotification(){
-//        musicWidgetsReset();
+        musicWidgetsReset();
 
         createChannel();
         NotificationCompat.Builder builder = BuildNotification.from(MusicPlayback.this,
@@ -702,7 +730,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     }
 
     private void showPausedNotification() {
-//        musicWidgetsReset();
+        musicWidgetsReset();
 
         createChannel();
         NotificationCompat.Builder builder
@@ -719,7 +747,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
                 (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_TRACK_NEXT), 0);
 
         builder.addAction(new NotificationCompat.Action(R.drawable.app_previous, "Previous", prevIntent));
-        builder.addAction(new NotificationCompat.Action(R.drawable.app_play, "Play", playPauseIntent));
+        builder.addAction(new NotificationCompat.Action(R.drawable.app_pause, "Play", playPauseIntent));
         builder.addAction(new NotificationCompat.Action(R.drawable.app_next, "Next", nextIntent));
         builder.addAction(new NotificationCompat.Action(R.drawable.ic_close_black_24dp,"Close",
                         pCloseIntent));
@@ -860,7 +888,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
         try {
             path = path.trim();
             CategorySongs mCategorySongs = CategorySongs.getInstance();
-            mCategorySongs.newRenderDB(this);
+            mCategorySongs.newRenderDB(getApplicationContext());
             mCategorySongs.open();
             if (mCategorySongs.checkRow(path)){
                 mCategorySongs.updateRow(path);
@@ -868,8 +896,11 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
                 mCategorySongs.addRow(1, mSongsManager.queue().get(mSongsManager.getCurrentMusicID()));
             }
         }catch (Exception e) {
+
             Log.d(TAG, "addVoteToTrack crashed.");
+            Log.d(TAG, e.getMessage());
         }
+
     }
 
 
@@ -879,7 +910,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
      ----------------------------------------------------------------*******/
     @Override
     public void onCompletion(MediaPlayer mp) {
-        resetMediaPlayer();
+        flushMediaPlayer();
         resetMediaPlayerPosition();
 
         if (!mSharedPrefsManager.getBoolean(Constants.PREFERENCES.repeat, false)){
@@ -932,17 +963,17 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     private void initNoisyReceiver(){
         //Handles headphones coming unplugged. cannot be done through a manifest receiver
         IntentFilter filter =new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-        registerReceiver(mNoisyReceiver, filter);
+        registerReceiver( mNoisyReceiver, filter);
     }
     /******* ---------------------------------------------------------------
      Music Widgets
      ----------------------------------------------------------------*******/
 
-   /* private void musicWidgetsReset() {
+    private void musicWidgetsReset() {
         updateMusicWidget(this, MusicWidget4x1.class);
-        updateMusicWidget(this, MusicWidget4x1v2.class);
-        updateMusicWidget(this, MusicWidget4x2.class);
-    }*/
+  /*      updateMusicWidget(this, MusicWidget4x1v2.class);
+        updateMusicWidget(this, MusicWidget4x2.class);*/
+    }
     private void updateMusicWidget(Context context, Class<?> cls) {
         Intent intent = new Intent(context, cls);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -952,5 +983,21 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         context.sendBroadcast(intent);
     }
+    /******* ---------------------------------------------------------------
+     Broad Cast Service
+     ----------------------------------------------------------------*******/
 
+
+
+    /******* ---------------------------------------------------------------
+     Init Music Media
+     ----------------------------------------------------------------*******/
+    /*private void playMedia() {
+        if (!mMediaPlayer.isPlaying()) {
+            mMediaPlayer.start();
+            isInitAudioError = false;
+            Log.d(TAG, "playMedia");
+
+        }
+    }*/
 }

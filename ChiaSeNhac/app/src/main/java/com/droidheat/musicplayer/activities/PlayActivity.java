@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
@@ -14,13 +16,17 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.droidheat.musicplayer.ChangeMusic;
+import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.ChangeMusicPagerAdapter;
 import com.droidheat.musicplayer.fragments.ChangeMusicFragment;
 import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.models.SongModel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -36,6 +42,9 @@ public class PlayActivity extends AppCompatActivity
     private Handler mHandler;
     private Runnable mRunnable;
     private TextView mTextLeftTime, mTextRightTime;
+    private String type;
+    private int position;
+    private ArrayList<SongModel> MusicType = new ArrayList<>();
     @Override
     protected void onStart() {
         super.onStart();
@@ -52,12 +61,18 @@ public class PlayActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+        // nhận giá trị postion và type ở home fragment và recently activity
+        type = this.getIntent().getStringExtra(Constants.VALUE.TYPE);
+        position = this.getIntent().getIntExtra(Constants.VALUE.POSITION, 0);
+        MusicType = ChangeMusic.getInstance().switchMusic(type);
+
+
         mPlayMusic = PlayMusic.getInstance();
         mPlayMusic.setActivity(this);
         mPlayMusic.initMediaBrowser();
         initView();
         assignView();
-        setupViewPager();
+
     }
 
     private void initView() {
@@ -88,18 +103,27 @@ public class PlayActivity extends AppCompatActivity
 
         mSongManager = SongsManager.getInstance();
         mSongManager.setContext(this);
+
         mSbTime.setOnSeekBarChangeListener(this);
         mAdapter = new ChangeMusicPagerAdapter(getSupportFragmentManager());
-        mTextLeftTime.setText("00 : 00");
-        mTextRightTime.setText(mSongManager.allSongs().get(0).getDuration());
-        for (int idx = 0 ; idx < mSongManager.allSongs().size(); idx ++){
-            mAdapter.addData(new ChangeMusicFragment(), mSongManager.allSongs().get(idx) );
+        for (int idx = 0 ; idx < MusicType.size(); idx ++){
+            mAdapter.addData(new ChangeMusicFragment(), MusicType.get(idx) );
         }
+        if (position == 0) {
+            mTextLeftTime.setText("00 : 00");
+            mTextRightTime.setText(MusicType.get(0).getDuration());
+        }else {
+            mTextLeftTime.setText("00 : 00");
+            mTextRightTime.setText(MusicType.get(position).getDuration());
+        }
+
+        setupViewPager(position);
+
     }
 
-    private void setupViewPager(){
+    private void setupViewPager(int position){
         mVpMusic.setAdapter(mAdapter);
-        mVpMusic.setCurrentItem(0);
+        mVpMusic.setCurrentItem(position);
         mVpMusic.addOnPageChangeListener(this);
     }
 
@@ -110,10 +134,11 @@ public class PlayActivity extends AppCompatActivity
 
     @Override
     public void onPageSelected(int position) {
+        this.position = position;
         mTextLeftTime.setText("00 : 00");
-        mTextRightTime.setText(convertTime(SongsManager.getInstance().allSongs().get(position).getTime()));
+        mTextRightTime.setText(convertTime(MusicType.get(position).getTime()));
         mSbTime.setProgress(0);
-        mSbTime.setMax(SongsManager.getInstance().allSongs().get(position).getTime());
+        mSbTime.setMax(MusicType.get(position).getTime());
         Log.d("BBB","Min: "+ 0+ " -- Max: "+ SongsManager.getInstance().allSongs().get(position).getTime());
 
     }
@@ -127,6 +152,7 @@ public class PlayActivity extends AppCompatActivity
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.icon_play:
+                MediaControllerCompat.getMediaController(PlayActivity.this).getTransportControls().play();
                 break;
             case R.id.icon_next:
                 break;
@@ -137,6 +163,12 @@ public class PlayActivity extends AppCompatActivity
             case R.id.icon_imageFav:
                 break;
             case R.id.imb_BackMusic:
+                // khi back ngược về ta cần phải lưu dc position khi tắt app bật lên ta phải có
+                // dc giá trị sẵn để xuất màn hình tất cả có ở Changmusic khi thao tác
+                Intent intent = new Intent(this, HomeActivity.class);
+                intent.putExtra(Constants.VALUE.POSITION, position);
+                startActivity(intent);
+                finish();
                 break;
             case R.id.imb_InfoMusic:
                 break;

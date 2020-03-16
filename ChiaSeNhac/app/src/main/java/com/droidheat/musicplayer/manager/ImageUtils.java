@@ -4,6 +4,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
@@ -15,6 +16,7 @@ import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.models.SongModel;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.FileDescriptor;
 import java.util.ArrayList;
@@ -99,6 +101,30 @@ public class ImageUtils {
         catch (Exception ignored) {}
     }
 
+    public void getBitmapImageByPicasso(String albumID, final ImageView imageView){
+        try {
+            Picasso.get().load(getSongUri(Long.parseLong(albumID)))
+                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(context, R.drawable.ic_music_note_black_24dp)))
+                    .resize(400,400)
+                    .onlyScaleDown()
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            imageView.setImageBitmap(bitmap);
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });}
+        catch (Exception ignored) {}
+    }
     public void getFullImageByPicasso(String albumID, ImageView imageView) {
         try {
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))

@@ -12,6 +12,7 @@
         android:id="@+id/ll_Back"
         android:weightSum="10"
         android:layout_weight="1"
+
         android:background="@color/transparent"
         android:orientation="horizontal"
         android:layout_width="match_parent"

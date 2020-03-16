@@ -16,17 +16,22 @@ public class BuildNotification {
         MediaMetadataCompat mediaMetadata = controller.getMetadata();
         MediaDescriptionCompat description = mediaMetadata.getDescription();
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "channel_music_playback");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
+                "channel_music_playback");
         builder
+                .setChannelId("channel_music_playback")
+                .setAutoCancel(true)
                 .setContentTitle(description.getTitle())
                 .setContentText(description.getSubtitle())
                 .setSubText(description.getDescription())
                 .setLargeIcon(description.getIconBitmap())
                 .setContentIntent(controller.getSessionActivity())
-                .setDeleteIntent(
-                        MediaButtonReceiver.buildMediaButtonPendingIntent(context, PlaybackStateCompat.ACTION_STOP))
+                .setDeleteIntent(MediaButtonReceiver
+                        .buildMediaButtonPendingIntent(context, PlaybackStateCompat.ACTION_STOP))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setShowWhen(false);
         return builder;
     }
+
+
 }

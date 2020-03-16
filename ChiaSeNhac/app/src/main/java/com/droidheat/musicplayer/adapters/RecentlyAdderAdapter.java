@@ -12,9 +12,10 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.manager.ImageUtils;
-import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.util.ArrayList;
@@ -22,19 +23,22 @@ import java.util.ArrayList;
 public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdapter.ItemViewHolder> {
     private final Context context;
     private ArrayList<SongModel> items;
-
-    public RecentlyAdderAdapter(ArrayList<SongModel> items, Context context) {
+    private String type;
+    private SharedPrefsManager prefsManager;
+    public RecentlyAdderAdapter(Context context, ArrayList<SongModel> items, String type) {
         this.items = items;
+        this.type = type;
         this.context = context;
-
+        prefsManager = new SharedPrefsManager();
+        prefsManager.setContext(context);
     }
 
-    private SetOnClick SetOnClick;
-    public void SetOnClickItem(SetOnClick SetOnClick) {
-        this.SetOnClick = SetOnClick;
+    private OnClickItem onClickItem;
+    public void SetOnClickItem(OnClickItem onClickItem) {
+        this.onClickItem = onClickItem;
     }
-    public interface SetOnClick {
-        void getCurrentSong(int index);
+    public interface OnClickItem {
+        void onClick(String type, int index);
     }
 
     @Override
@@ -50,31 +54,29 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
     @Override
     public void onBindViewHolder(ItemViewHolder holder, final int position) {
         SongModel item;
-        if (items == SongsManager.getInstance().newSongs()){
-            item = SongsManager.getInstance().newSongs().get(position);
-        }else {
-            item = items.get(position);
-        }
 
-        if (item != null) {
-            holder.set(item);
-            holder.mL_Recently_Add.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    SetOnClick.getCurrentSong(position);
-                }
-            });
-        }
+        item = items.get(position);
+        holder.set(item);
+        holder.mL_Recently_Add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prefsManager.setInteger(Constants.PREFERENCES.POSITION,position);
+                prefsManager.setString(Constants.PREFERENCES.TYPE, type);
+                onClickItem.onClick(type, position);
+
+            }
+        });
+
     }
 
     @Override
     public int getItemCount() {
-        if (items == null) {
-            return 0;
+        if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
+            return items.size();
+        }else {
+            return 15;
         }
-        return 15;
     }
-
 
 
     public class ItemViewHolder extends RecyclerView.ViewHolder  {

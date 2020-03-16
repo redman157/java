@@ -24,7 +24,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.PlayActivity"></activity>
+        <activity android:name=".activities.RecentlyAllMusicActivity"></activity>
+        <activity android:name=".activities.PlayActivity" />
         <activity android:name=".activities.EqualizerActivity" />
         <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.TimerActivity" />

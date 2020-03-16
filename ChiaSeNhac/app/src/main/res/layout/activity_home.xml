@@ -60,6 +60,7 @@
                             android:paddingLeft="10dp"
                             android:layout_weight="1.5"
                             android:id="@+id/menu_item"
+
                             android:scaleType="center"
                             android:src="@drawable/icon_menu"
                             android:layout_width="0dp"
@@ -107,10 +108,10 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#404040"
-            android:layout_above="@id/fragment"/>
+            android:layout_above="@id/fm_music_dock"/>
 
         <fragment
-            android:id="@+id/fragment"
+            android:id="@+id/fm_music_dock"
             android:name="com.droidheat.musicplayer.fragments.MusicDockFragment"
             class="com.droidheat.musicplayer.fragments.MusicDockFragment"
             android:layout_width="match_parent"
@@ -120,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#404040"
-            android:layout_above="@id/fragment"/>
+            android:layout_above="@id/fm_music_dock"/>
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

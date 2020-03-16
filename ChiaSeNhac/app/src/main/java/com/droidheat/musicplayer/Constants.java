@@ -10,6 +10,7 @@ public class Constants {
     public @interface VALUE {
         String SYNC = "sync";
         String TASK = "task";
+        String ALL_NEW_SONGS = "all_new_songs";
         String NEW_SONGS = "new_songs";
         String ALL_SONGS = "all_songs";
         String PLAYLIST_DB = "playlist.db";
@@ -17,7 +18,8 @@ public class Constants {
         String FAVS_DB = "Favs.db";
         String PLAYLISTSONGS_DB = "playlistsongs.db";
         String INPUT_METHOD = "input_method";
-
+        String TYPE = "type";
+        String POSITION = "position";
 
     }
 
@@ -32,6 +34,9 @@ public class Constants {
     }
 
     public @interface PREFERENCES{
+        String CURRENT_MEDIA = "CurrentMedia";
+        String TYPE = "type";
+        String POSITION = "position";
         String state = "state";
         String HOME_ARTIST = "HOME_ARTIST";
         String accentColor = "accentColor";

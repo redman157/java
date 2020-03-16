@@ -276,6 +276,7 @@
                 android:layout_height="match_parent"/>
 
             <Button
+                android:id="@+id/btn_ViewAll"
                 android:layout_gravity="center"
                 android:textColor="@color/cyan"
                 android:textSize="15dp"

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,43 +18,34 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.droidheat.musicplayer.ChangeMusic;
 import com.droidheat.musicplayer.Constants;
-import com.droidheat.musicplayer.IndexMusic;
 import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.activities.PlayActivity;
+import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongsManager;
 
-public class MusicDockFragment extends Fragment implements View.OnClickListener, PlayMusic.CallBackListener, IndexMusic {
+public class MusicDockFragment extends Fragment implements View.OnClickListener,
+        PlayMusic.CallBackListener{
     private View view;
     private Button mBtnTitle;
-    private ImageView mImgArt;
+    public ImageView mImgArt;
     private ImageButton mImbPlay;
-    private TextView mTextTitle, mTextArtists;
+    public TextView mTextTitle, mTextArtists;
     private PlayMusic mPlayMusic;
     private SongsManager mSongsManager;
     private MediaBrowserCompat mMediaBrowser;
-    private int mCurrentMusic = -3;
-    public static MusicDockFragment newInstance(String type, int Index) {
-
-        Bundle args = new Bundle();
-
-        MusicDockFragment fragment = new MusicDockFragment();
-        if (type.equals(Constants.VALUE.NEW_SONGS)) {
-            args.putInt(type, Index);
-        }else if (type.equals(Constants.VALUE.ALL_SONGS)){
-            args.putInt(type, Index);
-        }else {
-            Log.d("MusicDockFragmentLog", "null");
-        }
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    public String type = Constants.VALUE.NEW_SONGS;
+    public int position = 0;
+    private SharedPrefsManager prefsManager;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        HomeFragment.newInstance().SetIndexMusic(this);
+        prefsManager = new SharedPrefsManager();
+        prefsManager.setContext(getActivity());
+        position = prefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
+        type = prefsManager.getString(Constants.PREFERENCES.TYPE, Constants.VALUE.NEW_SONGS);
 
         mPlayMusic = PlayMusic.getInstance();
         mSongsManager = SongsManager.getInstance();
@@ -83,10 +73,10 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
             initView();
             assignView();
         }
-        if (mCurrentMusic == -3){
-            mPlayMusic.setCallBack(this);
-            mPlayMusic.initMediaBrowser();
-        }
+
+        mPlayMusic.setCallBack(this);
+        mPlayMusic.initMediaBrowser();
+
 
 
         return view;
@@ -102,14 +92,20 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
 
     private void assignView(){
         mBtnTitle.setOnClickListener(this);
+        ChangeMusic.getInstance().setContext(getContext());
+        ChangeMusic.getInstance().setFragment(this);
+        ChangeMusic.getInstance().setPosition(type, position);
+        ChangeMusic.getInstance().switchMusic();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fm_btn_title:
-                Intent intent = new Intent(getActivity(), PlayActivity.class);
 
+                Intent intent = new Intent(getActivity(), PlayActivity.class);
+                intent.putExtra(Constants.VALUE.TYPE, type);
+                intent.putExtra(Constants.VALUE.POSITION, position);
                 startActivity(intent);
 
                 break;
@@ -156,14 +152,24 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void getMetadataCompat(MediaMetadataCompat compat) {
-        mTextTitle.setText(compat.getText(MediaMetadataCompat.METADATA_KEY_TITLE));
+     /*   mTextTitle.setText(compat.getText(MediaMetadataCompat.METADATA_KEY_TITLE));
         mTextArtists.setText(compat.getText(MediaMetadataCompat.METADATA_KEY_ARTIST));
-        mImgArt.setImageBitmap(compat.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART));
-
+        mImgArt.setImageBitmap(compat.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART));*/
     }
 
-    @Override
-    public void getIndex(int current) {
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

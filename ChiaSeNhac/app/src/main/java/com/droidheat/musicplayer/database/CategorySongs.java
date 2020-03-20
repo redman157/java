@@ -33,12 +33,12 @@ public class CategorySongs {
 
     public void newRenderDB(Context context){
         this.context = context;
-        this.myDBHelper = new ReaderDB(this.context);
+        myDBHelper = new ReaderDB(context);
 //        this.myDBHelper = new ReaderDB(context, database);
     }
 
     public CategorySongs open() {
-        database = this.myDBHelper.getWritableDatabase();
+        database = myDBHelper.getWritableDatabase();
         return this;
     }
 
@@ -60,7 +60,7 @@ public class CategorySongs {
         contentValues.put(Database.CATEGORY.ARTIST, songModel.getArtist());
         contentValues.put(Database.CATEGORY.ALBUM, songModel.getAlbum());
         contentValues.put(Database.CATEGORY.NAME, songModel.getFileName());
-        contentValues.put(Database.CATEGORY.FAKE_PATH, dropInvalidString(songModel.getPath()));
+        contentValues.put(Database.CATEGORY.FAKEPATH, dropInvalidString(songModel.getPath()));
         contentValues.put(Database.CATEGORY.DURATION, songModel.getDuration());
         contentValues.put(Database.CATEGORY.ALBUM_ID, songModel.getAlbumID());
         return database.insert(Database.CATEGORY.TABLE_NAME, "NULL", contentValues);
@@ -146,17 +146,17 @@ public class CategorySongs {
         return query;
     }
 
-    public boolean checkRow(String row) {
-        String where = Database.CATEGORY.FAKE_PATH+" = '"+dropInvalidString(row)+"';";
-
-        Cursor query =
-                this.database.query(Database.CATEGORY.TABLE_NAME, Database.CATEGORY.ALL_KEYS, where, null, null, null, null);
-        if (query.getCount() > 0) {
-            query.close();
+    public boolean checkRow(String path) {
+        String where = Database.CATEGORY.FAKEPATH + " = '" + dropInvalidString(path) + "';";
+        Cursor c = database.query(Database.CATEGORY.TABLE_NAME, Database.CATEGORY.ALL_KEYS,
+                where, null, null, null, null);
+        if (c.getCount() > 0) {
+            c.close();
             return true;
+        } else {
+            c.close();
+            return false;
         }
-        query.close();
-        return false;
     }
 
     public boolean updateRow(String pathRow) {
@@ -169,7 +169,7 @@ public class CategorySongs {
         String title;
         int id;
         String category;
-        String update = Database.CATEGORY.FAKE_PATH+" = '"+dropInvalidString(pathRow)+"';";
+        String update = Database.CATEGORY.FAKEPATH +" = '"+dropInvalidString(pathRow)+"';";
 
         Cursor query = this.database.query(Database.CATEGORY.TABLE_NAME, Database.CATEGORY.ALL_KEYS, update, null, null, null, null);
         if (query != null) {
@@ -208,7 +208,7 @@ public class CategorySongs {
         values.put(Constants.PREFERENCES.NAME, name);
         values.put(Constants.PREFERENCES.DURATION, duration);
         values.put(Constants.PREFERENCES.ALBUMID, albumId);
-        values.put(Database.CATEGORY.FAKE_PATH, dropInvalidString(path));
+        values.put(Database.CATEGORY.FAKEPATH, dropInvalidString(path));
         if (this.database.update(Database.CATEGORY.TABLE_NAME, values, update, null) != 0) {
             return true;
         }

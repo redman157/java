@@ -34,6 +34,8 @@ public class Constants {
     }
 
     public @interface PREFERENCES{
+        String persistentNotificationPref = "persistentNotificationPref";
+        String audio_session_id = "audio_session_id";
         String CURRENT_MEDIA = "CurrentMedia";
         String TYPE = "type";
         String POSITION = "position";
@@ -48,18 +50,17 @@ public class Constants {
         String currentEqProfile = "currentEqProfile";
         String bassLevel = "bassLevel";
         String vzLevel = "vzLevel";
-        String persistentNotificationPref = "persistentNotificationPref";
-        String AUDIO_SESSION_ID =  "AUDIO_SESSION_ID";
+
         String MUSIC_ID = "musicID";
         String TITLE = "title";
-        String PATH = "PATH";
-        String ARTIST = "ARTIST";
-        String ALBUM = "ALBUM";
-        String NAME = "NAME";
-        String DURATION = "DURATION";
-        String ALBUMID = "ALBUMID";
+        String PATH = "path";
+        String ARTIST = "artist";
+        String ALBUM = "album";
+        String NAME = "name";
+        String DURATION = "duration";
+        String ALBUMID = "albumid";
         String RAW_PATH = "raw_path";
-        String DURATION_IN_MS = " DURATION_IN_MS";
+        String DURATION_IN_MS = " durationInMS";
     }
 
     public @interface ACTION{
@@ -70,6 +71,9 @@ public class Constants {
         String ACTION_REPEAT = "com.droidheat.musicplayer.action.REPEAT";
         String ACTION_TRACK_NEXT = "com.droidheat.musicplayer.action.TRACK_NEXT";
         String ACTION_TRACK_PREV = "com.droidheat.musicplayer.action.TRACK_PREV";
+
+        String BROADCAST_ACTION = "com.droidheat.musicplayer.action.seekprogress";
+        String BROADCAST_BUTTON = "com.droidheat.musicplayer.action.broadcastbutton";
     }
 
     public @interface COLOR{

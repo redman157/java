@@ -14,10 +14,10 @@ public class Database {
         String ALBUM = "ALBUM";
         String NAME = "NAME";
         String ALBUM_ID = "ALBUMID";
-        String FAKE_PATH = "fakepath";
+        String FAKEPATH = "fakepath";
         String DURATION = "DURATION";
         String[] ALL_KEYS = new String[]
-                {COLUMN_NAME_ID, CATEGORY, VOTES, TITLE, PATH, ARTIST, ALBUM, NAME, DURATION, ALBUM_ID, FAKE_PATH};
+                {COLUMN_NAME_ID, CATEGORY, VOTES, TITLE, PATH, ARTIST, ALBUM, NAME, DURATION, ALBUM_ID, FAKEPATH};
         String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + TABLE_NAME + " (" +
                         COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +
@@ -30,7 +30,7 @@ public class Database {
                         NAME + TEXT_TYPE + COMMA_SEP +
                         DURATION + TEXT_TYPE + COMMA_SEP +
                         ALBUM_ID + TEXT_TYPE + COMMA_SEP +
-                        FAKE_PATH + TEXT_TYPE +
+                        FAKEPATH + TEXT_TYPE +
                         ");";
         String SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;

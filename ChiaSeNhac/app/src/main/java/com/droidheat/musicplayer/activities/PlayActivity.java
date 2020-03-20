@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.media.MediaMetadataCompat;
@@ -22,7 +23,7 @@ import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.ChangeMusicPagerAdapter;
 import com.droidheat.musicplayer.fragments.ChangeMusicFragment;
-import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.manager.SongsUtils;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.text.SimpleDateFormat;
@@ -34,7 +35,7 @@ public class PlayActivity extends AppCompatActivity
         implements ViewPager.OnPageChangeListener, View.OnClickListener, PlayMusic.CallBackListener, SeekBar.OnSeekBarChangeListener{
     private ViewPager mVpMusic;
     private ChangeMusicPagerAdapter mAdapter;
-    private SongsManager mSongManager;
+    private SongsUtils mSongManager;
     private SeekBar mSbTime;
     private int indexPage = 0;
     private PlayMusic mPlayMusic;
@@ -61,6 +62,8 @@ public class PlayActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+        mSongManager = SongsUtils.getInstance();
+        mSongManager.setContext(this);
         // nhận giá trị postion và type ở home fragment và recently activity
         type = this.getIntent().getStringExtra(Constants.VALUE.TYPE);
         position = this.getIntent().getIntExtra(Constants.VALUE.POSITION, 0);
@@ -101,8 +104,6 @@ public class PlayActivity extends AppCompatActivity
         mBtnFavourite.setOnClickListener(this);
 
 
-        mSongManager = SongsManager.getInstance();
-        mSongManager.setContext(this);
 
         mSbTime.setOnSeekBarChangeListener(this);
         mAdapter = new ChangeMusicPagerAdapter(getSupportFragmentManager());
@@ -139,7 +140,7 @@ public class PlayActivity extends AppCompatActivity
         mTextRightTime.setText(convertTime(MusicType.get(position).getTime()));
         mSbTime.setProgress(0);
         mSbTime.setMax(MusicType.get(position).getTime());
-        Log.d("BBB","Min: "+ 0+ " -- Max: "+ SongsManager.getInstance().allSongs().get(position).getTime());
+        Log.d("BBB","Min: "+ 0+ " -- Max: "+ SongsUtils.getInstance().allSongs().get(position).getTime());
 
     }
 
@@ -152,7 +153,10 @@ public class PlayActivity extends AppCompatActivity
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.icon_play:
-                MediaControllerCompat.getMediaController(PlayActivity.this).getTransportControls().play();
+                SongsUtils.getInstance().setCurrentMusicID(position);
+                MediaControllerCompat
+                        .getMediaController(PlayActivity.this)
+                        .getTransportControls().play();
                 break;
             case R.id.icon_next:
                 break;

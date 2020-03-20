@@ -24,7 +24,7 @@ import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.activities.PlayActivity;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
-import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.manager.SongsUtils;
 
 public class MusicDockFragment extends Fragment implements View.OnClickListener,
         PlayMusic.CallBackListener{
@@ -34,7 +34,7 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
     private ImageButton mImbPlay;
     public TextView mTextTitle, mTextArtists;
     private PlayMusic mPlayMusic;
-    private SongsManager mSongsManager;
+    private SongsUtils mSongsUtils;
     private MediaBrowserCompat mMediaBrowser;
     public String type = Constants.VALUE.NEW_SONGS;
     public int position = 0;
@@ -48,8 +48,8 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
         type = prefsManager.getString(Constants.PREFERENCES.TYPE, Constants.VALUE.NEW_SONGS);
 
         mPlayMusic = PlayMusic.getInstance();
-        mSongsManager = SongsManager.getInstance();
-        mSongsManager.setContext(getActivity());
+        mSongsUtils = SongsUtils.getInstance();
+        mSongsUtils.setContext(getActivity());
         mPlayMusic.setActivity(getActivity());
     }
 
@@ -102,12 +102,13 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fm_btn_title:
+                if (!SongsUtils.getInstance().queue().isEmpty()) {
 
-                Intent intent = new Intent(getActivity(), PlayActivity.class);
-                intent.putExtra(Constants.VALUE.TYPE, type);
-                intent.putExtra(Constants.VALUE.POSITION, position);
-                startActivity(intent);
-
+                    Intent intent = new Intent(getActivity(), PlayActivity.class);
+                    intent.putExtra(Constants.VALUE.TYPE, type);
+                    intent.putExtra(Constants.VALUE.POSITION, position);
+                    startActivity(intent);
+                }
                 break;
         }
     }

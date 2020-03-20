@@ -11,9 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
@@ -21,11 +19,10 @@ import com.droidheat.musicplayer.ChangeMusic;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.IconView;
 import com.droidheat.musicplayer.R;
-import com.droidheat.musicplayer.adapters.OptionMenuAdapter;
 import com.droidheat.musicplayer.adapters.RecentlyAdderAdapter;
 import com.droidheat.musicplayer.fragments.MusicDockFragment;
 import com.droidheat.musicplayer.manager.ImageUtils;
-import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.manager.SongsUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class RecentlyAllMusicActivity extends AppCompatActivity implements
@@ -50,7 +47,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     private void assignView() {
         recentlyAdderAdapter = new RecentlyAdderAdapter(
                 this,
-                SongsManager.getInstance().newSongs(),
+                SongsUtils.getInstance().newSongs(),
                 Constants.VALUE.ALL_NEW_SONGS);
 //        rc_recently_add.setNestedScrollingEnabled(false);
         rc_recently_add.setHasFixedSize(true);
@@ -74,7 +71,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
         img_AlbumId = findViewById(R.id.img_AlbumId);
         scrollView = findViewById(R.id.scrollView);
         (new ImageUtils(this)).getSmallImageByPicasso(
-                SongsManager.getInstance().newSongs().get(0).getAlbumID(),
+                SongsUtils.getInstance().newSongs().get(0).getAlbumID(),
                 img_AlbumId);
     }
 
@@ -111,7 +108,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     public void onClick(String type, int index) {
         if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
             (new ImageUtils(this)).getSmallImageByPicasso(
-                    SongsManager.getInstance().newSongs().get(index).getAlbumID(),
+                    SongsUtils.getInstance().newSongs().get(index).getAlbumID(),
                     img_AlbumId);
 
             Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.fm_music_dock);

@@ -24,7 +24,7 @@ import com.droidheat.musicplayer.activities.RecentlyAllMusicActivity;
 import com.droidheat.musicplayer.adapters.RecentlyAdderAdapter;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
-import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.manager.SongsUtils;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.util.ArrayList;
@@ -60,10 +60,10 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
         ChangeMusic.getInstance().setContext(getContext());
 
         mAdderAdapter = new RecentlyAdderAdapter(getContext(),
-                SongsManager.getInstance().newSongs(),
+                SongsUtils.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS );
         mAdderAdapter.SetOnClickItem(this);
-        mNewSongs = SongsManager.getInstance().newSongs();
+        mNewSongs = SongsUtils.getInstance().newSongs();
     }
 
     @Nullable

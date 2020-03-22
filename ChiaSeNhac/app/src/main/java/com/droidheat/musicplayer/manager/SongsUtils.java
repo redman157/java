@@ -11,7 +11,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
-import android.media.MediaMetadataRetriever;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 
@@ -434,7 +435,7 @@ public class SongsUtils {
             if (file.exists()) {
                 replaceQueue(array);
                 setCurrentMusicID(id);
-                Intent intent = new Intent(Constants.ACTION.ACTION_PLAY);
+                Intent intent = new Intent(Constants.ACTION.PLAYING);
                 ContextCompat.startForegroundService(context, createExplicitFromImplicitIntent(intent));
 
             } else {
@@ -740,6 +741,7 @@ public class SongsUtils {
                                     .getColumnIndex(MediaStore.Audio.Media.DURATION));
                     int currentDuration = Math.round(Integer
                             .parseInt(duration));
+
                     if (currentDuration > ((excludeShortSounds) ? 60000 : 0)) {
                         if (!excludeWhatsApp || !cursor.getString(cursor
                                 .getColumnIndex(MediaStore.Audio.Media.ALBUM)).equals("WhatsApp Audio")) {
@@ -762,6 +764,12 @@ public class SongsUtils {
                                     .getString(
                                             cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
                                     );
+
+                      /*      Bitmap bitmap = (new ImageUtils(context)).getAlbumArt(Long.valueOf(albumID));
+                            if (bitmap == null){
+                                bitmap = BitmapFactory.decodeResource(context.getResources(),
+                                        R.drawable.ic_music_note_black_24dp);
+                            }*/
 
                             TimeZone tz = TimeZone.getTimeZone("UTC");
                             SimpleDateFormat df = new SimpleDateFormat("mm : ss", Locale.getDefault());

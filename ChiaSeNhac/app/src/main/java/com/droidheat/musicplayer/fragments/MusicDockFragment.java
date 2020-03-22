@@ -26,14 +26,13 @@ import com.droidheat.musicplayer.activities.PlayActivity;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongsUtils;
 
-public class MusicDockFragment extends Fragment implements View.OnClickListener,
-        PlayMusic.CallBackListener{
+public class MusicDockFragment extends Fragment implements View.OnClickListener{
     private View view;
     private Button mBtnTitle;
     public ImageView mImgArt;
     private ImageButton mImbPlay;
     public TextView mTextTitle, mTextArtists;
-    private PlayMusic mPlayMusic;
+//    private PlayMusic mPlayMusic;
     private SongsUtils mSongsUtils;
     private MediaBrowserCompat mMediaBrowser;
     public String type = Constants.VALUE.NEW_SONGS;
@@ -47,22 +46,22 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
         position = prefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
         type = prefsManager.getString(Constants.PREFERENCES.TYPE, Constants.VALUE.NEW_SONGS);
 
-        mPlayMusic = PlayMusic.getInstance();
+//        mPlayMusic = PlayMusic.getInstance();
         mSongsUtils = SongsUtils.getInstance();
         mSongsUtils.setContext(getActivity());
-        mPlayMusic.setActivity(getActivity());
+//        mPlayMusic.setActivity(getActivity());
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mPlayMusic.connect();
+//        mPlayMusic.connect();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mPlayMusic.disconnect();
+//        mPlayMusic.disconnect();
     }
 
     @Nullable
@@ -74,8 +73,8 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
             assignView();
         }
 
-        mPlayMusic.setCallBack(this);
-        mPlayMusic.initMediaBrowser();
+/*        mPlayMusic.setCallBack(this);
+        mPlayMusic.initMediaBrowser();*/
 
 
 
@@ -113,50 +112,6 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener,
         }
     }
 
-    @Override
-    public void getState(PlaybackStateCompat stateCompat) {
-        if (stateCompat == null) {
-            return;
-        }
-
-        switch (stateCompat.getState()) {
-            case PlaybackStateCompat.STATE_PLAYING:
-                mImbPlay.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.app_pause));
-                break;
-            case PlaybackStateCompat.STATE_PAUSED:
-                mImbPlay.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.app_play));
-                break;
-            case PlaybackStateCompat.STATE_NONE:
-            case PlaybackStateCompat.STATE_STOPPED:
-                mImbPlay.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.app_play));
-                break;
-            case PlaybackStateCompat.STATE_BUFFERING:
-                break;
-            default:
-//                Log.d(TAG, "Unhandled state " + state.getState());
-            case PlaybackStateCompat.STATE_CONNECTING:
-                break;
-            case PlaybackStateCompat.STATE_ERROR:
-                break;
-            case PlaybackStateCompat.STATE_FAST_FORWARDING:
-                break;
-            case PlaybackStateCompat.STATE_REWINDING:
-                break;
-            case PlaybackStateCompat.STATE_SKIPPING_TO_NEXT:
-                break;
-            case PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS:
-                break;
-            case PlaybackStateCompat.STATE_SKIPPING_TO_QUEUE_ITEM:
-                break;
-        }
-    }
-
-    @Override
-    public void getMetadataCompat(MediaMetadataCompat compat) {
-     /*   mTextTitle.setText(compat.getText(MediaMetadataCompat.METADATA_KEY_TITLE));
-        mTextArtists.setText(compat.getText(MediaMetadataCompat.METADATA_KEY_ARTIST));
-        mImgArt.setImageBitmap(compat.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART));*/
-    }
 
     public String getType() {
         return type;

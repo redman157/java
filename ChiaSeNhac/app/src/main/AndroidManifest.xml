@@ -62,7 +62,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widgetprovider4x1" />
         </receiver>
-
+        <service android:name=".MediaPlayerService" />
         <service
             android:name=".services.MusicPlayback"
             android:exported="false">

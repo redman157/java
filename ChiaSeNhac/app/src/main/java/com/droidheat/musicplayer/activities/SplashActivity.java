@@ -9,13 +9,17 @@ import androidx.core.content.PermissionChecker;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.IBinder;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,6 +27,8 @@ import android.widget.Toast;
 
 
 import com.droidheat.musicplayer.BaseActivity;
+import com.droidheat.musicplayer.MediaPlayerService;
+import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.database.Playlist;
 import com.droidheat.musicplayer.manager.CommonUtils;
 import com.droidheat.musicplayer.Constants;
@@ -36,7 +42,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Random;
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends AppCompatActivity {
 
     private String TAG = "SplashActivityLog";
     private boolean IsSync = false;
@@ -44,8 +50,10 @@ public class SplashActivity extends BaseActivity {
     private TextView mTextSync;
     private SongsUtils mSongsUtils;
     private SharedPrefsManager mSharedPrefsManager;
-    private PerformBackgroundTasks mPerformBackgroundTasks;
+
     /* access modifiers changed from: protected */
+    //Binding this Client to the AudioPlayer Service
+
     @SuppressLint({"SetTextI18n"})
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -136,32 +144,6 @@ public class SplashActivity extends BaseActivity {
             }
         });
         builder.show();
-    }
-
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    new PerformBackgroundTasks().execute("tasks");
-                    //weGotPermissions();
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-                    //TODO: if user has set to deny permission always, ask to go to settings
-                    Toast.makeText(this, "Application needs permission to run. Exiting!", Toast.LENGTH_SHORT).show();
-                    finish();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
     }
 
     @SuppressLint("StaticFieldLeak")

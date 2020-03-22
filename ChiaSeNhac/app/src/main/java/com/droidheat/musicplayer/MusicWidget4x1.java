@@ -39,10 +39,10 @@ public class MusicWidget4x1 extends AppWidgetProvider {
                 Intent repeatIntent = new Intent(context, MusicPlayback.class);
 
 
-                previousIntent.setAction(Constants.ACTION.ACTION_TRACK_PREV);
-                playIntent.setAction(Constants.ACTION.ACTION_PLAY);
-                nextIntent.setAction(Constants.ACTION.ACTION_TRACK_NEXT);
-                repeatIntent.setAction(Constants.ACTION.ACTION_REPEAT);
+                previousIntent.setAction(Constants.ACTION.PREVIOUS);
+                playIntent.setAction(Constants.ACTION.PLAYING);
+                nextIntent.setAction(Constants.ACTION.NEXT);
+                repeatIntent.setAction(Constants.ACTION.REPEAT);
 
                 PendingIntent pPreviousIntent = PendingIntent.getService(context, 0,
                         previousIntent,0);

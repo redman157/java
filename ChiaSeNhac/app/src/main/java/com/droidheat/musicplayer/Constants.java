@@ -7,6 +7,15 @@ public class Constants {
         String READ_EXTERNAL_STORAGE  = "android.permission.READ_EXTERNAL_STORAGE";
     }
 
+    public @interface MUSIC{
+        String isPlaying = "isPlaying";
+        String PREVIOUS = "previous";
+        String NEXT = "next";
+        String PAUSE = "pause";
+        String PLAY = "play";
+        String REPEAT = "seekpos";
+
+    }
     public @interface VALUE {
         String SYNC = "sync";
         String TASK = "task";
@@ -20,7 +29,7 @@ public class Constants {
         String INPUT_METHOD = "input_method";
         String TYPE = "type";
         String POSITION = "position";
-
+        String IS_PLAYING_STATUS = "is_playing_status";
     }
 
     public @interface TAG{
@@ -31,6 +40,12 @@ public class Constants {
 
     public @interface REQUEST_CODE{
         int READ_EXTERNAL_STORAGE = 1;
+        int PREVIOUS = 100;
+        int NEXT = 101;
+        int PAUSE = 102;
+        int PLAY = 103;
+        int REPEAT = 104;
+
     }
 
     public @interface PREFERENCES{
@@ -64,16 +79,19 @@ public class Constants {
     }
 
     public @interface ACTION{
-        String ACTION_CLOSE = "com.droidheat.musicplayer.action.CLOSE";
+        String STOP = "com.droidheat.musicplayer.action.CLOSE";
         String ACTION_PERSISTENT_NOTIFICATION = "com.droidheat.musicplayer.action.PERSISTENT_NOTIFICATION";
-        String ACTION_PLAY = "com.droidheat.musicplayer.action.PLAY";
-        String ACTION_PLAY_PAUSE = "com.droidheat.musicplayer.action.PLAY_PAUSE";
-        String ACTION_REPEAT = "com.droidheat.musicplayer.action.REPEAT";
-        String ACTION_TRACK_NEXT = "com.droidheat.musicplayer.action.TRACK_NEXT";
-        String ACTION_TRACK_PREV = "com.droidheat.musicplayer.action.TRACK_PREV";
+        String PLAYING = "com.droidheat.musicplayer.action.PLAYING";
+        String PAUSE = "com.droidheat.musicplayer.action.PLAY_PAUSE";
+        String REPEAT = "com.droidheat.musicplayer.action.REPEAT";
+        String NEXT = "com.droidheat.musicplayer.action.TRACK_NEXT";
+        String PREVIOUS = "com.droidheat.musicplayer.action.TRACK_PREV";
 
-        String BROADCAST_ACTION = "com.droidheat.musicplayer.action.seekprogress";
+        String Broadcast_STOP_AUDIO = "com.droidheat.musicplayer.action.StopAudio";
+        String BROADCAST_PLAY_NEW_AUDIO = "com.droidheat.musicplayer.action.PlayNewAudio";
+        String BROADCAST_SEEK_BAR = "com.droidheat.musicplayer.action.seekprogress";
         String BROADCAST_BUTTON = "com.droidheat.musicplayer.action.broadcastbutton";
+        String BROADCAST_RESET_AUDIO = "com.droidheat.musicplayer.action.ResetAudio";
     }
 
     public @interface COLOR{

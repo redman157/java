@@ -142,31 +142,31 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
             Log.d(tag, action== null? "null": "khac null");
             if (action != null) {
                 switch (action) {
-                    case Constants.ACTION.ACTION_PLAY: {
+                    case Constants.ACTION.PLAYING: {
                         resetMediaPlayerPosition();
                         processPlayRequest();
                         break;
                     }
-                    case Constants.ACTION.ACTION_PLAY_PAUSE: {
+                    case Constants.ACTION.PAUSE: {
 
                         resetMediaPlayerPosition();
 
                         processPlayPause();
                         break;
                     }
-                    case Constants.ACTION.ACTION_TRACK_PREV: {
+                    case Constants.ACTION.PREVIOUS: {
                         processPrevRequest();
                         break;
                     }
-                    case Constants.ACTION.ACTION_TRACK_NEXT: {
+                    case Constants.ACTION.NEXT: {
                         processNextRequest();
                         break;
                     }
-                    case Constants.ACTION.ACTION_REPEAT: {
+                    case Constants.ACTION.REPEAT: {
                         musicWidgetsReset();
                         break;
                     }
-                    case Constants.ACTION.ACTION_CLOSE: {
+                    case Constants.ACTION.STOP: {
                         if (!mSharedPrefsManager.getBoolean("persistentNotificationPref", false)) {
                             processCloseRequest();
                         } else {
@@ -573,14 +573,14 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
                 = BuildNotification.from(MusicPlayback.this, mMediaSessionCompat);
 
         PendingIntent pCloseIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_CLOSE), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.STOP), 0);
 
         PendingIntent prevIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_TRACK_PREV), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.PREVIOUS), 0);
         PendingIntent playPauseIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_PLAY_PAUSE), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.PAUSE), 0);
         PendingIntent nextIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_TRACK_NEXT),
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.NEXT),
                 0);
 
         builder.addAction(new NotificationCompat.Action(R.drawable.app_previous, "Previous", prevIntent));
@@ -605,14 +605,14 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
                 = BuildNotification.from(MusicPlayback.this, mMediaSessionCompat);
 
         PendingIntent pCloseIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_CLOSE), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.STOP), 0);
 
         PendingIntent prevIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_TRACK_PREV), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.PREVIOUS), 0);
         PendingIntent playPauseIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_PLAY_PAUSE), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.PAUSE), 0);
         PendingIntent nextIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_TRACK_NEXT), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.NEXT), 0);
 
         builder.addAction(new NotificationCompat.Action(R.drawable.app_previous, "Previous", prevIntent));
         builder.addAction(new NotificationCompat.Action(R.drawable.app_play, "Play", playPauseIntent));
@@ -637,14 +637,14 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
                 = BuildNotification.from(MusicPlayback.this, mMediaSessionCompat);
 
         PendingIntent pCloseIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_CLOSE), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.STOP), 0);
 
         PendingIntent prevIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_TRACK_PREV), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.PREVIOUS), 0);
         PendingIntent playPauseIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_PLAY_PAUSE), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.PAUSE), 0);
         PendingIntent nextIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.ACTION_TRACK_NEXT), 0);
+                (new Intent(this, MusicPlayback.class)).setAction(Constants.ACTION.NEXT), 0);
 
         builder.addAction(new NotificationCompat.Action(R.drawable.app_previous, "Previous", prevIntent));
         builder.addAction(new NotificationCompat.Action(R.drawable.app_play, "Play", playPauseIntent));

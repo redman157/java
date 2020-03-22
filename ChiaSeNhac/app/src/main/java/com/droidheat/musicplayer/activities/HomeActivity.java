@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.droidheat.musicplayer.BaseActivity;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.OptionMenuAdapter;
@@ -35,7 +36,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
+public class HomeActivity extends BaseActivity implements View.OnClickListener,
         OptionMenuAdapter.SetOnClickItemMenu, ViewPager.OnPageChangeListener {
     private View view_LayoutMenu;
 

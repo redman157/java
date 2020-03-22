@@ -4,7 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.icu.util.LocaleData;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,8 +21,10 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.droidheat.musicplayer.BaseActivity;
 import com.droidheat.musicplayer.ChangeMusic;
 import com.droidheat.musicplayer.Constants;
+import com.droidheat.musicplayer.MediaPlayerService;
 import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.ChangeMusicPagerAdapter;
@@ -31,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class PlayActivity extends AppCompatActivity
+public class PlayActivity extends BaseActivity
         implements ViewPager.OnPageChangeListener, View.OnClickListener, PlayMusic.CallBackListener, SeekBar.OnSeekBarChangeListener{
     private ViewPager mVpMusic;
     private ChangeMusicPagerAdapter mAdapter;
@@ -46,16 +52,20 @@ public class PlayActivity extends AppCompatActivity
     private String type;
     private int position;
     private ArrayList<SongModel> MusicType = new ArrayList<>();
+    private boolean receiverRegistered;
+    private Intent intent;
+    private Intent intentStatus;
     @Override
     protected void onStart() {
         super.onStart();
-        mPlayMusic.connect();
+//        mPlayMusic.connect();
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mPlayMusic.disconnect();
+//        mPlayMusic.disconnect();
     }
 
     @Override
@@ -69,14 +79,16 @@ public class PlayActivity extends AppCompatActivity
         position = this.getIntent().getIntExtra(Constants.VALUE.POSITION, 0);
         MusicType = ChangeMusic.getInstance().switchMusic(type);
 
-
-        mPlayMusic = PlayMusic.getInstance();
-        mPlayMusic.setActivity(this);
-        mPlayMusic.initMediaBrowser();
+        intent = new Intent(Constants.ACTION.BROADCAST_SEEK_BAR);
+        intentStatus = new Intent(Constants.ACTION.PLAYING);
+//        mPlayMusic = PlayMusic.getInstance();
+//        mPlayMusic.setActivity(this);
+//        mPlayMusic.initMediaBrowser();
         initView();
         assignView();
-
+        playAudio();
     }
+
 
     private void initView() {
         mTextLeftTime = findViewById(R.id.text_leftTime);
@@ -148,15 +160,61 @@ public class PlayActivity extends AppCompatActivity
     public void onPageScrollStateChanged(int state) {
 
     }
+    private void playAudio(){
+        if (!receiverRegistered) {
+            registerReceiver(broadcastReceiver, new IntentFilter(
+                    Constants.ACTION.BROADCAST_SEEK_BAR));
+            registerReceiver(broadcastReceiverPlayPause, new IntentFilter(
+                    Constants.ACTION.BROADCAST_BUTTON));
 
+            receiverRegistered = true;
+        }
+        if (!MediaPlayerService.isStarted) {
+            Intent playerIntent = new Intent(this, MediaPlayerService.class);
+            startService(playerIntent);
+
+            MediaPlayerService.isStarted = true;
+        } else {
+            //Service is active
+            //Send a broadcast to the service -> PLAY_NEW_AUDIO
+            Intent broadcastIntent = new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO);
+            sendBroadcast(broadcastIntent);
+        }
+    }
+    // -- Broadcast Receiver to update position of seekbar from service --
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent serviceIntent) {
+//            updateUI(serviceIntent);
+        }
+    };
+    private BroadcastReceiver broadcastReceiverPlayPause = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent serviceIntent) {
+            boolean isPlaying = serviceIntent.getBooleanExtra("is_playing_status", true);
+            mBtnPlay.setImageResource(isPlaying ? R.drawable.ic_media_pause_light : R.drawable.ic_media_play_light);
+        }
+    };
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.icon_play:
                 SongsUtils.getInstance().setCurrentMusicID(position);
-                MediaControllerCompat
-                        .getMediaController(PlayActivity.this)
-                        .getTransportControls().play();
+
+                boolean isPlaying;
+                if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+
+                    mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
+                    isPlaying = false;
+                    Log.d("BBB","Play acitivy onClick : "+isPlaying );
+                } else {
+                     mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+                    isPlaying = true;
+                    Log.d("BBB","Play acitivy onClick : "+isPlaying );
+                }
+
+                intentStatus.putExtra(Constants.MUSIC.isPlaying, isPlaying);
+                sendBroadcast(intentStatus);
                 break;
             case R.id.icon_next:
                 break;

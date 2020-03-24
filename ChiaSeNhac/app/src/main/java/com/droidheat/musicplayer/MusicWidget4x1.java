@@ -40,7 +40,7 @@ public class MusicWidget4x1 extends AppWidgetProvider {
 
 
                 previousIntent.setAction(Constants.ACTION.PREVIOUS);
-                playIntent.setAction(Constants.ACTION.PLAYING);
+                playIntent.setAction(Constants.ACTION.PLAY);
                 nextIntent.setAction(Constants.ACTION.NEXT);
                 repeatIntent.setAction(Constants.ACTION.REPEAT);
 

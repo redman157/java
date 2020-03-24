@@ -3,8 +3,6 @@ package com.droidheat.musicplayer.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +13,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.droidheat.musicplayer.ChangeMusic;
 import com.droidheat.musicplayer.Constants;
-import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.activities.PlayActivity;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
-import com.droidheat.musicplayer.manager.SongsUtils;
+import com.droidheat.musicplayer.manager.SongsManager;
 
 public class MusicDockFragment extends Fragment implements View.OnClickListener{
     private View view;
@@ -33,7 +29,7 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
     private ImageButton mImbPlay;
     public TextView mTextTitle, mTextArtists;
 //    private PlayMusic mPlayMusic;
-    private SongsUtils mSongsUtils;
+    private SongsManager mSongsManager;
     private MediaBrowserCompat mMediaBrowser;
     public String type = Constants.VALUE.NEW_SONGS;
     public int position = 0;
@@ -47,8 +43,8 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
         type = prefsManager.getString(Constants.PREFERENCES.TYPE, Constants.VALUE.NEW_SONGS);
 
 //        mPlayMusic = PlayMusic.getInstance();
-        mSongsUtils = SongsUtils.getInstance();
-        mSongsUtils.setContext(getActivity());
+        mSongsManager = SongsManager.getInstance();
+        mSongsManager.setContext(getActivity());
 //        mPlayMusic.setActivity(getActivity());
     }
 
@@ -101,7 +97,7 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fm_btn_title:
-                if (!SongsUtils.getInstance().queue().isEmpty()) {
+                if (!SongsManager.getInstance().queue().isEmpty()) {
 
                     Intent intent = new Intent(getActivity(), PlayActivity.class);
                     intent.putExtra(Constants.VALUE.TYPE, type);

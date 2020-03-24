@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
-import com.droidheat.musicplayer.manager.ImageUtils;
+import com.droidheat.musicplayer.manager.ImageManager;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.models.SongModel;
 
@@ -102,7 +102,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
             mTextTime.setText(song.getDuration());
             mImgMusic.setClipToOutline(true);
 
-            (new ImageUtils(context)).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);
+            (new ImageManager(context)).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);
 
         }
     }

@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <supports-screens
         android:anyDensity="true"
@@ -62,7 +63,22 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widgetprovider4x1" />
         </receiver>
-        <service android:name=".MediaPlayerService" />
+        <service android:name=".MediaPlayerService" >
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.droidheat.musicplayer.action.CLOSE" />
+                <action android:name="com.droidheat.musicplayer.action.PLAY_PAUSE" />
+                <action android:name="com.droidheat.musicplayer.action.PLAY" />
+                <action android:name="com.droidheat.musicplayer.action.REPEAT" />
+                <action android:name="com.droidheat.musicplayer.action.TRACK_PREV" />
+                <action android:name="com.droidheat.musicplayer.action.TRACK_NEXT" />
+                <action android:name="com.droidheat.musicplayer.action.PERSISTENT_NOTIFICATION" />
+                <action android:name="android.intent.action.HEADSET_PLUG" />
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
         <service
             android:name=".services.MusicPlayback"
             android:exported="false">

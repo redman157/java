@@ -3,9 +3,9 @@ package com.droidheat.musicplayer;
 import android.content.Context;
 
 import com.droidheat.musicplayer.fragments.MusicDockFragment;
-import com.droidheat.musicplayer.manager.ImageUtils;
+import com.droidheat.musicplayer.manager.ImageManager;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
-import com.droidheat.musicplayer.manager.SongsUtils;
+import com.droidheat.musicplayer.manager.SongsManager;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.util.ArrayList;
@@ -57,24 +57,24 @@ public class ChangeMusic {
         switch (type){
             case Constants.VALUE.ALL_SONGS:
                 mMusicDockFragment.mTextTitle.setText(
-                        SongsUtils.getInstance().allSongs().get(position).getTitle());
+                        SongsManager.getInstance().allSongs().get(position).getTitle());
                 mMusicDockFragment.mTextArtists.setText(
-                        SongsUtils.getInstance().allSongs().get(position).getArtist());
+                        SongsManager.getInstance().allSongs().get(position).getArtist());
 
-                (new ImageUtils(getContext())).getBitmapImageByPicasso(
-                        SongsUtils.getInstance().allSongs().get(position).getAlbumID(),
+                (new ImageManager(getContext())).getBitmapImageByPicasso(
+                        SongsManager.getInstance().allSongs().get(position).getAlbumID(),
                         mMusicDockFragment.mImgArt);
                 mMusicDockFragment.setType(type);
                 mMusicDockFragment.setPosition(position);
                 break;
             case Constants.VALUE.NEW_SONGS:
                 mMusicDockFragment.mTextTitle.setText(
-                        SongsUtils.getInstance().newSongs().get(position).getTitle());
+                        SongsManager.getInstance().newSongs().get(position).getTitle());
                 mMusicDockFragment.mTextArtists.setText(
-                        SongsUtils.getInstance().newSongs().get(position).getArtist());
+                        SongsManager.getInstance().newSongs().get(position).getArtist());
 
-                (new ImageUtils(getContext())).getBitmapImageByPicasso(
-                        SongsUtils.getInstance().newSongs().get(position).getAlbumID(),
+                (new ImageManager(getContext())).getBitmapImageByPicasso(
+                        SongsManager.getInstance().newSongs().get(position).getAlbumID(),
                         mMusicDockFragment.mImgArt);
                 mMusicDockFragment.setType(type);
                 mMusicDockFragment.setPosition(position);
@@ -86,10 +86,10 @@ public class ChangeMusic {
     public ArrayList<SongModel> switchMusic(String type){
         switch (type){
             case Constants.VALUE.ALL_SONGS:
-                return SongsUtils.getInstance().allSongs();
+                return SongsManager.getInstance().newSongs();
 
             case Constants.VALUE.NEW_SONGS:
-                return SongsUtils.getInstance().newSongs();
+                return SongsManager.getInstance().newSongs();
             default:
                 return null;
         }

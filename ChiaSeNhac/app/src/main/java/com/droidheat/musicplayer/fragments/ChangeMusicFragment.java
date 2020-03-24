@@ -1,9 +1,6 @@
 package com.droidheat.musicplayer.fragments;
 
-import android.media.Image;
 import android.os.Bundle;
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.R;
-import com.droidheat.musicplayer.adapters.ChangeMusicPagerAdapter;
-import com.droidheat.musicplayer.manager.ImageUtils;
+import com.droidheat.musicplayer.manager.ImageManager;
 import com.droidheat.musicplayer.models.SongModel;
 
 public class ChangeMusicFragment extends Fragment  {
@@ -43,7 +38,7 @@ public class ChangeMusicFragment extends Fragment  {
         }
         text_artists.setText(mSongModel.getArtist());
         text_tittle.setText(mSongModel.getTitle());
-        (new ImageUtils(getContext())).getSmallImageByPicasso(mSongModel.getAlbumID(), img_AblumArt);
+        (new ImageManager(getContext())).getSmallImageByPicasso(mSongModel.getAlbumID(), img_AblumArt);
 
         return view;
     }

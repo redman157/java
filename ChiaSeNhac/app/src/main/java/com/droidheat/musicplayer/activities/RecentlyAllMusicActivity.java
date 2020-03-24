@@ -21,8 +21,8 @@ import com.droidheat.musicplayer.IconView;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.RecentlyAdderAdapter;
 import com.droidheat.musicplayer.fragments.MusicDockFragment;
-import com.droidheat.musicplayer.manager.ImageUtils;
-import com.droidheat.musicplayer.manager.SongsUtils;
+import com.droidheat.musicplayer.manager.ImageManager;
+import com.droidheat.musicplayer.manager.SongsManager;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class RecentlyAllMusicActivity extends AppCompatActivity implements
@@ -47,7 +47,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     private void assignView() {
         recentlyAdderAdapter = new RecentlyAdderAdapter(
                 this,
-                SongsUtils.getInstance().newSongs(),
+                SongsManager.getInstance().newSongs(),
                 Constants.VALUE.ALL_NEW_SONGS);
 //        rc_recently_add.setNestedScrollingEnabled(false);
         rc_recently_add.setHasFixedSize(true);
@@ -70,8 +70,8 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
         rc_recently_add = findViewById(R.id.rc_recently_add);
         img_AlbumId = findViewById(R.id.img_AlbumId);
         scrollView = findViewById(R.id.scrollView);
-        (new ImageUtils(this)).getSmallImageByPicasso(
-                SongsUtils.getInstance().newSongs().get(0).getAlbumID(),
+        (new ImageManager(this)).getSmallImageByPicasso(
+                SongsManager.getInstance().newSongs().get(0).getAlbumID(),
                 img_AlbumId);
     }
 
@@ -107,8 +107,8 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     @Override
     public void onClick(String type, int index) {
         if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
-            (new ImageUtils(this)).getSmallImageByPicasso(
-                    SongsUtils.getInstance().newSongs().get(index).getAlbumID(),
+            (new ImageManager(this)).getSmallImageByPicasso(
+                    SongsManager.getInstance().newSongs().get(index).getAlbumID(),
                     img_AlbumId);
 
             Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.fm_music_dock);

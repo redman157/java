@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ImageUtils {
+public class ImageManager {
 
     private Context context;
-    public ImageUtils(Context context) {
+    public ImageManager(Context context) {
         this.context = context;
     }
 

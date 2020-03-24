@@ -22,9 +22,9 @@ import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.activities.HomeActivity;
 import com.droidheat.musicplayer.activities.RecentlyAllMusicActivity;
 import com.droidheat.musicplayer.adapters.RecentlyAdderAdapter;
-import com.droidheat.musicplayer.manager.ImageUtils;
+import com.droidheat.musicplayer.manager.ImageManager;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
-import com.droidheat.musicplayer.manager.SongsUtils;
+import com.droidheat.musicplayer.manager.SongsManager;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     private Button btn_ViewAll;
     private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
-    private ImageUtils mImageUtils;
+    private ImageManager mImageManager;
     private IndexMusic indexMusic;
     private Activity mActivity;
     private SharedPrefsManager prefsManager;
@@ -56,14 +56,14 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
 
 
 
-        mImageUtils = new ImageUtils(getContext());
+        mImageManager = new ImageManager(getContext());
         ChangeMusic.getInstance().setContext(getContext());
 
         mAdderAdapter = new RecentlyAdderAdapter(getContext(),
-                SongsUtils.getInstance().newSongs(),
+                SongsManager.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS );
         mAdderAdapter.SetOnClickItem(this);
-        mNewSongs = SongsUtils.getInstance().newSongs();
+        mNewSongs = SongsManager.getInstance().newSongs();
     }
 
     @Nullable

@@ -7,14 +7,14 @@ public class Constants {
         String READ_EXTERNAL_STORAGE  = "android.permission.READ_EXTERNAL_STORAGE";
     }
 
-    public @interface MUSIC{
-        String isPlaying = "isPlaying";
+    public @interface NOTIFICATION {
+        String IS_PLAYING = "is_playing";
         String PREVIOUS = "previous";
         String NEXT = "next";
         String PAUSE = "pause";
         String PLAY = "play";
         String REPEAT = "seekpos";
-
+        String IS_PLAYING_STATUS = "is_playing_status";
     }
     public @interface VALUE {
         String SYNC = "sync";
@@ -29,7 +29,7 @@ public class Constants {
         String INPUT_METHOD = "input_method";
         String TYPE = "type";
         String POSITION = "position";
-        String IS_PLAYING_STATUS = "is_playing_status";
+
     }
 
     public @interface TAG{
@@ -47,6 +47,7 @@ public class Constants {
         int REPEAT = 104;
 
     }
+
 
     public @interface PREFERENCES{
         String persistentNotificationPref = "persistentNotificationPref";
@@ -81,7 +82,7 @@ public class Constants {
     public @interface ACTION{
         String STOP = "com.droidheat.musicplayer.action.CLOSE";
         String ACTION_PERSISTENT_NOTIFICATION = "com.droidheat.musicplayer.action.PERSISTENT_NOTIFICATION";
-        String PLAYING = "com.droidheat.musicplayer.action.PLAYING";
+        String PLAY = "com.droidheat.musicplayer.action.PLAY";
         String PAUSE = "com.droidheat.musicplayer.action.PLAY_PAUSE";
         String REPEAT = "com.droidheat.musicplayer.action.REPEAT";
         String NEXT = "com.droidheat.musicplayer.action.TRACK_NEXT";

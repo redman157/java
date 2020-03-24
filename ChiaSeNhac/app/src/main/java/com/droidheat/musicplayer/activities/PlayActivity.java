@@ -1,6 +1,5 @@
 package com.droidheat.musicplayer.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
@@ -8,12 +7,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.icu.util.LocaleData;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
@@ -28,8 +25,9 @@ import com.droidheat.musicplayer.MediaPlayerService;
 import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.ChangeMusicPagerAdapter;
+import com.droidheat.musicplayer.database.Playlist;
 import com.droidheat.musicplayer.fragments.ChangeMusicFragment;
-import com.droidheat.musicplayer.manager.SongsUtils;
+import com.droidheat.musicplayer.manager.SongsManager;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.text.SimpleDateFormat;
@@ -41,7 +39,7 @@ public class PlayActivity extends BaseActivity
         implements ViewPager.OnPageChangeListener, View.OnClickListener, PlayMusic.CallBackListener, SeekBar.OnSeekBarChangeListener{
     private ViewPager mVpMusic;
     private ChangeMusicPagerAdapter mAdapter;
-    private SongsUtils mSongManager;
+    private SongsManager mSongManager;
     private SeekBar mSbTime;
     private int indexPage = 0;
     private PlayMusic mPlayMusic;
@@ -58,21 +56,31 @@ public class PlayActivity extends BaseActivity
     @Override
     protected void onStart() {
         super.onStart();
-//        mPlayMusic.connect();
 
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-//        mPlayMusic.disconnect();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            this.unregisterReceiver(brPlayPause);
+            this.unregisterReceiver(brSeekBar);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
-        mSongManager = SongsUtils.getInstance();
+        mSongManager = SongsManager.getInstance();
         mSongManager.setContext(this);
         // nhận giá trị postion và type ở home fragment và recently activity
         type = this.getIntent().getStringExtra(Constants.VALUE.TYPE);
@@ -80,14 +88,17 @@ public class PlayActivity extends BaseActivity
         MusicType = ChangeMusic.getInstance().switchMusic(type);
 
         intent = new Intent(Constants.ACTION.BROADCAST_SEEK_BAR);
-        intentStatus = new Intent(Constants.ACTION.PLAYING);
+        intentStatus = new Intent(Constants.ACTION.BROADCAST_BUTTON);
 //        mPlayMusic = PlayMusic.getInstance();
 //        mPlayMusic.setActivity(this);
 //        mPlayMusic.initMediaBrowser();
         initView();
         assignView();
-        playAudio();
+//        playAudio();
     }
+
+
+
 
 
     private void initView() {
@@ -152,7 +163,8 @@ public class PlayActivity extends BaseActivity
         mTextRightTime.setText(convertTime(MusicType.get(position).getTime()));
         mSbTime.setProgress(0);
         mSbTime.setMax(MusicType.get(position).getTime());
-        Log.d("BBB","Min: "+ 0+ " -- Max: "+ SongsUtils.getInstance().allSongs().get(position).getTime());
+
+//        Log.d("BBB","Min: "+ 0+ " -- Max: "+ SongsManager.getInstance().allSongs().get(position).getTime());
 
     }
 
@@ -162,36 +174,39 @@ public class PlayActivity extends BaseActivity
     }
     private void playAudio(){
         if (!receiverRegistered) {
-            registerReceiver(broadcastReceiver, new IntentFilter(
+            registerReceiver(brSeekBar, new IntentFilter(
                     Constants.ACTION.BROADCAST_SEEK_BAR));
-            registerReceiver(broadcastReceiverPlayPause, new IntentFilter(
+            registerReceiver(brPlayPause, new IntentFilter(
                     Constants.ACTION.BROADCAST_BUTTON));
 
             receiverRegistered = true;
         }
         if (!MediaPlayerService.isStarted) {
             Intent playerIntent = new Intent(this, MediaPlayerService.class);
+            playerIntent.setAction(Constants.ACTION.PLAY);
             startService(playerIntent);
 
             MediaPlayerService.isStarted = true;
         } else {
             //Service is active
             //Send a broadcast to the service -> PLAY_NEW_AUDIO
-            Intent broadcastIntent = new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO);
-            sendBroadcast(broadcastIntent);
+            Intent iPlayNewVideo = new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO);
+
+            sendBroadcast(iPlayNewVideo);
+
         }
     }
     // -- Broadcast Receiver to update position of seekbar from service --
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver brSeekBar = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent serviceIntent) {
 //            updateUI(serviceIntent);
         }
     };
-    private BroadcastReceiver broadcastReceiverPlayPause = new BroadcastReceiver() {
+    private BroadcastReceiver brPlayPause = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent serviceIntent) {
-            boolean isPlaying = serviceIntent.getBooleanExtra("is_playing_status", true);
+            boolean isPlaying = serviceIntent.getBooleanExtra(Constants.NOTIFICATION.IS_PLAYING_STATUS, true);
             mBtnPlay.setImageResource(isPlaying ? R.drawable.ic_media_pause_light : R.drawable.ic_media_play_light);
         }
     };
@@ -199,22 +214,27 @@ public class PlayActivity extends BaseActivity
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.icon_play:
-                SongsUtils.getInstance().setCurrentMusicID(position);
-
+                SongsManager.getInstance().setCurrentMusicID(position);
+                playAudio();
                 boolean isPlaying;
-                if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+                if (MediaPlayerService.mMediaPlayer != null) {
+                    if (MediaPlayerService.mMediaPlayer.isPlaying()) {
 
-                    mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
-                    isPlaying = false;
-                    Log.d("BBB","Play acitivy onClick : "+isPlaying );
-                } else {
-                     mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
-                    isPlaying = true;
-                    Log.d("BBB","Play acitivy onClick : "+isPlaying );
+                        mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+
+                        isPlaying = false;
+                        Log.d("BBB", "Play acitivy onClick : " + isPlaying);
+                    } else {
+                        mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
+                        isPlaying = true;
+                        Log.d("BBB", "Play acitivy onClick : " + isPlaying);
+                    }
+
+                    intentStatus.putExtra(Constants.NOTIFICATION.IS_PLAYING, isPlaying);
+                    sendBroadcast(intentStatus);
                 }
 
-                intentStatus.putExtra(Constants.MUSIC.isPlaying, isPlaying);
-                sendBroadcast(intentStatus);
+
                 break;
             case R.id.icon_next:
                 break;

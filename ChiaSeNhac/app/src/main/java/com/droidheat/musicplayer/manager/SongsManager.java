@@ -11,8 +11,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 
@@ -56,7 +54,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-public class SongsUtils {
+public class SongsManager {
     private ArrayList<HashMap<String, String>> albums = new ArrayList<>();
     private ArrayList<HashMap<String, String>> artists = new ArrayList<>();
     private  ArrayList<SongModel> mainList = new ArrayList<>();
@@ -68,16 +66,16 @@ public class SongsUtils {
     public SharedPrefsManager prefsManager;
 
     @SuppressLint("StaticFieldLeak")
-    private static SongsUtils instance;
+    private static SongsManager instance;
 
-    public static SongsUtils getInstance() {
+    public static SongsManager getInstance() {
         if (instance == null){
-            instance = new SongsUtils();
+            instance = new SongsManager();
         }
         return instance;
     }
 
-    private SongsUtils() {
+    private SongsManager() {
 
     }
 
@@ -109,7 +107,7 @@ public class SongsUtils {
                 }.getType();
                 ArrayList<SongModel> restoreData = new Gson().fromJson(prefsManager.getString("key", null), type);
                 replaceQueue(restoreData);
-                Log.d(TAG, "Retrieved queue from storage in SongsUtils. " + restoreData.size() + " mainList!");
+                Log.d(TAG, "Retrieved queue from storage in SongsManager. " + restoreData.size() + " mainList!");
             } catch (Exception e) {
                 Log.d(TAG, "Unable to retrieve data while queue is empty.");
                 Log.d(TAG, e.getMessage());
@@ -435,7 +433,7 @@ public class SongsUtils {
             if (file.exists()) {
                 replaceQueue(array);
                 setCurrentMusicID(id);
-                Intent intent = new Intent(Constants.ACTION.PLAYING);
+                Intent intent = new Intent(Constants.ACTION.PLAY);
                 ContextCompat.startForegroundService(context, createExplicitFromImplicitIntent(intent));
 
             } else {
@@ -542,7 +540,7 @@ public class SongsUtils {
         ListView listView = dialog.findViewById(R.id.listView);
         ImageView relAdd = dialog.findViewById(R.id.add_playlist);
         ImageView albumArt = dialog.findViewById(R.id.albumArt);
-        (new ImageUtils(context)).getImageByPicasso(hash.getAlbumID(), albumArt);
+        (new ImageManager(context)).getImageByPicasso(hash.getAlbumID(), albumArt);
         final PlaylistFragmentAdapterSimple playlistAdapter = new PlaylistFragmentAdapterSimple
                 (context);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -765,7 +763,7 @@ public class SongsUtils {
                                             cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
                                     );
 
-                      /*      Bitmap bitmap = (new ImageUtils(context)).getAlbumArt(Long.valueOf(albumID));
+                      /*      Bitmap bitmap = (new ImageManager(context)).getAlbumArt(Long.valueOf(albumID));
                             if (bitmap == null){
                                 bitmap = BitmapFactory.decodeResource(context.getResources(),
                                         R.drawable.ic_music_note_black_24dp);

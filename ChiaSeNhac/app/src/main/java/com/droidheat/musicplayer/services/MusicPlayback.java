@@ -52,7 +52,7 @@ import com.droidheat.musicplayer.activities.HomeActivity;
 import com.droidheat.musicplayer.database.CategorySongs;
 import com.droidheat.musicplayer.manager.CommonUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
-import com.droidheat.musicplayer.manager.SongsUtils;
+import com.droidheat.musicplayer.manager.SongsManager;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -82,7 +82,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     public static MediaSessionCompat mMediaSessionCompat;
     private PlaybackStateCompat.Builder mPlaybackStateBuilder;
     private SharedPrefsManager mSharedPrefsManager;
-    private SongsUtils mSongsUtils;
+    private SongsManager mSongsManager;
 
     private  Equalizer mEqualizer;
     private BassBoost mBassBoost;
@@ -111,8 +111,8 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
 
         mSharedPrefsManager = new SharedPrefsManager();
         mSharedPrefsManager.setContext(this);
-        mSongsUtils = SongsUtils.getInstance();
-        mSongsUtils.setContext(this);
+        mSongsManager = SongsManager.getInstance();
+        mSongsManager.setContext(this);
 
         /*
         Initialize
@@ -142,7 +142,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
             Log.d(tag, action== null? "null": "khac null");
             if (action != null) {
                 switch (action) {
-                    case Constants.ACTION.PLAYING: {
+                    case Constants.ACTION.PLAY: {
                         resetMediaPlayerPosition();
                         processPlayRequest();
                         break;
@@ -197,8 +197,8 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     }
 
     private void checkErrorInPrefs() {
-        if (mSongsUtils.getCurrentMusicID() > mSongsUtils.queue().size() - 1) {
-            mSongsUtils.setCurrentMusicID(0);
+        if (mSongsManager.getCurrentMusicID() > mSongsManager.queue().size() - 1) {
+            mSongsManager.setCurrentMusicID(0);
         }
     }
 
@@ -294,7 +294,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
      */
 
     private void saveData(){
-        int musicID = mSongsUtils.getCurrentMusicID();
+        int musicID = mSongsManager.getCurrentMusicID();
         mSharedPrefsManager.setInteger(Constants.PREFERENCES.audio_session_id,
                 getCurrentMediaPlayer().getAudioSessionId());
         try {
@@ -304,22 +304,22 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
                     musicID);
 
             mSharedPrefsManager.setString(Constants.PREFERENCES.TITLE ,
-                    mSongsUtils.queue().get(musicID).getTitle());
+                    mSongsManager.queue().get(musicID).getTitle());
 
             mSharedPrefsManager.setString(Constants.PREFERENCES.ARTIST ,
-                    mSongsUtils.queue().get(musicID).getArtist());
+                    mSongsManager.queue().get(musicID).getArtist());
 
             mSharedPrefsManager.setString(Constants.PREFERENCES.ALBUM ,
-                    mSongsUtils.queue().get(musicID).getAlbum());
+                    mSongsManager.queue().get(musicID).getAlbum());
 
             mSharedPrefsManager.setString(Constants.PREFERENCES.ALBUMID ,
-                    mSongsUtils.queue().get(musicID).getAlbumID());
+                    mSongsManager.queue().get(musicID).getAlbumID());
 
             mSharedPrefsManager.setString(Constants.PREFERENCES.RAW_PATH ,
-                    mSongsUtils.queue().get(musicID).getPath());
+                    mSongsManager.queue().get(musicID).getPath());
 
             mSharedPrefsManager.setString(Constants.PREFERENCES.DURATION ,
-                    mSongsUtils.queue().get(musicID).getDuration());
+                    mSongsManager.queue().get(musicID).getDuration());
 
             mSharedPrefsManager.setInteger(Constants.PREFERENCES.DURATION_IN_MS ,
                     getCurrentMediaPlayer().getDuration());
@@ -329,49 +329,49 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     }
 
     private void doPushPlay(int id) {
-        mSongsUtils.setCurrentMusicID(id);
+        mSongsManager.setCurrentMusicID(id);
         getCurrentMediaPlayer().reset();
         if (successfullyRetrievedAudioFocus()) {
             showPausedNotification();
             return;
         }
-        setMediaPlayer(mSongsUtils.queue().get(id).getPath());
+        setMediaPlayer(mSongsManager.queue().get(id).getPath());
     }
 
     private void processNextRequest(){
         resetMediaPlayerPosition();
 
-        int musicID = mSongsUtils.getCurrentMusicID();
+        int musicID = mSongsManager.getCurrentMusicID();
 
 
-        if (musicID + 1 != mSongsUtils.queue().size()){
+        if (musicID + 1 != mSongsManager.queue().size()){
             musicID++;
         }else {
             musicID = 0;
         }
-        mSongsUtils.setCurrentMusicID(musicID);
+        mSongsManager.setCurrentMusicID(musicID);
         if (successfullyRetrievedAudioFocus()) {
             showPausedNotification();
             return;
         }
 
         Log.d(tag, "Skipping to Next track.");
-        setMediaPlayer(mSongsUtils.queue().get(musicID).getPath());
+        setMediaPlayer(mSongsManager.queue().get(musicID).getPath());
     }
 
     private void processPrevRequest(){
         resetMediaPlayerPosition();
         if (getCurrentMediaPlayer().getCurrentPosition() < 5000){
-            int musicID =  mSongsUtils.getCurrentMusicID();
+            int musicID =  mSongsManager.getCurrentMusicID();
             if (musicID > 0) {
                 musicID--;
-                mSongsUtils.setCurrentMusicID(musicID);
+                mSongsManager.setCurrentMusicID(musicID);
                 Log.d(tag, "Skipping to Previous track.");
                 if (successfullyRetrievedAudioFocus()) {
                     showPausedNotification();
                     return;
                 }
-                setMediaPlayer(mSongsUtils.queue().get(musicID).getPath());
+                setMediaPlayer(mSongsManager.queue().get(musicID).getPath());
             }else {
                 mMediaSessionCompat.getController().getTransportControls().seekTo(0);
             }
@@ -385,9 +385,9 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
             showPausedNotification();
             return;
         }
-        Log.d(tag, "Processing Play Request for musicID: " + mSongsUtils.getCurrentMusicID());
+        Log.d(tag, "Processing Play Request for musicID: " + mSongsManager.getCurrentMusicID());
 
-        setMediaPlayer(mSongsUtils.queue().get(mSongsUtils.getCurrentMusicID()).getPath());
+        setMediaPlayer(mSongsManager.queue().get(mSongsManager.getCurrentMusicID()).getPath());
     }
 
     private void processPauseRequest(){
@@ -448,7 +448,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
     }
 
     private void setMetaData(){
-        if (mSongsUtils.queue().size() == 0){
+        if (mSongsManager.queue().size() == 0){
             MediaMetadataCompat mMediaMetadataCompat = new MediaMetadataCompat.Builder()
                     .putString(MediaMetadata.METADATA_KEY_TITLE,
                             mSharedPrefsManager.getString(Constants.PREFERENCES.TITLE,
@@ -468,18 +468,18 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
                     .build();
             mMediaSessionCompat.setMetadata(mMediaMetadataCompat);
         }else {
-            int musicID = mSongsUtils.getCurrentMusicID();
+            int musicID = mSongsManager.getCurrentMusicID();
             MediaMetadataCompat mMediaMetadataCompat = new MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_TITLE,
-                            mSongsUtils.queue().get(musicID).getTitle())
+                            mSongsManager.queue().get(musicID).getTitle())
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,
-                            mSongsUtils.queue().get(musicID).getAlbum())
+                            mSongsManager.queue().get(musicID).getAlbum())
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST,
-                            mSongsUtils.queue().get(musicID).getArtist())
+                            mSongsManager.queue().get(musicID).getArtist())
                     .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,
                             (long) mSharedPrefsManager.getInteger(Constants.PREFERENCES.DURATION_IN_MS, 0))
                     .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,
-                            grabAlbumArt(mSongsUtils.queue().get(musicID).getAlbumID()))
+                            grabAlbumArt(mSongsManager.queue().get(musicID).getAlbumID()))
                     .build();
             mMediaSessionCompat.setMetadata(mMediaMetadataCompat);
         }
@@ -769,7 +769,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
 
                 mCategorySongs.updateRow(path);
             }else {
-                mCategorySongs.addRow(1, mSongsUtils.queue().get(mSongsUtils.getCurrentMusicID()));
+                mCategorySongs.addRow(1, mSongsManager.queue().get(mSongsManager.getCurrentMusicID()));
             }
             Log.d(tag, mCategorySongs.checkRow(path) +"" );
             mCategorySongs.close();
@@ -795,7 +795,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
             Log.d(tag, "OnCompletion playing next track");
             processNextRequest();
         }else {
-            setMediaPlayer(mSongsUtils.queue().get(mSongsUtils.getCurrentMusicID()).getPath());
+            setMediaPlayer(mSongsManager.queue().get(mSongsManager.getCurrentMusicID()).getPath());
         }
 
     }
@@ -811,10 +811,11 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
          * remembered location
          * We reset this location to zero when we start playing a new song
          */
-        if (mPlaybackStateBuilder.build().getState() == PlaybackStateCompat.STATE_NONE &&
+        if (mPlaybackStateBuilder.build().getState() ==
+                PlaybackStateCompat.STATE_NONE &&
             mSharedPrefsManager.getString(Constants.PREFERENCES.RAW_PATH,"")
-                    .equals(mSongsUtils.queue()
-                            .get(mSongsUtils.getCurrentMusicID())
+                    .equals(mSongsManager.queue()
+                            .get(mSongsManager.getCurrentMusicID())
                             .getPath())){
             mMediaSessionCompat.getController()
                     .getTransportControls()
@@ -938,7 +939,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
      Init Music Media
      ----------------------------------------------------------------*******/
     /*private void playMedia() {
-        if (!mMediaPlayer.isPlaying()) {
+        if (!mMediaPlayer.IS_PLAYING()) {
             mMediaPlayer.start();
             isInitAudioError = false;
             Log.d(tag, "playMedia");

@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.droidheat.musicplayer.R;
-import com.droidheat.musicplayer.manager.ImageManager;
+import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.models.SongModel;
 
 public class ChangeMusicFragment extends Fragment  {
@@ -38,7 +38,7 @@ public class ChangeMusicFragment extends Fragment  {
         }
         text_artists.setText(mSongModel.getArtist());
         text_tittle.setText(mSongModel.getTitle());
-        (new ImageManager(getContext())).getSmallImageByPicasso(mSongModel.getAlbumID(), img_AblumArt);
+        ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongModel.getAlbumID(), img_AblumArt);
 
         return view;
     }

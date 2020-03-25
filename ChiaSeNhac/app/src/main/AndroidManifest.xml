@@ -63,8 +63,9 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widgetprovider4x1" />
         </receiver>
-        <service android:name=".MediaPlayerService" >
-            android:exported="false">
+        <service android:name=".MediaPlayerService"
+            android:exported="false"
+            tools:ignore="ExtraText">
             <intent-filter>
                 <action android:name="com.droidheat.musicplayer.action.CLOSE" />
                 <action android:name="com.droidheat.musicplayer.action.PLAY_PAUSE" />
@@ -79,6 +80,7 @@
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
+
         <service
             android:name=".services.MusicPlayback"
             android:exported="false">

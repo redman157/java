@@ -3,7 +3,7 @@ package com.droidheat.musicplayer;
 import android.content.Context;
 
 import com.droidheat.musicplayer.fragments.MusicDockFragment;
-import com.droidheat.musicplayer.manager.ImageManager;
+import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongsManager;
 import com.droidheat.musicplayer.models.SongModel;
@@ -30,8 +30,8 @@ public class ChangeMusic {
     public void setPosition(String type, int index){
         this.position = index;
         this.type = type;
-        prefsManager.setInteger(Constants.PREFERENCES.POSITION,position);
-        prefsManager.setString(Constants.PREFERENCES.TYPE, type);
+        prefsManager.setInteger(Constants.PREFERENCES.POSITION,this.position);
+        prefsManager.setString(Constants.PREFERENCES.TYPE, this.type);
     }
 
     public void setContext(Context context) {
@@ -61,7 +61,7 @@ public class ChangeMusic {
                 mMusicDockFragment.mTextArtists.setText(
                         SongsManager.getInstance().allSongs().get(position).getArtist());
 
-                (new ImageManager(getContext())).getBitmapImageByPicasso(
+                ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
                         SongsManager.getInstance().allSongs().get(position).getAlbumID(),
                         mMusicDockFragment.mImgArt);
                 mMusicDockFragment.setType(type);
@@ -73,7 +73,7 @@ public class ChangeMusic {
                 mMusicDockFragment.mTextArtists.setText(
                         SongsManager.getInstance().newSongs().get(position).getArtist());
 
-                (new ImageManager(getContext())).getBitmapImageByPicasso(
+                ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
                         SongsManager.getInstance().newSongs().get(position).getAlbumID(),
                         mMusicDockFragment.mImgArt);
                 mMusicDockFragment.setType(type);
@@ -94,8 +94,5 @@ public class ChangeMusic {
                 return null;
         }
     }
-
-
-
 
 }

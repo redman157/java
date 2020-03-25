@@ -21,7 +21,7 @@ import com.droidheat.musicplayer.IconView;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.RecentlyAdderAdapter;
 import com.droidheat.musicplayer.fragments.MusicDockFragment;
-import com.droidheat.musicplayer.manager.ImageManager;
+import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SongsManager;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
@@ -70,7 +70,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
         rc_recently_add = findViewById(R.id.rc_recently_add);
         img_AlbumId = findViewById(R.id.img_AlbumId);
         scrollView = findViewById(R.id.scrollView);
-        (new ImageManager(this)).getSmallImageByPicasso(
+        ImageUtils.getInstance(this).getSmallImageByPicasso(
                 SongsManager.getInstance().newSongs().get(0).getAlbumID(),
                 img_AlbumId);
     }
@@ -107,7 +107,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     @Override
     public void onClick(String type, int index) {
         if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
-            (new ImageManager(this)).getSmallImageByPicasso(
+            ImageUtils.getInstance(RecentlyAllMusicActivity.this).getSmallImageByPicasso(
                     SongsManager.getInstance().newSongs().get(index).getAlbumID(),
                     img_AlbumId);
 

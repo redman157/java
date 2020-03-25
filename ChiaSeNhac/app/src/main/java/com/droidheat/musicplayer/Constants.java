@@ -13,7 +13,7 @@ public class Constants {
         String NEXT = "next";
         String PAUSE = "pause";
         String PLAY = "play";
-        String REPEAT = "seekpos";
+        String SEEK_POS = "seekpos";
         String IS_PLAYING_STATUS = "is_playing_status";
     }
     public @interface VALUE {
@@ -40,10 +40,10 @@ public class Constants {
 
     public @interface REQUEST_CODE{
         int READ_EXTERNAL_STORAGE = 1;
-        int PREVIOUS = 100;
-        int NEXT = 101;
-        int PAUSE = 102;
-        int PLAY = 103;
+        int PREVIOUS = 103;
+        int NEXT = 102;
+        int PAUSE = 101;
+        int PLAY = 100;
         int REPEAT = 104;
 
     }
@@ -88,10 +88,10 @@ public class Constants {
         String NEXT = "com.droidheat.musicplayer.action.TRACK_NEXT";
         String PREVIOUS = "com.droidheat.musicplayer.action.TRACK_PREV";
 
-        String Broadcast_STOP_AUDIO = "com.droidheat.musicplayer.action.StopAudio";
+        String BROADCAST_STOP_AUDIO = "com.droidheat.musicplayer.action.StopAudio";
         String BROADCAST_PLAY_NEW_AUDIO = "com.droidheat.musicplayer.action.PlayNewAudio";
         String BROADCAST_SEEK_BAR = "com.droidheat.musicplayer.action.seekprogress";
-        String BROADCAST_BUTTON = "com.droidheat.musicplayer.action.broadcastbutton";
+        String BROADCAST_PLAY_PAUSE = "com.droidheat.musicplayer.action.broadcastbutton";
         String BROADCAST_RESET_AUDIO = "com.droidheat.musicplayer.action.ResetAudio";
     }
 

@@ -23,10 +23,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ImageManager {
+public class ImageUtils {
 
     private Context context;
-    public ImageManager(Context context) {
+    private static ImageUtils instance;
+    public static ImageUtils getInstance(Context context){
+        if (instance == null){
+            instance = new ImageUtils(context);
+        }
+        return instance;
+    }
+
+
+    public ImageUtils(Context context) {
         this.context = context;
     }
 

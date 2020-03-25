@@ -116,11 +116,11 @@ public class SongsManager {
     }
 
     public int getCurrentMusicID() {
-        return prefsManager.getInteger(Constants.PREFERENCES.MUSIC_ID, 0);
+        return prefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
     }
 
     public void setCurrentMusicID(int musicID) {
-        prefsManager.setInteger(Constants.PREFERENCES.MUSIC_ID, musicID);
+        prefsManager.setInteger(Constants.PREFERENCES.POSITION, musicID);
     }
 
     public ArrayList<SongModel> queue() {
@@ -540,7 +540,7 @@ public class SongsManager {
         ListView listView = dialog.findViewById(R.id.listView);
         ImageView relAdd = dialog.findViewById(R.id.add_playlist);
         ImageView albumArt = dialog.findViewById(R.id.albumArt);
-        (new ImageManager(context)).getImageByPicasso(hash.getAlbumID(), albumArt);
+        ImageUtils.getInstance(getContext()).getImageByPicasso(hash.getAlbumID(), albumArt);
         final PlaylistFragmentAdapterSimple playlistAdapter = new PlaylistFragmentAdapterSimple
                 (context);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -763,7 +763,7 @@ public class SongsManager {
                                             cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
                                     );
 
-                      /*      Bitmap bitmap = (new ImageManager(context)).getAlbumArt(Long.valueOf(albumID));
+                      /*      Bitmap bitmap = (new ImageUtils(context)).getAlbumArt(Long.valueOf(albumID));
                             if (bitmap == null){
                                 bitmap = BitmapFactory.decodeResource(context.getResources(),
                                         R.drawable.ic_music_note_black_24dp);

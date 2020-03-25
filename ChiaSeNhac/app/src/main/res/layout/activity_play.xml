@@ -172,13 +172,13 @@
 
                 <ImageButton
                     android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
+
                     android:id="@+id/icon_repeat"
                     android:layout_width="32dp"
                     android:layout_height="match_parent"
 
                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/app_repeat"
+                    android:src="@drawable/ic_repeat_black"
                     android:tint="@color/white" />
             </RelativeLayout>
 
@@ -196,12 +196,9 @@
                     android:layout_height="match_parent"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/_0"
-                    android:gravity="center"
-                    android:scaleType="fitCenter"
 
                     android:adjustViewBounds="true"
-                    android:rotation="180"
-                    android:src="@drawable/app_next"
+                    android:src="@drawable/ic_previous_black"
                     android:tint="@color/white" />
             </RelativeLayout>
 
@@ -221,7 +218,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
 
                     android:scaleType="fitCenter"
-                    android:src="@drawable/app_play"
+                    android:src="@drawable/ic_media_play_light"
                     android:tint="@android:color/white" />
             </RelativeLayout>
 
@@ -237,10 +234,10 @@
                     android:id="@+id/icon_next"
                     android:layout_width="32dp"
                     android:layout_height="match_parent"
-                    android:scaleType="fitCenter"
+
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:adjustViewBounds="true"
-                    android:src="@drawable/app_next"
+                    android:src="@drawable/ic_next_black"
                     android:tint="@color/white" />
             </RelativeLayout>
 

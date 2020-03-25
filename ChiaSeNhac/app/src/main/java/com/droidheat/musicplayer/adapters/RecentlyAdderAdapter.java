@@ -2,6 +2,7 @@ package com.droidheat.musicplayer.adapters;
 
 import android.content.Context;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
-import com.droidheat.musicplayer.manager.ImageManager;
+import com.droidheat.musicplayer.activities.RecentlyAllMusicActivity;
+import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.models.SongModel;
 
@@ -60,10 +62,11 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
         holder.mL_Recently_Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                onClickItem.onClick(type, position);
                 prefsManager.setInteger(Constants.PREFERENCES.POSITION,position);
                 prefsManager.setString(Constants.PREFERENCES.TYPE, type);
-                onClickItem.onClick(type, position);
-
+                Log.d("OOO", "HomeFragment position: "+position );
             }
         });
 
@@ -102,7 +105,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
             mTextTime.setText(song.getDuration());
             mImgMusic.setClipToOutline(true);
 
-            (new ImageManager(context)).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);
+            ImageUtils.getInstance(context).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);
 
         }
     }

@@ -182,12 +182,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             removeAudioFocus();
         }
         removeNotification();
-        unregisterReceiver(brSeekBar);
+
         unregisterReceiver(brResetMusic);
         unregisterReceiver(brPlayNewVideo);
         unregisterReceiver(brStopMusic);
+        unregisterReceiver(brCloseNotification);
+
         if (mSongMusics != null){
             unregisterReceiver(brPlayPause);
+            unregisterReceiver(brSeekBar);
             unregisterReceiver(becomingNoisyReceiver);
         }
     }
@@ -979,13 +982,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private BroadcastReceiver brCloseNotification = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("OOO","brCloseNotification: enter" );
+
             stopSelf();
             stopMedia();
             stopForeground(false);
 
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(NOTIFICATION_ID);
+
             System.exit(0);
 
         }

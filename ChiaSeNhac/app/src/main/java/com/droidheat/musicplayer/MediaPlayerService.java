@@ -123,7 +123,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 //        initMediaSession();
         initMediaPlayer();
         initMediaSession();
-//        initNotification(Constants.NOTIFICATION.PLAY);
+        initNotification(Constants.NOTIFICATION.PLAY);
 
 //        buildNotification(Constants.NOTIFICATION.PLAY);
         registerReceiver(becomingNoisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
@@ -221,7 +221,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 }
                 playMedia(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()).getPath());
                 updateMetaData(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));
-
+//                initNotification(Constants.ACTION.PLAY);
               /*  buildNotification(Constants.ACTION.PLAY,
                         mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));*/
             }
@@ -232,7 +232,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 pauseMedia();
                 updateMetaData(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));
 
-
+//                initNotification(Constants.ACTION.PAUSE);
             }
 
             @Override
@@ -282,12 +282,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 case Constants.ACTION.PLAY:
                     mMediaTransportControls.play();
 //                playMedia();
-
+//                    initNotification(Constants.ACTION.PLAY);
                     break;
                 case Constants.ACTION.PAUSE:
 //                pauseMedia();
-                    mMediaTransportControls.pause();
 
+                    mMediaTransportControls.pause();
+//                    initNotification(Constants.ACTION.PAUSE);
                     break;
                 case Constants.ACTION.NEXT:
                     mMediaTransportControls.skipToNext();
@@ -299,7 +300,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     mMediaTransportControls.stop();
                     break;
                 default: {
-//                    initNotification(Constants.NOTIFICATION.PAUSE);
+                    initNotification(Constants.NOTIFICATION.PAUSE);
                 }
             }
         }else {
@@ -747,13 +748,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.STOP), 0);
 
         PendingIntent playPauseIntent = null;
-        if (type == "pause_media"){
-            icon_Action = android.R.drawable.ic_media_pause;
+        if (type == Constants.NOTIFICATION.PAUSE){
+            icon_Action = R.drawable.ic_media_play_light;
             playPauseIntent = PendingIntent.getService(this, 0,
                     (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.PLAY), 0);
-        }else if (type == Constants.NOTIFICATION.PLAY){
-            icon_Action = android.R.drawable.ic_media_play;
+        }
+        if (type == Constants.NOTIFICATION.PLAY){
+//            icon_Action = android.R.drawable.ic_media_play;
+            icon_Action = R.drawable.ic_media_pause_light;
             playPauseIntent = PendingIntent.getService(this, 0,
+
                     (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.PAUSE),
                     0);
         }
@@ -776,7 +780,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                         // Show our playback controls in the compact notification view.
                         .setShowActionsInCompactView(0, 1, 2))
                 // Set the Notification color
-                .setColor(getResources().getColor(R.color.black))
+                .setColor(getResources().getColor(R.color.white))
                 .setLargeIcon(largeIcon)
                 .setSmallIcon(R.drawable.ic_music_note_black_24dp)
                 .setContentTitle(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()).getTitle())

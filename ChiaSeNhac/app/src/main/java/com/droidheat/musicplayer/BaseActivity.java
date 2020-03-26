@@ -10,22 +10,30 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class BaseActivity extends AppCompatActivity {
+import com.droidheat.musicplayer.manager.SharedPrefsManager;
+import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.services.MediaPlayerService;
+
+public abstract class BaseActivity extends AppCompatActivity {
     private boolean serviceBound = false;
     private MediaPlayerService mediaPlayerService;
-    private String TAG = "BaseActivity";
-    public boolean IsSync = false;
+    private SharedPrefsManager mSharedPrefsManager;
+    private SongsManager mSongsManager;
 
     @Override
     protected void onStart() {
         super.onStart();
+        mSharedPrefsManager = new SharedPrefsManager();
+        mSongsManager = SongsManager.getInstance();
 
+        mSharedPrefsManager.setContext(this);
+        mSongsManager.setContext(this);
     }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -45,13 +53,11 @@ public class BaseActivity extends AppCompatActivity {
         if (!serviceBound) {
             bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         }
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
     }
 
     //Binding this Client to the AudioPlayer Service
@@ -69,6 +75,4 @@ public class BaseActivity extends AppCompatActivity {
             serviceBound = false;
         }
     };
-
-
 }

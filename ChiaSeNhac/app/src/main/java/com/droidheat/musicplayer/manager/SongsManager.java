@@ -63,8 +63,8 @@ public class SongsManager {
     /* access modifiers changed from: private */
     private Context context;
     /* access modifiers changed from: private */
-    public SharedPrefsManager prefsManager;
-
+    private SharedPrefsManager mSharedPrefsManager;
+    private int totalSongs;
     @SuppressLint("StaticFieldLeak")
     private static SongsManager instance;
 
@@ -98,29 +98,40 @@ public class SongsManager {
     public void setContext(Context context) {
         this.context = context;
 
-        this.prefsManager = new SharedPrefsManager();
-        this.prefsManager.setContext(context);
-        grabIfEmpty();
-        if (queue.isEmpty()) {
-            try {
-                Type type = new TypeToken<ArrayList<SongModel>>() {
-                }.getType();
-                ArrayList<SongModel> restoreData = new Gson().fromJson(prefsManager.getString("key", null), type);
-                replaceQueue(restoreData);
-                Log.d(TAG, "Retrieved queue from storage in SongsManager. " + restoreData.size() + " mainList!");
-            } catch (Exception e) {
-                Log.d(TAG, "Unable to retrieve data while queue is empty.");
-                Log.d(TAG, e.getMessage());
+        this.mSharedPrefsManager = new SharedPrefsManager();
+        this.mSharedPrefsManager.setContext(context);
+        totalSongs = mSharedPrefsManager.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1);
+
+        // lần đầu tiên cài app
+        if (totalSongs == -1) {
+            grabIfEmpty();
+            if (queue.isEmpty()) {
+                try {
+                    Type type = new TypeToken<ArrayList<SongModel>>() {
+                    }.getType();
+                    ArrayList<SongModel> restoreData = new Gson().fromJson(mSharedPrefsManager.getString(Constants.PREFERENCES.KEY, null), type);
+                    replaceQueue(restoreData);
+                    Log.d(TAG, "Retrieved queue from storage in SongsManager. " + restoreData.size() + " mainList!");
+                } catch (Exception e) {
+                    Log.d(TAG, "Unable to retrieve data while queue is empty.");
+                    Log.d(TAG, e.getMessage());
+                }
+            }
+        }else if (mainList != null && mainList.size() > 0){
+            if (totalSongs == mainList.size()){
+                return;
+            }else {
+                grabData();
             }
         }
     }
 
     public int getCurrentMusicID() {
-        return prefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
+        return mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
     }
 
     public void setCurrentMusicID(int musicID) {
-        prefsManager.setInteger(Constants.PREFERENCES.POSITION, musicID);
+        mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION, musicID);
     }
 
     public ArrayList<SongModel> queue() {
@@ -132,9 +143,8 @@ public class SongsManager {
         return queue;
     }
 
-    public ArrayList<SongModel> allSongs() {
+    public ArrayList<SongModel> allSortSongs() {
         grabIfEmpty(); // If no song in list
-
         // Sorted list of 0-9 A-Z
         ArrayList<SongModel> songs = new ArrayList<>(newSongs());
         Collections.sort(songs, new Comparator<SongModel>() {
@@ -147,16 +157,22 @@ public class SongsManager {
     }
 
     public ArrayList<SongModel> newSongs() {
-        grabIfEmpty(); // If no song in list
+        grabIfEmpty(); // If no song in list (new songs)
 
-        ArrayList<SongModel> list = new ArrayList<>(mainList);
-        Collections.reverse(list);
-        return list;
+        ArrayList<SongModel> newSongs = new ArrayList<>(mainList);
+        Collections.reverse(newSongs);
+        return newSongs;
     }
 
+    public ArrayList<SongModel> shuffleSongs(){
+        grabIfEmpty(); // If no song in list (shuffle songs)
+        ArrayList<SongModel> shuffleSongs = new ArrayList<>(mainList);
+        Collections.shuffle(shuffleSongs);
+        return shuffleSongs;
+    }
 
     public ArrayList<HashMap<String, String>> albums() {
-        grabIfEmpty();
+        grabIfEmpty(); // albums
         return albums;
     }
 
@@ -173,7 +189,7 @@ public class SongsManager {
     }
 
     public ArrayList<HashMap<String, String>> artists() {
-        grabIfEmpty();
+        grabIfEmpty(); // artists
         return artists;
     }
 
@@ -198,12 +214,9 @@ public class SongsManager {
         return songs;
     }
 
-
-
     /*
      * Playlists
      */
-
     public ArrayList<HashMap<String, String>> getAllPlayLists() {
         Playlist db =  Playlist.getInstance();
         db.newRenderDB(context);
@@ -328,8 +341,6 @@ public class SongsManager {
         return list;
     }
 
-
-
     public void updateMostPlayedList(ArrayList<SongModel> newList) {
         CategorySongs db = CategorySongs.getInstance();
         db.newRenderDB(context);
@@ -349,7 +360,8 @@ public class SongsManager {
         mainList.clear();
         albums.clear();
         artists.clear();
-        grabIfEmpty();
+        queue.clear();
+        grabIfEmpty(); // sync
     }
 
     public void addToQueue(SongModel song) {
@@ -379,7 +391,7 @@ public class SongsManager {
             try {
                 new Thread(new Runnable() {
                     public void run() {
-                        prefsManager.setString("key", new Gson().toJson(list));
+                        mSharedPrefsManager.setString(Constants.PREFERENCES.KEY, new Gson().toJson(list));
                     }
                 }).start();
             } catch (Exception e) {
@@ -493,13 +505,13 @@ public class SongsManager {
 
                 final EditText input = alertDialog.findViewById(R.id.editText);
                 input.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context,
-                        (new CommonUtils(context)).accentColor(prefsManager))));
+                        (new CommonUtils(context)).accentColor(mSharedPrefsManager))));
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
 
                 Button btnCreate = alertDialog.findViewById(R.id.btnCreate);
                 btnCreate.setTextColor(ContextCompat.getColor(context,
-                        (new CommonUtils(context)).accentColor(prefsManager)));
+                        (new CommonUtils(context)).accentColor(mSharedPrefsManager)));
                 btnCreate.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -516,7 +528,7 @@ public class SongsManager {
 
                 Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
                 btnCancel.setTextColor(ContextCompat.getColor(context,
-                        (new CommonUtils(context)).accentColor(prefsManager)));
+                        (new CommonUtils(context)).accentColor(mSharedPrefsManager)));
                 btnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -573,13 +585,13 @@ public class SongsManager {
 
                 final EditText input = alertDialog.findViewById(R.id.editText);
                 input.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context
-                        , (new CommonUtils(context)).accentColor(prefsManager))));
+                        , (new CommonUtils(context)).accentColor(mSharedPrefsManager))));
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
 
                 Button btnCreate = alertDialog.findViewById(R.id.btnCreate);
                 btnCreate.setTextColor(ContextCompat.getColor(context,
-                        (new CommonUtils(context)).accentColor(prefsManager)));
+                        (new CommonUtils(context)).accentColor(mSharedPrefsManager)));
                 btnCreate.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -596,7 +608,7 @@ public class SongsManager {
 
                 Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
                 btnCancel.setTextColor(ContextCompat.getColor(context,
-                        (new CommonUtils(context)).accentColor(prefsManager)));
+                        (new CommonUtils(context)).accentColor(mSharedPrefsManager)));
                 btnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -705,7 +717,6 @@ public class SongsManager {
                 return i;
             }
         }
-
         return -1;
     }
 
@@ -722,8 +733,8 @@ public class SongsManager {
 
         String[] STAR = {"*"};
 
-        boolean excludeShortSounds = prefsManager.getBoolean("excludeShortSounds", false);
-        boolean excludeWhatsApp = prefsManager.getBoolean("excludeWhatsAppSounds", false);
+        boolean excludeShortSounds = mSharedPrefsManager.getBoolean(Constants.PREFERENCES.excludeShortSounds, false);
+        boolean excludeWhatsApp = mSharedPrefsManager.getBoolean(Constants.PREFERENCES.excludeWhatsAppSounds, false);
 
         Cursor cursor;
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -763,12 +774,6 @@ public class SongsManager {
                                             cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
                                     );
 
-                      /*      Bitmap bitmap = (new ImageUtils(context)).getAlbumArt(Long.valueOf(albumID));
-                            if (bitmap == null){
-                                bitmap = BitmapFactory.decodeResource(context.getResources(),
-                                        R.drawable.ic_music_note_black_24dp);
-                            }*/
-
                             TimeZone tz = TimeZone.getTimeZone("UTC");
                             SimpleDateFormat df = new SimpleDateFormat("mm : ss", Locale.getDefault());
                             df.setTimeZone(tz);
@@ -784,14 +789,15 @@ public class SongsManager {
                             songModel.setPath(path);
                             songModel.setDuration(time);
                             songModel.setTime(currentDuration);
-//                            songModel.setBitmap(bitmap);
                             mainList.add(songModel);
                         }
                     }
                 }
                 while (cursor.moveToNext());
             }
+
             setMainList(mainList);
+            mSharedPrefsManager.setInteger(Constants.PREFERENCES.TOTAL_SONGS, mainList.size());
             cursor.close();
         }
 

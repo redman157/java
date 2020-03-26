@@ -11,7 +11,7 @@ import com.droidheat.musicplayer.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+@SuppressWarnings("unchecked")
 public class Playlist {
 
     private Context context;

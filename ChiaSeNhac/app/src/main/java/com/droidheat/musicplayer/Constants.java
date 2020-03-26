@@ -50,6 +50,8 @@ public class Constants {
 
 
     public @interface PREFERENCES{
+        String KEY = "key";
+        String TOTAL_SONGS = "total_song";
         String persistentNotificationPref = "persistentNotificationPref";
         String audio_session_id = "audio_session_id";
         String CURRENT_MEDIA = "CurrentMedia";

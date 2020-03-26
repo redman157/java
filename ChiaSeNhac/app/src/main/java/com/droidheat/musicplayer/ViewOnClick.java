@@ -16,7 +16,7 @@ public class ViewOnClick implements View.OnClickListener {
     private ArrayList<SongModel> allSongs, mostSongs,favSongs, newSongs, artistsSong, albumsSongs;
     public ViewOnClick(int resource){
         this.resource = resource;
-        this.allSongs = mSongsManager.allSongs();
+        this.allSongs = mSongsManager.allSortSongs();
         this.mostSongs = mSongsManager.mostPlayedSongs();
         this.favSongs = mSongsManager.favouriteSongs();
         this.newSongs = mSongsManager.newSongs();
@@ -30,7 +30,7 @@ public class ViewOnClick implements View.OnClickListener {
         private Context context;
         private String type;
         private SongsManager mSongsManager;
-        private ArrayList<SongModel> allSongs, mostSongs,favSongs, newSongs, artistsSong, albumsSongs;
+        private ArrayList<SongModel> allSortSongs, mostSongs,favSongs, newSongs, artistsSong, albumsSongs;
 
         public ViewOnClick.Build setContext(Context context) {
             this.context = context;
@@ -40,7 +40,7 @@ public class ViewOnClick implements View.OnClickListener {
 
 
         public ViewOnClick.Build setAllData() {
-            this.allSongs = mSongsManager.allSongs();
+            this.allSortSongs = mSongsManager.allSortSongs();
             this.mostSongs = mSongsManager.mostPlayedSongs();
             this.favSongs = mSongsManager.favouriteSongs();
             this.newSongs = mSongsManager.newSongs();
@@ -70,9 +70,9 @@ public class ViewOnClick implements View.OnClickListener {
     public void onClick(View view) {
        /* switch (){
             case R.id.img_Shuffle_All:
-                if (allSongs.size() > 0) {
+                if (allSortSongs.size() > 0) {
                     Log.d("BBB", "enter");
-                    mSongsManager.shufflePlay(allSongs);
+                    mSongsManager.shufflePlay(allSortSongs);
                 }else {
                     Log.d("BBB", "no enter");
                 }

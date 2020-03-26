@@ -219,36 +219,34 @@ public class SplashActivity extends AppCompatActivity {
 
                 mPlaylist.close();
 
-
-                if (SplashActivity.this.sync) {
-
+                if (sync) {
                     for (int song = 0; song < mSongsManager.getAllPlayLists().size(); song++) {
                         int playlistID = Integer
                                 .parseInt(Objects.requireNonNull
                                         (mSongsManager.getAllPlayLists()
                                                 .get(song).get("ID")));
-                        ArrayList<SongModel> mPlayListSongs =
-                                mSongsManager.playlistSongs(playlistID);
+
+                        ArrayList<SongModel> mPlayListSongs = mSongsManager.playlistSongs(playlistID);
 
                         if (!mPlayListSongs.isEmpty()) {
                             for (int item = 0; item < mPlayListSongs.size(); item++) {
                                 Log.d(TAG, "Playlist: Search if current song " + item + " is not similar with song in new songs list");
-                                if (!mSongsManager.allSongs().contains(mPlayListSongs.get(item))) {
-                                    Log.d(TAG, "Playlist: current playlist song doesn't exist in allSongs," +
+                                if (!mSongsManager.allSortSongs().contains(mPlayListSongs.get(item))) {
+                                    Log.d(TAG, "Playlist: current playlist song doesn't exist in allSortSongs," +
                                             " so lets see if only path is changed or user has moved the song");
                                     boolean isFound = false;
-                                    for (int fItem = 0; fItem < mSongsManager.allSongs().size(); fItem++) {
-                                        if ((mSongsManager.allSongs().get(fItem).getTitle() +
-                                                mSongsManager.allSongs().get(fItem).getDuration())
+                                    for (int fItem = 0; fItem < mSongsManager.allSortSongs().size(); fItem++) {
+                                        if ((mSongsManager.allSortSongs().get(fItem).getTitle() +
+                                                mSongsManager.allSortSongs().get(fItem).getDuration())
                                                 .equals(mPlayListSongs.get(item).getTitle() +
                                                         mPlayListSongs.get(item).getDuration())) {
                                             Log.d(TAG, "Playlist: song " + item + " does exist and is probably moved," +
                                                     " so lets change broken song with lasted");
                                             mPlayListSongs.remove(item);
-                                            mPlayListSongs.add(item, mSongsManager.allSongs().get(fItem));
+                                            mPlayListSongs.add(item, mSongsManager.allSortSongs().get(fItem));
                                             Log.d(TAG, "Playlist: position doesn't change and we changed broken song. All good!");
                                             isFound = true;
-                                            fItem = mSongsManager.allSongs().size();
+                                            fItem = mSongsManager.allSortSongs().size();
                                         }
                                     }
                                     if (!isFound) {
@@ -267,8 +265,7 @@ public class SplashActivity extends AppCompatActivity {
                                 }
                             }
                             // Update favourite songs list
-                            mSongsManager.updatePlaylistSongs(playlistID,
-                                    mPlayListSongs);
+                            mSongsManager.updatePlaylistSongs(playlistID, mPlayListSongs);
                             Log.d(TAG, "Playlist: done!");
                         }
 
@@ -282,22 +279,22 @@ public class SplashActivity extends AppCompatActivity {
                     if (!mFavSongs.isEmpty()) {
                         Log.d(TAG, "Favourites: Search if current hashMap is not similar with song in new songs list");
                         for (int j = 0; j < mFavSongs.size(); j++) {
-                            if (!mSongsManager.allSongs().contains(mFavSongs.get(j))) {
-                                Log.d(TAG, "Favourites: current favourite doesn't exist in allSongs," +
+                            if (!mSongsManager.allSortSongs().contains(mFavSongs.get(j))) {
+                                Log.d(TAG, "Favourites: current favourite doesn't exist in allSortSongs," +
                                         " so lets see if only path is changed or user has moved the song");
                                 boolean isFound = false;
-                                for (int i = 0; i < mSongsManager.allSongs().size(); i++) {
-                                    if ((mSongsManager.allSongs().get(i).getTitle() +
-                                            mSongsManager.allSongs().get(i).getDuration())
+                                for (int i = 0; i < mSongsManager.allSortSongs().size(); i++) {
+                                    if ((mSongsManager.allSortSongs().get(i).getTitle() +
+                                            mSongsManager.allSortSongs().get(i).getDuration())
                                             .equals(mFavSongs.get(j).getTitle() +
                                                     mFavSongs.get(j).getDuration())) {
                                         Log.d(TAG, "Favourites: songs does exist and is probably moved," +
                                                 " so lets change broken song with lasted");
                                         mFavSongs.remove(j);
-                                        mFavSongs.add(j, mSongsManager.allSongs().get(i));
+                                        mFavSongs.add(j, mSongsManager.allSortSongs().get(i));
                                         Log.d(TAG, "Favourites: position doesn't change and we changed broken song. All good");
                                         isFound = true;
-                                        i = mSongsManager.allSongs().size();
+                                        i = mSongsManager.allSortSongs().size();
                                     }
                                 }
                                 if (!isFound) {
@@ -316,27 +313,26 @@ public class SplashActivity extends AppCompatActivity {
                     }
 
                     // -- Checking Most Played
-                    ArrayList<SongModel> mostPlayed =
-                            mSongsManager.mostPlayedSongs();
+                    ArrayList<SongModel> mostPlayed = mSongsManager.mostPlayedSongs();
                     if (!mostPlayed.isEmpty()) {
                         Log.d(TAG, "MostPlayed: Search if current hashMap is not similar with song in new songs list");
                         for (int j = 0; j < mostPlayed.size(); j++) {
-                            if (!mSongsManager.allSongs().contains(mostPlayed.get(j))) {
-                                Log.d(TAG, "MostPlayed: current song " + j + " doesn't exist in allSongs," +
+                            if (!mSongsManager.allSortSongs().contains(mostPlayed.get(j))) {
+                                Log.d(TAG, "MostPlayed: current song " + j + " doesn't exist in allSortSongs," +
                                         " so lets see if only path is changed or user has moved the song");
                                 boolean isFound = false;
-                                for (int i = 0; i < mSongsManager.allSongs().size(); i++) {
-                                    if ((mSongsManager.allSongs().get(i).getTitle() +
-                                            mSongsManager.allSongs().get(i).getDuration())
+                                for (int i = 0; i < mSongsManager.allSortSongs().size(); i++) {
+                                    if ((mSongsManager.allSortSongs().get(i).getTitle() +
+                                            mSongsManager.allSortSongs().get(i).getDuration())
                                             .equals(mostPlayed.get(j).getTitle() +
                                                     mostPlayed.get(j).getDuration())) {
                                         Log.d(TAG, "MostPlayed: songs does exist and is probably moved," +
                                                 " so lets change broken song with lasted");
                                         mostPlayed.remove(j);
-                                        mostPlayed.add(j, mSongsManager.allSongs().get(i));
+                                        mostPlayed.add(j, mSongsManager.allSortSongs().get(i));
                                         Log.d(TAG, "MostPlayed: position doesn't change and we changed broken song. All good!");
                                         isFound = true;
-                                        i = mSongsManager.allSongs().size();
+                                        i = mSongsManager.allSortSongs().size();
                                     }
                                 }
                                 if (!isFound) {

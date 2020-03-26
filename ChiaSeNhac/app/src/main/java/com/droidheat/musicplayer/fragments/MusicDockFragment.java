@@ -143,7 +143,7 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
                 mMusicSongs = SongsManager.getInstance().newSongs();
                 break;
             case Constants.VALUE.ALL_SONGS:
-                mMusicSongs = SongsManager.getInstance().allSongs();
+                mMusicSongs = SongsManager.getInstance().allSortSongs();
                 break;
         }
     }

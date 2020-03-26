@@ -57,12 +57,12 @@ public class ChangeMusic {
         switch (type){
             case Constants.VALUE.ALL_SONGS:
                 mMusicDockFragment.mTextTitle.setText(
-                        SongsManager.getInstance().allSongs().get(position).getTitle());
+                        SongsManager.getInstance().allSortSongs().get(position).getTitle());
                 mMusicDockFragment.mTextArtists.setText(
-                        SongsManager.getInstance().allSongs().get(position).getArtist());
+                        SongsManager.getInstance().allSortSongs().get(position).getArtist());
 
                 ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
-                        SongsManager.getInstance().allSongs().get(position).getAlbumID(),
+                        SongsManager.getInstance().allSortSongs().get(position).getAlbumID(),
                         mMusicDockFragment.mImgArt);
                 mMusicDockFragment.setType(type);
                 mMusicDockFragment.setPosition(position);

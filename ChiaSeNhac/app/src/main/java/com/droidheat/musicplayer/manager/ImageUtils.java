@@ -113,6 +113,7 @@ public class ImageUtils {
     }
 
     public void getBitmapImageByPicasso(String albumID, final ImageView imageView){
+
         try {
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(context, R.drawable.ic_music_note_black_24dp)))
@@ -135,6 +136,33 @@ public class ImageUtils {
                         }
                     });}
         catch (Exception ignored) {}
+    }
+
+    public Bitmap getBitmapIntoPicasso(String albumID){
+        final Bitmap[] mBitmap = new Bitmap[1];
+        try {
+            Picasso.get().load(getSongUri(Long.parseLong(albumID)))
+                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(context, R.drawable.ic_music_note_black_24dp)))
+                    .resize(400,400)
+                    .onlyScaleDown()
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            mBitmap[0] = bitmap;
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                        }
+                    });}
+        catch (Exception ignored) {}
+        return mBitmap[0];
     }
     public void getFullImageByPicasso(String albumID, ImageView imageView) {
         try {

@@ -352,10 +352,10 @@ public class PlayActivity extends BaseActivity
     private void setEnableButton() {
         mBtnPrev.setEnabled(SongsManager.getInstance().getCurrentMusicID() != 0);
         mBtnPrev.setImageResource(SongsManager.getInstance().getCurrentMusicID() != 0 ?
-                R.drawable.ic_previous_black : R.drawable.ic_previous_gray);
+                R.drawable.ic_previous_black : R.drawable.ic_previous_white);
         mBtnNext.setEnabled(SongsManager.getInstance().getCurrentMusicID() < SongsManager.getInstance().newSongs().size() - 1);
         mBtnNext.setImageResource(SongsManager.getInstance().getCurrentMusicID() < SongsManager.getInstance().newSongs().size() - 1 ?
-                R.drawable.ic_next_black : R.drawable.ic_next_gray);
+                R.drawable.ic_next_black : R.drawable.ic_next_white);
     }
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

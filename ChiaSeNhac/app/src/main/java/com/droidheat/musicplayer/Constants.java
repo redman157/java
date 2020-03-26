@@ -87,6 +87,7 @@ public class Constants {
         String REPEAT = "com.droidheat.musicplayer.action.REPEAT";
         String NEXT = "com.droidheat.musicplayer.action.TRACK_NEXT";
         String PREVIOUS = "com.droidheat.musicplayer.action.TRACK_PREV";
+        String CLOSE_NOTIFICATION = "com.droidheat.musicplayer.action.CLOSE_NOTIFICATION";
 
         String BROADCAST_STOP_AUDIO = "com.droidheat.musicplayer.action.StopAudio";
         String BROADCAST_PLAY_NEW_AUDIO = "com.droidheat.musicplayer.action.PlayNewAudio";

@@ -379,13 +379,13 @@ public class SplashActivity extends AppCompatActivity {
 
                 @Override
                 public void onFinish() {
-
+                    startActivity(new Intent(SplashActivity.this,
+                            HomeActivity.class));
+                    finish();
                 }
             };
-//            count.start();
-            startActivity(new Intent(SplashActivity.this,
-                    HomeActivity.class));
-            finish();
+            count.start();
+
         }
     }
 }

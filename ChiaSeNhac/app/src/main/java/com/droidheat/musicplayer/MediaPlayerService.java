@@ -1005,7 +1005,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         public void onReceive(Context context, Intent intent) {
             boolean isPlaying = intent.getBooleanExtra(Constants.NOTIFICATION.IS_PLAYING, true);
             Log.d(tag,"onReceive brButtonPlay: "+ isPlaying);
-            if (isPlaying)
+
             setStatusNoti(isPlaying);
         }
     };

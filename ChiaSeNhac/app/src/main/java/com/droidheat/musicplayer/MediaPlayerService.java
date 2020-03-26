@@ -771,7 +771,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             notificationBuilder = new androidx.core.app.NotificationCompat
                 .Builder(this, getString(R.string.default_notification_channel_id))
                 .setChannelId(getString(R.string.default_notification_channel_id))
@@ -811,11 +810,52 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                         // Attach our MediaSession token
                         .setMediaSession(mMediaSessionCompat.getSessionToken()));
 
-            notificationBuilder.setDeleteIntent(dismissNotification());
-            startForeground(NOTIFICATION_ID,
-                    notificationBuilder.build());
-            notificationBuilder.mActions.clear();
         }
+        else {
+            notificationBuilder = new NotificationCompat.Builder(this)
+                    .setChannelId(getString(R.string.default_notification_channel_id))
+                    .setAutoCancel(true)
+                    .setShowWhen(false)
+
+                    // Set the Notification color
+                    .setColorized(true).setColor(getResources().getColor(R.color.white))
+//                .setLargeIcon()
+                    .setSmallIcon(R.drawable.ic_music_note_black_24dp)
+                    .setLargeIcon(bitmap)
+                    .setSubText(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()).getFileName())
+
+                    .setContentTitle(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()).getTitle())
+                    .setContentText(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()).getArtist())
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    // click notification intent to home activity
+                    .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, HomeActivity.class), 0))
+                    // Add playback actions
+                    .addAction(SongsManager.getInstance().getCurrentMusicID() != 0 ?
+                                    R.drawable.ic_previous_white : R.drawable.ic_previous_black,
+                            Constants.NOTIFICATION.PREVIOUS,
+                            prevIntent)
+                    .addAction(icon_Action, Constants.NOTIFICATION.PAUSE, playPauseIntent)
+
+                    .addAction(SongsManager.getInstance().getCurrentMusicID() < mSongMusics.size() ?
+                                    R.drawable.ic_next_white : R.drawable.ic_next_black,
+                            Constants.NOTIFICATION.NEXT,
+                            nextIntent)
+                    .addAction(R.drawable.ic_close_black_24dp, "Stop", closeNotification())
+
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+
+                            // Show our playback controls in the compact notification view.
+                            .setShowActionsInCompactView(0, 1, 2)
+                            // Attach our MediaSession token
+                            .setMediaSession(mMediaSessionCompat.getSessionToken()));
+
+
+
+        }
+        notificationBuilder.setDeleteIntent(dismissNotification());
+        startForeground(NOTIFICATION_ID,
+                notificationBuilder.build());
     }
 
     // set trạng thái action của notification -> service

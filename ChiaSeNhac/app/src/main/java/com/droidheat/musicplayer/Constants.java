@@ -80,10 +80,10 @@ public class Constants {
     }
 
     public @interface ACTION{
-        String STOP = "com.droidheat.musicplayer.action.CLOSE";
+        String STOP = "com.droidheat.musicplayer.action.STOP";
         String ACTION_PERSISTENT_NOTIFICATION = "com.droidheat.musicplayer.action.PERSISTENT_NOTIFICATION";
         String PLAY = "com.droidheat.musicplayer.action.PLAY";
-        String PAUSE = "com.droidheat.musicplayer.action.PLAY_PAUSE";
+        String PAUSE = "com.droidheat.musicplayer.action.PAUSE";
         String REPEAT = "com.droidheat.musicplayer.action.REPEAT";
         String NEXT = "com.droidheat.musicplayer.action.TRACK_NEXT";
         String PREVIOUS = "com.droidheat.musicplayer.action.TRACK_PREV";

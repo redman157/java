@@ -58,9 +58,6 @@ public class PlayActivity extends BaseActivity
         registerReceiver(brSeekBar, new IntentFilter(Constants.ACTION.BROADCAST_SEEK_BAR));
         registerReceiver(brPlayPause, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
         // start service
-        Intent playerIntent = new Intent(this, MediaPlayerService.class);
-        startService(playerIntent);
-
 
     }
 
@@ -180,9 +177,6 @@ public class PlayActivity extends BaseActivity
         mSbTime.setMax(MusicType.get(position).getTime());
 
 
-
-
-
 //        Log.d("BBB","Min: "+ 0+ " -- Max: "+ SongsManager.getInstance().allSongs().get(position).getTime());
 
     }
@@ -221,7 +215,7 @@ public class PlayActivity extends BaseActivity
                 Log.d("BBB", "brPlayPause notification: "+isPlaying);
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
             }else {
-                Log.d("BBB", "brPlayPause: "+isPlaying);
+                Log.d("BBB", "brPlayPause notification: "+isPlaying);
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
             }
 
@@ -232,7 +226,8 @@ public class PlayActivity extends BaseActivity
         switch (view.getId()){
             case R.id.icon_play:
                 SongsManager.getInstance().setCurrentMusicID(position);
-
+                /*Intent playerIntent = new Intent(this, MediaPlayerService.class);
+                startService(playerIntent);*/
                 boolean isPlaying;
                 if (MediaPlayerService.mMediaPlayer != null) {
 
@@ -337,7 +332,7 @@ public class PlayActivity extends BaseActivity
         int currentPos = serviceIntent.getIntExtra("current_pos", 0);
         int mediaMax = serviceIntent.getIntExtra("media_max", 0);
         String songTitle = serviceIntent.getStringExtra("song_title");
-        Log.d("BBB", "current Poss: "+currentPos + " ======= Media Max: "+mediaMax);
+//        Log.d("BBB", "current Poss: "+currentPos + " ======= Media Max: "+mediaMax);
         mSbTime.setMax(mediaMax);
         mSbTime.setProgress(currentPos);
         mTextLeftTime.setText(convertTime(currentPos));

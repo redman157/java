@@ -27,12 +27,15 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
+import com.droidheat.musicplayer.activities.HomeActivity;
 import com.droidheat.musicplayer.database.CategorySongs;
 import com.droidheat.musicplayer.manager.CommonUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongsManager;
 import com.droidheat.musicplayer.models.SongModel;
+import com.droidheat.musicplayer.services.MusicPlayback;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,6 +123,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 //        initMediaSession();
         initMediaPlayer();
         initMediaSession();
+//        initNotification(Constants.NOTIFICATION.PLAY);
+
 //        buildNotification(Constants.NOTIFICATION.PLAY);
         registerReceiver(becomingNoisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         registerReceiver(brResetMusic,  new IntentFilter(Constants.ACTION.BROADCAST_RESET_AUDIO));
@@ -216,8 +221,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 }
                 playMedia(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()).getPath());
                 updateMetaData(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));
-/*
-                buildNotification(Constants.ACTION.PLAY,
+
+              /*  buildNotification(Constants.ACTION.PLAY,
                         mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));*/
             }
 
@@ -227,8 +232,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 pauseMedia();
                 updateMetaData(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));
 
-             /*   buildNotification(Constants.ACTION.PLAY,
-                        mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));*/
+
             }
 
             @Override
@@ -273,26 +277,33 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         String action = iAction.getAction();
         Log.d("BBB", "handleIncomingActions: "+iAction.getAction());
-        switch (action){
-            case Constants.ACTION.PLAY:
-                mMediaTransportControls.play();
+        if (action != null) {
+            switch (action) {
+                case Constants.ACTION.PLAY:
+                    mMediaTransportControls.play();
 //                playMedia();
 
-                break;
-            case Constants.ACTION.PAUSE:
+                    break;
+                case Constants.ACTION.PAUSE:
 //                pauseMedia();
-                mMediaTransportControls.pause();
+                    mMediaTransportControls.pause();
 
-                break;
-            case Constants.ACTION.NEXT:
-                mMediaTransportControls.skipToNext();
-                break;
-            case Constants.ACTION.PREVIOUS:
-                mMediaTransportControls.skipToPrevious();
-                break;
-            case Constants.ACTION.STOP:
-                mMediaTransportControls.stop();
-                break;
+                    break;
+                case Constants.ACTION.NEXT:
+                    mMediaTransportControls.skipToNext();
+                    break;
+                case Constants.ACTION.PREVIOUS:
+                    mMediaTransportControls.skipToPrevious();
+                    break;
+                case Constants.ACTION.STOP:
+                    mMediaTransportControls.stop();
+                    break;
+                default: {
+//                    initNotification(Constants.NOTIFICATION.PAUSE);
+                }
+            }
+        }else {
+            initNotification(Constants.NOTIFICATION.PAUSE);
         }
         /*if (action.equals(Constants.ACTION.PLAY)) {
             if (SongsManager.getInstance().getCurrentMusicID() == mSongMusics.size()) {
@@ -726,6 +737,69 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 .notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
+    private void initNotification(String type){
+        int icon_Action = 0;
+        createChannel();
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(),
+                R.mipmap.ic_launcher);
+        androidx.core.app.NotificationCompat.Builder notificationBuilder = null;
+        PendingIntent pCloseIntent = PendingIntent.getService(this, 0,
+                (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.STOP), 0);
+
+        PendingIntent playPauseIntent = null;
+        if (type == "pause_media"){
+            icon_Action = android.R.drawable.ic_media_pause;
+            playPauseIntent = PendingIntent.getService(this, 0,
+                    (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.PLAY), 0);
+        }else if (type == Constants.NOTIFICATION.PLAY){
+            icon_Action = android.R.drawable.ic_media_play;
+            playPauseIntent = PendingIntent.getService(this, 0,
+                    (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.PAUSE),
+                    0);
+        }
+
+
+        PendingIntent prevIntent = PendingIntent.getService(this, 0,
+                (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.PREVIOUS), 0);
+
+        PendingIntent nextIntent = PendingIntent.getService(this, 0,
+                (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.NEXT ), 0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationBuilder = new androidx.core.app.NotificationCompat
+                .Builder(this, getString(R.string.default_notification_channel_id))
+                .setChannelId(getString(R.string.default_notification_channel_id))
+                .setAutoCancel(true)
+                .setShowWhen(false)
+                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                        // Attach our MediaSession token
+                        .setMediaSession(mMediaSessionCompat.getSessionToken())
+                        // Show our playback controls in the compact notification view.
+                        .setShowActionsInCompactView(0, 1, 2))
+                // Set the Notification color
+                .setColor(getResources().getColor(R.color.black))
+                .setLargeIcon(largeIcon)
+                .setSmallIcon(R.drawable.ic_music_note_black_24dp)
+                .setContentTitle(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()).getTitle())
+                .setContentText(mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()).getArtist())
+
+                // click notification intent to home activity
+                .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, HomeActivity.class), 0))
+                // Add playback actions
+                .addAction(SongsManager.getInstance().getCurrentMusicID() != 0 ?
+                                R.drawable.ic_previous_gray : R.drawable.ic_previous_black,
+                        Constants.NOTIFICATION.PREVIOUS,
+                        prevIntent)
+                .addAction(icon_Action, Constants.NOTIFICATION.PAUSE, playPauseIntent)
+
+                .addAction(SongsManager.getInstance().getCurrentMusicID() < mSongMusics.size() ?
+                                R.drawable.ic_next_gray : R.drawable.ic_next_black,
+                        Constants.NOTIFICATION.NEXT,
+                        nextIntent);
+            notificationBuilder.setDeleteIntent(dismissNotification());
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
+        }
+    }
+
     // set trạng thái action của notification -> service
     public void setStatusNoti(boolean isPlaying){
         Log.d(tag,"setStatusNoti: "+isPlaying );
@@ -742,19 +816,22 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         handleIncomingActions(iAction);
 
 
-        if (isPlaying){
-            Log.d(tag,"setStatusNoti: PLAY MEDIA" + isPlaying);
-//            resumeMedia();
-
-            playMedia();
-
-//            buildNotification(Constants.NOTIFICATION.PLAY, mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));
-        }else {
-            Log.d(tag,"setStatusNoti: pauseMedia" +isPlaying);
-            pauseMedia();
-
-//            buildNotification(Constants.NOTIFICATION.PAUSE, mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));
-        }
+//        if (isPlaying){
+//            Log.d(tag,"setStatusNoti: PLAY MEDIA " + isPlaying);
+////            resumeMedia();
+//
+//            playMedia();
+//
+//
+////            buildNotification(Constants.NOTIFICATION.PLAY, mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));
+//        }else {
+//            Log.d(tag,"setStatusNoti: PAUSE MEDIA " +isPlaying);
+//            pauseMedia();
+//
+////            buildNotification(Constants.ACTION.PAUSE,
+////                    mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));
+////            buildNotification(Constants.NOTIFICATION.PAUSE, mSongMusics.get(SongsManager.getInstance().getCurrentMusicID()));
+//        }
     }
 
 
@@ -928,6 +1005,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         public void onReceive(Context context, Intent intent) {
             boolean isPlaying = intent.getBooleanExtra(Constants.NOTIFICATION.IS_PLAYING, true);
             Log.d(tag,"onReceive brButtonPlay: "+ isPlaying);
+            if (isPlaying)
             setStatusNoti(isPlaying);
         }
     };

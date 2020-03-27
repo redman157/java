@@ -7,13 +7,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-            android:layout_gravity="bottom"
-            android:orientation="horizontal"
-            android:weightSum="10"
-
-            android:background="@color/black"
             android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="bottom"
             android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_gravity="bottom"
+                android:orientation="horizontal"
+                android:weightSum="10"
+
+                android:background="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
 
                 <RelativeLayout
@@ -71,34 +76,34 @@
 
                 </RelativeLayout>
 
-            <LinearLayout
-                android:layout_weight="1.5"
-                android:layout_width="0dp"
-                android:baselineAligned="true"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_weight="1.5"
+                    android:layout_width="0dp"
+                    android:baselineAligned="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_height="match_parent">
 
-                <ImageView
-                    android:layout_gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/app_list"
-                    android:tint="@color/white"
-                    android:padding="10dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:id="@+id/item_img_viewQueue"
-                    android:background="?attr/selectableItemBackgroundBorderless"/>
-            </LinearLayout>
+                    <ImageView
+                        android:layout_gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/app_list"
+                        android:tint="@color/white"
+                        android:padding="10dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:id="@+id/item_img_viewQueue"
+                        android:background="?attr/selectableItemBackgroundBorderless"/>
+                </LinearLayout>
 
-            <LinearLayout
-                android:layout_weight="1.5"
-                android:layout_width="0dp"
-                android:baselineAligned="true"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_weight="1.5"
+                    android:layout_width="0dp"
+                    android:baselineAligned="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_height="match_parent">
                     <ImageView
                         android:layout_gravity="center"
                         android:layout_width="match_parent"
@@ -110,9 +115,12 @@
                         android:padding="10dp"
                         android:id="@+id/item_img_addToPlayListImageView"
                         android:background="?attr/selectableItemBackgroundBorderless"/>
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
+
 
         <ImageView
             android:id="@+id/item_img_ChangeMusic"

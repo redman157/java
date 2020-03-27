@@ -8,13 +8,14 @@ public class Constants {
     }
 
     public @interface NOTIFICATION {
-        String IS_PLAYING = "is_playing";
+        String IS_PLAYING_ACTIVITY = "is_playing";
         String PREVIOUS = "previous";
         String NEXT = "next";
         String PAUSE = "pause";
         String PLAY = "play";
-        String SEEK_POS = "seekpos";
-        String IS_PLAYING_STATUS = "is_playing_status";
+        String SEEK_POS_ACTIVITY = "seekpos_activity";
+        String SEEK_POS_SERVICE = "seekbar_service";
+        String IS_PLAYING_STATUS_NOTI = "is_playing_status";
     }
     public @interface VALUE {
         String SYNC = "sync";
@@ -68,7 +69,7 @@ public class Constants {
         String currentEqProfile = "currentEqProfile";
         String bassLevel = "bassLevel";
         String vzLevel = "vzLevel";
-
+        String POSITION_SONG = "position_song";
         String MUSIC_ID = "musicID";
         String TITLE = "title";
         String PATH = "path";
@@ -90,12 +91,14 @@ public class Constants {
         String NEXT = "com.droidheat.musicplayer.action.TRACK_NEXT";
         String PREVIOUS = "com.droidheat.musicplayer.action.TRACK_PREV";
         String CLOSE_NOTIFICATION = "com.droidheat.musicplayer.action.CLOSE_NOTIFICATION";
+        String SEEK = "com.droidheat.musicplayer.action.SEEK";
 
         String BROADCAST_STOP_AUDIO = "com.droidheat.musicplayer.action.StopAudio";
         String BROADCAST_PLAY_NEW_AUDIO = "com.droidheat.musicplayer.action.PlayNewAudio";
         String BROADCAST_SEEK_BAR = "com.droidheat.musicplayer.action.seekprogress";
         String BROADCAST_PLAY_PAUSE = "com.droidheat.musicplayer.action.broadcastbutton";
         String BROADCAST_RESET_AUDIO = "com.droidheat.musicplayer.action.ResetAudio";
+
     }
 
     public @interface COLOR{

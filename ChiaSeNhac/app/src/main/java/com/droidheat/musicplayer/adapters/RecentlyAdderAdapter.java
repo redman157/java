@@ -67,7 +67,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
                 onClickItem.onClick(type, position);
                 prefsManager.setInteger(Constants.PREFERENCES.POSITION,position);
                 prefsManager.setString(Constants.PREFERENCES.TYPE, type);
-                Log.d("OOO", "HomeFragment position: "+position );
+
             }
         });
 

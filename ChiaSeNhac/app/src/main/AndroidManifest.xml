@@ -67,6 +67,7 @@
             android:exported="false"
             tools:ignore="ExtraText">
             <intent-filter>
+                <action android:name="com.droidheat.musicplayer.action.SEEK"/>
                 <action android:name="com.droidheat.musicplayer.action.CLOSE" />
                 <action android:name="com.droidheat.musicplayer.action.PLAY_PAUSE" />
                 <action android:name="com.droidheat.musicplayer.action.PLAY" />

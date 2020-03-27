@@ -939,7 +939,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
      Init Music Media
      ----------------------------------------------------------------*******/
     /*private void playMedia() {
-        if (!mMediaPlayer.IS_PLAYING()) {
+        if (!mMediaPlayer.IS_PLAYING_ACTIVITY()) {
             mMediaPlayer.start();
             isInitAudioError = false;
             Log.d(tag, "playMedia");

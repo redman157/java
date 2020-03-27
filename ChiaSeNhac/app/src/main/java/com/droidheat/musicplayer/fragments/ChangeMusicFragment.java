@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,10 +16,15 @@ import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.models.SongModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class ChangeMusicFragment extends Fragment  {
     private SongModel mSongModel;
     private ImageView img_AblumArt;
-    private TextView text_playing, text_tittle, text_artists;
+    private TextView text_playing, text_tittle, text_artists, text_leftTime, text_rightTime;
+    private SeekBar sb_leftTime;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
     private View view;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,7 +40,9 @@ public class ChangeMusicFragment extends Fragment  {
             text_tittle = view.findViewById(R.id.item_text_title);
             text_artists = view.findViewById(R.id.item_text_album);
             img_AblumArt = view.findViewById(R.id.item_img_ChangeMusic);
-
+           /* text_rightTime = view.findViewById(R.id.text_rightTime);
+            sb_leftTime = view.findViewById(R.id.sb_leftTime);
+            text_leftTime = view.findViewById(R.id.text_leftTime);*/
         }
         text_artists.setText(mSongModel.getArtist());
         text_tittle.setText(mSongModel.getTitle());

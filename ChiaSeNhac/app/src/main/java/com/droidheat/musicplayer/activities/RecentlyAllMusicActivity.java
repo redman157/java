@@ -51,7 +51,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
                 Constants.VALUE.ALL_NEW_SONGS);
 //        rc_recently_add.setNestedScrollingEnabled(false);
         rc_recently_add.setHasFixedSize(true);
-        recentlyAdderAdapter.SetOnClickItem(this);
+        recentlyAdderAdapter.OnClickItem(this);
         rc_recently_add.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));
         rc_recently_add.setAdapter(recentlyAdderAdapter);

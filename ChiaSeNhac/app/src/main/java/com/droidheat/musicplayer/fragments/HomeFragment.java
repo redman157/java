@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
         mAdderAdapter = new RecentlyAdderAdapter(getContext(),
                 SongsManager.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS );
-        mAdderAdapter.SetOnClickItem(this);
+        mAdderAdapter.OnClickItem(this);
         mNewSongs = SongsManager.getInstance().newSongs();
     }
 

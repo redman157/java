@@ -30,6 +30,7 @@ import com.droidheat.musicplayer.fragments.AllSongsFragment;
 import com.droidheat.musicplayer.fragments.ArtistGridFragment;
 import com.droidheat.musicplayer.fragments.HomeFragment;
 import com.droidheat.musicplayer.fragments.PlaylistFragment;
+import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -63,7 +64,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         setContentView(R.layout.activity_home);
         // khởi tạo màn hình chính là home ta cần check position để gán sẵn vị trí luôn
 
-
+        ImageUtils.getInstance(this);
         initMenu();
         initView();
         assignView();

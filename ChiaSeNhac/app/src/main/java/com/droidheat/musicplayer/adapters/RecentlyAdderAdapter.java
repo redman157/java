@@ -37,7 +37,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
     }
 
     private OnClickItem onClickItem;
-    public void SetOnClickItem(OnClickItem onClickItem) {
+    public void OnClickItem(OnClickItem onClickItem) {
         this.onClickItem = onClickItem;
     }
     public interface OnClickItem {
@@ -56,7 +56,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
 
     @Override
     public void onBindViewHolder(ItemViewHolder holder, final int position) {
-        SongModel item;
+        final SongModel item;
 
         item = items.get(position);
         holder.set(item);
@@ -67,7 +67,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
                 onClickItem.onClick(type, position);
                 prefsManager.setInteger(Constants.PREFERENCES.POSITION,position);
                 prefsManager.setString(Constants.PREFERENCES.TYPE, type);
-
+                prefsManager.setString(Constants.PREFERENCES.SaveAlbumID, items.get(position).getAlbumID());
             }
         });
 

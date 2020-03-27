@@ -1,5 +1,6 @@
 package com.droidheat.musicplayer.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.droidheat.musicplayer.ChangeMusic;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
+import com.droidheat.musicplayer.activities.HomeActivity;
 import com.droidheat.musicplayer.activities.PlayActivity;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
@@ -88,8 +90,8 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
         mTextArtists = view.findViewById(R.id.fm_text_artists);
         mImgArt = view.findViewById(R.id.fm_img_albumArt);
 
-        ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
-                SongsManager.getInstance().newSongs().get(position).getAlbumID(), mImgArt);
+
+        mImgArt.setImageBitmap(ImageUtils.getInstance(getContext()).getBitmapIntoPicasso(prefsManager.getString(Constants.PREFERENCES.SaveAlbumID,"0")));
     }
 
     private void assignView(){
@@ -110,6 +112,7 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
                     intent.putExtra(Constants.VALUE.TYPE, type);
                     intent.putExtra(Constants.VALUE.POSITION, position);
                     startActivity(intent);
+                    ((HomeActivity)getActivity()).finish();
                 }
                 break;
         }

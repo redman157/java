@@ -51,6 +51,7 @@ public class Constants {
 
 
     public @interface PREFERENCES{
+        String SaveAlbumID = "SaveAlbumID";
         String KEY = "key";
         String TOTAL_SONGS = "total_song";
         String persistentNotificationPref = "persistentNotificationPref";

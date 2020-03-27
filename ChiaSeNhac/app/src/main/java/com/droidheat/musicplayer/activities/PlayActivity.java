@@ -113,6 +113,11 @@ public class PlayActivity extends BaseActivity
         playAudio();
     }
 
+    @Override
+    public void onBackPressed() {
+        
+    }
+
     private void initView() {
         mTextLeftTime = findViewById(R.id.text_leftTime);
         mTextRightTime = findViewById(R.id.text_rightTime);

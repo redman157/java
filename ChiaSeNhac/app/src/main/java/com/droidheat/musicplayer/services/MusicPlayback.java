@@ -75,8 +75,8 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
      Private
      ----------------------------------------------------------------*******/
 
-    private final String tag = "NNN";
 
+    private String tag = "SSS";
     private MediaPlayer mMediaPlayer;
     private MediaPlayer mMediaPlayer2;
     public static MediaSessionCompat mMediaSessionCompat;

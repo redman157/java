@@ -8,7 +8,7 @@ public class Constants {
     }
 
     public @interface NOTIFICATION {
-        String IS_PLAYING_ACTIVITY = "is_playing";
+
         String PREVIOUS = "previous";
         String NEXT = "next";
         String PAUSE = "pause";
@@ -16,6 +16,11 @@ public class Constants {
         String SEEK_POS_ACTIVITY = "seekpos_activity";
         String SEEK_POS_SERVICE = "seekbar_service";
         String IS_PLAYING_STATUS_NOTI = "is_playing_status";
+    }
+
+    public @interface INTENT{
+        String IS_PLAY_MEDIA = "isPlayMedia";
+        String IS_PLAYING_NOTI = "isPlayingNoti";
     }
     public @interface VALUE {
         String SYNC = "sync";
@@ -93,6 +98,7 @@ public class Constants {
         String PREVIOUS = "com.droidheat.musicplayer.action.TRACK_PREV";
         String CLOSE_NOTIFICATION = "com.droidheat.musicplayer.action.CLOSE_NOTIFICATION";
         String SEEK = "com.droidheat.musicplayer.action.SEEK";
+        String ISPLAY = "com.droidheat.musicplayer.action.IS_PLAY";
 
         String BROADCAST_STOP_AUDIO = "com.droidheat.musicplayer.action.StopAudio";
         String BROADCAST_PLAY_NEW_AUDIO = "com.droidheat.musicplayer.action.PlayNewAudio";

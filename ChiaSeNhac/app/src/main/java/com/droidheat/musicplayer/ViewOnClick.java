@@ -71,12 +71,12 @@ public class ViewOnClick implements View.OnClickListener {
        /* switch (){
             case R.id.img_Shuffle_All:
                 if (allSortSongs.size() > 0) {
-                    Log.d("BBB", "enter");
+
                     mSongsManager.shufflePlay(allSortSongs);
                 }else {
-                    Log.d("BBB", "no enter");
+
                 }
-                Log.d("BBB","k có");
+
                 break;
         }*/
     }

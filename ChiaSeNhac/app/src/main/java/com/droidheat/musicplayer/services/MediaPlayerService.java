@@ -28,7 +28,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
-import com.droidheat.musicplayer.BaseActivity;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.activities.HomeActivity;
@@ -75,8 +74,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private int resumePosition;
     private int newPosition;
     private int position;
-    private Intent iIntentSeekBar;
-    private Intent iIntentPlayPause;
+    private Intent iIntentSeekBar, iCheckPlayActivity, iPlayPauseActivity;
     private String title, fileName, path, albumId, album, artists;
 
     private androidx.core.app.NotificationCompat.Builder notificationBuilder = null;
@@ -115,8 +113,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         Log.d(tag, "Start service" );
 
         // ---Set up intent for seek bar broadcast ---
-        iIntentPlayPause = new Intent(Constants.ACTION.BROADCAST_PLAY_PAUSE);
+        iPlayPauseActivity = new Intent(Constants.ACTION.BROADCAST_PLAY_PAUSE);
         iIntentSeekBar = new Intent(Constants.ACTION.BROADCAST_SEEK_BAR);
+        iCheckPlayActivity = new Intent(Constants.ACTION.ISPLAY);
 
         mSongsManager = SongsManager.getInstance();
         mSongsManager.setContext(this);
@@ -144,7 +143,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         registerReceiver(brStopMusic, new IntentFilter(Constants.ACTION.BROADCAST_STOP_AUDIO));
         registerReceiver(brPlayNewVideo, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
 
-
+//        registerReceiver(brPlayPause, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
+        registerReceiver(brSeekBar, new IntentFilter(Constants.ACTION.BROADCAST_SEEK_BAR));
         registerReceiver(brCloseNotification, new IntentFilter(Constants.ACTION.CLOSE_NOTIFICATION));
 
 
@@ -153,8 +153,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(tag,"Service Enter onStartCommand:  Enter");
 
-        registerReceiver(brPlayPause, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
-        registerReceiver(brSeekBar, new IntentFilter(Constants.ACTION.BROADCAST_SEEK_BAR));
+
 
         if (!requestAudioFocus()) {
             //Could not gain focus
@@ -189,7 +188,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         unregisterReceiver(brCloseNotification);
 
         if (mSongs != null){
-            unregisterReceiver(brPlayPause);
+//            unregisterReceiver(brPlayPause);
             unregisterReceiver(brSeekBar);
             unregisterReceiver(becomingNoisyReceiver);
         }
@@ -222,33 +221,32 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 if( !successfullyRetrievedAudioFocus() ) {
                     return;
                 }
-                updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
                 playMedia(mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getPath());
-
                 initNotification(Constants.NOTIFICATION.PLAY);
+
             }
 
             @Override
             public void onPause() {
                 super.onPause();
                 pauseMedia();
-                updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
                 initNotification(Constants.NOTIFICATION.PAUSE);
+              /*  iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAYING_NOTI, false);
+                sendBroadcast(iPlayPauseActivity)*/;
             }
 
             @Override
             public void onSkipToNext() {
                 super.onSkipToNext();
                 skipToNext();
-                updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
-//                buildNotification(Constants.NOTIFICATION.PLAY);
+                initNotification(Constants.NOTIFICATION.PAUSE);
             }
 
             @Override
             public void onSkipToPrevious() {
                 super.onSkipToPrevious();
                 skipToPrevious();
-                updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
+                initNotification(Constants.NOTIFICATION.PAUSE);
 //                buildNotification(Constants.NOTIFICATION.PLAY);
             }
 
@@ -311,11 +309,20 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     if (pos != 0) {
                         mMediaTransportControls.seekTo(pos);
                     }
+                    break;
+                case Constants.ACTION.ISPLAY:
 
+                    if (mMediaPlayer.isPlaying()){
 
-                default: {
-                    initNotification(Constants.NOTIFICATION.PAUSE);
-                }
+                        iCheckPlayActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA, true);
+                        sendBroadcast(iCheckPlayActivity);
+                    }else {
+
+                        iCheckPlayActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA, false);
+                        sendBroadcast(iCheckPlayActivity);
+                    }
+
+                    break;
             }
         }
         /*if (action.equals(Constants.ACTION.PLAY)) {
@@ -444,16 +451,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
 
     private void playMedia(String path){
-        Log.d("BBB","Service --- playMedia(have path): Enter");
+
         if (!mMediaPlayer.isPlaying()) {
             setMediaPlayer(path);
-
             isInitAudioError = false;
-//            sendBroadcast(new Intent(Constants.NOTIFICATION.));
+
         }
     }
     private void playMedia(){
-        Log.d("BBB","Service --- playMedia(not path): Enter");
+
         if (!mMediaPlayer.isPlaying() ) {
             mMediaPlayer.start();
             isInitAudioError = false;
@@ -563,7 +569,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
 
 
-            initNotification(Constants.NOTIFICATION.PLAY);
+
 
         }
 
@@ -638,12 +644,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     (new Intent(this, MediaPlayerService.class))
                             .setAction(Constants.ACTION.PAUSE),
                     0);
+            iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAYING_NOTI, false);
+            sendBroadcast(iPlayPauseActivity);
         }
         else if (type.equals(Constants.NOTIFICATION.PAUSE)){
             icon_Action = R.drawable.ic_play_button_black;
             playPauseIntent = PendingIntent.getService(this, 0,
                     (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.PLAY),
                     0);
+            iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAYING_NOTI, true);
+            sendBroadcast(iPlayPauseActivity);
         }
 
         PendingIntent prevIntent = PendingIntent.getService(this, 0,
@@ -860,7 +870,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
          * remembered location
          * We reset this location to zero when we start playing a new song
          */
-        Log.d("BBB", "Service --- OnPrepared: Enter");
+
         if (newPosition != -1){
             resumeMedia();
 
@@ -919,7 +929,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     }
 
-    private BroadcastReceiver brPlayPause = new BroadcastReceiver() {
+   /* private BroadcastReceiver brPlayPause = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             boolean isPlaying = intent.getBooleanExtra(Constants.NOTIFICATION.IS_PLAYING_STATUS_NOTI, true);
@@ -927,7 +937,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             Log.d(tag,"Service --- onReceive brPlayPause : "+ isPlaying);
             setStatusNoti(isPlaying);
         }
-    };
+    };*/
 
     private BroadcastReceiver brPlayNewVideo = new BroadcastReceiver() {
         @Override
@@ -944,7 +954,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             mMediaPlayer.reset();
             initMediaPlayer();
             updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
-            initNotification(Constants.NOTIFICATION.PLAY);
+//            initNotification(Constants.NOTIFICATION.PLAY);
         }
     };
 
@@ -964,8 +974,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private BroadcastReceiver becomingNoisyReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            pauseMedia();
-            initNotification(Constants.ACTION.PAUSE);
+//            pauseMedia();
+//            initNotification(Constants.ACTION.PAUSE);
            /* buildNotification(Constants.NOTIFICATION.PAUSE,
                     mSongs.get(SongsManager.getInstance().getCurrentMusicID()));*/
         }

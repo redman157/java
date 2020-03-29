@@ -48,7 +48,7 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
         prefsManager = new SharedPrefsManager();
         prefsManager.setContext(getActivity());
         position = prefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
-
+        Log.d("BBB", "MusicDockFragment --- onCreate: "+position);
         type = prefsManager.getString(Constants.PREFERENCES.TYPE, Constants.VALUE.NEW_SONGS);
         mSongsManager = SongsManager.getInstance();
         mSongsManager.setContext(getActivity());

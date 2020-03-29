@@ -65,8 +65,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
             public void onClick(View v) {
 
                 onClickItem.onClick(type, position);
-                prefsManager.setInteger(Constants.PREFERENCES.POSITION,position);
-                prefsManager.setString(Constants.PREFERENCES.TYPE, type);
+
                 prefsManager.setString(Constants.PREFERENCES.SaveAlbumID, items.get(position).getAlbumID());
             }
         });

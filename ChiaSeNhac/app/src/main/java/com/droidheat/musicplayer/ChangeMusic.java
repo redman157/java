@@ -1,6 +1,7 @@
 package com.droidheat.musicplayer;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.droidheat.musicplayer.fragments.MusicDockFragment;
 import com.droidheat.musicplayer.manager.ImageUtils;
@@ -30,6 +31,7 @@ public class ChangeMusic {
     public void setPosition(String type, int index){
         this.position = index;
         this.type = type;
+        Log.d("BBB", "ChangeMusic --- setPosition:"+position);
         prefsManager.setInteger(Constants.PREFERENCES.POSITION,this.position);
         prefsManager.setString(Constants.PREFERENCES.TYPE, this.type);
     }

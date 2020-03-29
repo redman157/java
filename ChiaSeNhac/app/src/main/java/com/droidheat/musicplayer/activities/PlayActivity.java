@@ -70,16 +70,10 @@ public class PlayActivity extends BaseActivity
             registerReceiver(brSeekBar, new IntentFilter(Constants.ACTION.BROADCAST_SEEK_BAR));
             registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
             registerReceiver(brCheckPlayService, new IntentFilter(Constants.ACTION.ISPLAY));
-            registerReceiver(receiver, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
+            registerReceiver(brPlayNew, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
             receiverRegistered = true;
         }
         // start service
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
     }
 
     @Override
@@ -89,7 +83,7 @@ public class PlayActivity extends BaseActivity
             this.unregisterReceiver(brPlayPauseActivity);
             this.unregisterReceiver(brSeekBar);
             this.unregisterReceiver(brCheckPlayService);
-            this.unregisterReceiver(receiver);
+            this.unregisterReceiver(brPlayNew);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -108,14 +102,10 @@ public class PlayActivity extends BaseActivity
         // nhận giá trị postion và type ở home fragment và recently activity
         type = this.getIntent().getStringExtra(Constants.VALUE.TYPE);
         position = this.getIntent().getIntExtra(Constants.VALUE.POSITION, 0);
+        Log.d("BBB", "Play Activity --- onCreate: "+position);
         MusicType = ChangeMusic.getInstance().switchMusic(type);
-
-
         initView();
         assignView();
-
-
-
     }
 
     @Override
@@ -163,9 +153,6 @@ public class PlayActivity extends BaseActivity
         }
 
         setupViewPager(position);
-
-
-
     }
 
     private void setupViewPager(int position){
@@ -180,7 +167,8 @@ public class PlayActivity extends BaseActivity
         seekPos = 0;
 
         MediaPlayerService.mMediaPlayer.stop();
-       /* MediaPlayerService.mMediaPlayer.reset();
+        MediaPlayerService.mMediaPlayer.reset();
+       /*
         if (MediaPlayerService.mMediaPlayer.isPlaying()) {
             mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
 
@@ -200,41 +188,24 @@ public class PlayActivity extends BaseActivity
     public void onPageSelected(int position) {
         this.position = position;
 //        sendBroadcast(new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
-
-
+        Log.d("BBB", "Play Activity --- onPageSelected: "+position);
         mSeekBarTime.setProgress(0);
         mSeekBarTime.setMax(MusicType.get(position).getTime());
         mTextLeftTime.setText("00 : 00");
         mTextRightTime.setText(convertTime(MusicType.get(position).getTime()));
-
 //        Log.d("BBB","Min: "+ 0+ " -- Max: "+ SongsManager.getInstance().allSortSongs().get(position).getTime());
-
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
 
     }
-    private void playNextAudio(){
 
-        if (!MediaPlayerService.isStarted) {
-            Intent playerIntent = new Intent(this, MediaPlayerService.class);
-            startService(playerIntent);
-            MediaPlayerService.isStarted = true;
-        } else {
-            //Service is active
-            //Send a broadcast to the service -> PLAY_NEW_AUDIO
-//            sendBroadcast(new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
-
-        }
-    }
     // -- Broadcast Receiver to update position of seekbar from service --
     private BroadcastReceiver brSeekBar = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent serviceIntent) {
-
-                updateUI(serviceIntent);
-
+            updateUI(serviceIntent);
         }
     };
     private BroadcastReceiver brPlayPauseActivity = new BroadcastReceiver() {
@@ -263,36 +234,35 @@ public class PlayActivity extends BaseActivity
 
             if (isPlayingMedia) {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-
                 isPlaying = false;
                 Intent iPlayMedia = new Intent(PlayActivity.this, MediaPlayerService.class);
                 iPlayMedia.setAction(Constants.ACTION.PAUSE);
                 startService(iPlayMedia);
-
-
             } else {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = true;
                 Intent iPlayMedia = new Intent(PlayActivity.this, MediaPlayerService.class);
                 iPlayMedia.setAction(Constants.ACTION.PLAY);
                 startService(iPlayMedia);
-
             }
-
         }
     };
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private BroadcastReceiver brPlayNew = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
             String actionNoti = intent.getStringExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY);
-
+           /* String parsedAction = actionNoti.split(":")[0].trim();
+            int posMusic = Integer.parseInt(actionNoti.split(":")[1]);*/
             Log.d("KKK", "PlayActivity ---  Receiver: "+actionNoti);
-            if (actionNoti == "NextToService") {
-                Log.d("KKK", "PlayActivity ---  Receiver: NextToService Enter");
-            }else if (actionNoti == "PreviousToService"){
-                Log.d("KKK", "PlayActivity ---  Receiver: PreviousToService Enter");
+            if (actionNoti.equals("NextToService")) {
+                Log.d("KKK", "Enter");
+                Log.d("KKK", "PlayActivity ---  Receiver NextToService:"+(SongsManager.getInstance().getCurrentMusic()));
+                mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic() , true);
+            }else if (actionNoti.equals("PreviousToService")){
+                Log.d("KKK", "PlayActivity ---  Receiver: PreviousToService "+(SongsManager.getInstance().getCurrentMusic() -1));
+                mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic(), true);
             }
 
         }
@@ -310,19 +280,20 @@ public class PlayActivity extends BaseActivity
             case R.id.icon_next:
                 mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic()+1);
                 Log.d("BBB",
-                        "PlayActivity --- icon_prev: "+(SongsManager.getInstance().getCurrentMusic()+1));
+                        "PlayActivity --- icon_next: "+(SongsManager.getInstance().getCurrentMusic()+1));
                 Intent iNext = new Intent(this, MediaPlayerService.class);
 
                 iNext.setAction(Constants.ACTION.NEXT);
                 startService(iNext);
                 break;
             case R.id.icon_prev:
-                mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic()-1);
+
                 Log.d("BBB",
                         "PlayActivity --- icon_prev: "+(SongsManager.getInstance().getCurrentMusic()-1));
                 Intent iPrevious = new Intent(this, MediaPlayerService.class);
                 iPrevious.setAction(Constants.ACTION.PREVIOUS);
                 startService(iPrevious);
+                mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic()-1);
                 break;
             case R.id.icon_repeat:
 
@@ -359,8 +330,6 @@ public class PlayActivity extends BaseActivity
         int mediaMax = serviceIntent.getIntExtra("media_max", 0);
         String songTitle = serviceIntent.getStringExtra("song_title");
 //        Log.d("BBB", "current Poss: "+currentPos + " ======= Media Max: "+mediaMax);
-
-
         mSeekBarTime.setMax(mediaMax);
         mSeekBarTime.setProgress(currentPos);
         mTextLeftTime.setText(convertTime(currentPos));
@@ -375,7 +344,7 @@ public class PlayActivity extends BaseActivity
 
                 @Override
                 public void onFinish() {
-                    mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic()+1, true);
+                    mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic() +1, true);
                 }
             }.start();
         }

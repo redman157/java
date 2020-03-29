@@ -8,7 +8,6 @@ public class Constants {
     }
 
     public @interface NOTIFICATION {
-
         String PREVIOUS = "previous";
         String NEXT = "next";
         String PAUSE = "pause";
@@ -24,6 +23,8 @@ public class Constants {
         String NOTI_SERVICE_TO_ACTIVITY = "ServiceToActivity";
         String NEXT_TO_SERVICE = "nextToService";
         String PREVIOUS_TO_SERVICE = "previousToService";
+        String POS_NEXT = "posNext";
+        String POS_PREV = "posPrev";
 
     }
     public @interface VALUE {
@@ -39,13 +40,6 @@ public class Constants {
         String INPUT_METHOD = "input_method";
         String TYPE = "type";
         String POSITION = "position";
-
-    }
-
-    public @interface TAG{
-        String SplashActivityLog = "SplashActivityLog";
-        String SplashActivityAsyncTaskLog = "SplashActivityAsyncTaskLog";
-        String SongsManagerConsole = "SongsManagerConsole";
     }
 
     public @interface REQUEST_CODE{
@@ -90,6 +84,10 @@ public class Constants {
         String ALBUMID = "albumid";
         String RAW_PATH = "raw_path";
         String DURATION_IN_MS = " durationInMS";
+        String newsongs = "newSongs";
+        String allSongs = "allSongs";
+        String favSongs = "favSongs";
+        String playListSongs = "playListSongs";
     }
 
     public @interface ACTION{

@@ -77,7 +77,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private int position;
     private Intent iIntentSeekBar, iPlayNewMusic, iCheckPlayActivity, iPlayPauseActivity;
     private String title, fileName, path, albumId, album, artists;
-
+    private Intent iPrev, iNext;
     private androidx.core.app.NotificationCompat.Builder notificationBuilder = null;
     /**
      * Service Binder
@@ -155,18 +155,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(tag,"Service --- onStartCommand:  Enter ===== Action: "+intent.getAction());
+//        Log.d(tag,"Service --- onStartCommand:  Enter ===== Action: "+intent.getAction());
 
         // noti về đây, bắt nó ném lên lại activity trong hàm handleIncomingActions
-
 
         if (!requestAudioFocus()) {
             //Could not gain focus
             stopSelf();
             Log.d(tag, "requestAudioFocus: ENTER");
         }
-
-
         if (intent.getAction() != null) {
             //Handle Intent action from MediaSession.TransportControls
             handleIncomingActions(intent);
@@ -226,7 +223,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 if( !successfullyRetrievedAudioFocus() ) {
                     return;
                 }
-                playMedia(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getPath());
+                int position = SongsManager.getInstance().getCurrentMusic();
+                Log.d("BBB","Service --- onPlay:"+position);
+                playMedia(mSongs.get(position).getPath());
                 initNotification(Constants.NOTIFICATION.PLAY);
 
             }
@@ -284,7 +283,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             return;
         }
         String action = iAction.getAction();
-        Log.d("BBB", "Service --- HandleIncomingActions: "+iAction.getAction());
+
 
         if (action != null) {
             switch (action) {
@@ -296,21 +295,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     break;
                 case Constants.ACTION.NEXT:
                     mMediaTransportControls.skipToNext();
-                    Bundle bdNext = iAction.getExtras();
-                    String nextToActivity = bdNext.getString(Constants.INTENT.NEXT_TO_SERVICE);
-
-                    iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY, nextToActivity);
-                    sendBroadcast(iPlayNewMusic);
+                    this.iNext = iAction;
 
                     break;
                 case Constants.ACTION.PREVIOUS:
                     mMediaTransportControls.skipToPrevious();
-                    Bundle bdPrev = iAction.getExtras();
-                    String prevToActivity = bdPrev.getString(Constants.INTENT.PREVIOUS_TO_SERVICE);
+                    this.iPrev = iAction;
 
-                    iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY,
-                            prevToActivity);
-                    sendBroadcast(iPlayNewMusic);
                     break;
                 case Constants.ACTION.STOP:
                     mMediaTransportControls.stop();
@@ -538,7 +529,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             mMediaPlayer.seekTo(newPosition);
             mMediaPlayer.start();
             newPosition = -1;
-            Log.d(tag, "resumeMedia: Enter");
+//            Log.d(tag, "resumeMedia: Enter");
         }
     }
 
@@ -556,6 +547,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             SongsManager.getInstance().setCurrentMusic(
                     SongsManager.getInstance().getCurrentMusic() -1);
             Log.d("BBB", "Service --- skipToPrevious: "+SongsManager.getInstance().getCurrentMusic());
+            Bundle bdPrev = iPrev.getExtras();
+            Log.d("BBB", "Service --- Constants.ACTION.PREVIOUS:" + SongsManager.getInstance().getCurrentMusic());
+            if (bdPrev != null) {
+                String prevToActivity = bdPrev.getString(Constants.INTENT.PREVIOUS_TO_SERVICE);
+
+                iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY,
+                        prevToActivity);
+                sendBroadcast(iPlayNewMusic);
+            }
         }
 
         stopMedia();
@@ -576,11 +576,21 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
             endOfAudioList = true;
         }else {
-            SongsManager.getInstance().setCurrentMusic(SongsManager.getInstance().getCurrentMusic() + 1);
-            Log.d("BBB", "Service --- skipToNext: "+SongsManager.getInstance().getCurrentMusic());
+            SongsManager.getInstance().setCurrentMusic(SongsManager.getInstance().getCurrentMusic() +1);
+            Log.d("KKK", "Service --- skipToNext position: "+SongsManager.getInstance().getCurrentMusic());
+            Bundle bdNext = iNext.getExtras();
+            Log.d("KKK", "Service --- Constants.ACTION.NEXT:" + SongsManager.getInstance().getCurrentMusic());
+            if (bdNext != null) {
+                String nextToActivity = bdNext.getString(Constants.INTENT.NEXT_TO_SERVICE);
+                iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY, nextToActivity);
+                sendBroadcast(iPlayNewMusic);
+            } else {
+                Log.d("KKK", "dbNext is null");
+            }
             stopMedia();
 
             mMediaPlayer.reset();
+
 
         }
 
@@ -644,7 +654,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
 
     private void initNotification(String type){
-        Log.d("BBB", "Service --- initNotification:"+type);
         int icon_Action = 0;
 
         PendingIntent playPauseIntent = null;
@@ -1051,8 +1060,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             mCategorySongs.close();
         } catch (Exception e) {
 
-            Log.d(tag, "addVoteToTrack crashed.");
-            Log.d(tag,"==============");
+            /*Log.d(tag, "addVoteToTrack crashed.");
+            Log.d(tag,"==============");*/
         }
     }
 

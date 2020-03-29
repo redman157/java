@@ -16,6 +16,7 @@ import android.media.MediaPlayer;
 import android.media.session.MediaSessionManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -74,7 +75,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private int resumePosition;
     private int newPosition;
     private int position;
-    private Intent iIntentSeekBar, iCheckPlayActivity, iPlayPauseActivity;
+    private Intent iIntentSeekBar, iPlayNewMusic, iCheckPlayActivity, iPlayPauseActivity;
     private String title, fileName, path, albumId, album, artists;
 
     private androidx.core.app.NotificationCompat.Builder notificationBuilder = null;
@@ -116,6 +117,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         iPlayPauseActivity = new Intent(Constants.ACTION.BROADCAST_PLAY_PAUSE);
         iIntentSeekBar = new Intent(Constants.ACTION.BROADCAST_SEEK_BAR);
         iCheckPlayActivity = new Intent(Constants.ACTION.ISPLAY);
+        iPlayNewMusic = new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO);
+
+
 
         mSongsManager = SongsManager.getInstance();
         mSongsManager.setContext(this);
@@ -141,7 +145,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         registerReceiver(becomingNoisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         registerReceiver(brResetMusic,  new IntentFilter(Constants.ACTION.BROADCAST_RESET_AUDIO));
         registerReceiver(brStopMusic, new IntentFilter(Constants.ACTION.BROADCAST_STOP_AUDIO));
-        registerReceiver(brPlayNewVideo, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
+//        registerReceiver(brPlayNewVideo, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
 
 //        registerReceiver(brPlayPause, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
         registerReceiver(brSeekBar, new IntentFilter(Constants.ACTION.BROADCAST_SEEK_BAR));
@@ -151,8 +155,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(tag,"Service Enter onStartCommand:  Enter");
+        Log.d(tag,"Service --- onStartCommand:  Enter ===== Action: "+intent.getAction());
 
+        // noti về đây, bắt nó ném lên lại activity trong hàm handleIncomingActions
 
 
         if (!requestAudioFocus()) {
@@ -161,7 +166,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             Log.d(tag, "requestAudioFocus: ENTER");
         }
 
-        Log.d(tag, "onStartCommand handleIncomingActions: "+ intent.getAction());
+
         if (intent.getAction() != null) {
             //Handle Intent action from MediaSession.TransportControls
             handleIncomingActions(intent);
@@ -183,7 +188,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         removeNotification();
 
         unregisterReceiver(brResetMusic);
-        unregisterReceiver(brPlayNewVideo);
+//        unregisterReceiver(brPlayNewVideo);
         unregisterReceiver(brStopMusic);
         unregisterReceiver(brCloseNotification);
 
@@ -221,7 +226,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 if( !successfullyRetrievedAudioFocus() ) {
                     return;
                 }
-                playMedia(mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getPath());
+                playMedia(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getPath());
                 initNotification(Constants.NOTIFICATION.PLAY);
 
             }
@@ -231,7 +236,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 super.onPause();
                 pauseMedia();
                 initNotification(Constants.NOTIFICATION.PAUSE);
-              /*  iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAYING_NOTI, false);
+              /*  iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION, false);
                 sendBroadcast(iPlayPauseActivity)*/;
             }
 
@@ -285,19 +290,27 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             switch (action) {
                 case Constants.ACTION.PLAY:
                     mMediaTransportControls.play();
-
                     break;
                 case Constants.ACTION.PAUSE:
-//                pauseMedia();
-
                     mMediaTransportControls.pause();
-//                    initNotification(Constants.ACTION.PAUSE);
                     break;
                 case Constants.ACTION.NEXT:
                     mMediaTransportControls.skipToNext();
+                    Bundle bdNext = iAction.getExtras();
+                    String nextToActivity = bdNext.getString(Constants.INTENT.NEXT_TO_SERVICE);
+
+                    iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY, nextToActivity);
+                    sendBroadcast(iPlayNewMusic);
+
                     break;
                 case Constants.ACTION.PREVIOUS:
                     mMediaTransportControls.skipToPrevious();
+                    Bundle bdPrev = iAction.getExtras();
+                    String prevToActivity = bdPrev.getString(Constants.INTENT.PREVIOUS_TO_SERVICE);
+
+                    iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY,
+                            prevToActivity);
+                    sendBroadcast(iPlayNewMusic);
                     break;
                 case Constants.ACTION.STOP:
                     mMediaTransportControls.stop();
@@ -314,11 +327,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
                     if (mMediaPlayer.isPlaying()){
 
-                        iCheckPlayActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA, true);
+                        iCheckPlayActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, true);
                         sendBroadcast(iCheckPlayActivity);
                     }else {
 
-                        iCheckPlayActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA, false);
+                        iCheckPlayActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
                         sendBroadcast(iCheckPlayActivity);
                     }
 
@@ -326,7 +339,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             }
         }
         /*if (action.equals(Constants.ACTION.PLAY)) {
-            if (SongsManager.getInstance().getCurrentMusicID() == mSongs.size()) {
+            if (SongsManager.getInstance().getCurrentMusic() == mSongs.size()) {
 
                 Intent audioIntent = new Intent(Constants.ACTION.BROADCAST_RESET_AUDIO);
                 sendBroadcast(audioIntent);
@@ -376,7 +389,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
      */
 
     private void saveData(){
-        int musicID = mSongsManager.getCurrentMusicID();
+        int musicID = mSongsManager.getCurrentMusic();
         mSharedPrefsManager.setInteger(Constants.PREFERENCES.audio_session_id,
                     mMediaPlayer.getAudioSessionId());
         try {
@@ -432,15 +445,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         try{
             int mediaPosition = mMediaPlayer.getCurrentPosition();
 
-            int mediaMax = mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getTime();
+            int mediaMax = mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTime();
            /* Log.d("MMM", "LogMediaPosition : Enter ==== MediaPosition: "+mediaPosition +" ==== " +
-                    "MediaMax: "+mediaMax +" ==== Song Title: "+ mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getTitle());
+                    "MediaMax: "+mediaMax +" ==== Song Title: "+ mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTitle());
 */
 
             iIntentSeekBar.putExtra("current_pos", mediaPosition);
             iIntentSeekBar.putExtra("media_max", mediaMax);
             iIntentSeekBar.putExtra("song_title",
-                    mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getTitle());
+                    mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTitle());
             sendBroadcast(iIntentSeekBar);
 
         }catch (Exception e){
@@ -477,7 +490,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 addVoteToTrack(path);
                 mMediaPlayer.setDataSource(path);
             } catch (IOException e) {
-//                skipToNext();
+                skipToNext();
                 e.printStackTrace();
             }
 
@@ -509,7 +522,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             try {
                 if (mMediaPlayer.isPlaying()) {
                     Log.d(tag, "stopMedia: Enter");
-                    SongsManager.getInstance().setCurrentMusicID(SongsManager.getInstance().getCurrentMusicID());
+                    SongsManager.getInstance().setCurrentMusic(SongsManager.getInstance().getCurrentMusic());
                     mMediaPlayer.stop();
                 }
                 handler.removeCallbacks(sendUpdatesToUI);
@@ -532,18 +545,19 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void skipToPrevious(){
         Log.d(tag, "skipToPrevious: Enter");
-        if (SongsManager.getInstance().getCurrentMusicID() == 0){
+        if (SongsManager.getInstance().getCurrentMusic() == 0){
             if (mSongs != null) {
-                SongsManager.getInstance().setCurrentMusicID(mSongs.size());
+                SongsManager.getInstance().setCurrentMusic(mSongs.size());
             }else {
                 Log.d(tag, "danh sach nhạc = null");
             }
 
         }else {
-            SongsManager.getInstance().setCurrentMusicID(
-                    SongsManager.getInstance().getCurrentMusicID() -1);
+            SongsManager.getInstance().setCurrentMusic(
+                    SongsManager.getInstance().getCurrentMusic() -1);
+            Log.d("BBB", "Service --- skipToPrevious: "+SongsManager.getInstance().getCurrentMusic());
         }
-        Log.d(tag, "skipToPrevious");
+
         stopMedia();
         //reset mediaPlayer
         mMediaPlayer.reset();
@@ -551,7 +565,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void skipToNext(){
         Log.d(tag, "skipToNext: Enter");
-        if (SongsManager.getInstance().getCurrentMusicID() == mSongs.size()){
+        if (SongsManager.getInstance().getCurrentMusic() == mSongs.size()){
 
             stopMedia();
             stopSelf();
@@ -562,14 +576,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
             endOfAudioList = true;
         }else {
-            SongsManager.getInstance().setCurrentMusicID(SongsManager.getInstance().getCurrentMusicID() + 1);
+            SongsManager.getInstance().setCurrentMusic(SongsManager.getInstance().getCurrentMusic() + 1);
+            Log.d("BBB", "Service --- skipToNext: "+SongsManager.getInstance().getCurrentMusic());
             stopMedia();
 
             mMediaPlayer.reset();
-            updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
-
-
-
 
         }
 
@@ -593,11 +604,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
                 R.drawable.ic_music_note_black_24dp);
         // Update the current metadata
-        if (SongsManager.getInstance().getCurrentMusicID() != -1){
+        if (SongsManager.getInstance().getCurrentMusic() != -1){
             mMediaSessionCompat.setMetadata(new MediaMetadataCompat.Builder()
                     .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
-                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getArtist())
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getAlbum())
+                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mSongs.get(SongsManager.getInstance().getCurrentMusic()).getArtist())
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, mSongs.get(SongsManager.getInstance().getCurrentMusic()).getAlbum())
                     .putString(MediaMetadataCompat.METADATA_KEY_TITLE, songModel.getTitle())
                     .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, songModel.getTime())
                     .build());
@@ -633,18 +644,33 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
 
     private void initNotification(String type){
-
+        Log.d("BBB", "Service --- initNotification:"+type);
         int icon_Action = 0;
 
         PendingIntent playPauseIntent = null;
+        PendingIntent nextIntent = null;
+        PendingIntent prevIntent = null;
+        // GỬI INTENT TỪ NOTI VỀ SERVICE
+        Intent iNext = new Intent(this, MediaPlayerService.class);
+        iNext.setAction(Constants.ACTION.NEXT);
+        Bundle bdNext = new Bundle();
+        bdNext.putString(Constants.INTENT.NEXT_TO_SERVICE, "NextToService");
+        iNext.putExtras(bdNext);
+        // GỬI INTENT TỪ NOTI VỀ SERVICE
+        Intent iPrev = new Intent(this, MediaPlayerService.class);
+        iPrev.setAction(Constants.ACTION.PREVIOUS);
+        Bundle bdPrevious = new Bundle();
+        bdPrevious.putString(Constants.INTENT.PREVIOUS_TO_SERVICE, "PreviousToService");
+        iPrev.putExtras(bdPrevious);
+
         if (type.equals(Constants.NOTIFICATION.PLAY)){
-//            icon_Action = android.R.drawable.ic_media_play;
+
             icon_Action = R.drawable.ic_pause_black;
             playPauseIntent = PendingIntent.getService(this, 0,
                     (new Intent(this, MediaPlayerService.class))
                             .setAction(Constants.ACTION.PAUSE),
                     0);
-            iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAYING_NOTI, false);
+            iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION, false);
             sendBroadcast(iPlayPauseActivity);
         }
         else if (type.equals(Constants.NOTIFICATION.PAUSE)){
@@ -652,19 +678,20 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             playPauseIntent = PendingIntent.getService(this, 0,
                     (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.PLAY),
                     0);
-            iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAYING_NOTI, true);
+            iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION, true);
             sendBroadcast(iPlayPauseActivity);
         }
+        nextIntent = PendingIntent.getService(this, 0,
+            iNext, 0);
 
-        PendingIntent prevIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.PREVIOUS), 0);
 
-        PendingIntent nextIntent = PendingIntent.getService(this, 0,
-                (new Intent(this, MediaPlayerService.class)).setAction(Constants.ACTION.NEXT ), 0);
+        prevIntent = PendingIntent.getService(this, 0,
+            iPrev, 0);
+
 
         createChannel();
         Bitmap bitmap =
-                ImageUtils.getInstance(this).getBitmapIntoPicasso(mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getAlbumID());
+                ImageUtils.getInstance(this).getBitmapIntoPicasso(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getAlbumID());
 
 
 
@@ -680,21 +707,21 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 //                .setLargeIcon()
                 .setSmallIcon(R.drawable.ic_music_note_black_24dp)
                 .setLargeIcon(bitmap)
-                .setSubText(mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getFileName())
+                .setSubText(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getFileName())
 
-                .setContentTitle(mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getTitle())
-                .setContentText(mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getArtist())
+                .setContentTitle(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTitle())
+                .setContentText(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getArtist())
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 // click notification intent to home activity
                 .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, HomeActivity.class), 0))
                 // Add playback actions
-                .addAction(SongsManager.getInstance().getCurrentMusicID() != 0 ?
+                .addAction(SongsManager.getInstance().getCurrentMusic() != 0 ?
                                 R.drawable.ic_previous_white : R.drawable.ic_previous_black,
                         Constants.NOTIFICATION.PREVIOUS,
                         prevIntent)
                 .addAction(icon_Action, Constants.NOTIFICATION.PAUSE, playPauseIntent)
 
-                .addAction(SongsManager.getInstance().getCurrentMusicID() < mSongs.size() ?
+                .addAction(SongsManager.getInstance().getCurrentMusic() < mSongs.size() ?
                                 R.drawable.ic_next_white : R.drawable.ic_next_black,
                         Constants.NOTIFICATION.NEXT,
                         nextIntent)
@@ -720,21 +747,21 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 //                .setLargeIcon()
                     .setSmallIcon(R.drawable.ic_music_note_black_24dp)
                     .setLargeIcon(bitmap)
-                    .setSubText(mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getFileName())
+                    .setSubText(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getFileName())
 
-                    .setContentTitle(mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getTitle())
-                    .setContentText(mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getArtist())
+                    .setContentTitle(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTitle())
+                    .setContentText(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getArtist())
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     // click notification intent to home activity
                     .setContentIntent(PendingIntent.getActivity(this, 0, new Intent(this, HomeActivity.class), 0))
                     // Add playback actions
-                    .addAction(SongsManager.getInstance().getCurrentMusicID() != 0 ?
+                    .addAction(SongsManager.getInstance().getCurrentMusic() != 0 ?
                                     R.drawable.ic_previous_white : R.drawable.ic_previous_black,
                             Constants.NOTIFICATION.PREVIOUS,
                             prevIntent)
                     .addAction(icon_Action, Constants.NOTIFICATION.PAUSE, playPauseIntent)
 
-                    .addAction(SongsManager.getInstance().getCurrentMusicID() < mSongs.size() ?
+                    .addAction(SongsManager.getInstance().getCurrentMusic() < mSongs.size() ?
                                     R.drawable.ic_next_white : R.drawable.ic_next_black,
                             Constants.NOTIFICATION.NEXT,
                             nextIntent)
@@ -761,7 +788,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         Log.d(tag,"Service --- SetStatusNoti: "+isPlaying );
 
         Intent iAction = new Intent(this, MediaPlayerService.class);
-        updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
+        updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusic()));
         if (isPlaying){
 
             iAction.setAction(Constants.ACTION.PLAY);
@@ -837,7 +864,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        Log.d(tag, "initMediaPlayer ERROR " + what + " - " + mSongs.get(SongsManager.getInstance().getCurrentMusicID()).getTitle());
+        Log.d(tag, "initMediaPlayer ERROR " + what + " - " + mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTitle());
         isInitAudioError = true;
         //Invoked when there has been an error during an asynchronous operation.
         switch (what) {
@@ -911,7 +938,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
                 mMediaPlayer.seekTo(0);
-                SongsManager.getInstance().setCurrentMusicID(0);
+                SongsManager.getInstance().setCurrentMusic(0);
             }
 
         }
@@ -946,14 +973,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             // reset mediaPlayer to play the new Audio
             if (position == -1 &&  position < mSongs.size()){
                 endOfAudioList = false;
-                SongsManager.getInstance().setCurrentMusicID(0);
+                SongsManager.getInstance().setCurrentMusic(0);
             }else {
                 stopSelf();
             }
             stopMedia();
             mMediaPlayer.reset();
             initMediaPlayer();
-            updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
+
 //            initNotification(Constants.NOTIFICATION.PLAY);
         }
     };
@@ -964,7 +991,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             // reset mediaPlayer to play the new Audio
             mMediaPlayer.reset();
 //            initMediaPlayer();
-            updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
+            updateMetaData(mSongs.get(SongsManager.getInstance().getCurrentMusic()));
 //            buildNotification(Constants.NOTIFICATION.PLAY);
         }
     };
@@ -977,7 +1004,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 //            pauseMedia();
 //            initNotification(Constants.ACTION.PAUSE);
            /* buildNotification(Constants.NOTIFICATION.PAUSE,
-                    mSongs.get(SongsManager.getInstance().getCurrentMusicID()));*/
+                    mSongs.get(SongsManager.getInstance().getCurrentMusic()));*/
         }
     };
 
@@ -1018,7 +1045,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             if (mCategorySongs.checkRow(path)) {
                 mCategorySongs.updateRow(path);
             } else {
-                mCategorySongs.addRow(1, mSongs.get(SongsManager.getInstance().getCurrentMusicID()));
+                mCategorySongs.addRow(1, mSongs.get(SongsManager.getInstance().getCurrentMusic()));
             }
             Log.d(tag, mCategorySongs.checkRow(path) +"" );
             mCategorySongs.close();

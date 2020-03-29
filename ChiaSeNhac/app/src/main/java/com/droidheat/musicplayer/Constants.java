@@ -19,8 +19,12 @@ public class Constants {
     }
 
     public @interface INTENT{
-        String IS_PLAY_MEDIA = "isPlayMedia";
-        String IS_PLAYING_NOTI = "isPlayingNoti";
+        String IS_PLAY_MEDIA_SERVICE = "isPlayMedia";
+        String IS_PLAY_MEDIA_NOTIFICATION = "isPlayingNotification";
+        String NOTI_SERVICE_TO_ACTIVITY = "ServiceToActivity";
+        String NEXT_TO_SERVICE = "nextToService";
+        String PREVIOUS_TO_SERVICE = "previousToService";
+
     }
     public @interface VALUE {
         String SYNC = "sync";

@@ -126,14 +126,21 @@ public class SongsManager {
         }
     }
 
-    public int getCurrentMusicID() {
+    public int getCurrentMusic() {
         return mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
     }
 
-    public void setCurrentMusicID(int musicID) {
+    public void setCurrentMusic(int musicID) {
         mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION, musicID);
     }
 
+    public void setNextCurrentMusic(){
+        setCurrentMusic(mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0) + 1);
+    }
+
+    public void setPreviousCurrentMusic(){
+        setCurrentMusic(mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0) - 1);
+    }
     public ArrayList<SongModel> queue() {
         if (queue.isEmpty()){
             ArrayList<SongModel> list = new ArrayList<>(mainList);
@@ -380,7 +387,7 @@ public class SongsManager {
     }
 
     public void playNext(SongModel song) {
-        queue().add(getCurrentMusicID() + 1, song);
+        queue().add(getCurrentMusic() + 1, song);
         (new CommonUtils(context)).showTheToast("Playing next: " + song.getTitle());
     }
 
@@ -410,7 +417,7 @@ public class SongsManager {
             if (options[i] == R.id.play_musicUtils) {
                 name = "Play";
             } else if (options[i] == R.id.play_next_musicUtils) {
-                name = "Play Next";
+                name = "Play NEXT";
             } else if (options[i] == R.id.add_to_queue_musicUtils) {
                 name = "Add to Queue";
             } else if (options[i] == R.id.add_to_playlist_musicUtils) {
@@ -444,7 +451,7 @@ public class SongsManager {
             File file = new File(array.get(id).getPath());
             if (file.exists()) {
                 replaceQueue(array);
-                setCurrentMusicID(id);
+                setCurrentMusic(id);
                 Intent intent = new Intent(Constants.ACTION.PLAY);
                 ContextCompat.startForegroundService(context, createExplicitFromImplicitIntent(intent));
 

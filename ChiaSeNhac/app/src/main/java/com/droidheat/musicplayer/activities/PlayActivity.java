@@ -70,6 +70,7 @@ public class PlayActivity extends BaseActivity
             registerReceiver(brSeekBar, new IntentFilter(Constants.ACTION.BROADCAST_SEEK_BAR));
             registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
             registerReceiver(brCheckPlayService, new IntentFilter(Constants.ACTION.ISPLAY));
+            registerReceiver(receiver, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
             receiverRegistered = true;
         }
         // start service
@@ -88,6 +89,7 @@ public class PlayActivity extends BaseActivity
             this.unregisterReceiver(brPlayPauseActivity);
             this.unregisterReceiver(brSeekBar);
             this.unregisterReceiver(brCheckPlayService);
+            this.unregisterReceiver(receiver);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -134,7 +136,7 @@ public class PlayActivity extends BaseActivity
         mBtnMenu = findViewById(R.id.imb_SeeMenu);
         mVpMusic = findViewById(R.id.vp_change_music);
         mSeekBarTime = findViewById(R.id.sb_leftTime);
-        mSeekBarTime.setMax(MusicType.get(SongsManager.getInstance().getCurrentMusicID()).getTime());
+        mSeekBarTime.setMax(MusicType.get(SongsManager.getInstance().getCurrentMusic()).getTime());
     }
 
     private void assignView(){
@@ -189,7 +191,7 @@ public class PlayActivity extends BaseActivity
             isPlaying = true;
             Log.d("BBB", "Play acitivy onClick : " + isPlaying + " Media Player : "+MediaPlayerService.mMediaPlayer.isPlaying());
         }*/
-        SongsManager.getInstance().setCurrentMusicID(position);
+        SongsManager.getInstance().setCurrentMusic(position);
 
 
     }
@@ -197,7 +199,7 @@ public class PlayActivity extends BaseActivity
     @Override
     public void onPageSelected(int position) {
         this.position = position;
-        sendBroadcast(new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
+//        sendBroadcast(new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
 
 
         mSeekBarTime.setProgress(0);
@@ -222,7 +224,7 @@ public class PlayActivity extends BaseActivity
         } else {
             //Service is active
             //Send a broadcast to the service -> PLAY_NEW_AUDIO
-            sendBroadcast(new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
+//            sendBroadcast(new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
 
         }
     }
@@ -240,7 +242,7 @@ public class PlayActivity extends BaseActivity
         public void onReceive(Context context, Intent serviceIntent) {
             // activity gửi broadcast từ service >> activity
                 boolean isPlayingNoti =
-                        serviceIntent.getBooleanExtra(Constants.INTENT.IS_PLAYING_NOTI,
+                        serviceIntent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION,
                                 false);
 
                 if (isPlayingNoti) {
@@ -257,7 +259,7 @@ public class PlayActivity extends BaseActivity
         @Override
         public void onReceive(Context context, Intent intent) {
             // activity gửi broadcast xuống service
-            boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA, false);
+            boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
 
             if (isPlayingMedia) {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
@@ -279,21 +281,48 @@ public class PlayActivity extends BaseActivity
 
         }
     };
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String actionNoti = intent.getStringExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY);
+
+            Log.d("KKK", "PlayActivity ---  Receiver: "+actionNoti);
+            if (actionNoti == "NextToService") {
+                Log.d("KKK", "PlayActivity ---  Receiver: NextToService Enter");
+            }else if (actionNoti == "PreviousToService"){
+                Log.d("KKK", "PlayActivity ---  Receiver: PreviousToService Enter");
+            }
+
+        }
+    };
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.icon_play:
-                SongsManager.getInstance().setCurrentMusicID(position);
+                SongsManager.getInstance().setCurrentMusic(position);
                 // khi bấm play check play trước đã, trong broad cast check play sẽ play video
                 Intent iPlay = new Intent(this, MediaPlayerService.class);
                 iPlay.setAction(Constants.ACTION.ISPLAY);
                 startService(iPlay);
                 break;
             case R.id.icon_next:
-               
+                mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic()+1);
+                Log.d("BBB",
+                        "PlayActivity --- icon_prev: "+(SongsManager.getInstance().getCurrentMusic()+1));
+                Intent iNext = new Intent(this, MediaPlayerService.class);
+
+                iNext.setAction(Constants.ACTION.NEXT);
+                startService(iNext);
                 break;
             case R.id.icon_prev:
-
+                mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic()-1);
+                Log.d("BBB",
+                        "PlayActivity --- icon_prev: "+(SongsManager.getInstance().getCurrentMusic()-1));
+                Intent iPrevious = new Intent(this, MediaPlayerService.class);
+                iPrevious.setAction(Constants.ACTION.PREVIOUS);
+                startService(iPrevious);
                 break;
             case R.id.icon_repeat:
 
@@ -335,9 +364,9 @@ public class PlayActivity extends BaseActivity
         mSeekBarTime.setMax(mediaMax);
         mSeekBarTime.setProgress(currentPos);
         mTextLeftTime.setText(convertTime(currentPos));
-        mTextRightTime.setText(convertTime(MusicType.get(SongsManager.getInstance().getCurrentMusicID()).getTime()));
+        mTextRightTime.setText(convertTime(MusicType.get(SongsManager.getInstance().getCurrentMusic()).getTime()));
 
-        if (MusicType.get(SongsManager.getInstance().getCurrentMusicID()).getTime() - currentPos < 1000){
+        if (MusicType.get(SongsManager.getInstance().getCurrentMusic()).getTime() - currentPos < 1000){
             new CountDownTimer(2000, 1000) {
                 @Override
                 public void onTick(long l) {
@@ -346,7 +375,7 @@ public class PlayActivity extends BaseActivity
 
                 @Override
                 public void onFinish() {
-                    mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusicID()+1, true);
+                    mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic()+1, true);
                 }
             }.start();
         }
@@ -354,18 +383,18 @@ public class PlayActivity extends BaseActivity
         setEnableButton();
     }
     private void setEnableButton() {
-        mBtnPrev.setEnabled(SongsManager.getInstance().getCurrentMusicID() != 0);
-        mBtnPrev.setImageResource(SongsManager.getInstance().getCurrentMusicID() != 0 ?
+        mBtnPrev.setEnabled(SongsManager.getInstance().getCurrentMusic() != 0);
+        mBtnPrev.setImageResource(SongsManager.getInstance().getCurrentMusic() != 0 ?
                 R.drawable.ic_previous_black : R.drawable.ic_previous_white);
-        mBtnNext.setEnabled(SongsManager.getInstance().getCurrentMusicID() < SongsManager.getInstance().newSongs().size() - 1);
-        mBtnNext.setImageResource(SongsManager.getInstance().getCurrentMusicID() < SongsManager.getInstance().newSongs().size() - 1 ?
+        mBtnNext.setEnabled(SongsManager.getInstance().getCurrentMusic() < SongsManager.getInstance().newSongs().size() - 1);
+        mBtnNext.setImageResource(SongsManager.getInstance().getCurrentMusic() < SongsManager.getInstance().newSongs().size() - 1 ?
                 R.drawable.ic_next_black : R.drawable.ic_next_white);
     }
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (!MediaPlayerService.mMediaPlayer.isPlaying()){
             Log.d("KKK", "onProgressChanged: ENTER");
-            seekBar.setMax(MusicType.get(SongsManager.getInstance().getCurrentMusicID()).getTime());
+            seekBar.setMax(MusicType.get(SongsManager.getInstance().getCurrentMusic()).getTime());
         }
         if (fromUser){
             seekPos = seekBar.getProgress();

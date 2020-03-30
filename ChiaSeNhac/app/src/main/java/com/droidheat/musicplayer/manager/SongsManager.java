@@ -127,7 +127,9 @@ public class SongsManager {
     }
 
     public int getCurrentMusic() {
-        return mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
+        int pos = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
+
+        return pos;
     }
 
     public void setCurrentMusic(int position) {

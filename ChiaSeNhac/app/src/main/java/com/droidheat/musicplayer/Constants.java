@@ -25,7 +25,8 @@ public class Constants {
         String PREVIOUS_TO_SERVICE = "previousToService";
         String POS_NEXT = "posNext";
         String POS_PREV = "posPrev";
-
+        String isPrev = "isPrev";
+        String isNext = "isNext";
     }
     public @interface VALUE {
         String SYNC = "sync";

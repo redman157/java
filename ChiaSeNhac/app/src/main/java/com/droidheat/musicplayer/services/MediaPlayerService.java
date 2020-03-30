@@ -76,6 +76,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private int newPosition;
     private int position;
     private Intent iIntentSeekBar, iPlayNewMusic, iCheckPlayActivity, iPlayPauseActivity;
+    private Intent iIsPrev, iIsNext;
     private String title, fileName, path, albumId, album, artists;
     private Intent iPrev, iNext;
     private androidx.core.app.NotificationCompat.Builder notificationBuilder = null;
@@ -128,6 +129,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         mSongs = mSongsManager.queue();
 
         position = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1);
+
         title = mSongs.get(position).getTitle();
         path = mSongs.get(position).getPath();
         fileName = mSongs.get(position).getFileName();
@@ -250,8 +252,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             public void onSkipToPrevious() {
                 super.onSkipToPrevious();
                 skipToPrevious();
-                initNotification(Constants.NOTIFICATION.PAUSE);
-//                buildNotification(Constants.NOTIFICATION.PLAY);
+
+
             }
 
             @Override
@@ -283,8 +285,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             return;
         }
         String action = iAction.getAction();
-
-
+        Log.d("BBB", "Service --- handleIncomingActions: "+SongsManager.getInstance().getCurrentMusic());
         if (action != null) {
             switch (action) {
                 case Constants.ACTION.PLAY:
@@ -299,16 +300,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
                     break;
                 case Constants.ACTION.PREVIOUS:
+
                     mMediaTransportControls.skipToPrevious();
                     this.iPrev = iAction;
-
+                    this.iIsPrev = iAction;
                     break;
                 case Constants.ACTION.STOP:
                     mMediaTransportControls.stop();
                     break;
                 case Constants.ACTION.SEEK:
                     int pos = iAction.getIntExtra(Constants.PREFERENCES.POSITION_SONG, 0);
-                    Log.d("KKK","Service --- Position: "+pos);
+
 
                     if (pos != 0) {
                         mMediaTransportControls.seekTo(pos);
@@ -536,27 +538,21 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void skipToPrevious(){
         Log.d(tag, "skipToPrevious: Enter");
-        if (SongsManager.getInstance().getCurrentMusic() == 0){
-            if (mSongs != null) {
-                SongsManager.getInstance().setCurrentMusic(mSongs.size());
-            }else {
-                Log.d(tag, "danh sach nhạc = null");
-            }
+        int posPrev = SongsManager.getInstance().getCurrentMusic();
+        SongsManager.getInstance().setCurrentMusic(posPrev -1);
+        Log.d("KKK", "Service --- skipToPrevious: "+posPrev);
+        Bundle bdPrev = iPrev.getExtras();
+        Log.d("KKK",
+                "Service --- Constants.ACTION.PREVIOUS:" + SongsManager.getInstance().getCurrentMusic());
+        if (bdPrev != null) {
+            String prevToActivity = bdPrev.getString(Constants.INTENT.PREVIOUS_TO_SERVICE);
 
-        }else {
-            SongsManager.getInstance().setCurrentMusic(
-                    SongsManager.getInstance().getCurrentMusic() -1);
-            Log.d("BBB", "Service --- skipToPrevious: "+SongsManager.getInstance().getCurrentMusic());
-            Bundle bdPrev = iPrev.getExtras();
-            Log.d("BBB", "Service --- Constants.ACTION.PREVIOUS:" + SongsManager.getInstance().getCurrentMusic());
-            if (bdPrev != null) {
-                String prevToActivity = bdPrev.getString(Constants.INTENT.PREVIOUS_TO_SERVICE);
-
-                iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY,
-                        prevToActivity);
-                sendBroadcast(iPlayNewMusic);
-            }
+            iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY,
+                    prevToActivity);
+            sendBroadcast(iPlayNewMusic);
         }
+        // set up dù có trường hợp là <0 vẫn xảy ra
+        initNotification(Constants.NOTIFICATION.PAUSE);
 
         stopMedia();
         //reset mediaPlayer
@@ -577,15 +573,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             endOfAudioList = true;
         }else {
             SongsManager.getInstance().setCurrentMusic(SongsManager.getInstance().getCurrentMusic() +1);
-            Log.d("KKK", "Service --- skipToNext position: "+SongsManager.getInstance().getCurrentMusic());
+
             Bundle bdNext = iNext.getExtras();
-            Log.d("KKK", "Service --- Constants.ACTION.NEXT:" + SongsManager.getInstance().getCurrentMusic());
+
             if (bdNext != null) {
                 String nextToActivity = bdNext.getString(Constants.INTENT.NEXT_TO_SERVICE);
                 iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY, nextToActivity);
                 sendBroadcast(iPlayNewMusic);
             } else {
-                Log.d("KKK", "dbNext is null");
+                Log.d("KKK", "Service --- SkipToNext: dbNext is null");
             }
             stopMedia();
 
@@ -655,7 +651,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void initNotification(String type){
         int icon_Action = 0;
-
+        int posNoti = SongsManager.getInstance().getCurrentMusic();
+        if (posNoti < 0){
+            posNoti = mSongs.size() - 1;
+        }
         PendingIntent playPauseIntent = null;
         PendingIntent nextIntent = null;
         PendingIntent prevIntent = null;
@@ -665,6 +664,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         Bundle bdNext = new Bundle();
         bdNext.putString(Constants.INTENT.NEXT_TO_SERVICE, "NextToService");
         iNext.putExtras(bdNext);
+
         // GỬI INTENT TỪ NOTI VỀ SERVICE
         Intent iPrev = new Intent(this, MediaPlayerService.class);
         iPrev.setAction(Constants.ACTION.PREVIOUS);
@@ -699,8 +699,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
 
         createChannel();
-        Bitmap bitmap =
-                ImageUtils.getInstance(this).getBitmapIntoPicasso(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getAlbumID());
+
+        Bitmap bitmap = ImageUtils.getInstance(this).getBitmapIntoPicasso(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getAlbumID());
 
 
 

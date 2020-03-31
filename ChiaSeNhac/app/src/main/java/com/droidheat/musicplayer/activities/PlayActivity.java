@@ -55,7 +55,9 @@ public class PlayActivity extends BaseActivity
     public   int seekPos;
     private OnSongChange onSongChange;
     private boolean isPlayingMedia;
+    private int size;
     private boolean isChange, isPlaying;
+    private boolean isRepeat = true;
     public void setOnChange(OnSongChange onSongChange){
         this.onSongChange = onSongChange;
     }
@@ -106,6 +108,7 @@ public class PlayActivity extends BaseActivity
         mSongs = ChangeMusic.getInstance().switchMusic(type);
         initView();
         assignView();
+        size = mSongs.size();
     }
 
     @Override
@@ -145,12 +148,10 @@ public class PlayActivity extends BaseActivity
             mAdapter.addData(new ChangeMusicFragment(), mSongs.get(idx) );
         }
         if (position == 0) {
-
-
+            mBtnPrev.setImageResource(R.drawable.ic_previous_black);
             mTextLeftTime.setText("00 : 00");
             mTextRightTime.setText(mSongs.get(0).getDuration());
         }else {
-
             mTextLeftTime.setText("00 : 00");
             mTextRightTime.setText(mSongs.get(position).getDuration());
         }
@@ -167,24 +168,28 @@ public class PlayActivity extends BaseActivity
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+        if (position==0) {
+            mBtnPrev.setImageResource(R.drawable.ic_previous_black);
+            mBtnNext.setImageResource(R.drawable.ic_next_white);
+        }else if (position == mSongs.size()) {
+            mBtnPrev.setImageResource(R.drawable.ic_previous_white);
+            mBtnNext.setImageResource(R.drawable.ic_next_black);
+        }else {
+            mBtnPrev.setImageResource(R.drawable.ic_previous_white);
+            mBtnNext.setImageResource(R.drawable.ic_next_white);
+        }
+
         seekPos = 0;
 
         MediaPlayerService.mMediaPlayer.stop();
         MediaPlayerService.mMediaPlayer.reset();
-       /*
-        if (MediaPlayerService.mMediaPlayer.isPlaying()) {
-            mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-
-            isPlaying = false;
-            Log.d("BBB", "Play acitivy onClick : " + isPlaying + " Media Player : "+MediaPlayerService.mMediaPlayer.isPlaying());
-        } else {
-            mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-            isPlaying = true;
-            Log.d("BBB", "Play acitivy onClick : " + isPlaying + " Media Player : "+MediaPlayerService.mMediaPlayer.isPlaying());
-        }*/
+        mTextLeftTime.setText("00 : 00");
+        mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
         SongsManager.getInstance().setCurrentMusic(position);
 
-
+        Intent iPlay = new Intent(this, MediaPlayerService.class);
+        iPlay.setAction(Constants.ACTION.IS_PLAY);
+        startService(iPlay);
     }
 
     @Override
@@ -192,25 +197,13 @@ public class PlayActivity extends BaseActivity
         this.position = position;
 //        sendBroadcast(new Intent(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
         Log.d("BBB", "Play Activity --- onPageSelected: "+position);
-        if (position == 0 ){
-            mBtnPrev.setClickable(false);
-            mBtnPrev.setImageResource(R.drawable.ic_previous_blue);
-        }else {
-            mBtnPrev.setClickable(true);
-            mBtnPrev.setImageResource(R.drawable.ic_previous_white);
-        }
 
-        if (position == mSongs.size() - 1){
-            mBtnNext.setClickable(false);
-            mBtnNext.setImageResource(R.drawable.ic_next_blue);
-        }else {
-            mBtnNext.setClickable(false);
-            mBtnNext.setImageResource(R.drawable.ic_next_white);
-        }
         mSeekBarTime.setProgress(0);
         mSeekBarTime.setMax(mSongs.get(position).getTime());
         mTextLeftTime.setText("00 : 00");
         mTextRightTime.setText(convertTime(mSongs.get(position).getTime()));
+
+
 //        Log.d("BBB","Min: "+ 0+ " -- Max: "+ SongsManager.getInstance().allSortSongs().get(position).getTime());
     }
 
@@ -235,7 +228,7 @@ public class PlayActivity extends BaseActivity
                                 false);
 
                 if (isPlayingNoti) {
-
+                    mTextLeftTime.setText("00 : 00");
                     mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
                 } else {
 
@@ -300,13 +293,9 @@ public class PlayActivity extends BaseActivity
                 break;
             case R.id.icon_next:
                 if (position == mSongs.size() - 1){
-                   /* Intent iNext = new Intent(this, MediaPlayerService.class);
-                    iNext.setAction(Constants.ACTION.NEXT);
-                    iNext.putExtra(Constants.INTENT.POS_NEXT, 0);
-                    startService(iNext);
-                    mVpMusic.setCurrentItem(0);*/
+
                     mBtnNext.setClickable(false);
-                    mBtnNext.setImageResource(R.drawable.ic_next_blue);
+                    mBtnNext.setImageResource(R.drawable.ic_next_black);
                 }else {
                     mBtnNext.setClickable(true);
                     mBtnNext.setImageDrawable(getResources().getDrawable(R.drawable.ic_next_white));
@@ -315,7 +304,6 @@ public class PlayActivity extends BaseActivity
                             "PlayActivity --- icon_next: " + (SongsManager.getInstance().getCurrentMusic() + 1));
                     Intent iNext = new Intent(this, MediaPlayerService.class);
                     iNext.setAction(Constants.ACTION.NEXT);
-
                     startService(iNext);
                 }
                 break;
@@ -323,15 +311,9 @@ public class PlayActivity extends BaseActivity
 
 
                 if (position ==  0 ){
-/*
-                    Intent iPrevious = new Intent(this, MediaPlayerService.class);
-                    iPrevious.setAction(Constants.ACTION.PREVIOUS);
-                    iPrevious.putExtra(Constants.INTENT.POS_PREV, mSongs.size() - 1);
-                    startService(iPrevious);
 
-                    mVpMusic.setCurrentItem(mSongs.size());*/
                     mBtnPrev.setClickable(false);
-                    mBtnPrev.setImageResource(R.drawable.ic_previous_blue);
+                    mBtnPrev.setImageResource(R.drawable.ic_previous_black);
                 }else {
                     mBtnPrev.setClickable(true);
                     mBtnPrev.setImageResource(R.drawable.ic_previous_white);
@@ -340,7 +322,7 @@ public class PlayActivity extends BaseActivity
                             "PlayActivity --- icon_prev: " + (SongsManager.getInstance().getCurrentMusic() - 1));
                     Intent iPrevious = new Intent(this, MediaPlayerService.class);
                     iPrevious.setAction(Constants.ACTION.PREVIOUS);
-                    iPrevious.putExtra(Constants.INTENT.POS_PREV, position);
+
                     startService(iPrevious);
                     mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic() - 1);
                 }
@@ -348,6 +330,18 @@ public class PlayActivity extends BaseActivity
                 break;
             case R.id.icon_repeat:
 
+                if (isRepeat == true){
+
+                    mBtnRepeat.setImageResource(R.drawable.ic_repeat_blue);
+                    Log.d("CCC","Enter blue");
+                    isRepeat = false;
+
+                }else {
+                    mBtnRepeat.setImageResource(R.drawable.ic_repeat_white);
+                    isRepeat = true;
+                    Log.d("CCC","Enter white");
+
+                }
                 break;
             case R.id.icon_imageFav:
                 break;
@@ -355,7 +349,7 @@ public class PlayActivity extends BaseActivity
                 // khi back ngược về ta cần phải lưu dc position khi tắt app bật lên ta phải có
                 // dc giá trị sẵn để xuất màn hình tất cả có ở Changmusic khi thao tác
                 Intent intent = new Intent(this, HomeActivity.class);
-//                intent.putExtra(Constants.VALUE.POSITION, position);
+                intent.putExtra(Constants.INTENT.POS_HOME, position);
                 finish();
                 startActivity(intent);
 
@@ -378,6 +372,7 @@ public class PlayActivity extends BaseActivity
 
     private void updateUI(Intent serviceIntent) {
 
+
         int currentPos = serviceIntent.getIntExtra("current_pos", 0);
         int mediaMax = serviceIntent.getIntExtra("media_max", 0);
         String songTitle = serviceIntent.getStringExtra("song_title");
@@ -387,8 +382,8 @@ public class PlayActivity extends BaseActivity
         mTextLeftTime.setText(convertTime(currentPos));
         mTextRightTime.setText(convertTime(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTime()));
 
-        if (mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTime() - currentPos < 1000){
-            new CountDownTimer(2000, 1000) {
+        if (mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTime() - currentPos < 1200){
+            new CountDownTimer(2500, 1000) {
                 @Override
                 public void onTick(long l) {
 
@@ -401,7 +396,7 @@ public class PlayActivity extends BaseActivity
             }.start();
         }
 
-        setEnableButton();
+
     }
     private void setEnableButton() {
         mBtnPrev.setEnabled(SongsManager.getInstance().getCurrentMusic() != 0);
@@ -419,13 +414,12 @@ public class PlayActivity extends BaseActivity
         if (fromUser){
             seekPos = seekBar.getProgress();
 
-//            iSeekBar.putExtra("seekbar_service", seekPos);
             Intent intent = new Intent(this, MediaPlayerService.class);
             intent.setAction(Constants.ACTION.SEEK);
             intent.putExtra(Constants.PREFERENCES.POSITION_SONG, seekPos);
 
             startService(intent);
-//            Log.d("TTT", "PlayActivity Seekbar: " + seekBar.getProgress() + "/" + seekBar.getMax());
+
 
         }
     }
@@ -438,7 +432,6 @@ public class PlayActivity extends BaseActivity
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         if (seekPos != 0) {
-
             seekBar.setProgress(seekPos);
 
         }

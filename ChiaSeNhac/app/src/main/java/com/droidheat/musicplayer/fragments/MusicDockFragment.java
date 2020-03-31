@@ -2,6 +2,7 @@ package com.droidheat.musicplayer.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,8 +28,10 @@ import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongsManager;
 import com.droidheat.musicplayer.models.SongModel;
+import com.droidheat.musicplayer.services.MediaPlayerService;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MusicDockFragment extends Fragment implements View.OnClickListener{
     private View view;
@@ -54,17 +58,6 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
         mSongsManager.setContext(getActivity());
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-//        mPlayMusic.connect();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-//        mPlayMusic.disconnect();
-    }
 
     @Nullable
     @Override
@@ -74,9 +67,6 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
             initView();
             assignView();
         }
-
-/*        mPlayMusic.setCallBack(this);
-        mPlayMusic.initMediaBrowser();*/
 
 
 
@@ -91,7 +81,21 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
         mImgArt = view.findViewById(R.id.fm_img_albumArt);
 
 
-        mImgArt.setImageBitmap(ImageUtils.getInstance(getContext()).getBitmapIntoPicasso(prefsManager.getString(Constants.PREFERENCES.SaveAlbumID,"0")));
+        Bundle intent = getActivity().getIntent().getExtras();
+
+        Bitmap bitmap = intent.getParcelable("SendAlbumId");
+        if (bitmap != null){
+            mImgArt.setImageBitmap(bitmap);
+        }
+        if (MediaPlayerService.mMediaPlayer!= null){
+            if (MediaPlayerService.mMediaPlayer.isPlaying()){
+                mImbPlay.setImageResource(R.drawable.app_pause);
+            }else {
+                mImbPlay.setImageResource(R.drawable.app_play);
+            }
+        }else {
+            mImbPlay.setImageResource(R.drawable.app_play);
+        }
     }
 
     private void assignView(){
@@ -114,6 +118,9 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
                     startActivity(intent);
                     ((HomeActivity)getActivity()).finish();
                 }
+                break;
+            case R.id.fm_btn_Play:
+                Toast.makeText(getContext(), "HEHE", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

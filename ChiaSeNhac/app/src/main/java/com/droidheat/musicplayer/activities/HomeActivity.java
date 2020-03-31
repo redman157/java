@@ -270,7 +270,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                             R.anim.fadeout);
 
                     mRcOptionMenu.setAnimation(fadeOut);*/
-                    mRcOptionMenu.animate().alpha(0).setDuration(700).withEndAction(new Runnable() {
+                    mRcOptionMenu.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
                         @Override
                         public void run() {
                             mRcOptionMenu.setVisibility(View.GONE);

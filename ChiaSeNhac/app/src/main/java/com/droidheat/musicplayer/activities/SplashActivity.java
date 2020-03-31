@@ -13,6 +13,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -28,6 +29,7 @@ import com.droidheat.musicplayer.database.Playlist;
 import com.droidheat.musicplayer.manager.CommonUtils;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
+import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongsManager;
 import com.droidheat.musicplayer.models.SongModel;
@@ -375,8 +377,13 @@ public class SplashActivity extends AppCompatActivity {
 
                 @Override
                 public void onFinish() {
-                    startActivity(new Intent(SplashActivity.this,
-                            HomeActivity.class));
+                    Bitmap bitmap =
+                            ImageUtils.getInstance(SplashActivity.this).getBitmapIntoPicasso(mSharedPrefsManager.getString(Constants.PREFERENCES.SaveAlbumID,"0"));
+                    Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
+
+                    intent.putExtra("SendAlbumId", bitmap);
+                    startActivity(intent);
+
                     finish();
                 }
             };

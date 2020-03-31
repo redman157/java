@@ -23,7 +23,7 @@ public class Constants {
         String NOTI_SERVICE_TO_ACTIVITY = "ServiceToActivity";
         String NEXT_TO_SERVICE = "nextToService";
         String PREVIOUS_TO_SERVICE = "previousToService";
-
+        String POS_HOME = "posHome";
         String POS_PLAY = "posPlay";
         String POS_PAUSE = "posPause";
         String POS_PREV = "posPrev";

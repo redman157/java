@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.droidheat.musicplayer.BaseActivity;
 import com.droidheat.musicplayer.ChangeMusic;
@@ -57,7 +58,7 @@ public class PlayActivity extends BaseActivity
     private boolean isPlayingMedia;
     private int size;
     private boolean isChange, isPlaying;
-    private boolean isRepeat = true;
+    private boolean isRepeat = false;
     public void setOnChange(OnSongChange onSongChange){
         this.onSongChange = onSongChange;
     }
@@ -263,19 +264,20 @@ public class PlayActivity extends BaseActivity
     private BroadcastReceiver brPlayNew = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            String actionNoti = intent.getStringExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY);
+            if (isRepeat == false) {
+                String actionNoti = intent.getStringExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY);
            /* String parsedAction = actionNoti.split(":")[0].trim();
             int posMusic = Integer.parseInt(actionNoti.split(":")[1]);*/
-            if (actionNoti != null) {
-                if (actionNoti.equals("NextToService")) {
-                    Log.d("BBB",
-                            "PlayActivity ---  Receiver NextToService:" + (SongsManager.getInstance().getCurrentMusic()));
-                    mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic(), true);
-                } else if (actionNoti.equals("PreviousToService")) {
-                    Log.d("BBB",
-                            "PlayActivity ---  Receiver: PreviousToService " + (SongsManager.getInstance().getCurrentMusic()));
-                    mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic(), true);
+                if (actionNoti != null) {
+                    if (actionNoti.equals("NextToService")) {
+                        Log.d("BBB",
+                                "PlayActivity ---  Receiver NextToService:" + (SongsManager.getInstance().getCurrentMusic()));
+                        mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic(), true);
+                    } else if (actionNoti.equals("PreviousToService")) {
+                        Log.d("BBB",
+                                "PlayActivity ---  Receiver: PreviousToService " + (SongsManager.getInstance().getCurrentMusic()));
+                        mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic(), true);
+                    }
                 }
             }
 
@@ -330,16 +332,20 @@ public class PlayActivity extends BaseActivity
                 break;
             case R.id.icon_repeat:
 
-                if (isRepeat == true){
+                if (isRepeat == false){
 
                     mBtnRepeat.setImageResource(R.drawable.ic_repeat_blue);
-                    Log.d("CCC","Enter blue");
-                    isRepeat = false;
+                    SongsManager.getInstance().setCurrentMusic(position);
 
+                    isRepeat = true;
+                    Toast.makeText(this, "Turn On Repeat Music", Toast.LENGTH_SHORT).show();
+                    unregisterReceiver(brPlayNew);
                 }else {
                     mBtnRepeat.setImageResource(R.drawable.ic_repeat_white);
-                    isRepeat = true;
-                    Log.d("CCC","Enter white");
+                    isRepeat = false;
+                    registerReceiver(brPlayNew,
+                            new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
+                    Toast.makeText(this, "Turn Off Repeat Music", Toast.LENGTH_SHORT).show();
 
                 }
                 break;
@@ -382,7 +388,7 @@ public class PlayActivity extends BaseActivity
         mTextLeftTime.setText(convertTime(currentPos));
         mTextRightTime.setText(convertTime(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTime()));
 
-        if (mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTime() - currentPos < 1200){
+        if (mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTime() - currentPos < 1000){
             new CountDownTimer(2500, 1000) {
                 @Override
                 public void onTick(long l) {
@@ -391,21 +397,20 @@ public class PlayActivity extends BaseActivity
 
                 @Override
                 public void onFinish() {
-                    mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic() +1, true);
+                    if (!isRepeat) {
+                        mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic() + 1, true);
+                    }else {
+                        Intent intent = new Intent(PlayActivity.this, MediaPlayerService.class);
+                        intent.setAction(Constants.ACTION.PLAY);
+                        startService(intent);
+                    }
                 }
             }.start();
         }
 
 
     }
-    private void setEnableButton() {
-        mBtnPrev.setEnabled(SongsManager.getInstance().getCurrentMusic() != 0);
-        mBtnPrev.setImageResource(SongsManager.getInstance().getCurrentMusic() != 0 ?
-                R.drawable.ic_previous_black : R.drawable.ic_previous_white);
-        mBtnNext.setEnabled(SongsManager.getInstance().getCurrentMusic() < SongsManager.getInstance().newSongs().size() - 1);
-        mBtnNext.setImageResource(SongsManager.getInstance().getCurrentMusic() < SongsManager.getInstance().newSongs().size() - 1 ?
-                R.drawable.ic_next_black : R.drawable.ic_next_white);
-    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (!MediaPlayerService.mMediaPlayer.isPlaying()){

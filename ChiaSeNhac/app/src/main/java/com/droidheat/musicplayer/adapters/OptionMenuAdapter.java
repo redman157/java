@@ -15,12 +15,12 @@ import java.util.ArrayList;
 public class OptionMenuAdapter extends RecyclerView.Adapter<OptionMenuAdapter.ViewHolder> {
     private final Context context;
     private ArrayList<String> items;
-    private SetOnClickItemMenu setOnClick;
-    public void setSetOnClick(SetOnClickItemMenu setOnClick){
-        this.setOnClick = setOnClick;
+    private OnClickItem onClickItem;
+    public void OnClickItemMenu(OnClickItem onClickItem){
+        this.onClickItem = onClickItem;
     }
-    public interface SetOnClickItemMenu {
-        void onClickItem(String item);
+    public interface OnClickItem {
+        void onClickItemMenu(String item);
     }
     public OptionMenuAdapter(ArrayList<String> items, Context context) {
         this.items = items;
@@ -62,7 +62,7 @@ public class OptionMenuAdapter extends RecyclerView.Adapter<OptionMenuAdapter.Vi
             textItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    setOnClick.onClickItem(item);
+                    onClickItem.onClickItemMenu(item);
                 }
             });
         }

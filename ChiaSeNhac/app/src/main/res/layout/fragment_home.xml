@@ -17,6 +17,7 @@
             android:id="@+id/text_QuickPlay"
             android:text="Quick Play"
             android:textSize="20sp"
+            android:textColor="@color/blackGrey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:ignore="HardcodedText" />
@@ -45,6 +46,7 @@
                     android:layout_weight="7"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
+
                     card_view:cardCornerRadius="10dp"
                     card_view:cardPreventCornerOverlap = "false"
                     card_view:cardElevation="6dp" >
@@ -60,6 +62,7 @@
                     android:layout_weight="3"
                     android:text="Shuffle All"
                     android:textSize="15dp"
+                    android:textColor="@color/blackGrey"
                     android:layout_marginTop="5dp"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
@@ -95,6 +98,7 @@
                     android:layout_weight="3"
                     android:text="Most Player"
                     android:textSize="15dp"
+                    android:textColor="@color/blackGrey"
                     android:layout_marginTop="5dp"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
@@ -131,6 +135,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="3"
                     android:text="Recently Added"
+                    android:textColor="@color/blackGrey"
                     android:textSize="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"/>
@@ -264,14 +269,16 @@
             android:layout_alignParentLeft="true"
             android:weightSum="10"
             android:orientation="horizontal"
+
             android:layout_below="@id/ll_Player_Songs">
             <TextView
                 android:layout_weight="7"
                 android:id="@+id/text_Recently_Added"
                 android:layout_width="0dp"
-                android:textColor="@color/white"
+                android:textColor="@color/blackGrey"
                 android:textSize="20dp"
                 android:gravity="center"
+
                 android:text="Recently Added To Library"
                 android:layout_height="match_parent"/>
 

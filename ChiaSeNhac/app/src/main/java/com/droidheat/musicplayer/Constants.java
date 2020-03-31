@@ -23,10 +23,11 @@ public class Constants {
         String NOTI_SERVICE_TO_ACTIVITY = "ServiceToActivity";
         String NEXT_TO_SERVICE = "nextToService";
         String PREVIOUS_TO_SERVICE = "previousToService";
-        String POS_NEXT = "posNext";
+
+        String POS_PLAY = "posPlay";
+        String POS_PAUSE = "posPause";
         String POS_PREV = "posPrev";
-        String isPrev = "isPrev";
-        String isNext = "isNext";
+        String POS_NEXT = "posNext";
     }
     public @interface VALUE {
         String SYNC = "sync";
@@ -101,7 +102,7 @@ public class Constants {
         String PREVIOUS = "com.droidheat.musicplayer.action.TRACK_PREV";
         String CLOSE_NOTIFICATION = "com.droidheat.musicplayer.action.CLOSE_NOTIFICATION";
         String SEEK = "com.droidheat.musicplayer.action.SEEK";
-        String ISPLAY = "com.droidheat.musicplayer.action.IS_PLAY";
+        String IS_PLAY = "com.droidheat.musicplayer.action.IS_PLAY";
 
         String BROADCAST_STOP_AUDIO = "com.droidheat.musicplayer.action.StopAudio";
         String BROADCAST_PLAY_NEW_AUDIO = "com.droidheat.musicplayer.action.PlayNewAudio";

@@ -1,7 +1,7 @@
 package com.droidheat.musicplayer.activities;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -38,11 +38,11 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
-        OptionMenuAdapter.SetOnClickItemMenu, ViewPager.OnPageChangeListener {
+        OptionMenuAdapter.OnClickItem, ViewPager.OnPageChangeListener {
     private View view_LayoutMenu;
 
     private TextView txt_Home, txt_Albums, txt_Artists, txt_Songs, txt_PlayLists;
-    private ImageView menu_Item, menu_Search, img_Artists, img_Songs, img_PlayLists;
+    private ImageView mImgMenu, mImgSearch, img_Artists, img_Songs, img_PlayLists;
     private LinearLayout ll_Home, ll_Albums, ll_Artists, ll_Songs, ll_PlayLists;
     private ArrayList<LinearLayout> linearLayouts;
     private TabLayout mTabLayout_Home;
@@ -50,7 +50,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private ViewPager mViewPager_Home;
     private OptionMenuAdapter mOptionMenuAdapter;
     private String tag = "BBB";
-    private RecyclerView rc_OptionMenu;
+    private RecyclerView mRcOptionMenu;
     private BottomNavigationView mNavigationView;
     private ArrayList<Fragment> mFragments;
     private ArrayList<String> mMenus;
@@ -63,7 +63,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         // khởi tạo màn hình chính là home ta cần check position để gán sẵn vị trí luôn
-
         ImageUtils.getInstance(this);
         initMenu();
         initView();
@@ -96,10 +95,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private void initView() {
 //        view_LayoutMenu = findViewById(R.id.layout_menu);
         ll_PlayLists = findViewById(R.id.ll_StatusPlayMusic);
-        menu_Item = findViewById(R.id.menu_item);
-        menu_Search = findViewById(R.id.menu_search);
-        rc_OptionMenu = findViewById(R.id.rc_OptionMenu);
-        rc_OptionMenu.setVisibility(View.GONE);
+        mImgMenu = findViewById(R.id.menu_item);
+        mImgSearch = findViewById(R.id.menu_search);
+        mRcOptionMenu = findViewById(R.id.rc_OptionMenu);
+        mRcOptionMenu.setVisibility(View.GONE);
 
         mNavigationView = findViewById(R.id.nav_view);
         mNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -111,13 +110,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     private void assignView(){
         mOptionMenuAdapter = new OptionMenuAdapter(mMenus, this);
-        mOptionMenuAdapter.setSetOnClick(this);
+        mOptionMenuAdapter.OnClickItemMenu(this);
 
-        rc_OptionMenu.setAdapter(mOptionMenuAdapter);
-        rc_OptionMenu.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mRcOptionMenu.setAdapter(mOptionMenuAdapter);
+        mRcOptionMenu.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        menu_Item.setOnClickListener(this);
-        menu_Search.setOnClickListener(this);
+        mImgMenu.setOnClickListener(this);
+        mImgSearch.setOnClickListener(this);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -147,7 +146,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
 
     @Override
-    public void onClickItem(String item) {
+    public void onClickItemMenu(String item) {
         switch (item){
             case Constants.MENU.Set_Sleep_Timer:
                 startActivity(new Intent(this, TimerActivity.class));
@@ -260,15 +259,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case R.id.menu_item:
 
                 if (!isHide){
-                    Animation fadeIn = AnimationUtils.loadAnimation(HomeActivity.this,R.anim.fadein);
-                    rc_OptionMenu.setAnimation(fadeIn);
-                    rc_OptionMenu.setVisibility(View.VISIBLE);
+                    mRcOptionMenu.setAlpha(1);
+                    Animation fadeIn = AnimationUtils.loadAnimation(HomeActivity.this,R.anim.slide_in_right);
+                    mRcOptionMenu.setAnimation(fadeIn);
+
+                    mRcOptionMenu.setVisibility(View.VISIBLE);
                     isHide = true;
                 }else if (isHide){
-                    Animation fadeOut = AnimationUtils.loadAnimation(HomeActivity.this,
+                   /* Animation fadeOut = AnimationUtils.loadAnimation(HomeActivity.this,
                             R.anim.fadeout);
-                    rc_OptionMenu.setAnimation(fadeOut);
-                    rc_OptionMenu.setVisibility(View.GONE);
+
+                    mRcOptionMenu.setAnimation(fadeOut);*/
+                    mRcOptionMenu.animate().alpha(0).setDuration(700).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRcOptionMenu.setVisibility(View.GONE);
+                        }
+                    });
+
+
                     isHide = false;
                 }
                 break;
@@ -277,10 +286,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 startActivity(intent);
                 break;
             case R.id.vp_Home:
-                if (rc_OptionMenu.getVisibility() == View.GONE){
+                if (mRcOptionMenu.getVisibility() == View.GONE){
                     Animation fadeIn = AnimationUtils.loadAnimation(HomeActivity.this,R.anim.fadein);
-                    rc_OptionMenu.setAnimation(fadeIn);
-                    rc_OptionMenu.setVisibility(View.VISIBLE);
+                    mRcOptionMenu.setAnimation(fadeIn);
+                    mRcOptionMenu.setVisibility(View.VISIBLE);
                     isHide = true;
                 }
                 break;

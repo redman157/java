@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:weightSum="10"
-
+    android:background="@color/white"
     android:layout_height="match_parent"
     tools:mContext=".activities.HomeActivity">
     <LinearLayout
@@ -16,7 +16,6 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -26,20 +25,24 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <LinearLayout
-                        android:layout_width="match_parent"
+
+                    <LinearLayout android:layout_width="match_parent"
                         android:orientation="horizontal"
                         android:weightSum="10"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        xmlns:android="http://schemas.android.com/apk/res/android">
                         <TextView
                             android:padding="5dp"
                             android:layout_gravity="center"
                             android:gravity="left|center"
                             android:layout_weight="7"
                             android:text="@string/app_name"
+                            android:textColor="@color/black"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:textSize="28dp"/>
+                            android:textStyle="bold"
+                            android:textSize="@dimen/_21sdp"/>
                         <ImageView
                             android:paddingTop="5dp"
                             android:paddingBottom="5dp"
@@ -72,9 +75,10 @@
                         android:layout_height="wrap_content">
 
                         <androidx.viewpager.widget.ViewPager
+                            android:id="@+id/vp_Home"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/vp_Home" />
+                            android:layout_height="wrap_content" />
+
                         <LinearLayout
                             android:layout_gravity="right"
                             android:layout_width="wrap_content"
@@ -113,7 +117,6 @@
             android:layout_above="@id/fm_music_dock"/>
 
         <fragment
-
             android:id="@+id/fm_music_dock"
             android:name="com.droidheat.musicplayer.fragments.MusicDockFragment"
             class="com.droidheat.musicplayer.fragments.MusicDockFragment"

@@ -35,7 +35,7 @@ import java.util.TimeZone;
 
 public class PlayActivity extends BaseActivity
         implements ViewPager.OnPageChangeListener, View.OnClickListener,
-        SeekBar.OnSeekBarChangeListener, OnSongChange {
+        SeekBar.OnSeekBarChangeListener {
     private ViewPager mVpMusic;
     private ChangeMusicPagerAdapter mAdapter;
     private SongsManager mSongManager;
@@ -54,20 +54,21 @@ public class PlayActivity extends BaseActivity
     public Intent iSeekBar;
     private Intent iPlayPause;
     public   int seekPos;
-    private OnSongChange onSongChange;
+
     private boolean isPlayingMedia;
     private int size;
     private boolean isChange, isPlaying;
     private boolean isRepeat = false;
-    public void setOnChange(OnSongChange onSongChange){
+    private OnSongChange onSongChange;
+    private void setStatus(OnSongChange onSongChange){
         this.onSongChange = onSongChange;
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         iSeekBar = new Intent(Constants.ACTION.BROADCAST_SEEK_BAR);
         iPlayPause = new Intent(Constants.ACTION.BROADCAST_PLAY_PAUSE);
-
 
         if (!receiverRegistered){
             registerReceiver(brSeekBar, new IntentFilter(Constants.ACTION.BROADCAST_SEEK_BAR));
@@ -110,6 +111,7 @@ public class PlayActivity extends BaseActivity
         initView();
         assignView();
         size = mSongs.size();
+
     }
 
     @Override
@@ -220,6 +222,7 @@ public class PlayActivity extends BaseActivity
             updateUI(serviceIntent);
         }
     };
+
     private BroadcastReceiver brPlayPauseActivity = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent serviceIntent) {
@@ -229,10 +232,10 @@ public class PlayActivity extends BaseActivity
                                 false);
 
                 if (isPlayingNoti) {
+
                     mTextLeftTime.setText("00 : 00");
                     mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
                 } else {
-
                     mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
                 }
             }
@@ -246,12 +249,20 @@ public class PlayActivity extends BaseActivity
 
             if (isPlayingMedia) {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+
+                if (onSongChange != null) {
+                    onSongChange.onChange("Pause");
+                }
+
                 isPlaying = false;
                 Intent iPlayMedia = new Intent(PlayActivity.this, MediaPlayerService.class);
                 iPlayMedia.setAction(Constants.ACTION.PAUSE);
                 startService(iPlayMedia);
             } else {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+                if (onSongChange != null){
+                    onSongChange.onChange("Playing");
+                }
                 isPlaying = true;
                 Intent iPlayMedia = new Intent(PlayActivity.this, MediaPlayerService.class);
                 iPlayMedia.setAction(Constants.ACTION.PLAY);
@@ -444,8 +455,4 @@ public class PlayActivity extends BaseActivity
     }
 
 
-    @Override
-    public void onChange(boolean isChange) {
-        this.isChange = isChange;
-    }
 }

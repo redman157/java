@@ -89,7 +89,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/app_list"
-                        android:tint="@color/white"
+
                         android:padding="10dp"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"

@@ -93,7 +93,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         viewPager.setOnClickListener(this);
     }
     private void initView() {
-//        view_LayoutMenu = findViewById(R.id.layout_menu);
         ll_PlayLists = findViewById(R.id.ll_StatusPlayMusic);
         mImgMenu = findViewById(R.id.menu_item);
         mImgSearch = findViewById(R.id.menu_search);
@@ -266,10 +265,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     mRcOptionMenu.setVisibility(View.VISIBLE);
                     isHide = true;
                 }else if (isHide){
-                   /* Animation fadeOut = AnimationUtils.loadAnimation(HomeActivity.this,
-                            R.anim.fadeout);
-
-                    mRcOptionMenu.setAnimation(fadeOut);*/
                     mRcOptionMenu.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
                         @Override
                         public void run() {

@@ -174,6 +174,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     public void onDestroy() {
         super.onDestroy();
         if (mMediaPlayer != null) {
+            SongsManager.getInstance().setCurrentMusic(position);
             stopMedia();
             mMediaPlayer.release();
             mMediaPlayer = null;
@@ -222,10 +223,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 if( !successfullyRetrievedAudioFocus() ) {
                     return;
                 }
-                int position = SongsManager.getInstance().getCurrentMusic();
+//                int position = SongsManager.getInstance().getCurrentMusic();
                 Log.d("BBB","Service --- onPlay:"+position);
                 playMedia(mSongs.get(position).getPath());
-                initNotification(Constants.NOTIFICATION.PLAY);
+                initNotification(Constants.NOTIFICATION.PLAY, position);
 
             }
 
@@ -234,38 +235,25 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 super.onPause();
                 pauseMedia();
 
-                initNotification(Constants.NOTIFICATION.PAUSE);
-              /*  iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION, false);
-                sendBroadcast(iPlayPauseActivity)*/;
+                initNotification(Constants.NOTIFICATION.PAUSE, position);
+
             }
 
             @Override
             public void onSkipToNext() {
                 super.onSkipToNext();
-//                int pos = SongsManager.getInstance().getCurrentMusic();
-                /*if (pos == 0 ){
-                    skipToNext(position);
-                }else {*/
+                SongsManager.getInstance().setCurrentMusic(position + 1);
                 skipToNext();
+                initNotification(Constants.NOTIFICATION.PLAY, position );
 
-                initNotification(Constants.NOTIFICATION.PAUSE);
             }
 
             @Override
             public void onSkipToPrevious() {
                 super.onSkipToPrevious();
-                /*int isPrev = iPrevToActivity.getIntExtra(Constants.INTENT.POS_PREV, 0);
-
-                if (isPrev == (mSongs.size() - 1 )){
-                    skipToPrevious(isPrev);
-                }else {
-
-                }*/
+                SongsManager.getInstance().setCurrentMusic(position - 1);
                 skipToPrevious();
-
-                initNotification(Constants.NOTIFICATION.PAUSE);
-
-
+                initNotification(Constants.NOTIFICATION.PLAY, position);
             }
 
             @Override
@@ -347,7 +335,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
                     break;
             default:
-                initNotification(Constants.NOTIFICATION.PAUSE);
+                initNotification(Constants.NOTIFICATION.PAUSE, position);
                 break;
             }
         }
@@ -519,7 +507,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             try {
                 if (mMediaPlayer.isPlaying()) {
                     Log.d(tag, "stopMedia: Enter");
-                    SongsManager.getInstance().setCurrentMusic(SongsManager.getInstance().getCurrentMusic());
+
                     mMediaPlayer.stop();
                 }
                 handler.removeCallbacks(sendUpdatesToUI);
@@ -542,9 +530,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void skipToPrevious(){
         Log.d(tag, "skipToPrevious: Enter");
-        int posPrev = SongsManager.getInstance().getCurrentMusic();
 
-        Log.d("BBB", "Service --- skipToPrevious: "+posPrev);
+
+        Log.d("BBB", "Service --- skipToPrevious: "+position);
         Bundle bdPrev = iPrevToActivity.getExtras();
 
         if (bdPrev != null) {
@@ -556,50 +544,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         }
         // set up dù có trường hợp là <0 vẫn xảy ra
 
-        stopMedia();
-        //reset mediaPlayer
-        mMediaPlayer.reset();
-    }
-
-    private void skipToPrevious(int position){
-        Bundle bdPrev = iPrevToActivity.getExtras();
-
-        if (bdPrev != null) {
-            String prevToActivity = bdPrev.getString(Constants.INTENT.PREVIOUS_TO_SERVICE);
-
-            iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY,
-                    prevToActivity);
-            sendBroadcast(iPlayNewMusic);
-        }
-        // set up dù có trường hợp là <0 vẫn xảy ra
-        initNotification(Constants.NOTIFICATION.PAUSE);
 
         stopMedia();
         //reset mediaPlayer
         mMediaPlayer.reset();
-    }
-
-    private void skipToNext(int position){
-        Bundle bdNext = iNextToActivity.getExtras();
-
-        if (bdNext != null) {
-            String nextToActivity = bdNext.getString(Constants.INTENT.NEXT_TO_SERVICE);
-            iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY, nextToActivity);
-            sendBroadcast(iPlayNewMusic);
-        } else {
-            Log.d("KKK", "Service --- SkipToNext: dbNext is null");
-        }
-        initNotification(Constants.ACTION.PLAY);
-        stopMedia();
-
-        mMediaPlayer.reset();
-
 
     }
+
 
     private void skipToNext(){
 
-//        SongsManager.getInstance().setCurrentMusic(SongsManager.getInstance().getCurrentMusic());
+        Log.d("BBB", "Service --- skipToNext: "+position);
         if (iNextToActivity != null) {
             Bundle bdNext = iNextToActivity.getExtras();
             if (bdNext != null) {
@@ -609,11 +564,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             } else {
                 Log.d("KKK", "Service --- SkipToNext: dbNext is null");
             }
-        }else {
-
         }
         stopMedia();
-
         mMediaPlayer.reset();
 
 
@@ -677,14 +629,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
 
-    private void initNotification(String type){
+    private void initNotification(String type, int position){
         int icon_Action = 0;
 //        int position = SongsManager.getInstance().getCurrentMusic();
 
 
         PendingIntent playPauseIntent = null;
-        PendingIntent nextIntent = null;
-        PendingIntent prevIntent = null;
+        PendingIntent nextIntent;
+        PendingIntent prevIntent ;
         // GỬI INTENT TỪ NOTI VỀ SERVICE
         Intent iNext = new Intent(this, MediaPlayerService.class);
         iNext.setAction(Constants.ACTION.NEXT);

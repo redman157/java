@@ -170,7 +170,7 @@ public class PlayActivity extends BaseActivity
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+        mSharedPrefsManager.setString(Constants.PREFERENCES.SaveAlbumID, mSongs.get(position).getAlbumID());
         if (position==0) {
             mBtnPrev.setImageResource(R.drawable.ic_previous_black);
             mBtnNext.setImageResource(R.drawable.ic_next_white);

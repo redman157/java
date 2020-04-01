@@ -80,6 +80,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private String title, fileName, path, albumId, album, artists;
     private Intent iPrevToActivity, iNextToActivity;
     private androidx.core.app.NotificationCompat.Builder notificationBuilder = null;
+    private boolean isRepeat;
     /**
      * Service Binder
      */
@@ -242,8 +243,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             @Override
             public void onSkipToNext() {
                 super.onSkipToNext();
-                SongsManager.getInstance().setCurrentMusic(position + 1);
-                skipToNext();
+                if (!isRepeat) {
+                    SongsManager.getInstance().setCurrentMusic(position + 1);
+                    skipToNext();
+                }
+
                 initNotification(Constants.NOTIFICATION.PLAY, position );
 
             }
@@ -251,8 +255,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             @Override
             public void onSkipToPrevious() {
                 super.onSkipToPrevious();
-                SongsManager.getInstance().setCurrentMusic(position - 1);
-                skipToPrevious();
+                if (!isRepeat) {
+                    SongsManager.getInstance().setCurrentMusic(position - 1);
+                    skipToPrevious();
+                }
+
                 initNotification(Constants.NOTIFICATION.PLAY, position);
             }
 
@@ -332,7 +339,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
                     break;
                 case Constants.ACTION.REPEAT:
-
+                    this.isRepeat = iAction.getBooleanExtra(Constants.INTENT.IS_REPEAT, false);
                     break;
             default:
                 initNotification(Constants.NOTIFICATION.PAUSE, position);
@@ -629,27 +636,33 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
 
-    private void initNotification(String type, int position){
+    private void initNotification(String type, int position) {
         int icon_Action = 0;
 //        int position = SongsManager.getInstance().getCurrentMusic();
 
 
         PendingIntent playPauseIntent = null;
         PendingIntent nextIntent;
-        PendingIntent prevIntent ;
+        PendingIntent prevIntent;
+
         // GỬI INTENT TỪ NOTI VỀ SERVICE
         Intent iNext = new Intent(this, MediaPlayerService.class);
-        iNext.setAction(Constants.ACTION.NEXT);
+        Intent iPrev = new Intent(this, MediaPlayerService.class);
+        if (!type.equals(Constants.NOTIFICATION.REPEAT)){
+            iNext.setAction(Constants.ACTION.NEXT);
+            iPrev.setAction(Constants.ACTION.PREVIOUS);
+        }else {
+            iNext.setAction(null);
+            iPrev.setAction(null);
+        }
+        Bundle bdPrevious = new Bundle();
+        bdPrevious.putString(Constants.INTENT.PREVIOUS_TO_SERVICE, "PreviousToService");
+        iPrev.putExtras(bdPrevious);
+
         Bundle bdNext = new Bundle();
         bdNext.putString(Constants.INTENT.NEXT_TO_SERVICE, "NextToService");
         iNext.putExtras(bdNext);
 
-        // GỬI INTENT TỪ NOTI VỀ SERVICE
-        Intent iPrev = new Intent(this, MediaPlayerService.class);
-        iPrev.setAction(Constants.ACTION.PREVIOUS);
-        Bundle bdPrevious = new Bundle();
-        bdPrevious.putString(Constants.INTENT.PREVIOUS_TO_SERVICE, "PreviousToService");
-        iPrev.putExtras(bdPrevious);
 
         if (type.equals(Constants.NOTIFICATION.PLAY)){
 
@@ -669,12 +682,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION, true);
             sendBroadcast(iPlayPauseActivity);
         }
+
+
         nextIntent = PendingIntent.getService(this, 0,
-            iNext, 0);
+                iNext, 0);
 
 
         prevIntent = PendingIntent.getService(this, 0,
-            iPrev, 0);
+                iPrev, 0);
 
 
         createChannel();

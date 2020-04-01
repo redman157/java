@@ -140,6 +140,7 @@
             class="com.droidheat.musicplayer.fragments.MusicDockFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             tools:layout="@layout/fragment_music_dock" />
         <TextView
             android:layout_width="match_parent"

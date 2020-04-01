@@ -89,12 +89,12 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
         }
         if (MediaPlayerService.mMediaPlayer!= null){
             if (MediaPlayerService.mMediaPlayer.isPlaying()){
-                mImbPlay.setImageResource(R.drawable.app_pause);
+                mImbPlay.setImageResource(R.drawable.ic_media_pause_light);
             }else {
-                mImbPlay.setImageResource(R.drawable.app_play);
+                mImbPlay.setImageResource(R.drawable.ic_media_play_light);
             }
         }else {
-            mImbPlay.setImageResource(R.drawable.app_play);
+            mImbPlay.setImageResource(R.drawable.ic_media_play_light);
         }
     }
 

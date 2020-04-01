@@ -2,6 +2,7 @@ package com.droidheat.musicplayer.activities;
 
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +11,12 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +49,8 @@ public class PlayActivity extends BaseActivity
 
     private PlayMusic mPlayMusic;
     public ImageButton mBtnPlayPause;
-    private ImageButton mBtnBack, mBtnInfoMusic, mBtnMenu, mBtnPrev, mBtnRepeat, mBtnNext, mBtnFavourite;
+    private ImageButton mBtnBack, mBtnInfoMusic, mBtnMenu, mBtnPrev, mBtnRepeat, mBtnNext,
+    mBtnSeeMore, mBtnAbout;
     private SharedPrefsManager mSharedPrefsManager;
     private Runnable mRunnable;
     private TextView mTextLeftTime, mTextRightTime;
@@ -57,8 +64,11 @@ public class PlayActivity extends BaseActivity
 
     private boolean isPlayingMedia;
     private int size;
+    private LinearLayout mLinearSeeMore;
     private boolean isChange, isPlaying;
     private boolean isRepeat = false;
+    private boolean isMore = false;
+    private Dialog mDlAboutMusic;
     private OnSongChange onSongChange;
     private void setStatus(OnSongChange onSongChange){
         this.onSongChange = onSongChange;
@@ -120,18 +130,20 @@ public class PlayActivity extends BaseActivity
     }
 
     private void initView() {
+        mLinearSeeMore = findViewById(R.id.ll_see_more);
         mTextLeftTime = findViewById(R.id.text_leftTime);
         mTextRightTime = findViewById(R.id.text_rightTime);
         mBtnPlayPause = findViewById(R.id.icon_play);
         mBtnPrev = findViewById(R.id.icon_prev);
         mBtnRepeat = findViewById(R.id.icon_repeat);
         mBtnNext = findViewById(R.id.icon_next);
-        mBtnFavourite = findViewById(R.id.icon_imageFav);
+        mBtnSeeMore = findViewById(R.id.icon_image_More);
         mBtnBack = findViewById(R.id.imb_BackMusic);
         mBtnInfoMusic = findViewById(R.id.imb_InfoMusic);
         mBtnMenu = findViewById(R.id.imb_SeeMenu);
         mVpMusic = findViewById(R.id.vp_change_music);
         mSeekBarTime = findViewById(R.id.sb_leftTime);
+        mBtnAbout = findViewById(R.id.icon_about);
         mSeekBarTime.setMax(mSongs.get(SongsManager.getInstance().getCurrentMusic()).getTime());
     }
 
@@ -143,7 +155,8 @@ public class PlayActivity extends BaseActivity
         mBtnPrev.setOnClickListener(this);
         mBtnRepeat.setOnClickListener(this);
         mBtnNext.setOnClickListener(this);
-        mBtnFavourite.setOnClickListener(this);
+        mBtnSeeMore.setOnClickListener(this);
+        mBtnAbout.setOnClickListener(this);
 
         mSeekBarTime.setOnSeekBarChangeListener(this);
         mAdapter = new ChangeMusicPagerAdapter(getSupportFragmentManager());
@@ -166,6 +179,32 @@ public class PlayActivity extends BaseActivity
         mVpMusic.setAdapter(mAdapter);
         mVpMusic.setCurrentItem(position);
         mVpMusic.addOnPageChangeListener(this);
+    }
+
+    private void showMusicAbout(){
+        mDlAboutMusic = new Dialog(this);
+
+        mDlAboutMusic.setContentView(R.layout.dialog_info_music);
+
+        TextView textName = mDlAboutMusic.findViewById(R.id.dialog_about_music_name);
+        TextView textFileName = mDlAboutMusic.findViewById(R.id.dialog_about_music_file_name);
+        TextView textSong = mDlAboutMusic.findViewById(R.id.dialog_about_music_title);
+        TextView textAlbum = mDlAboutMusic.findViewById(R.id.dialog_about_music_album);
+        TextView textArtist = mDlAboutMusic.findViewById(R.id.dialog_about_music_artist);
+        TextView textTime = mDlAboutMusic.findViewById(R.id.dialog_about_music_time);
+        TextView textLocation = mDlAboutMusic.findViewById(R.id.dialog_about_music_location);
+        Button btnDone = mDlAboutMusic.findViewById(R.id.dialog_about_close);
+
+        textName.setText(mSongs.get(position).getTitle());
+        textFileName.setText("File Name: "+mSongs.get(position).getFileName());
+        textSong.setText("Song Title: "+mSongs.get(position).getTitle());
+        textAlbum.setText("Album: "+mSongs.get(position).getAlbum());
+        textArtist.setText("Artist: "+mSongs.get(position).getArtist());
+        textTime.setText("Time Song: "+convertTime(mSongs.get(position).getTime()));
+        textLocation.setText("File Location: "+mSongs.get(position).getPath());
+
+        btnDone.setOnClickListener(this);
+        mDlAboutMusic.show();
     }
 
     @Override
@@ -194,6 +233,7 @@ public class PlayActivity extends BaseActivity
         iPlay.setAction(Constants.ACTION.IS_PLAY);
         startService(iPlay);
     }
+
 
     @Override
     public void onPageSelected(int position) {
@@ -312,12 +352,15 @@ public class PlayActivity extends BaseActivity
                 }else {
                     mBtnNext.setClickable(true);
                     mBtnNext.setImageDrawable(getResources().getDrawable(R.drawable.ic_next_white));
-                    mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic() + 1);
+
                     Log.d("BBB",
                             "PlayActivity --- icon_next: " + (SongsManager.getInstance().getCurrentMusic() + 1));
+
                     Intent iNext = new Intent(this, MediaPlayerService.class);
                     iNext.setAction(Constants.ACTION.NEXT);
                     startService(iNext);
+
+                    mVpMusic.setCurrentItem(SongsManager.getInstance().getCurrentMusic() + 1);
                 }
                 break;
             case R.id.icon_prev:
@@ -333,6 +376,7 @@ public class PlayActivity extends BaseActivity
 
                     Log.d("BBB",
                             "PlayActivity --- icon_prev: " + (SongsManager.getInstance().getCurrentMusic() - 1));
+
                     Intent iPrevious = new Intent(this, MediaPlayerService.class);
                     iPrevious.setAction(Constants.ACTION.PREVIOUS);
 
@@ -343,24 +387,51 @@ public class PlayActivity extends BaseActivity
                 break;
             case R.id.icon_repeat:
 
-                if (isRepeat == false){
+                if (!isRepeat){
 
                     mBtnRepeat.setImageResource(R.drawable.ic_repeat_blue);
                     SongsManager.getInstance().setCurrentMusic(position);
-
+                    Intent intent = new Intent(PlayActivity.this, MediaPlayerService.class);
+                    intent.setAction(Constants.ACTION.REPEAT);
+                    intent.putExtra(Constants.INTENT.IS_REPEAT, true);
+                    startService(intent);
                     isRepeat = true;
                     Toast.makeText(this, "Turn On Repeat Music", Toast.LENGTH_SHORT).show();
                     unregisterReceiver(brPlayNew);
                 }else {
                     mBtnRepeat.setImageResource(R.drawable.ic_repeat_white);
                     isRepeat = false;
+                    Intent intent = new Intent(PlayActivity.this, MediaPlayerService.class);
+                    intent.setAction(Constants.ACTION.REPEAT);
+                    intent.putExtra(Constants.INTENT.IS_REPEAT, false);
+                    startService(intent);
                     registerReceiver(brPlayNew,
                             new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
                     Toast.makeText(this, "Turn Off Repeat Music", Toast.LENGTH_SHORT).show();
 
                 }
                 break;
-            case R.id.icon_imageFav:
+            case R.id.icon_image_More:
+                if (!isMore){
+                    mLinearSeeMore.setAlpha(1);
+                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_black);
+                    isMore = true;
+                    Animation fadeIn = AnimationUtils.loadAnimation(PlayActivity.this,R.anim.fadein);
+                    mLinearSeeMore.setAnimation(fadeIn);
+                    mLinearSeeMore.setVisibility(View.VISIBLE);
+
+                }else {
+                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_white);
+
+                    isMore = false;
+                    mLinearSeeMore.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLinearSeeMore.setVisibility(View.GONE);
+                        }
+                    });
+
+                }
                 break;
             case R.id.imb_BackMusic:
                 // khi back ngược về ta cần phải lưu dc position khi tắt app bật lên ta phải có
@@ -375,6 +446,12 @@ public class PlayActivity extends BaseActivity
                 break;
             case R.id.imb_SeeMenu:
                 break;
+            case R.id.icon_about:
+                showMusicAbout();
+
+                break;
+            case R.id.dialog_about_close:
+                mDlAboutMusic.cancel();
         }
 
     }
@@ -453,6 +530,5 @@ public class PlayActivity extends BaseActivity
         }
 
     }
-
 
 }

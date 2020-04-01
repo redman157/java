@@ -97,7 +97,118 @@
     </androidx.viewpager.widget.ViewPager>
 
     <LinearLayout
+        android:id="@+id/ll_see_more"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="5"
+
+        android:layout_marginLeft="@dimen/_20sdp"
+        android:layout_marginRight="@dimen/_20sdp"
+        android:layout_height="@dimen/_40sdp">
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <ImageButton
+                android:adjustViewBounds="true"
+
+                android:id="@+id/icon_about"
+                android:layout_width="32dp"
+                android:layout_height="match_parent"
+
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_info_outline_black_24dp"
+                android:tint="@color/white"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <ImageButton
+                android:adjustViewBounds="true"
+
+                android:id="@+id/icon_set_time"
+                android:layout_width="32dp"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_access_time_black_48dp"
+                android:tint="@color/white"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <ImageButton
+                android:adjustViewBounds="true"
+
+                android:id="@+id/icon_shuffle"
+                android:layout_width="32dp"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/app_shuffle"
+                android:tint="@color/white"
+
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <ImageButton
+                android:adjustViewBounds="true"
+
+                android:id="@+id/icon_equalizer"
+                android:layout_width="32dp"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/app_equalizer"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <ImageButton
+                android:adjustViewBounds="true"
+
+                android:id="@+id/icon_favorite"
+                android:layout_width="32dp"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/app_heart"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
         android:layout_weight="1"
+        android:layout_marginLeft="@dimen/_15sdp"
+        android:layout_marginRight="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:background="@drawable/custom_background_galaxy"
@@ -240,13 +351,13 @@
 
             <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_gravity="center"
                 android:gravity="center">
 
                 <ImageButton
-                    android:id="@+id/icon_imageFav"
+                    android:id="@+id/icon_image_More"
                     android:layout_width="32dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -254,8 +365,8 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
 
                     android:scaleType="fitCenter"
-                    android:src="@drawable/app_heart"
-                    android:tint="#ffffff" />
+                    android:src="@drawable/ic_menu_dot_white"
+                    />
             </RelativeLayout>
 
 

@@ -12,6 +12,7 @@ public class Constants {
         String NEXT = "next";
         String PAUSE = "pause";
         String PLAY = "play";
+        String REPEAT = "repeat";
         String SEEK_POS_ACTIVITY = "seekpos_activity";
         String SEEK_POS_SERVICE = "seekbar_service";
         String IS_PLAYING_STATUS_NOTI = "is_playing_status";
@@ -23,6 +24,7 @@ public class Constants {
         String NOTI_SERVICE_TO_ACTIVITY = "ServiceToActivity";
         String NEXT_TO_SERVICE = "nextToService";
         String PREVIOUS_TO_SERVICE = "previousToService";
+        String IS_REPEAT = "isRepeat";
         String POS_HOME = "posHome";
         String POS_PLAY = "posPlay";
         String POS_PAUSE = "posPause";

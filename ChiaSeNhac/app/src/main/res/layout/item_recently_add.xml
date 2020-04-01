@@ -60,6 +60,6 @@
         android:layout_weight="1.5"
         android:layout_width="0dp"
         android:layout_gravity="center"
-        android:drawableLeft="@drawable/ic_menu_dot"
+        android:drawableLeft="@drawable/ic_menu_dot_black"
         android:layout_height="match_parent"/>
 </LinearLayout>

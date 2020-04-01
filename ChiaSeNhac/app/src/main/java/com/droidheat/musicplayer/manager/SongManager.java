@@ -54,7 +54,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-public class SongsManager {
+public class SongManager {
     private ArrayList<HashMap<String, String>> albums = new ArrayList<>();
     private ArrayList<HashMap<String, String>> artists = new ArrayList<>();
     private  ArrayList<SongModel> mainList = new ArrayList<>();
@@ -66,16 +66,16 @@ public class SongsManager {
     private SharedPrefsManager mSharedPrefsManager;
     private int totalSongs;
     @SuppressLint("StaticFieldLeak")
-    private static SongsManager instance;
+    private static SongManager instance;
 
-    public static SongsManager getInstance() {
+    public static SongManager getInstance() {
         if (instance == null){
-            instance = new SongsManager();
+            instance = new SongManager();
         }
         return instance;
     }
 
-    private SongsManager() {
+    private SongManager() {
 
     }
 
@@ -111,7 +111,7 @@ public class SongsManager {
                     }.getType();
                     ArrayList<SongModel> restoreData = new Gson().fromJson(mSharedPrefsManager.getString(Constants.PREFERENCES.KEY, null), type);
                     replaceQueue(restoreData);
-                    Log.d(TAG, "Retrieved queue from storage in SongsManager. " + restoreData.size() + " mainList!");
+                    Log.d(TAG, "Retrieved queue from storage in SongManager. " + restoreData.size() + " mainList!");
                 } catch (Exception e) {
                     Log.d(TAG, "Unable to retrieve data while queue is empty.");
                     Log.d(TAG, e.getMessage());

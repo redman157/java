@@ -2,7 +2,6 @@ package com.droidheat.musicplayer.adapters;
 
 import android.content.Context;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
-import com.droidheat.musicplayer.activities.RecentlyAllMusicActivity;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
-import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.manager.SongManager;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.util.ArrayList;
@@ -77,8 +75,8 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
         if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
             return items.size();
         }else {
-            if (SongsManager.getInstance().queue().size() < 15){
-                return SongsManager.getInstance().queue().size();
+            if (SongManager.getInstance().queue().size() < 15){
+                return SongManager.getInstance().queue().size();
             }else {
                 return 15;
             }

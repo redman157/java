@@ -2,7 +2,9 @@ package com.droidheat.musicplayer.models;
 
 import android.graphics.Bitmap;
 
-public class SongModel {
+import java.io.Serializable;
+
+public class SongModel implements Serializable {
     private String Album;
     private String AlbumID;
     private String Artist;

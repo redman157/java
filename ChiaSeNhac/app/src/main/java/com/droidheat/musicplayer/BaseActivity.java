@@ -11,23 +11,23 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
-import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.manager.SongManager;
 import com.droidheat.musicplayer.services.MediaPlayerService;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private boolean serviceBound = false;
     private MediaPlayerService mediaPlayerService;
     private SharedPrefsManager mSharedPrefsManager;
-    private SongsManager mSongsManager;
+    private SongManager mSongManager;
 
     @Override
     protected void onStart() {
         super.onStart();
         mSharedPrefsManager = new SharedPrefsManager();
-        mSongsManager = SongsManager.getInstance();
+        mSongManager = SongManager.getInstance();
 
         mSharedPrefsManager.setContext(this);
-        mSongsManager.setContext(this);
+        mSongManager.setContext(this);
     }
 
 

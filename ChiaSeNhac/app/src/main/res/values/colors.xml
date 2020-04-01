@@ -13,6 +13,7 @@
     <color name="black">#000</color>
     <color name="blackSubtitle">#77000000</color>
     <color name="blackGrey">#FF000000</color>
+    <color name="dark_blue">#3279a8</color>
     <color name="dark_green">#388E3C</color>
     <!-- Accent Colors -->
 

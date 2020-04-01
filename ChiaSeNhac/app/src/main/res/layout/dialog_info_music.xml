@@ -10,13 +10,14 @@
     android:paddingBottom="@dimen/_10sdp"
     android:layout_height="@dimen/_300sdp">
 
+
     <TextView
         android:id="@+id/dialog_about_music_name"
         android:textColor="@color/white"
-        android:textSize="@dimen/_17sdp"
+        android:textSize="@dimen/_16sdp"
         android:layout_weight="1"
         android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginRight="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
         android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
@@ -24,10 +25,9 @@
     <TextView
         android:id="@+id/dialog_about_music_file_name"
         android:textColor="@color/white"
-        android:textSize="@dimen/_12sdp"
-        android:layout_marginTop="@dimen/_10sdp"
+        android:textSize="@dimen/_11sdp"
 
-        android:layout_marginRight="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
@@ -36,9 +36,9 @@
     <TextView
         android:id="@+id/dialog_about_music_title"
         android:textColor="@color/white"
-        android:textSize="@dimen/_12sdp"
+        android:textSize="@dimen/_11sdp"
 
-        android:layout_marginRight="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
@@ -47,26 +47,26 @@
     <TextView
         android:id="@+id/dialog_about_music_album"
         android:textColor="@color/white"
-        android:textSize="@dimen/_12sdp"
+        android:textSize="@dimen/_11sdp"
         android:layout_weight="1"
-        android:layout_marginRight="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
 
     <TextView
         android:id="@+id/dialog_about_music_artist"
         android:textColor="@color/white"
-        android:textSize="@dimen/_12sdp"
+        android:textSize="@dimen/_11sdp"
         android:layout_weight="1"
-        android:layout_marginRight="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
     <TextView
         android:id="@+id/dialog_about_music_time"
         android:textColor="@color/white"
-        android:textSize="@dimen/_12sdp"
+        android:textSize="@dimen/_11sdp"
         android:layout_weight="1"
-        android:layout_marginRight="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
         android:layout_width="match_parent"
 
         android:layout_height="0dp"/>
@@ -75,15 +75,15 @@
     <TextView
         android:id="@+id/dialog_about_music_location"
         android:textColor="@color/white"
-        android:textSize="@dimen/_12sdp"
+        android:textSize="@dimen/_10sdp"
         android:layout_weight="1"
-        android:layout_marginRight="@dimen/_10sdp"
+        android:paddingRight="@dimen/_10sdp"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
 
     <Button
         android:text="Done"
-        android:layout_marginTop="@dimen/_5sdp"
+
         android:layout_marginRight="@dimen/_10sdp"
         android:layout_gravity="right"
         android:textStyle="bold"

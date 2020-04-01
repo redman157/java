@@ -22,7 +22,7 @@ import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.RecentlyAdderAdapter;
 import com.droidheat.musicplayer.fragments.MusicDockFragment;
 import com.droidheat.musicplayer.manager.ImageUtils;
-import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.manager.SongManager;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class RecentlyAllMusicActivity extends AppCompatActivity implements
@@ -47,7 +47,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     private void assignView() {
         recentlyAdderAdapter = new RecentlyAdderAdapter(
                 this,
-                SongsManager.getInstance().newSongs(),
+                SongManager.getInstance().newSongs(),
                 Constants.VALUE.ALL_NEW_SONGS);
 //        rc_recently_add.setNestedScrollingEnabled(false);
         rc_recently_add.setHasFixedSize(true);
@@ -71,7 +71,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
         img_AlbumId = findViewById(R.id.img_AlbumId);
         scrollView = findViewById(R.id.scrollView);
         ImageUtils.getInstance(this).getSmallImageByPicasso(
-                SongsManager.getInstance().newSongs().get(0).getAlbumID(),
+                SongManager.getInstance().newSongs().get(0).getAlbumID(),
                 img_AlbumId);
     }
 
@@ -108,7 +108,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     public void onClick(String type, int index) {
         if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
             ImageUtils.getInstance(RecentlyAllMusicActivity.this).getSmallImageByPicasso(
-                    SongsManager.getInstance().newSongs().get(index).getAlbumID(),
+                    SongManager.getInstance().newSongs().get(index).getAlbumID(),
                     img_AlbumId);
 
             Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.fm_music_dock);

@@ -1,11 +1,11 @@
 package com.droidheat.musicplayer.adapters;
 
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,8 +24,11 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
     private SongModel mSongModel;
     private ArrayList<SongModel> mListMusic;
     private ImageUtils mImageUtils;
+    private int mPossitionMusic;
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
+
     public MusicAdapter(Context context) {
+
         mContext = context;
         mImageUtils = ImageUtils.getInstance(context);
     }
@@ -37,6 +40,8 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
     public void setListMusic(ArrayList<SongModel> mListMusic) {
         this.mListMusic = mListMusic;
     }
+
+
 
     @NonNull
     @Override
@@ -53,18 +58,26 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        notifyDataSetChanged();
 
-        mSongModel = mListMusic.get(position);
+
+        mSongModel = getListMusic().get(position);
         holder.setData(mSongModel);
+        holder.ll_option_music.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
+        private LinearLayout ll_option_music;
         private TextView textTime, textTitle, textArtist;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            ll_option_music = itemView.findViewById(R.id.ll_item_option_music);
             imageView = itemView.findViewById(R.id.item_music_img_music);
             textTime = itemView.findViewById(R.id.item_music_text_time);
             textTitle = itemView.findViewById(R.id.item_music_text_title);

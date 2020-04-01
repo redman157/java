@@ -3,23 +3,23 @@ package com.droidheat.musicplayer;
 import android.content.Context;
 import android.view.View;
 
-import com.droidheat.musicplayer.manager.SongsManager;
+import com.droidheat.musicplayer.manager.SongManager;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.util.ArrayList;
 
 public class ViewOnClick implements View.OnClickListener {
     private Context mContext;
-    private SongsManager mSongsManager;
+    private SongManager mSongManager;
     private String type;
     private int resource;
     private ArrayList<SongModel> allSongs, mostSongs,favSongs, newSongs, artistsSong, albumsSongs;
     public ViewOnClick(int resource){
         this.resource = resource;
-        this.allSongs = mSongsManager.allSortSongs();
-        this.mostSongs = mSongsManager.mostPlayedSongs();
-        this.favSongs = mSongsManager.favouriteSongs();
-        this.newSongs = mSongsManager.newSongs();
+        this.allSongs = mSongManager.allSortSongs();
+        this.mostSongs = mSongManager.mostPlayedSongs();
+        this.favSongs = mSongManager.favouriteSongs();
+        this.newSongs = mSongManager.newSongs();
     }
     public ViewOnClick(int resource,String type){
         this.type = type;
@@ -29,30 +29,30 @@ public class ViewOnClick implements View.OnClickListener {
     /*public static class Build{
         private Context context;
         private String type;
-        private SongsManager mSongsManager;
+        private SongManager mSongManager;
         private ArrayList<SongModel> allSortSongs, mostSongs,favSongs, newSongs, artistsSong, albumsSongs;
 
         public ViewOnClick.Build setContext(Context context) {
             this.context = context;
-            mSongsManager = SongsManager.getInstance();
+            mSongManager = SongManager.getInstance();
             return this;
         }
 
 
         public ViewOnClick.Build setAllData() {
-            this.allSortSongs = mSongsManager.allSortSongs();
-            this.mostSongs = mSongsManager.mostPlayedSongs();
-            this.favSongs = mSongsManager.favouriteSongs();
-            this.newSongs = mSongsManager.newSongs();
+            this.allSortSongs = mSongManager.allSortSongs();
+            this.mostSongs = mSongManager.mostPlayedSongs();
+            this.favSongs = mSongManager.favouriteSongs();
+            this.newSongs = mSongManager.newSongs();
             return this;
         }
         public ViewOnClick.Build setAlbum(String type){
-            albumsSongs = mSongsManager.albumSongs(type);
+            albumsSongs = mSongManager.albumSongs(type);
             return this;
         }
 
         public ViewOnClick.Build setArtist(String type){
-            artistsSong = mSongsManager.artistSongs(type);
+            artistsSong = mSongManager.artistSongs(type);
             return this;
         }
 
@@ -72,7 +72,7 @@ public class ViewOnClick implements View.OnClickListener {
             case R.id.img_Shuffle_All:
                 if (allSortSongs.size() > 0) {
 
-                    mSongsManager.shufflePlay(allSortSongs);
+                    mSongManager.shufflePlay(allSortSongs);
                 }else {
 
                 }

@@ -10,6 +10,7 @@
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_gravity="bottom"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_gravity="bottom"

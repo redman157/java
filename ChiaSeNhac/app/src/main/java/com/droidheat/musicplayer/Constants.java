@@ -26,10 +26,7 @@ public class Constants {
         String PREVIOUS_TO_SERVICE = "previousToService";
         String IS_REPEAT = "isRepeat";
         String POS_HOME = "posHome";
-        String POS_PLAY = "posPlay";
-        String POS_PAUSE = "posPause";
-        String POS_PREV = "posPrev";
-        String POS_NEXT = "posNext";
+        String SET_MUSIC = "SetMusic";
     }
     public @interface VALUE {
         String SYNC = "sync";
@@ -95,6 +92,7 @@ public class Constants {
     }
 
     public @interface ACTION{
+        String SET_MUSIC = "SetMusic";
         String STOP = "com.droidheat.musicplayer.action.STOP";
         String ACTION_PERSISTENT_NOTIFICATION = "com.droidheat.musicplayer.action.PERSISTENT_NOTIFICATION";
         String PLAY = "com.droidheat.musicplayer.action.PLAY";

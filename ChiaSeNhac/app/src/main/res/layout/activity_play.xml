@@ -101,7 +101,7 @@
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:weightSum="5"
-
+        android:visibility="gone"
         android:layout_marginLeft="@dimen/_20sdp"
         android:layout_marginRight="@dimen/_20sdp"
         android:layout_height="@dimen/_40sdp">
@@ -160,10 +160,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/app_shuffle"
-                android:tint="@color/white"
-
-                />
+                android:src="@drawable/app_shuffle_white" />
         </RelativeLayout>
 
         <RelativeLayout

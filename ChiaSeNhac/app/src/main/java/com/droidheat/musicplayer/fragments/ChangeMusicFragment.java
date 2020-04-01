@@ -41,12 +41,22 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     private Dialog mDlOptionMusic;
     private MusicAdapter mMusicAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private ArrayList<SongModel> musicMain;
     private OnMusicChange onMusicChange;
     private SharedPrefsManager sharedPrefsManager;
     public void setMusicChange(OnMusicChange onMusicChange){
         this.onMusicChange = onMusicChange;
 
     }
+
+    public ArrayList<SongModel> getMusicMain() {
+        return musicMain;
+    }
+
+    public void setMusicMain(ArrayList<SongModel> musicMain) {
+        this.musicMain = musicMain;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,9 +113,9 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
             case R.id.item_img_viewQueue:
                 ArrayList<SongModel> songModels = SongManager.getInstance().shuffleSongs();
                 for (int i = 0 ; i < songModels.size(); i ++){
-                    if (songModels.get(i).getTitle().equals(PlayActivity.mSongs.get(sharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1)).getTitle())){
-                        Log.d("KKK", PlayActivity.mSongs.get(sharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1)).getTitle());
-                        
+                    if (songModels.get(i).getTitle().equals(musicMain.get(sharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1)).getTitle())){
+                        Log.d("KKK", musicMain.get(sharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1)).getTitle());
+
                         mDlOptionMusic.show();
                     }
                 }

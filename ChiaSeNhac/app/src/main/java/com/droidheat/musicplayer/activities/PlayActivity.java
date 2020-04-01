@@ -55,7 +55,7 @@ public class PlayActivity extends BaseActivity
     private TextView mTextLeftTime, mTextRightTime;
     private String type;
     private int position;
-    public static ArrayList<SongModel> mSongs = new ArrayList<>();
+    private ArrayList<SongModel> mSongs = new ArrayList<>();
     private boolean receiverRegistered;
     public Intent iSeekBar;
     private Intent iPlayPause;
@@ -171,9 +171,7 @@ public class PlayActivity extends BaseActivity
 
             }
             ChangeMusicFragment fChangeMusicFragment = new ChangeMusicFragment();
-            Log.d("TTT" ,
-                    "Play Activity --- new ChangeMusicPagerAdapter: "+(onMusicChange == null ?
-                    "null": "khac null"));
+            fChangeMusicFragment.setMusicMain(mSongs);
             fChangeMusicFragment.setMusicChange(fChangeMusicFragment);
             mAdapter.addData(fChangeMusicFragment, mSongs.get(idx));
         }

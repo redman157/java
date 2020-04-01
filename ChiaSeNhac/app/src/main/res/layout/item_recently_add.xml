@@ -33,14 +33,14 @@
             android:layout_weight="1"
             android:textSize="14sp"
             android:gravity="left|center"
-            android:textColor="@color/blackGrey"
+            android:textColor="@color/black"
             android:id="@+id/item_text_title_recently_add"
             android:layout_width="match_parent"
             android:layout_height="0dp"/>
         <TextView
             android:textSize="10sp"
             android:gravity="left|center"
-            android:textColor="@color/blackGrey"
+            android:textColor="@color/black"
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:id="@+id/item_text_artist_recently_add"
@@ -50,16 +50,17 @@
         android:id="@+id/item_text_time_recently_add"
         android:textSize="10sp"
         android:gravity="center"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:layout_weight="1"
         android:layout_width="0dp"
 
         android:layout_height="match_parent"/>
-    <Button
+    <ImageButton
         android:id="@+id/item_btn_menu_recently_add"
         android:layout_weight="1.5"
         android:layout_width="0dp"
         android:layout_gravity="center"
-        android:drawableLeft="@drawable/ic_menu_dot_black"
+        android:src="@drawable/ic_menu_dot_black"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:layout_height="match_parent"/>
 </LinearLayout>

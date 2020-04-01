@@ -1,6 +1,8 @@
 package com.droidheat.musicplayer;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
 import com.droidheat.musicplayer.fragments.MusicDockFragment;
@@ -31,7 +33,7 @@ public class ChangeMusic {
     public void setPosition(String type, int index){
         this.position = index;
         this.type = type;
-        Log.d("BBB", "ChangeMusic --- setPosition:"+position);
+        Log.d("KKK", "ChangeMusic --- setPosition:"+position + " === type: "+type);
         prefsManager.setInteger(Constants.PREFERENCES.POSITION,this.position);
         prefsManager.setString(Constants.PREFERENCES.TYPE, this.type);
     }
@@ -52,6 +54,7 @@ public class ChangeMusic {
 
     public void setFragment(MusicDockFragment musicDockFragment) {
         this.mMusicDockFragment = musicDockFragment;
+
     }
 
 
@@ -88,7 +91,7 @@ public class ChangeMusic {
     public ArrayList<SongModel> switchMusic(String type){
         switch (type){
             case Constants.VALUE.ALL_SONGS:
-                return SongManager.getInstance().newSongs();
+                return SongManager.getInstance().allSortSongs();
 
             case Constants.VALUE.NEW_SONGS:
                 return SongManager.getInstance().newSongs();

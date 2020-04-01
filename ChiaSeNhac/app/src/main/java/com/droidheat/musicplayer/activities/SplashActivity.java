@@ -382,9 +382,10 @@ public class SplashActivity extends AppCompatActivity {
                     Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
 
                     intent.putExtra("SendAlbumId", bitmap);
-                    startActivity(intent);
 
-                    finish();
+                    startActivity(intent);
+//                    finish();
+
                 }
             };
             count.start();

@@ -1,6 +1,10 @@
 package com.droidheat.musicplayer.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.models.SongModel;
@@ -26,13 +31,18 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
     private ImageUtils mImageUtils;
     private int mPossitionMusic;
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
-
+    private int mOptionMusic;
     public MusicAdapter(Context context) {
-
         mContext = context;
         mImageUtils = ImageUtils.getInstance(context);
     }
 
+    public void setPosition(int position){
+        mOptionMusic = position;
+    }
+    public int getPosition(){
+        return mOptionMusic;
+    }
     public ArrayList<SongModel> getListMusic() {
         return mListMusic;
     }
@@ -61,7 +71,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
 
 
         mSongModel = getListMusic().get(position);
-        holder.setData(mSongModel);
+        holder.setData(position);
         holder.ll_option_music.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,8 +93,25 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
             textTitle = itemView.findViewById(R.id.item_music_text_title);
             textArtist = itemView.findViewById(R.id.item_music_text_artists);
         }
-        public void setData(SongModel songModel){
-            mImageUtils.getBitmapImageByPicasso(songModel.getAlbumID(), imageView);
+
+        public void setData(int pos){
+            SongModel songModel = getListMusic().get(pos);
+            if (mOptionMusic == pos){
+//                Log.d("KKK", "setData: "+getListMusic().get(pos).getTitle());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    textTitle.setTextColor(mContext.getColor(R.color.red));
+                }else {
+                    textTitle.setTextColor(Color.parseColor("#FFFF0000"));
+                }
+            }else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    textTitle.setTextColor(mContext.getColor(R.color.white));
+                }else {
+                    textTitle.setTextColor(Color.parseColor("#FFFFFFFF"));
+                }
+            }
+
+            mImageUtils.getSmallImageByPicasso(songModel.getAlbumID(), imageView);
             textTime.setText(format.format(songModel.getTime()));
             textArtist.setText(songModel.getArtist());
             textTitle.setText(songModel.getTitle());

@@ -29,6 +29,7 @@ import com.droidheat.musicplayer.models.SongModel;
 import com.droidheat.musicplayer.services.MediaPlayerService;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MusicDockFragment extends Fragment implements View.OnClickListener{
     private View view;
@@ -49,7 +50,7 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
         prefsManager = new SharedPrefsManager();
         prefsManager.setContext(getActivity());
         position = prefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
-        Log.d("BBB", "MusicDockFragment --- onCreate: "+position);
+        Log.d("KKK", "MusicDockFragment --- onCreate: "+position);
         type = prefsManager.getString(Constants.PREFERENCES.TYPE, Constants.VALUE.NEW_SONGS);
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(getActivity());
@@ -64,9 +65,6 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
             initView();
             assignView();
         }
-
-
-
         return view;
     }
 
@@ -87,8 +85,6 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
         if (MediaPlayerService.mMediaPlayer!= null){
             if (MediaPlayerService.mMediaPlayer.isPlaying()){
                 mImbPlay.setImageResource(R.drawable.ic_media_pause_light);
-            }else {
-                mImbPlay.setImageResource(R.drawable.ic_media_play_light);
             }
         }else {
             mImbPlay.setImageResource(R.drawable.ic_media_play_light);
@@ -112,8 +108,10 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
                     Intent intent = new Intent(getActivity(), PlayActivity.class);
                     intent.putExtra(Constants.VALUE.TYPE, type);
                     intent.putExtra(Constants.VALUE.POSITION, position);
+
                     startActivity(intent);
-                    ((HomeActivity)getActivity()).finish();
+
+//                    ( Objects.requireNonNull(getActivity())).finish();
                 }
                 break;
             case R.id.fm_btn_Play:

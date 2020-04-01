@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +23,11 @@ import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.RecentlyAdderAdapter;
 import com.droidheat.musicplayer.fragments.MusicDockFragment;
 import com.droidheat.musicplayer.manager.ImageUtils;
+import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
+import com.droidheat.musicplayer.models.SongModel;
+
+import java.util.ArrayList;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class RecentlyAllMusicActivity extends AppCompatActivity implements
@@ -33,21 +38,25 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     private ScrollView scrollView;
     private ImageButton btnBack;
     private RecentlyAdderAdapter recentlyAdderAdapter;
+    private SharedPrefsManager mSharedPrefsManager;
+    private String type;
+    private ArrayList<SongModel> mSongs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recently_all_music);
+        type = getIntent().getStringExtra(Constants.INTENT.TYPE_MUSIC);
+        mSharedPrefsManager = new SharedPrefsManager();
+        mSharedPrefsManager.setContext(this);
+        mSongs =SongManager.getInstance().newSongs();
         initView();
-
         assignView();
-
-
     }
 
     private void assignView() {
         recentlyAdderAdapter = new RecentlyAdderAdapter(
                 this,
-                SongManager.getInstance().newSongs(),
+                mSongs,
                 Constants.VALUE.ALL_NEW_SONGS);
 //        rc_recently_add.setNestedScrollingEnabled(false);
         rc_recently_add.setHasFixedSize(true);
@@ -97,7 +106,12 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.imb_BackMusic:
-                startActivity(new Intent(this, HomeActivity.class));
+                Bitmap bitmap =
+                        ImageUtils.getInstance(RecentlyAllMusicActivity.this).getBitmapIntoPicasso(mSharedPrefsManager.getString(Constants.PREFERENCES.SaveAlbumID,"0"));
+
+                Intent intent = new Intent(this, HomeActivity.class);
+//                intent.putExtra("SendAlbumId", bitmap);
+                startActivity(intent);
                 break;
         }
 
@@ -105,10 +119,12 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onClick(String type, int index) {
+    public void onClick(String type, int position) {
         if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
+            mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION, position);
+            mSharedPrefsManager.setString(Constants.PREFERENCES.SaveAlbumID, mSongs.get(position).getAlbumID());
             ImageUtils.getInstance(RecentlyAllMusicActivity.this).getSmallImageByPicasso(
-                    SongManager.getInstance().newSongs().get(index).getAlbumID(),
+                    SongManager.getInstance().newSongs().get(position).getAlbumID(),
                     img_AlbumId);
 
             Fragment fragment = this.getSupportFragmentManager().findFragmentById(R.id.fm_music_dock);
@@ -116,7 +132,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
                 // set switch vị trí và type music cho play activity chạy
                 ChangeMusic.getInstance().setContext(this);
                 ChangeMusic.getInstance().setFragment((MusicDockFragment) fragment);
-                ChangeMusic.getInstance().setPosition(Constants.VALUE.NEW_SONGS, index);
+                ChangeMusic.getInstance().setPosition(Constants.VALUE.NEW_SONGS, position);
                 ChangeMusic.getInstance().switchMusic();
             }
         }

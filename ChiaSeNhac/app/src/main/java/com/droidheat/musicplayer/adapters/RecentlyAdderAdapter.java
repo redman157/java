@@ -2,10 +2,12 @@ package com.droidheat.musicplayer.adapters;
 
 import android.content.Context;
 
+import android.icu.util.LocaleData;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,13 +21,16 @@ import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
 import com.droidheat.musicplayer.models.SongModel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdapter.ItemViewHolder> {
     private final Context context;
     private ArrayList<SongModel> items;
     private String type;
     private SharedPrefsManager prefsManager;
+    private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
     public RecentlyAdderAdapter(Context context, ArrayList<SongModel> items, String type) {
         this.items = items;
         this.type = type;
@@ -88,7 +93,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
         private ImageView mImgMusic;
         private TextView mTextName, mTextArtist;
         private TextView mTextTime;
-        private Button mBtnMenu;
+        private ImageButton mBtnMenu;
         private LinearLayout mL_Recently_Add;
         public ItemViewHolder(View itemView) {
             super(itemView);
@@ -104,7 +109,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
             //UI setting code
             mTextName.setText(song.getTitle());
             mTextArtist.setText(song.getArtist());
-            mTextTime.setText(song.getDuration());
+            mTextTime.setText(format.format(song.getTime()));
             mImgMusic.setClipToOutline(true);
 
             ImageUtils.getInstance(context).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);

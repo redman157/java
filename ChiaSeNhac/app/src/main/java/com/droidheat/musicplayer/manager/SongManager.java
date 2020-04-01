@@ -177,6 +177,7 @@ public class SongManager {
         grabIfEmpty(); // If no song in list (shuffle songs)
         ArrayList<SongModel> shuffleSongs = new ArrayList<>(mainList);
         Collections.shuffle(shuffleSongs);
+
         return shuffleSongs;
     }
 

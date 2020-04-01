@@ -291,6 +291,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
+
     private int currentViewPagerPosition = 0;
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -24,6 +25,7 @@ import com.droidheat.musicplayer.BaseActivity;
 import com.droidheat.musicplayer.ChangeMusic;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.OnMusicChange;
+import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
 import com.droidheat.musicplayer.services.MediaPlayerService;
@@ -302,20 +304,15 @@ public class PlayActivity extends BaseActivity
 
             if (isPlayingMedia) {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-
-
-
                 isPlaying = false;
                 Intent iPlayMedia = new Intent(PlayActivity.this, MediaPlayerService.class);
                 iPlayMedia.setAction(Constants.ACTION.PAUSE);
                 startService(iPlayMedia);
             } else {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-
                 isPlaying = true;
                 Intent iPlayMedia = new Intent(PlayActivity.this, MediaPlayerService.class);
                 iPlayMedia.setAction(Constants.ACTION.PLAY);
-
                 startService(iPlayMedia);
             }
         }
@@ -373,10 +370,7 @@ public class PlayActivity extends BaseActivity
                 }
                 break;
             case R.id.icon_prev:
-
-
                 if (position ==  0 ){
-
                     mBtnPrev.setClickable(false);
                     mBtnPrev.setImageResource(R.drawable.ic_previous_black);
                 }else {
@@ -392,7 +386,6 @@ public class PlayActivity extends BaseActivity
                     startService(iPrevious);
                     mVpMusic.setCurrentItem(SongManager.getInstance().getCurrentMusic() - 1);
                 }
-
                 break;
             case R.id.icon_repeat:
 
@@ -445,9 +438,11 @@ public class PlayActivity extends BaseActivity
             case R.id.imb_BackMusic:
                 // khi back ngược về ta cần phải lưu dc position khi tắt app bật lên ta phải có
                 // dc giá trị sẵn để xuất màn hình tất cả có ở Changmusic khi thao tác
+                Bitmap bitmap =
+                        ImageUtils.getInstance(PlayActivity.this).getBitmapIntoPicasso(mSharedPrefsManager.getString(Constants.PREFERENCES.SaveAlbumID,"0"));
                 Intent iBackMusic = new Intent(this, HomeActivity.class);
-                iBackMusic.putExtra(Constants.INTENT.POS_HOME, position);
-                finish();
+//                iBackMusic.putExtra("SendAlbumId", bitmap);
+
                 startActivity(iBackMusic);
 
                 break;

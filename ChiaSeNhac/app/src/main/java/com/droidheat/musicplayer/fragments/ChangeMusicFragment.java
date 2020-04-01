@@ -75,11 +75,9 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
             assignView();
         }
         if (mMusicAdapter == null){
-            showOptionMusic(SongManager.getInstance().shuffleSongs());
+            mMusicAdapter = new MusicAdapter(getContext());
+
         }
-
-
-
         mTextPlaying.setText(mSongModel.getAlbum());
         mTextArtists.setText(mSongModel.getArtist());
         mTextTittle.setText(mSongModel.getTitle());
@@ -113,9 +111,10 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
             case R.id.item_img_viewQueue:
                 ArrayList<SongModel> songModels = SongManager.getInstance().shuffleSongs();
                 for (int i = 0 ; i < songModels.size(); i ++){
+//                    Log.d("KKK", "Tên bài hát: "+songModels.get(i).getTitle() +" ==== AlbumID: "+songModels.get(i).getAlbumID());
                     if (songModels.get(i).getTitle().equals(musicMain.get(sharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1)).getTitle())){
-                        Log.d("KKK", musicMain.get(sharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1)).getTitle());
-
+                        mMusicAdapter.setPosition(i);
+                        showOptionMusic(songModels, i);
                         mDlOptionMusic.show();
                     }
                 }
@@ -125,16 +124,15 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
                 break;
         }
     }
-    private void showOptionMusic(ArrayList<SongModel> songModels){
-
+    private void showOptionMusic(ArrayList<SongModel> songModels, int pos){
         mDlOptionMusic.setContentView(R.layout.dialog_option_music);
         RecyclerView mRcOptionMusic = mDlOptionMusic.findViewById(R.id.rc_OptionMusic);
-        mMusicAdapter = new MusicAdapter(getContext());
+
         mMusicAdapter.setListMusic(songModels);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRcOptionMusic.setAdapter(mMusicAdapter);
         mRcOptionMusic.setLayoutManager(layoutManager);
-
+        mRcOptionMusic.getLayoutManager().scrollToPosition(pos);
     }
 
     @Override

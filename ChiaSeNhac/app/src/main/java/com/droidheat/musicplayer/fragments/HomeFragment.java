@@ -3,6 +3,7 @@ package com.droidheat.musicplayer.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import com.droidheat.musicplayer.manager.SongManager;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnClickItem, View.OnClickListener{
     private RecyclerView mRc_Recently_Add;
@@ -40,7 +42,8 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
     private ImageUtils mImageUtils;
-
+    private String type;
+    private String position;
     private Activity mActivity;
     private SharedPrefsManager prefsManager;
     private Fragment MusicDock;
@@ -54,8 +57,6 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
         prefsManager = new SharedPrefsManager();
         prefsManager.setContext(getContext());
         MusicDock = ((HomeActivity) mActivity).getSupportFragmentManager().findFragmentById(R.id.fm_music_dock);
-
-        ChangeMusic.getInstance().setContext(getContext());
 
         mAdderAdapter = new RecentlyAdderAdapter(getContext(),
                 SongManager.getInstance().newSongs(),
@@ -98,7 +99,9 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     @Override
     public void onClick(String type, int index) {
         // set switch vị trí và type music cho play activity chạy
-
+        this.type = type;
+        ChangeMusic.getInstance().setContext(getContext());
+        Log.d("KKK", "HomeFragment --- setPosition: "+index + " === type: "+type);
         ChangeMusic.getInstance().setFragment((MusicDockFragment) MusicDock);
         ChangeMusic.getInstance().setPosition(type , index);
         ChangeMusic.getInstance().switchMusic();
@@ -109,9 +112,10 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_ViewAll:
+                Intent intent = new Intent(getContext(), RecentlyAllMusicActivity.class);
+                intent.putExtra(Constants.INTENT.TYPE_MUSIC, type);
 
-                startActivity(new Intent(getContext(), RecentlyAllMusicActivity.class));
-                getActivity().finish();
+                startActivity(intent);
                 break;
             case R.id.img_Shuffle_All:
                 break;

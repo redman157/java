@@ -219,7 +219,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 if( !successfullyRetrievedAudioFocus() ) {
                     return;
                 }
-//                int position = SongManager.getInstance().getCurrentMusic();
+                int position = SongManager.getInstance().getCurrentMusic();
                 Log.d("BBB","Service --- onPlay:"+position);
                 playMedia(mSongs.get(position).getPath());
                 initNotification(Constants.NOTIFICATION.PLAY, position);
@@ -230,9 +230,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             public void onPause() {
                 super.onPause();
                 pauseMedia();
-
                 initNotification(Constants.NOTIFICATION.PAUSE, position);
-
             }
 
             @Override
@@ -524,7 +522,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 //            mMediaPlayer.seekTo(resumePosition);
             mMediaPlayer.seekTo(newPosition);
             mMediaPlayer.start();
-            newPosition = -1;
+
 //            Log.d(tag, "resumeMedia: Enter");
         }
     }
@@ -564,13 +562,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY, nextToActivity);
                 sendBroadcast(iPlayNewMusic);
             } else {
-                Log.d("KKK", "Service --- SkipToNext: dbNext is null");
+                Log.d("BBB", "Service --- SkipToNext: dbNext is null");
+                // check lai next khúc này !!
+               /* Intent intent = new Intent();
+                intent.setAction(Constants.ACTION.PLAY);
+                handleIncomingActions(intent);*/
             }
         }
         stopMedia();
         mMediaPlayer.reset();
-
-
 
     }
     private Runnable sendUpdatesToUI = new Runnable() {
@@ -856,7 +856,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         Log.d(tag, "onCompletion");
 
         if (!isInitAudioError) {
-            skipToNext();
+
+            Intent intent = new Intent(this, MediaPlayerService.class);
+            intent.setAction(Constants.ACTION.NEXT);
+            startService(intent);
+//            skipToNext();
+//            playMedia();
+
         }
     }
 
@@ -898,7 +904,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         if (newPosition != -1){
             resumeMedia();
-
+            newPosition = -1;
         }else {
             playMedia();
         }

@@ -27,6 +27,7 @@ public class Constants {
         String IS_REPEAT = "isRepeat";
         String POS_HOME = "posHome";
         String SET_MUSIC = "SetMusic";
+        String TYPE_MUSIC = "TypeMusic";
     }
     public @interface VALUE {
         String SYNC = "sync";

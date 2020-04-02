@@ -19,12 +19,15 @@ public class Constants {
     }
 
     public @interface INTENT{
+        String POSITION = "position";
+        String TYPE = "type";
         String IS_PLAY_MEDIA_SERVICE = "isPlayMedia";
         String IS_PLAY_MEDIA_NOTIFICATION = "isPlayingNotification";
         String NOTI_SERVICE_TO_ACTIVITY = "ServiceToActivity";
         String NEXT_TO_SERVICE = "nextToService";
         String PREVIOUS_TO_SERVICE = "previousToService";
         String IS_REPEAT = "isRepeat";
+        String IS_PLAY = "isPlay";
         String POS_HOME = "posHome";
         String SET_MUSIC = "SetMusic";
         String TYPE_MUSIC = "TypeMusic";
@@ -40,8 +43,6 @@ public class Constants {
         String FAVS_DB = "Favs.db";
         String PLAYLISTSONGS_DB = "playlistsongs.db";
         String INPUT_METHOD = "input_method";
-        String TYPE = "type";
-        String POSITION = "position";
     }
 
     public @interface REQUEST_CODE{
@@ -56,6 +57,7 @@ public class Constants {
 
 
     public @interface PREFERENCES{
+
         String SaveAlbumID = "SaveAlbumID";
         String KEY = "key";
         String TOTAL_SONGS = "total_song";

@@ -63,7 +63,7 @@ public class PlayActivity extends BaseActivity
     private Intent iPlayPause;
     public   int seekPos;
 
-    private boolean isPlayingMedia;
+
     private int size;
     private LinearLayout mLinearSeeMore;
     private boolean isChange, isPlaying;
@@ -115,10 +115,10 @@ public class PlayActivity extends BaseActivity
         mSharedPrefsManager.setContext(this);
 
         // nhận giá trị postion và type ở home fragment và recently activity
-        type = this.getIntent().getStringExtra(Constants.VALUE.TYPE);
-        position = this.getIntent().getIntExtra(Constants.VALUE.POSITION, 0);
-        Log.d("BBB", "Play Activity --- onCreate: "+position);
-        mSongs = ChangeMusic.getInstance().switchMusic(type);
+        type = this.getIntent().getStringExtra(Constants.INTENT.TYPE);
+        position = this.getIntent().getIntExtra(Constants.INTENT.POSITION, 0);
+        Log.d("BBB", "Play Activity --- onCreate: "+position +" === Type: "+type);
+        setTypeSong(type);
         initView();
         assignView();
         size = mSongs.size();
@@ -127,6 +127,14 @@ public class PlayActivity extends BaseActivity
         iSetMusic.setAction(Constants.ACTION.SET_MUSIC);
         iSetMusic.putExtra(Constants.INTENT.SET_MUSIC, mSongs);
         startService(iSetMusic);
+    }
+
+    private void setTypeSong(String type){
+        if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)){
+            mSongs = SongManager.getInstance().newSongs();
+        }else if (type.equals(Constants.VALUE.ALL_SONGS)){
+            mSongs = SongManager.getInstance().allSortSongs();
+        }
     }
 
     @Override
@@ -303,14 +311,16 @@ public class PlayActivity extends BaseActivity
             boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
 
             if (isPlayingMedia) {
+
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                isPlaying = false;
+                isPlaying = true;
                 Intent iPlayMedia = new Intent(PlayActivity.this, MediaPlayerService.class);
                 iPlayMedia.setAction(Constants.ACTION.PAUSE);
                 startService(iPlayMedia);
             } else {
+
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                isPlaying = true;
+                isPlaying = false;
                 Intent iPlayMedia = new Intent(PlayActivity.this, MediaPlayerService.class);
                 iPlayMedia.setAction(Constants.ACTION.PLAY);
                 startService(iPlayMedia);
@@ -440,7 +450,9 @@ public class PlayActivity extends BaseActivity
                 // dc giá trị sẵn để xuất màn hình tất cả có ở Changmusic khi thao tác
                 Bitmap bitmap =
                         ImageUtils.getInstance(PlayActivity.this).getBitmapIntoPicasso(mSharedPrefsManager.getString(Constants.PREFERENCES.SaveAlbumID,"0"));
+
                 Intent iBackMusic = new Intent(this, HomeActivity.class);
+                iBackMusic.putExtra(Constants.INTENT.IS_PLAY, isPlaying);
 //                iBackMusic.putExtra("SendAlbumId", bitmap);
 
                 startActivity(iBackMusic);

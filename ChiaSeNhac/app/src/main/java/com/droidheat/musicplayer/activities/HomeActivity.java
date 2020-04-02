@@ -1,7 +1,6 @@
 package com.droidheat.musicplayer.activities;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,9 +15,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.droidheat.musicplayer.BaseActivity;
 import com.droidheat.musicplayer.Constants;
@@ -32,6 +34,8 @@ import com.droidheat.musicplayer.fragments.HomeFragment;
 import com.droidheat.musicplayer.fragments.PlaylistFragment;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
+import com.droidheat.musicplayer.manager.SongManager;
+import com.droidheat.musicplayer.models.SongModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -57,15 +61,33 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private ViewPagerAdapter mViewPagerAdapter;
     private boolean isHide = false;
     private int position;
-    private SharedPrefsManager prefsManager;
+    private ImageUtils imageUtils;
+    private View mViewPlayMedia;
+    public ImageView mImgMedia;
+    public TextView mTextTitle, mTextArtist;
+    public ImageButton mBtnPlay;
+    public Button mBtnTitle;
+    private SharedPrefsManager mSharedPrefsManager;
+    private ArrayList<SongModel> mSongs;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setTypeSong(mSharedPrefsManager.getString(Constants.PREFERENCES.TYPE, ""));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         // khởi tạo màn hình chính là home ta cần check position để gán sẵn vị trí luôn
-        ImageUtils.getInstance(this);
+        mSharedPrefsManager = new SharedPrefsManager();
+        mSharedPrefsManager.setContext(this);
         initMenu();
         initView();
+        imageUtils = ImageUtils.getInstance(this);
+        setTypeSong(mSharedPrefsManager.getString(Constants.PREFERENCES.TYPE, ""));
+
         assignView();
     }
 
@@ -92,7 +114,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         viewPager.addOnPageChangeListener(this);
         viewPager.setOnClickListener(this);
     }
+
     private void initView() {
+        mViewPlayMedia = findViewById(R.id.layout_play_media);
+        mTextTitle = mViewPlayMedia.findViewById(R.id.text_title_media);
+        mTextArtist = mViewPlayMedia.findViewById(R.id.text_artists_media);
+        mBtnPlay = mViewPlayMedia.findViewById(R.id.imbt_Play_media);
+        mBtnTitle = mViewPlayMedia.findViewById(R.id.btn_title_media);
+        mImgMedia = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
+
+        Intent intent = getIntent();
+        boolean isPlay = intent.getBooleanExtra(Constants.INTENT.IS_PLAY, false);
+        if (isPlay){
+            mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+        }else {
+            mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
+        }
+
+
         ll_PlayLists = findViewById(R.id.ll_StatusPlayMusic);
         mImgMenu = findViewById(R.id.menu_item);
         mImgSearch = findViewById(R.id.menu_search);
@@ -108,6 +147,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void assignView(){
+        mBtnPlay.setOnClickListener(this);
+        mBtnTitle.setOnClickListener(this);
         mOptionMenuAdapter = new OptionMenuAdapter(mMenus, this);
         mOptionMenuAdapter.OnClickItemMenu(this);
 
@@ -143,6 +184,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
     };
 
+    private void setTypeSong(String type){
+        int position = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
+        if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)){
+            mSongs = SongManager.getInstance().newSongs();
+        }else if (type.equals(Constants.VALUE.ALL_SONGS)){
+            mSongs = SongManager.getInstance().allSortSongs();
+        }else if (type.equals("")){
+            mSongs = SongManager.getInstance().newSongs();
+
+        }
+        mTextArtist.setText(mSongs.get(position).getArtist());
+        mTextTitle.setText(mSongs.get(position).getTitle());
+        imageUtils.getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
+    }
 
     @Override
     public void onClickItemMenu(String item) {
@@ -255,6 +310,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+            case R.id.imbt_Play_media:
+                Toast.makeText(this, "test thôi chưa xài", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.btn_title_media:
+                if (!SongManager.getInstance().queue().isEmpty()) {
+
+                    Intent intent = new Intent(HomeActivity.this, PlayActivity.class);
+                    intent.putExtra(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
+                    intent.putExtra(Constants.INTENT.POSITION,
+                            mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0));
+
+                    startActivity(intent);
+                }
+                break;
             case R.id.menu_item:
 
                 if (!isHide){

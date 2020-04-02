@@ -75,17 +75,20 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
         mTextArtists = view.findViewById(R.id.fm_text_artists);
         mImgArt = view.findViewById(R.id.fm_img_albumArt);
 
+        Intent intent = getActivity().getIntent();
 
-        Bundle intent = getActivity().getIntent().getExtras();
+        Bundle bundle = intent.getExtras();
 
-        Bitmap bitmap = intent.getParcelable("SendAlbumId");
-        if (bitmap != null){
+        if (bundle != null){
+            Bitmap bitmap = bundle.getParcelable("SendAlbumId");
             mImgArt.setImageBitmap(bitmap);
         }
-        if (MediaPlayerService.mMediaPlayer!= null){
-            if (MediaPlayerService.mMediaPlayer.isPlaying()){
-                mImbPlay.setImageResource(R.drawable.ic_media_pause_light);
-            }
+
+
+        boolean isPlay = intent.getBooleanExtra(Constants.INTENT.IS_PLAY, false);
+        Log.d("BBB", "MusicDockPlayer === IsPlay: "+isPlay);
+        if (isPlay){
+            mImbPlay.setImageResource(R.drawable.ic_media_pause_light);
         }else {
             mImbPlay.setImageResource(R.drawable.ic_media_play_light);
         }
@@ -106,12 +109,10 @@ public class MusicDockFragment extends Fragment implements View.OnClickListener{
                 if (!SongManager.getInstance().queue().isEmpty()) {
 
                     Intent intent = new Intent(getActivity(), PlayActivity.class);
-                    intent.putExtra(Constants.VALUE.TYPE, type);
-                    intent.putExtra(Constants.VALUE.POSITION, position);
+                    intent.putExtra(Constants.INTENT.TYPE, type);
+                    intent.putExtra(Constants.INTENT.POSITION, position);
 
                     startActivity(intent);
-
-//                    ( Objects.requireNonNull(getActivity())).finish();
                 }
                 break;
             case R.id.fm_btn_Play:

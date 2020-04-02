@@ -114,7 +114,7 @@
         android:background="@color/black"
         android:layout_height="0dp">
 
-        <fragment
+       <!-- <fragment
             android:id="@+id/fm_music_dock"
             android:name="com.droidheat.musicplayer.fragments.MusicDockFragment"
             class="com.droidheat.musicplayer.fragments.MusicDockFragment"
@@ -122,7 +122,10 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
 
-            tools:layout="@layout/fragment_music_dock" />
+            tools:layout="@layout/fragment_music_dock" />-->
+        <include layout="@layout/layout_play_media"
+
+            android:id="@+id/layout_play_media"/>
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"

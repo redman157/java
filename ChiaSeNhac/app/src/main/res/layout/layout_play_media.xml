@@ -26,7 +26,7 @@
             android:layout_height="35dp">
             <ImageView
                 android:layout_width="match_parent"
-                android:id="@+id/fm_img_albumArt"
+                android:id="@+id/img_albumArt_media"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
@@ -37,12 +37,10 @@
         <RelativeLayout
             android:layout_weight="9"
             android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_alignParentBottom="true"
-            android:layout_toEndOf="@+id/fm_img_albumArt">
+            android:layout_height="56dp">
 
             <Button
-                android:id="@+id/fm_btn_title"
+                android:id="@+id/btn_title_media"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_alignParentBottom="true"
@@ -62,7 +60,7 @@
                 android:layout_marginEnd="8dp">
 
                 <ImageButton
-                    android:id="@+id/fm_btn_Play"
+                    android:id="@+id/imbt_Play_media"
                     android:layout_width="@dimen/_32sdp"
                     android:layout_height="@dimen/_32sdp"
                     android:layout_alignParentTop="true"
@@ -84,7 +82,7 @@
                 android:paddingStart="8dp">
 
                 <TextView
-                    android:id="@+id/fm_text_title"
+                    android:id="@+id/text_title_media"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
@@ -98,11 +96,11 @@
                     android:textSize="15sp" />
 
                 <TextView
-                    android:id="@+id/fm_text_artists"
+                    android:id="@+id/text_artists_media"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:layout_below="@+id/fm_text_title"
+                    android:layout_below="@+id/text_title_media"
                     android:fontFamily="sans-serif"
                     android:maxLines="1"
                     android:paddingTop="0dp"

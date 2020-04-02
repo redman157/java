@@ -113,12 +113,13 @@
                 android:layout_weight="7.5"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
+                android:background="@color/whiteOpaque"
                 android:layout_height="0dp">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rc_recently_add"
-                android:layout_width="match_parent"
-                android:nestedScrollingEnabled="true"
-                android:layout_height="match_parent" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rc_recently_add"
+                    android:layout_width="match_parent"
+                    android:nestedScrollingEnabled="true"
+                    android:layout_height="match_parent" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -134,14 +135,8 @@
             android:layout_height="1dp"
             android:background="#404040" />
 
-        <fragment
-            android:id="@+id/fm_music_dock"
-            android:name="com.droidheat.musicplayer.fragments.MusicDockFragment"
-            class="com.droidheat.musicplayer.fragments.MusicDockFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            tools:layout="@layout/fragment_music_dock" />
+        <include android:id="@+id/layout_play_media"
+            layout="@layout/layout_play_media"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"

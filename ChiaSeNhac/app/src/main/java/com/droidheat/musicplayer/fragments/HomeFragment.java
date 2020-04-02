@@ -3,7 +3,6 @@ package com.droidheat.musicplayer.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.droidheat.musicplayer.ChangeMusic;
 import com.droidheat.musicplayer.Constants;
 
 
@@ -30,7 +28,6 @@ import com.droidheat.musicplayer.manager.SongManager;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnClickItem, View.OnClickListener{
     private RecyclerView mRc_Recently_Add;
@@ -43,10 +40,10 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
     private ImageUtils mImageUtils;
     private String type;
-    private String position;
+    private int position;
     private Activity mActivity;
-    private SharedPrefsManager prefsManager;
-    private Fragment MusicDock;
+    private SharedPrefsManager mSharedPrefsManager;
+    private ArrayList<SongModel> mSongs;
 
     public HomeFragment(Activity activity){
         mActivity = activity;
@@ -54,9 +51,9 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prefsManager = new SharedPrefsManager();
-        prefsManager.setContext(getContext());
-        MusicDock = ((HomeActivity) mActivity).getSupportFragmentManager().findFragmentById(R.id.fm_music_dock);
+        mSharedPrefsManager = new SharedPrefsManager();
+        mSharedPrefsManager.setContext(getContext());
+
 
         mAdderAdapter = new RecentlyAdderAdapter(getContext(),
                 SongManager.getInstance().newSongs(),
@@ -72,6 +69,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
             view = inflater.inflate(R.layout.fragment_home, null);
             initView();
             assignView();
+
             mRc_Recently_Add.setAdapter(mAdderAdapter);
             mRc_Recently_Add.setNestedScrollingEnabled(false);
             mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(getContext(),
@@ -92,19 +90,27 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     }
 
     private void assignView(){
+        ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getTitle());
+        ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
+        ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
+                mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);
+
         mImg_Shuffle_All.setOnClickListener(this);
         btn_ViewAll.setOnClickListener(this);
     }
 
     @Override
-    public void onClick(String type, int index) {
+    public void onClick(String type, int position) {
         // set switch vị trí và type music cho play activity chạy
-        this.type = type;
-        ChangeMusic.getInstance().setContext(getContext());
-        Log.d("KKK", "HomeFragment --- setPosition: "+index + " === type: "+type);
-        ChangeMusic.getInstance().setFragment((MusicDockFragment) MusicDock);
-        ChangeMusic.getInstance().setPosition(type , index);
-        ChangeMusic.getInstance().switchMusic();
+
+        mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION,position);
+        mSharedPrefsManager.setString(Constants.PREFERENCES.TYPE, type);
+
+        ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getTitle());
+        ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
+        ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
+                mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);
+
     }
 
 
@@ -113,7 +119,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
         switch (v.getId()){
             case R.id.btn_ViewAll:
                 Intent intent = new Intent(getContext(), RecentlyAllMusicActivity.class);
-                intent.putExtra(Constants.INTENT.TYPE_MUSIC, type);
+                intent.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
 
                 startActivity(intent);
                 break;

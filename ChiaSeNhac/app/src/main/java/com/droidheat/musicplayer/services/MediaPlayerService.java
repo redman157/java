@@ -561,7 +561,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 String nextToActivity = bdNext.getString(Constants.INTENT.NEXT_TO_SERVICE);
                 iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY, nextToActivity);
                 sendBroadcast(iPlayNewMusic);
-            } else {
+            } else if (bdNext == null){
                 Log.d("BBB", "Service --- SkipToNext: dbNext is null");
                 // check lai next khúc này !!
                /* Intent intent = new Intent();
@@ -855,14 +855,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         stopSelf();
         Log.d(tag, "onCompletion");
 
-        if (!isInitAudioError) {
-
-            Intent intent = new Intent(this, MediaPlayerService.class);
-            intent.setAction(Constants.ACTION.NEXT);
-            startService(intent);
-//            skipToNext();
-//            playMedia();
-
+        if (!isInitAudioError && !isRepeat) {
+            if (position < mSongs.size() - 1) {
+                SongManager.getInstance().setCurrentMusic(position + 1);
+                Intent intent = new Intent(this, MediaPlayerService.class);
+                intent.setAction(Constants.ACTION.PLAY);
+                startService(intent);
+            }else {
+                Log.d("BBB", "Lớn hơn mSongs size");
+            }
         }
     }
 

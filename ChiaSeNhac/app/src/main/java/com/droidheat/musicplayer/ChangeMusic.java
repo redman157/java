@@ -33,7 +33,7 @@ public class ChangeMusic {
     public void setPosition(String type, int index){
         this.position = index;
         this.type = type;
-        Log.d("KKK", "ChangeMusic --- setPosition:"+position + " === type: "+type);
+//        Log.d("KKK", "ChangeMusic --- setPosition:"+position + " === type: "+type);
         prefsManager.setInteger(Constants.PREFERENCES.POSITION,this.position);
         prefsManager.setString(Constants.PREFERENCES.TYPE, this.type);
     }

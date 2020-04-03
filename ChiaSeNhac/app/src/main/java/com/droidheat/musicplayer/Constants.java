@@ -19,8 +19,11 @@ public class Constants {
     }
 
     public @interface INTENT{
+        String IS_PLAY_ACTIVITY = "isPlayActivity";
         String POSITION = "position";
+        String POSITION_SONG = "position_song";
         String TYPE = "type";
+
         String IS_PLAY_MEDIA_SERVICE = "isPlayMedia";
         String IS_PLAY_MEDIA_NOTIFICATION = "isPlayingNotification";
         String NOTI_SERVICE_TO_ACTIVITY = "ServiceToActivity";
@@ -57,7 +60,7 @@ public class Constants {
 
 
     public @interface PREFERENCES{
-
+        String POSITION_SONG = "position_song";
         String SaveAlbumID = "SaveAlbumID";
         String KEY = "key";
         String TOTAL_SONGS = "total_song";
@@ -77,7 +80,7 @@ public class Constants {
         String currentEqProfile = "currentEqProfile";
         String bassLevel = "bassLevel";
         String vzLevel = "vzLevel";
-        String POSITION_SONG = "position_song";
+
         String MUSIC_ID = "musicID";
         String TITLE = "title";
         String PATH = "path";

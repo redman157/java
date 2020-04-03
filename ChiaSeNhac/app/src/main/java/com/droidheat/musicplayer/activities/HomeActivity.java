@@ -10,6 +10,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -69,11 +70,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public Button mBtnTitle;
     private SharedPrefsManager mSharedPrefsManager;
     private ArrayList<SongModel> mSongs;
-
+    private boolean isPlay;
     @Override
     protected void onResume() {
         super.onResume();
         setTypeSong(mSharedPrefsManager.getString(Constants.PREFERENCES.TYPE, ""));
+        Intent intent = getIntent();
+        isPlay = intent.getBooleanExtra(Constants.INTENT.IS_PLAY, false);
+        Log.d("KKK", "Home Activity --- onResume: "+isPlay);
+        if (isPlay){
+
+            mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+        }else {
+            mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
+        }
     }
 
     @Override
@@ -124,7 +134,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mImgMedia = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
 
         Intent intent = getIntent();
-        boolean isPlay = intent.getBooleanExtra(Constants.INTENT.IS_PLAY, false);
+        isPlay = intent.getBooleanExtra(Constants.INTENT.IS_PLAY, false);
+        Log.d("KKK", "Home Activity --- onCreate: "+isPlay);
         if (isPlay){
             mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
         }else {
@@ -186,13 +197,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     private void setTypeSong(String type){
         int position = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
+
         if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)){
             mSongs = SongManager.getInstance().newSongs();
         }else if (type.equals(Constants.VALUE.ALL_SONGS)){
             mSongs = SongManager.getInstance().allSortSongs();
         }else if (type.equals("")){
             mSongs = SongManager.getInstance().newSongs();
-
+        }
+        if (position < 0){
+            position = mSongs.size() - 1;
+        }else if (position > mSongs.size()){
+            position = 0;
         }
         mTextArtist.setText(mSongs.get(position).getArtist());
         mTextTitle.setText(mSongs.get(position).getTitle());

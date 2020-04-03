@@ -111,6 +111,7 @@
         android:layout_marginLeft="@dimen/_7sdp"
         android:layout_marginRight="@dimen/_7sdp"
         android:orientation="vertical"
+
         android:background="@color/black"
         android:layout_height="0dp">
 

@@ -471,11 +471,8 @@ public class PlayActivity extends BaseActivity
                 // dc giá trị sẵn để xuất màn hình tất cả có ở Changmusic khi thao tác
 
                 Intent iBackMusic = new Intent(this, HomeActivity.class);
-
-                iBackMusic.putExtra(Constants.INTENT.POSITION,
-                        SongManager.getInstance().getCurrentMusic());
                 startActivity(iBackMusic);
-
+                finish();
                 break;
             case R.id.imb_InfoMusic:
                 for (int i = 0 ; i < mSongs.size(); i++){

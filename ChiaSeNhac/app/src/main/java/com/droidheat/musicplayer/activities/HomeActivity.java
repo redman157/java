@@ -76,31 +76,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("PPP", "onPause : Enter");
+
     }
 
     @Override
     protected void onStop() {
 
         super.onStop();
-        Log.d("PPP", "onStop : Enter");
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d("PPP", "onStart : Enter");
+
         Intent iService = new Intent(this, MediaPlayerService.class);
         iService.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, false);
         startService(iService);
-
-
-
         setTypeSong(mSharedPrefsManager.getString(Constants.PREFERENCES.TYPE, ""));
-        mTextArtist.setText(mSongs.get(position).getArtist());
-        mTextTitle.setText(mSongs.get(position).getTitle());
-        imageUtils.getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
-
         Log.d("KKK", "Home Activity --- onResume: "+isPlay);
         if (MediaPlayerService.mMediaPlayer != null) {
             if (MediaPlayerService.mMediaPlayer.isPlaying()) {
@@ -120,6 +113,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         super.onResume();
         Log.d("PPP", "onResume : Enter");
 
+
     }
 
     @Override
@@ -131,12 +125,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mSharedPrefsManager.setContext(this);
         initMenu();
         initView();
+
         imageUtils = ImageUtils.getInstance(this);
         setTypeSong(mSharedPrefsManager.getString(Constants.PREFERENCES.TYPE, ""));
-
-        mTextArtist.setText(mSongs.get(position).getArtist());
-        mTextTitle.setText(mSongs.get(position).getTitle());
-        imageUtils.getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
 
         assignView();
         Intent iService = new Intent(this, MediaPlayerService.class);
@@ -249,7 +240,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }else if (type.equals("")){
             mSongs = SongManager.getInstance().newSongs();
         }
-
+        mTextArtist.setText(mSongs.get(position).getArtist());
+        mTextTitle.setText(mSongs.get(position).getTitle());
+        imageUtils.getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
 
     }
 
@@ -374,9 +367,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     intent.putExtra(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
                     intent.putExtra(Constants.INTENT.POSITION,
                             mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0));
-                    finish();
                     startActivity(intent);
-
                 }
                 break;
             case R.id.menu_item:

@@ -128,11 +128,11 @@ public class PlayActivity extends BaseActivity
         assignView();
         size = mSongs.size() - 1;
 
-      /*  Intent iSetMusic = new Intent(this, MediaPlayerService.class);
+        Intent iSetMusic = new Intent(this, MediaPlayerService.class);
         iSetMusic.setAction(Constants.ACTION.SET_MUSIC);
         iSetMusic.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
         iSetMusic.putExtra(Constants.INTENT.SET_MUSIC, mSongs);
-        startService(iSetMusic);*/
+        startService(iSetMusic);
     }
 
     private void setTypeSong(String type){
@@ -238,41 +238,41 @@ public class PlayActivity extends BaseActivity
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (positionOffsetPixels == 0) {
-            this.position = position;
-            mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION, position);
-            mSharedPrefsManager.setString(Constants.PREFERENCES.SaveAlbumID, mSongs.get(position).getAlbumID());
+        if (positionOffset == 0.0 && positionOffsetPixels == 0) {
+            Log.d("BBB", "PlayActivity --- onPageScrolled: "+position);
+            SongManager.getInstance().setCurrentMusic(this.position);
+            mSharedPrefsManager.setString(Constants.PREFERENCES.SaveAlbumID,
+                    mSongs.get(this.position).getAlbumID());
+
+
+            if (position==0) {
+                mBtnPrev.setImageResource(R.drawable.ic_previous_black);
+                mBtnNext.setImageResource(R.drawable.ic_next_white);
+            }else if (position == mSongs.size()) {
+                mBtnPrev.setImageResource(R.drawable.ic_previous_white);
+                mBtnNext.setImageResource(R.drawable.ic_next_black);
+            }else {
+                mBtnPrev.setImageResource(R.drawable.ic_previous_white);
+                mBtnNext.setImageResource(R.drawable.ic_next_white);
+            }
+
+            seekPos = 0;
+            MediaPlayerService.mMediaPlayer.stop();
+
+            mTextLeftTime.setText("00 : 00");
+            mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+            Intent intent = new Intent(this, MediaPlayerService.class);
+            intent.setAction(Constants.ACTION.PLAY);
+            intent.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
+            startService(intent);
         }
 
-        if (position==0) {
-            mBtnPrev.setImageResource(R.drawable.ic_previous_black);
-            mBtnNext.setImageResource(R.drawable.ic_next_white);
-        }else if (position == mSongs.size()) {
-            mBtnPrev.setImageResource(R.drawable.ic_previous_white);
-            mBtnNext.setImageResource(R.drawable.ic_next_black);
-        }else {
-            mBtnPrev.setImageResource(R.drawable.ic_previous_white);
-            mBtnNext.setImageResource(R.drawable.ic_next_white);
-        }
-
-        seekPos = 0;
-
-        MediaPlayerService.mMediaPlayer.stop();
-        MediaPlayerService.mMediaPlayer.reset();
-        mTextLeftTime.setText("00 : 00");
-        mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-        SongManager.getInstance().setCurrentMusic(position);
-
-        Intent iPlay = new Intent(this, MediaPlayerService.class);
-        iPlay.setAction(Constants.ACTION.IS_PLAY);
-        iPlay.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-        startService(iPlay);
     }
 
 
     @Override
     public void onPageSelected(int position) {
-
+        this.position = position;
 
         Log.d("BBB", "Play Activity --- onPageSelected: "+position);
 
@@ -282,7 +282,7 @@ public class PlayActivity extends BaseActivity
         mTextRightTime.setText(convertTime(mSongs.get(position).getTime()));
 
 
-//        Log.d("BBB","Min: "+ 0+ " -- Max: "+ SongManager.getInstance().allSortSongs().get(position).getTime());
+
     }
 
     @Override
@@ -375,6 +375,7 @@ public class PlayActivity extends BaseActivity
                 Intent iPlay = new Intent(this, MediaPlayerService.class);
                 iPlay.setAction(Constants.ACTION.IS_PLAY);
                 iPlay.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
+
                 startService(iPlay);
                 break;
             case R.id.icon_next:
@@ -387,7 +388,7 @@ public class PlayActivity extends BaseActivity
                     mBtnNext.setImageDrawable(getResources().getDrawable(R.drawable.ic_next_white));
 
                     Log.d("BBB",
-                            "PlayActivity --- icon_next: " + (SongManager.getInstance().getCurrentMusic() + 1));
+                            "PlayActivity --- icon_next: " + position + 1);
 
                     Intent iNext = new Intent(this, MediaPlayerService.class);
                     iNext.setAction(Constants.ACTION.NEXT);
@@ -470,8 +471,9 @@ public class PlayActivity extends BaseActivity
                 // dc giá trị sẵn để xuất màn hình tất cả có ở Changmusic khi thao tác
 
                 Intent iBackMusic = new Intent(this, HomeActivity.class);
-                iBackMusic.putExtra(Constants.INTENT.IS_PLAY, isPlaying);
 
+                iBackMusic.putExtra(Constants.INTENT.POSITION,
+                        SongManager.getInstance().getCurrentMusic());
                 startActivity(iBackMusic);
 
                 break;

@@ -322,7 +322,7 @@
                     android:adjustViewBounds="true"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_media_play_dark"
+                    android:src="@drawable/ic_media_pause_light"
                     android:tint="@color/white"
                     />
             </RelativeLayout>

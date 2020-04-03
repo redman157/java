@@ -37,6 +37,7 @@ import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
 import com.droidheat.musicplayer.models.SongModel;
+import com.droidheat.musicplayer.services.MediaPlayerService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -71,19 +72,54 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private SharedPrefsManager mSharedPrefsManager;
     private ArrayList<SongModel> mSongs;
     private boolean isPlay;
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setTypeSong(mSharedPrefsManager.getString(Constants.PREFERENCES.TYPE, ""));
-        Intent intent = getIntent();
-        isPlay = intent.getBooleanExtra(Constants.INTENT.IS_PLAY, false);
-        Log.d("KKK", "Home Activity --- onResume: "+isPlay);
-        if (isPlay){
 
-            mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("PPP", "onPause : Enter");
+    }
+
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+        Log.d("PPP", "onStop : Enter");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("PPP", "onStart : Enter");
+        Intent iService = new Intent(this, MediaPlayerService.class);
+        iService.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, false);
+        startService(iService);
+
+
+
+        setTypeSong(mSharedPrefsManager.getString(Constants.PREFERENCES.TYPE, ""));
+        mTextArtist.setText(mSongs.get(position).getArtist());
+        mTextTitle.setText(mSongs.get(position).getTitle());
+        imageUtils.getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
+
+        Log.d("KKK", "Home Activity --- onResume: "+isPlay);
+        if (MediaPlayerService.mMediaPlayer != null) {
+            if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+
+                mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+            } else {
+                mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
+            }
         }else {
             mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
         }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("PPP", "onResume : Enter");
+
     }
 
     @Override
@@ -98,7 +134,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         imageUtils = ImageUtils.getInstance(this);
         setTypeSong(mSharedPrefsManager.getString(Constants.PREFERENCES.TYPE, ""));
 
+        mTextArtist.setText(mSongs.get(position).getArtist());
+        mTextTitle.setText(mSongs.get(position).getTitle());
+        imageUtils.getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
+
         assignView();
+        Intent iService = new Intent(this, MediaPlayerService.class);
+        iService.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, false);
+        startService(iService);
     }
 
     private void initMenu(){
@@ -133,11 +176,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mBtnTitle = mViewPlayMedia.findViewById(R.id.btn_title_media);
         mImgMedia = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
 
-        Intent intent = getIntent();
-        isPlay = intent.getBooleanExtra(Constants.INTENT.IS_PLAY, false);
-        Log.d("KKK", "Home Activity --- onCreate: "+isPlay);
-        if (isPlay){
-            mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+        if (MediaPlayerService.mMediaPlayer != null) {
+            if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+                mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+            } else {
+                mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
+            }
         }else {
             mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
         }
@@ -196,8 +240,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     };
 
     private void setTypeSong(String type){
-        int position = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
-
+        position = SongManager.getInstance().getCurrentMusic();
+        Log.d("PPP", "setTypeSong: "+position);
         if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)){
             mSongs = SongManager.getInstance().newSongs();
         }else if (type.equals(Constants.VALUE.ALL_SONGS)){
@@ -205,14 +249,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }else if (type.equals("")){
             mSongs = SongManager.getInstance().newSongs();
         }
-        if (position < 0){
-            position = mSongs.size() - 1;
-        }else if (position > mSongs.size()){
-            position = 0;
-        }
-        mTextArtist.setText(mSongs.get(position).getArtist());
-        mTextTitle.setText(mSongs.get(position).getTitle());
-        imageUtils.getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
+
+
     }
 
     @Override
@@ -336,8 +374,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     intent.putExtra(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
                     intent.putExtra(Constants.INTENT.POSITION,
                             mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0));
-
+                    finish();
                     startActivity(intent);
+
                 }
                 break;
             case R.id.menu_item:

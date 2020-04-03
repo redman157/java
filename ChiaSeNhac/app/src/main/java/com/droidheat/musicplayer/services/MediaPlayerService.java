@@ -210,7 +210,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 if( !successfullyRetrievedAudioFocus() ) {
                     return;
                 }
-                int position = SongManager.getInstance().getCurrentMusic();
+
                 Log.d("BBB","Service --- onPlay:"+position);
                 playMedia(mSongs.get(position).getPath());
                 initNotification(Constants.NOTIFICATION.PLAY, position);
@@ -232,6 +232,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 if (isPlayActivity) {
                     if (!isRepeat) {
                         SongManager.getInstance().setCurrentMusic(position + 1);
+                        newPosition = -1;
                         skipToNext();
                     }
                     initNotification(Constants.NOTIFICATION.PLAY, position);
@@ -251,6 +252,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 if (isPlayActivity){
                     if (!isRepeat) {
                         SongManager.getInstance().setCurrentMusic(position - 1);
+                        newPosition = -1;
                         skipToPrevious();
                     }
 
@@ -517,6 +519,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     Log.d(tag, "stopMedia: Enter");
 
                     mMediaPlayer.stop();
+
                 }
                 handler.removeCallbacks(sendUpdatesToUI);
             } catch (Exception e) {
@@ -539,18 +542,21 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         Log.d(tag, "skipToPrevious: Enter");
 
 
-        Log.d("BBB", "Service --- skipToPrevious: "+position);
-        Bundle bdPrev = iPrevToActivity.getExtras();
+        Log.d("BBB", "Service --- skipToPrevious: "+SongManager.getInstance().getCurrentMusic());
 
-        if (bdPrev != null) {
-            String prevToActivity = bdPrev.getString(Constants.INTENT.PREVIOUS_TO_SERVICE);
+        if (iPrevToActivity != null) {
+            Bundle bdPrev = iPrevToActivity.getExtras();
+            if (bdPrev != null) {
+                String prevToActivity = bdPrev.getString(Constants.INTENT.PREVIOUS_TO_SERVICE);
 
-            iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY,
-                    prevToActivity);
-            sendBroadcast(iPlayNewMusic);
+                iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY,
+                        prevToActivity);
+                sendBroadcast(iPlayNewMusic);
+            }else {
+                Log.d("BBB", "Service --- skipToPrevious: bdPrev is null");
+            }
+            // set up dù có trường hợp là <0 vẫn xảy ra
         }
-        // set up dù có trường hợp là <0 vẫn xảy ra
-
 
         stopMedia();
         //reset mediaPlayer
@@ -561,7 +567,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void skipToNext(){
 
-        Log.d("KKK", "Service --- skipToNext: "+position);
+        Log.d("KKK", "Service --- skipToNext: "+SongManager.getInstance().getCurrentMusic());
         if (iNextToActivity != null) {
             Log.d("KKK", "Service --- skipToNext: if iNextToActivity != null ");
             Bundle bdNext = iNextToActivity.getExtras();
@@ -571,7 +577,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY, nextToActivity);
                 sendBroadcast(iPlayNewMusic);
             } else if (bdNext == null){
-                Log.d("KKK", "Service --- skipToNext: bdNext == null");
+
                 Log.d("BBB", "Service --- SkipToNext: dbNext is null");
                 // check lai next khúc này !!
                /* Intent intent = new Intent();
@@ -890,12 +896,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         stopSelf();
         Log.d(tag, "onCompletion");
 
-        if (!isInitAudioError && !isRepeat) {
-            if (position < mSongs.size() - 1) {
+        if (!endOfAudioList && !isRepeat) {
+            Log.d("BBB", "Service --- onCompletion: Enter");
+            if (!isPlayActivity && position < mSongs.size() - 1) {
                 SongManager.getInstance().setCurrentMusic(position + 1);
-                Intent intent = new Intent(this, MediaPlayerService.class);
-                intent.setAction(Constants.ACTION.PLAY);
-                startService(intent);
+
+                initNotification(Constants.NOTIFICATION.PAUSE,
+                        SongManager.getInstance().getCurrentMusic());
             }
         }
     }

@@ -231,8 +231,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     };
 
     private void setTypeSong(String type){
-        position = SongManager.getInstance().getCurrentMusic();
-        Log.d("PPP", "setTypeSong: "+position);
+        Log.d("PPP", "setTypeSong: "+SongManager.getInstance().getCurrentMusic());
         if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)){
             mSongs = SongManager.getInstance().newSongs();
         }else if (type.equals(Constants.VALUE.ALL_SONGS)){
@@ -240,12 +239,26 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }else if (type.equals("")){
             mSongs = SongManager.getInstance().newSongs();
         }
-        mTextArtist.setText(mSongs.get(position).getArtist());
-        mTextTitle.setText(mSongs.get(position).getTitle());
-        imageUtils.getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
+        processEndOfList(SongManager.getInstance().getCurrentMusic());
+        Log.d("PPP", mSongs.get(SongManager.getInstance().getCurrentMusic()).getTitle());
+        mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
+        mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getTitle());
+        imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
 
     }
 
+    private void processEndOfList(int position){
+        Log.d("CCC", "processEndOfList: "+position);
+        int size = mSongs.size() - 2;
+        if (position == size || position > size){
+            SongManager.getInstance().setCurrentMusic(0);
+
+        }else if (position < 0){
+            SongManager.getInstance().setCurrentMusic(69);
+        }else {
+            SongManager.getInstance().setCurrentMusic(position);
+        }
+    }
     @Override
     public void onClickItemMenu(String item) {
         switch (item){

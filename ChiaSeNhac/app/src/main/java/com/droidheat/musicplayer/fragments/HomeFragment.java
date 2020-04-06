@@ -90,10 +90,10 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     }
 
     private void assignView(){
-        ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getTitle());
+  /*      ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getTitle());
         ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
         ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
-                mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);
+                mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);*/
 
         mImg_Shuffle_All.setOnClickListener(this);
         btn_ViewAll.setOnClickListener(this);

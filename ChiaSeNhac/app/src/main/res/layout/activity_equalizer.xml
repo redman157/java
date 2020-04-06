@@ -1,9 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:mContext="com.droidheat.musicplayer.activities.EqualizerActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="10"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_weight="2"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:gravity="center"
+
+            tools:ignore="NestedWeights">
+            <ImageButton
+                android:baselineAligned="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:id="@+id/imb_BackMusic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="15dp"
+                android:src="@drawable/ic_arrow_back_black_24dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:tint="@color/white"
+                />
+        </LinearLayout>
+        <View
+            android:layout_weight="6"
+            android:layout_width="0dp"
+            android:layout_height="1dp"/>
+    <Switch
+        android:layout_weight="2"
+        android:id="@+id/enabled"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:layout_gravity="right"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:checked="false"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        app:trackTint="@color/whiteOpaque"/>
+    </LinearLayout>
+</LinearLayout>

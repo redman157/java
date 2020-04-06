@@ -127,8 +127,7 @@ public class SongManager {
     }
 
     public int getCurrentMusic() {
-        int pos = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0);
-
+        int pos = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1);
         return pos;
     }
 
@@ -136,13 +135,7 @@ public class SongManager {
         mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION, position);
     }
 
-    public void setNextCurrentMusic(){
-        setCurrentMusic(mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0) + 1);
-    }
 
-    public void setPreviousCurrentMusic(){
-        setCurrentMusic(mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, 0) - 1);
-    }
     public ArrayList<SongModel> queue() {
         if (queue.isEmpty()){
             ArrayList<SongModel> list = new ArrayList<>(mainList);
@@ -227,6 +220,7 @@ public class SongManager {
     /*
      * Playlists
      */
+
     public ArrayList<HashMap<String, String>> getAllPlayLists() {
         Playlist db =  Playlist.getInstance();
         db.newRenderDB(context);
@@ -465,6 +459,8 @@ public class SongManager {
             }
         }
     }
+
+
 
 
     public void playNext(ArrayList<SongModel> arrayList) {

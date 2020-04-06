@@ -20,6 +20,7 @@ public class ChangeMusicPagerAdapter extends FragmentPagerAdapter {
     public void addData(ChangeMusicFragment fragment, SongModel songModel) {
         fragment.setSongModel(songModel);
         mFragments.add(fragment);
+
     }
 
     @NonNull

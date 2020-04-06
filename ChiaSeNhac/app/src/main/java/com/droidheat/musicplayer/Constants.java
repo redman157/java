@@ -23,15 +23,14 @@ public class Constants {
         String POSITION = "position";
         String POSITION_SONG = "position_song";
         String TYPE = "type";
-
         String IS_PLAY_MEDIA_SERVICE = "isPlayMedia";
         String IS_PLAY_MEDIA_NOTIFICATION = "isPlayingNotification";
         String NOTI_SERVICE_TO_ACTIVITY = "ServiceToActivity";
         String NEXT_TO_SERVICE = "nextToService";
         String PREVIOUS_TO_SERVICE = "previousToService";
+        String IS_SHUFFLE = "isShuffle";
         String IS_REPEAT = "isRepeat";
         String IS_PLAY = "isPlay";
-        String POS_HOME = "posHome";
         String SET_MUSIC = "SetMusic";
         String TYPE_MUSIC = "TypeMusic";
     }
@@ -55,12 +54,12 @@ public class Constants {
         int PAUSE = 101;
         int PLAY = 100;
         int REPEAT = 104;
-
     }
 
 
     public @interface PREFERENCES{
         String POSITION_SONG = "position_song";
+        String POSITION_MAIN = "position_main";
         String SaveAlbumID = "SaveAlbumID";
         String KEY = "key";
         String TOTAL_SONGS = "total_song";
@@ -80,7 +79,6 @@ public class Constants {
         String currentEqProfile = "currentEqProfile";
         String bassLevel = "bassLevel";
         String vzLevel = "vzLevel";
-
         String MUSIC_ID = "musicID";
         String TITLE = "title";
         String PATH = "path";

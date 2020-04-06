@@ -67,8 +67,12 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public boolean onFailedToRecycleView(@NonNull ViewHolder holder) {
+        return super.onFailedToRecycleView(holder);
+    }
 
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         mSongModel = getListMusic().get(position);
         holder.setData(position);

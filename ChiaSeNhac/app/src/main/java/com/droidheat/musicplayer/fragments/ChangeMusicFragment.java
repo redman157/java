@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class ChangeMusicFragment extends Fragment implements View.OnClickListener, OnMusicChange {
+public class ChangeMusicFragment extends Fragment implements View.OnClickListener {
     private SongModel mSongModel;
     private ImageView mImgAlbumArt, mImgShowList, mImgAddPlayList;
     private TextView mTextTittle, mTextArtists, text_leftTime, text_rightTime;
@@ -42,11 +42,10 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     private MusicAdapter mMusicAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SongModel> musicMain;
-    private OnMusicChange onMusicChange;
     private SharedPrefsManager sharedPrefsManager;
-    public void setMusicChange(OnMusicChange onMusicChange){
-        this.onMusicChange = onMusicChange;
-
+    private static ArrayList<SongModel> mSongModels;
+    public static void newInstance(ArrayList<SongModel> songModels) {
+        mSongModels = songModels;
     }
 
     public ArrayList<SongModel> getMusicMain() {
@@ -65,19 +64,20 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.item_change_music, null);
-            initView();
-            assignView();
-        }
-        if (mMusicAdapter == null){
-            mMusicAdapter = new MusicAdapter(getContext());
 
-        }
+        view = inflater.inflate(R.layout.item_change_music, null);
+        initView();
+        assignView();
+
         mTextPlaying.setText(mSongModel.getAlbum());
         mTextArtists.setText(mSongModel.getArtist());
         mTextTittle.setText(mSongModel.getTitle());
@@ -109,15 +109,20 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.item_img_viewQueue:
-                ArrayList<SongModel> songModels = SongManager.getInstance().shuffleSongs();
-                for (int i = 0 ; i < songModels.size(); i ++){
-//                    Log.d("KKK", "Tên bài hát: "+songModels.get(i).getTitle() +" ==== AlbumID: "+songModels.get(i).getAlbumID());
-                    if (songModels.get(i).getTitle().equals(musicMain.get(sharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1)).getTitle())){
+                if (mSongModels == null){
+                    mSongModels = musicMain;
+                }
+                mMusicAdapter = new MusicAdapter(getContext());
+                int pos = sharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1);
+                for (int i = 0; i < mSongModels.size(); i++) {
+                    if (mSongModels.get(i).getTitle().equals(musicMain.get(pos).getTitle())) {
                         mMusicAdapter.setPosition(i);
-                        showOptionMusic(songModels, i);
+
+                        showOptionMusic(mSongModels, i);
                         mDlOptionMusic.show();
                     }
                 }
+
 
                 break;
             case R.id.item_img_addToPlayListImageView:
@@ -135,10 +140,5 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         mRcOptionMusic.getLayoutManager().scrollToPosition(pos);
     }
 
-    @Override
-    public void onChange(ArrayList<SongModel> songModels) {
-        Log.d("CCC", ""+songModels.size());
 
-//        showOptionMusic(songModels);
-    }
 }

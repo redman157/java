@@ -87,21 +87,24 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
-
-    <androidx.viewpager.widget.ViewPager
+    <LinearLayout
         android:layout_weight="8"
-        android:id="@+id/vp_change_music"
+        android:id="@+id/ll_vp_change_music"
         android:layout_width="match_parent"
+        android:orientation="vertical"
         android:layout_height="0dp">
 
-    </androidx.viewpager.widget.ViewPager>
-
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/vp_change_music"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/ll_see_more"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:weightSum="5"
-        android:visibility="gone"
+
         android:layout_marginLeft="@dimen/_20sdp"
         android:layout_marginRight="@dimen/_20sdp"
         android:layout_height="@dimen/_40sdp">

@@ -80,6 +80,7 @@ public class Database {
         String COMMA_SEP = ",";
 
         String[] ALL_KEYS = {PLAYLIST.COLUMN_NAME_ID, PLAYLIST.TITLE};
+
         String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + TABLE_NAME + " (" +
                         COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + COMMA_SEP +

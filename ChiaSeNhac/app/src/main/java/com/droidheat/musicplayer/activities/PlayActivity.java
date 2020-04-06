@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -22,10 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.droidheat.musicplayer.BaseActivity;
-import com.droidheat.musicplayer.ChangeMusic;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.OnMusicChange;
-import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
 import com.droidheat.musicplayer.services.MediaPlayerService;
@@ -51,7 +48,7 @@ public class PlayActivity extends BaseActivity
     private PlayMusic mPlayMusic;
     public ImageButton mBtnPlayPause;
     private ImageButton mBtnBack, mBtnInfoMusic, mBtnMenu, mBtnPrev, mBtnRepeat, mBtnNext,
-    mBtnSeeMore, mBtnAbout, mBtnShuffle;
+    mBtnSeeMore, mBtnAbout, mBtnShuffle, mBtnEqualizer;
     private SharedPrefsManager mSharedPrefsManager;
     private Runnable mRunnable;
     private TextView mTextLeftTime, mTextRightTime;
@@ -62,8 +59,7 @@ public class PlayActivity extends BaseActivity
     public Intent iSeekBar;
     private Intent iPlayPause;
     public   int seekPos;
-
-
+    private LinearLayout ll_vp_change_music;
     private int size;
     private LinearLayout mLinearSeeMore;
     private boolean isChange, isPlaying;
@@ -149,6 +145,7 @@ public class PlayActivity extends BaseActivity
     }
 
     private void initView() {
+        mBtnEqualizer = findViewById(R.id.icon_equalizer);
         mLinearSeeMore = findViewById(R.id.ll_see_more);
         mTextLeftTime = findViewById(R.id.text_leftTime);
         mTextRightTime = findViewById(R.id.text_rightTime);
@@ -160,6 +157,7 @@ public class PlayActivity extends BaseActivity
         mBtnBack = findViewById(R.id.imb_BackMusic);
         mBtnInfoMusic = findViewById(R.id.imb_InfoMusic);
         mBtnMenu = findViewById(R.id.imb_SeeMenu);
+        ll_vp_change_music = findViewById(R.id.ll_vp_change_music);
         mVpMusic = findViewById(R.id.vp_change_music);
         mSeekBarTime = findViewById(R.id.sb_leftTime);
         mBtnShuffle = findViewById(R.id.icon_shuffle);
@@ -168,6 +166,7 @@ public class PlayActivity extends BaseActivity
     }
 
     private void assignView(){
+        mBtnEqualizer.setOnClickListener(this);
         mBtnBack.setOnClickListener(this);
         mBtnInfoMusic.setOnClickListener(this);
         mBtnMenu.setOnClickListener(this);
@@ -181,16 +180,7 @@ public class PlayActivity extends BaseActivity
         mSeekBarTime.setOnSeekBarChangeListener(this);
 
 
-        mAdapter = new ChangeMusicPagerAdapter(getSupportFragmentManager());
-        for (int idx = 0; idx < mSongs.size(); idx ++){
-            if (onMusicChange != null){
-
-            }
-            ChangeMusicFragment fChangeMusicFragment = new ChangeMusicFragment();
-            fChangeMusicFragment.setMusicMain(mSongs);
-            fChangeMusicFragment.setMusicChange(fChangeMusicFragment);
-            mAdapter.addData(fChangeMusicFragment, mSongs.get(idx));
-        }
+        initData(mSongs);
         if (position == 0) {
             mBtnPrev.setImageResource(R.drawable.ic_previous_black);
             mTextLeftTime.setText("00 : 00");
@@ -204,11 +194,21 @@ public class PlayActivity extends BaseActivity
     }
 
     private void setupViewPager(int position){
+
+
         mVpMusic.setAdapter(mAdapter);
         mVpMusic.setCurrentItem(position);
         mVpMusic.addOnPageChangeListener(this);
     }
 
+    private void initData(ArrayList<SongModel> mSongs){
+        mAdapter = new ChangeMusicPagerAdapter(getSupportFragmentManager());
+        for (int idx = 0; idx < mSongs.size(); idx ++){
+            ChangeMusicFragment fChangeMusicFragment = new ChangeMusicFragment();
+            fChangeMusicFragment.setMusicMain(mSongs);
+            mAdapter.addData(fChangeMusicFragment, mSongs.get(idx));
+        }
+    }
 
     private void showMusicAbout(){
         mDlAboutMusic = new Dialog(this);
@@ -260,7 +260,7 @@ public class PlayActivity extends BaseActivity
             MediaPlayerService.mMediaPlayer.stop();
 
             mTextLeftTime.setText("00 : 00");
-            mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+            mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
             Intent intent = new Intent(this, MediaPlayerService.class);
             intent.setAction(Constants.ACTION.PLAY);
             intent.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
@@ -345,21 +345,24 @@ public class PlayActivity extends BaseActivity
         public void onReceive(Context context, Intent intent) {
             if (!isRepeat) {
                 String actionNoti = intent.getStringExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY);
-           /* String parsedAction = actionNoti.split(":")[0].trim();
-            int posMusic = Integer.parseInt(actionNoti.split(":")[1]);*/
                 if (actionNoti != null) {
                     if (actionNoti.equals("NextToService")) {
-                        Log.d("BBB",
-                                "PlayActivity ---  Receiver NextToService:" + (SongManager.getInstance().getCurrentMusic()));
+                        Log.d("KKK", "PlayActiviy --- brPlayNew: NextToService");
+                        int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
+                        Log.d("KKK", "PlayActiviy --- brPlayNew: "+pos);
                         if (SongManager.getInstance().getCurrentMusic() != mSongs.size() - 1) {
-                            mVpMusic.setCurrentItem(SongManager.getInstance().getCurrentMusic(), true);
+                            mVpMusic.setCurrentItem(pos, true);
                         }
                     } else if (actionNoti.equals("PreviousToService")) {
-                        Log.d("BBB",
-                                "PlayActivity ---  Receiver: PreviousToService " + (SongManager.getInstance().getCurrentMusic()));
+                        int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
                         if (SongManager.getInstance().getCurrentMusic() != 0 ) {
-                            mVpMusic.setCurrentItem(SongManager.getInstance().getCurrentMusic(), true);
+                            mVpMusic.setCurrentItem(pos, true);
                         }
+                    }
+                }else {
+                    int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
+                    if (SongManager.getInstance().getCurrentMusic() != 0 ) {
+                        mVpMusic.setCurrentItem(pos, true);
                     }
                 }
             }
@@ -388,14 +391,13 @@ public class PlayActivity extends BaseActivity
                     mBtnNext.setImageDrawable(getResources().getDrawable(R.drawable.ic_next_white));
 
                     Log.d("BBB",
-                            "PlayActivity --- icon_next: " + position + 1);
+                            "PlayActivity --- icon_next: " + (position + 1));
 
                     Intent iNext = new Intent(this, MediaPlayerService.class);
                     iNext.setAction(Constants.ACTION.NEXT);
                     iNext.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
                     startService(iNext);
-                    mVpMusic.setCurrentItem(position + 1);
-//
+//                    mVpMusic.setCurrentItem(position + 1);
                 }
                 break;
             case R.id.icon_prev:
@@ -413,8 +415,8 @@ public class PlayActivity extends BaseActivity
                     iPrevious.setAction(Constants.ACTION.PREVIOUS);
                     iPrevious.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
                     startService(iPrevious);
-                    mVpMusic.setCurrentItem(position - 1);
-//
+//                    mVpMusic.setCurrentItem(position - 1);
+
                 }
                 break;
             case R.id.icon_repeat:
@@ -475,9 +477,10 @@ public class PlayActivity extends BaseActivity
                 finish();
                 break;
             case R.id.imb_InfoMusic:
-                for (int i = 0 ; i < mSongs.size(); i++){
-                    Log.d("CCC","Album id "+i +" là :"+mSongs.get(i).getAlbumID());
-                }
+
+                break;
+            case R.id.icon_equalizer:
+                startActivity(new Intent(this, EqualizerActivity.class));
                 break;
             case R.id.imb_SeeMenu:
                 break;
@@ -487,27 +490,32 @@ public class PlayActivity extends BaseActivity
             case R.id.icon_shuffle:
                 if (!isShuffle){
                     isShuffle = true;
+                    mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION_MAIN,
+                            position);
 
-                    if (onMusicChange != null) {
-                        onMusicChange.onChange(SongManager.getInstance().shuffleSongs());
-                    }
+                    ArrayList<SongModel> songShuffle = SongManager.getInstance().shuffleSongs();
+
+                    ChangeMusicFragment.newInstance(songShuffle);
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_blue);
+                    Toast.makeText(this, "Turn On Shuffle Music", Toast.LENGTH_SHORT).show();
+
                     Intent inShuffle = new Intent(PlayActivity.this, MediaPlayerService.class);
                     inShuffle.setAction(Constants.ACTION.SET_MUSIC);
-                    inShuffle.putExtra(Constants.INTENT.SET_MUSIC, SongManager.getInstance().shuffleSongs());
+                    inShuffle.putExtra(Constants.INTENT.SET_MUSIC, songShuffle);
+                    inShuffle.putExtra(Constants.INTENT.IS_SHUFFLE, true);
                     inShuffle.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
                     startService(inShuffle);
                 }else {
                     isShuffle = false;
-                    Log.d("TTT", "PlayActivy --- icon_shuffle: "+ (onMusicChange == null ? "null":
-                            "khac null"));
-                    if (onMusicChange != null) {
-                        onMusicChange.onChange(mSongs);
-                    }
+
+
+                    ChangeMusicFragment.newInstance(null);
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_white);
+                    Toast.makeText(this, "Turn Off Shuffle Music", Toast.LENGTH_SHORT).show();
                     Intent inShuffle = new Intent(PlayActivity.this, MediaPlayerService.class);
                     inShuffle.setAction(Constants.ACTION.SET_MUSIC);
-                    inShuffle.putExtra(Constants.INTENT.SET_MUSIC, SongManager.getInstance().newSongs());
+                    inShuffle.putExtra(Constants.INTENT.IS_SHUFFLE, false);
+                    inShuffle.putExtra(Constants.INTENT.SET_MUSIC, mSongs);
                     startService(inShuffle);
                 }
                 break;

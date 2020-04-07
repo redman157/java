@@ -5,13 +5,16 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
 
-    android:background="@color/white">
+    android:layout_marginLeft="@dimen/_15sdp"
+    android:layout_marginRight="@dimen/_15sdp"
+    android:background="@color/whiteOpaqueX2">
 
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_gravity="center"
-        android:gravity="center"
+
+
         android:orientation="horizontal"
         android:weightSum="10"
         android:background="?android:attr/selectableItemBackground"
@@ -20,10 +23,11 @@
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_weight="1"
-
+            android:layout_gravity="center"
             card_view:cardElevation="5dp"
             card_view:cardCornerRadius="5dp"
-            android:layout_height="35dp">
+
+            android:layout_height="40dp">
             <ImageView
                 android:layout_width="match_parent"
                 android:id="@+id/img_albumArt_media"
@@ -46,8 +50,10 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_marginEnd="?android:attr/actionBarSize"
-                android:background="?android:attr/selectableItemBackgroundBorderless" />
+                android:theme="@android:style/ThemeOverlay.Material.Dark"
+                 />
 
             <RelativeLayout
                 android:id="@+id/relativeLayout1"
@@ -59,14 +65,17 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginEnd="8dp">
 
-                <ImageButton
+                <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
                     android:id="@+id/imbt_Play_media"
-                    android:layout_width="@dimen/_32sdp"
-                    android:layout_height="@dimen/_32sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+
                     android:layout_alignParentTop="true"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:padding="18dp"
-                    android:src="@drawable/ic_media_play_light"
+                    android:padding="10dp"
+
+                    android:src="@drawable/app_play"
                     />
 
             </RelativeLayout>

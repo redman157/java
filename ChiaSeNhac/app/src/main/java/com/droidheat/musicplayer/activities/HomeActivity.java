@@ -41,7 +41,11 @@ import com.droidheat.musicplayer.services.MediaPlayerService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
+
 import java.util.ArrayList;
+
+import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton;
+import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
         OptionMenuAdapter.OnClickItem, ViewPager.OnPageChangeListener {
@@ -67,10 +71,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private View mViewPlayMedia;
     public ImageView mImgMedia;
     public TextView mTextTitle, mTextArtist;
-    public ImageButton mBtnPlay;
+
     public Button mBtnTitle;
     private SharedPrefsManager mSharedPrefsManager;
     private ArrayList<SongModel> mSongs;
+    private MaterialPlayPauseButton mBtnPlay;
     private boolean isPlay;
 
     @Override
@@ -89,11 +94,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onStart() {
         super.onStart();
-
-        Intent iService = new Intent(this, MediaPlayerService.class);
-        iService.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, false);
-        startService(iService);
         setTypeSong(mSharedPrefsManager.getString(Constants.PREFERENCES.TYPE, ""));
+        Intent iService = new Intent(this, MediaPlayerService.class);
+        iService.setAction(Constants.ACTION.SET_MUSIC);
+        iService.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, false);
+        iService.putExtra(Constants.INTENT.SET_MUSIC, mSongs);
+        startService(iService);
+
         Log.d("KKK", "Home Activity --- onResume: "+isPlay);
         if (MediaPlayerService.mMediaPlayer != null) {
             if (MediaPlayerService.mMediaPlayer.isPlaying()) {
@@ -178,7 +185,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
 
 
-        ll_PlayLists = findViewById(R.id.ll_StatusPlayMusic);
         mImgMenu = findViewById(R.id.menu_item);
         mImgSearch = findViewById(R.id.menu_search);
         mRcOptionMenu = findViewById(R.id.rc_OptionMenu);
@@ -194,10 +200,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     private void assignView(){
         mBtnPlay.setOnClickListener(this);
+        mBtnPlay.setAnimationDuration(1500);
+
         mBtnTitle.setOnClickListener(this);
         mOptionMenuAdapter = new OptionMenuAdapter(mMenus, this);
         mOptionMenuAdapter.OnClickItemMenu(this);
-
+        mViewPlayMedia.setOnClickListener(this);
         mRcOptionMenu.setAdapter(mOptionMenuAdapter);
         mRcOptionMenu.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
@@ -371,7 +379,28 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.imbt_Play_media:
+
+                if(MediaPlayerService.mMediaPlayer != null){
+                    if (MediaPlayerService.mMediaPlayer.isPlaying()){
+                        mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
+                        mBtnPlay.setState(MaterialPlayPauseDrawable.State.Pause);
+                        Intent iPause = new Intent(this, MediaPlayerService.class);
+                        iPause.setAction(Constants.ACTION.PAUSE);
+                        iPause.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, false);
+                        startService(iPause);
+                    }else {
+                        mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+                        mBtnPlay.setState(MaterialPlayPauseDrawable.State.Play);
+                        Intent iPlay = new Intent(this, MediaPlayerService.class);
+                        iPlay.setAction(Constants.ACTION.PLAY);
+                        iPlay.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, false);
+                        startService(iPlay);
+                    }
+                }
                 Toast.makeText(this, "test thôi chưa xài", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.layout_play_media:
+
                 break;
             case R.id.btn_title_media:
                 if (!SongManager.getInstance().queue().isEmpty()) {

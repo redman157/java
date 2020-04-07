@@ -39,6 +39,7 @@ import java.util.TimeZone;
 
 public class PlayActivity extends BaseActivity
         implements ViewPager.OnPageChangeListener, View.OnClickListener,
+        OnMusicChange,
         SeekBar.OnSeekBarChangeListener {
     private ViewPager mVpMusic;
     private ChangeMusicPagerAdapter mAdapter;
@@ -159,6 +160,10 @@ public class PlayActivity extends BaseActivity
         mBtnMenu = findViewById(R.id.imb_SeeMenu);
         ll_vp_change_music = findViewById(R.id.ll_vp_change_music);
         mVpMusic = findViewById(R.id.vp_change_music);
+
+        mVpMusic.setPageTransformer(true, new ChangeMusicPagerAdapter.ZoomOutPageTransformer());
+        mVpMusic.setPageTransformer(false, new ChangeMusicPagerAdapter.DepthPageTransformer());
+        mVpMusic.setTranslationX(-1 * mVpMusic.getWidth() * position);
         mSeekBarTime = findViewById(R.id.sb_leftTime);
         mBtnShuffle = findViewById(R.id.icon_shuffle);
         mBtnAbout = findViewById(R.id.icon_about);
@@ -182,7 +187,6 @@ public class PlayActivity extends BaseActivity
 
         initData(mSongs);
         if (position == 0) {
-            mBtnPrev.setImageResource(R.drawable.ic_previous_black);
             mTextLeftTime.setText("00 : 00");
             mTextRightTime.setText(mSongs.get(0).getDuration());
         }else {
@@ -204,7 +208,8 @@ public class PlayActivity extends BaseActivity
     private void initData(ArrayList<SongModel> mSongs){
         mAdapter = new ChangeMusicPagerAdapter(getSupportFragmentManager());
         for (int idx = 0; idx < mSongs.size(); idx ++){
-            ChangeMusicFragment fChangeMusicFragment = new ChangeMusicFragment();
+            ChangeMusicFragment fChangeMusicFragment = new ChangeMusicFragment(this);
+
             fChangeMusicFragment.setMusicMain(mSongs);
             mAdapter.addData(fChangeMusicFragment, mSongs.get(idx));
         }
@@ -243,18 +248,6 @@ public class PlayActivity extends BaseActivity
             SongManager.getInstance().setCurrentMusic(this.position);
             mSharedPrefsManager.setString(Constants.PREFERENCES.SaveAlbumID,
                     mSongs.get(this.position).getAlbumID());
-
-
-            if (position==0) {
-                mBtnPrev.setImageResource(R.drawable.ic_previous_black);
-                mBtnNext.setImageResource(R.drawable.ic_next_white);
-            }else if (position == mSongs.size()) {
-                mBtnPrev.setImageResource(R.drawable.ic_previous_white);
-                mBtnNext.setImageResource(R.drawable.ic_next_black);
-            }else {
-                mBtnPrev.setImageResource(R.drawable.ic_previous_white);
-                mBtnNext.setImageResource(R.drawable.ic_next_white);
-            }
 
             seekPos = 0;
             MediaPlayerService.mMediaPlayer.stop();
@@ -346,24 +339,27 @@ public class PlayActivity extends BaseActivity
             if (!isRepeat) {
                 String actionNoti = intent.getStringExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY);
                 if (actionNoti != null) {
+                    // action noti có giá trị thì sẽ swipe theo viewpager
                     if (actionNoti.equals("NextToService")) {
                         Log.d("KKK", "PlayActiviy --- brPlayNew: NextToService");
                         int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
                         Log.d("KKK", "PlayActiviy --- brPlayNew: "+pos);
-                        if (SongManager.getInstance().getCurrentMusic() != mSongs.size() - 1) {
+
                             mVpMusic.setCurrentItem(pos, true);
-                        }
+
                     } else if (actionNoti.equals("PreviousToService")) {
                         int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
-                        if (SongManager.getInstance().getCurrentMusic() != 0 ) {
+
+
                             mVpMusic.setCurrentItem(pos, true);
-                        }
+
                     }
                 }else {
+                    // còn null thì sẽ làm 1 việc khác
+                    // là tác động của viewpager next -> truyền  service -> và trả về kết quả
                     int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
-                    if (SongManager.getInstance().getCurrentMusic() != 0 ) {
-                        mVpMusic.setCurrentItem(pos, true);
-                    }
+                    Log.d("BBB", "PlayActivity --- PreviousToService: "+pos);
+                    mVpMusic.setCurrentItem(pos, true);
                 }
             }
         }
@@ -382,29 +378,22 @@ public class PlayActivity extends BaseActivity
                 startService(iPlay);
                 break;
             case R.id.icon_next:
-                if (position == mSongs.size() - 1){
+                // khi nhấn next truyền intent xuống service -> do bundle là getString về null
 
-                    mBtnNext.setClickable(false);
-                    mBtnNext.setImageResource(R.drawable.ic_next_black);
-                }else {
-                    mBtnNext.setClickable(true);
-                    mBtnNext.setImageDrawable(getResources().getDrawable(R.drawable.ic_next_white));
+                mBtnNext.setClickable(true);
+                mBtnNext.setImageDrawable(getResources().getDrawable(R.drawable.ic_next_white));
 
-                    Log.d("BBB",
-                            "PlayActivity --- icon_next: " + (position + 1));
+                Log.d("BBB",
+                        "PlayActivity --- icon_next: " + (position));
 
-                    Intent iNext = new Intent(this, MediaPlayerService.class);
-                    iNext.setAction(Constants.ACTION.NEXT);
-                    iNext.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-                    startService(iNext);
-//                    mVpMusic.setCurrentItem(position + 1);
-                }
+                Intent iNext = new Intent(this, MediaPlayerService.class);
+                iNext.setAction(Constants.ACTION.NEXT);
+                iNext.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
+                startService(iNext);
+
+
                 break;
             case R.id.icon_prev:
-                if (SongManager.getInstance().getCurrentMusic() ==  0 ){
-                    mBtnPrev.setClickable(false);
-                    mBtnPrev.setImageResource(R.drawable.ic_previous_black);
-                }else {
                     mBtnPrev.setClickable(true);
                     mBtnPrev.setImageResource(R.drawable.ic_previous_white);
 
@@ -417,7 +406,7 @@ public class PlayActivity extends BaseActivity
                     startService(iPrevious);
 //                    mVpMusic.setCurrentItem(position - 1);
 
-                }
+
                 break;
             case R.id.icon_repeat:
                 if (!isRepeat){
@@ -606,4 +595,8 @@ public class PlayActivity extends BaseActivity
 
     }
 
+    @Override
+    public void onChange(int pos) {
+        mVpMusic.setCurrentItem(pos);
+    }
 }

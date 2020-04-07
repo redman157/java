@@ -38,7 +38,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     private SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
     private View view;
     public TextView mTextPlaying;
-    private Dialog mDlOptionMusic;
+    public Dialog mDlOptionMusic;
     private MusicAdapter mMusicAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SongModel> musicMain;
@@ -50,6 +50,10 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
 
     public ArrayList<SongModel> getMusicMain() {
         return musicMain;
+    }
+    private OnMusicChange onMusicChange;
+    public ChangeMusicFragment(OnMusicChange onMusicChange) {
+        this.onMusicChange = onMusicChange;
     }
 
     public void setMusicMain(ArrayList<SongModel> musicMain) {
@@ -112,7 +116,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
                 if (mSongModels == null){
                     mSongModels = musicMain;
                 }
-                mMusicAdapter = new MusicAdapter(getContext());
+                mMusicAdapter = new MusicAdapter(getContext(), mDlOptionMusic);
                 int pos = sharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1);
                 for (int i = 0; i < mSongModels.size(); i++) {
                     if (mSongModels.get(i).getTitle().equals(musicMain.get(pos).getTitle())) {
@@ -134,6 +138,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         RecyclerView mRcOptionMusic = mDlOptionMusic.findViewById(R.id.rc_OptionMusic);
 
         mMusicAdapter.setListMusic(songModels);
+        mMusicAdapter.setMusicChange(onMusicChange);
         layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         mRcOptionMusic.setAdapter(mMusicAdapter);
         mRcOptionMusic.setLayoutManager(layoutManager);

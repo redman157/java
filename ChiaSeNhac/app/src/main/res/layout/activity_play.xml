@@ -307,6 +307,7 @@
 
                     android:adjustViewBounds="true"
                     android:src="@drawable/ic_previous_white"
+
                   />
             </RelativeLayout>
 

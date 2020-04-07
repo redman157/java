@@ -1,6 +1,7 @@
 package com.droidheat.musicplayer.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.droidheat.musicplayer.Constants;
+import com.droidheat.musicplayer.OnMusicChange;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.models.SongModel;
@@ -32,10 +34,13 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
     private int mPossitionMusic;
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
     private int mOptionMusic;
-    public MusicAdapter(Context context) {
+    private Dialog dialog;
+    public MusicAdapter(Context context, Dialog dialog) {
         mContext = context;
+        this.dialog = dialog;
         mImageUtils = ImageUtils.getInstance(context);
     }
+
 
     public void setPosition(int position){
         mOptionMusic = position;
@@ -51,7 +56,10 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
         this.mListMusic = mListMusic;
     }
 
-
+    private OnMusicChange onMusicChange;
+    public void setMusicChange(OnMusicChange onMusicChange){
+        this.onMusicChange = onMusicChange;
+    }
 
     @NonNull
     @Override
@@ -72,14 +80,17 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
         mSongModel = getListMusic().get(position);
         holder.setData(position);
         holder.ll_option_music.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                onMusicChange.onChange(position);
+                if (dialog.isShowing()){
+                    dialog.cancel();
+                }
             }
         });
     }

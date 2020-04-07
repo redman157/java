@@ -52,4 +52,6 @@ dependencies {
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:0.7.0'
     implementation 'com.xgc1986.android:parallaxpagertransformer:1.0.3'
 
+    // animation play pause
+    implementation 'me.zhanghai.android.materialplaypausedrawable:library:1.0.0'
 }

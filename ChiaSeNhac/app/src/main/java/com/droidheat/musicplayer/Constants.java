@@ -60,6 +60,7 @@ public class Constants {
     public @interface PREFERENCES{
         String POSITION_SONG = "position_song";
         String POSITION_MAIN = "position_main";
+        String POSITION_BACK = "position_back";
         String SaveAlbumID = "SaveAlbumID";
         String KEY = "key";
         String TOTAL_SONGS = "total_song";

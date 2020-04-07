@@ -130,6 +130,13 @@ public class SongManager {
         int pos = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1);
         return pos;
     }
+    public int getPrevMusic(){
+        int pos = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION_BACK, -1);
+        return pos;
+    }
+    public void setPrevMusic(int position) {
+        mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION_BACK, position);
+    }
 
     public void setCurrentMusic(int position) {
         mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION, position);

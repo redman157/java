@@ -106,26 +106,13 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_weight="0.75"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:layout_marginLeft="@dimen/_7sdp"
-        android:layout_marginRight="@dimen/_7sdp"
+
         android:orientation="vertical"
 
-        android:background="@color/black"
+        android:background="@color/blackGrey"
         android:layout_height="0dp">
 
-       <!-- <fragment
-            android:id="@+id/fm_music_dock"
-            android:name="com.droidheat.musicplayer.fragments.MusicDockFragment"
-            class="com.droidheat.musicplayer.fragments.MusicDockFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-
-            tools:layout="@layout/fragment_music_dock" />-->
         <include layout="@layout/layout_play_media"
-
             android:id="@+id/layout_play_media"/>
     </LinearLayout>
     <TextView

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Music Player</string>
+    <string name="app_name">Nhật Thanh</string>
     <string name="app_version">v0.9.6 (August 12, 2019)</string>
     <string name="default_notification_channel_id">channel_music_playback</string>
     <string name="action_settings">Settings</string>

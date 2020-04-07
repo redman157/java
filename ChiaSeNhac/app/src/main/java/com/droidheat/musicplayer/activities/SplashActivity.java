@@ -369,7 +369,7 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Long aLong) {
-            CountDownTimer count = new CountDownTimer(500,3000) {
+            CountDownTimer count = new CountDownTimer(1000,3000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
 

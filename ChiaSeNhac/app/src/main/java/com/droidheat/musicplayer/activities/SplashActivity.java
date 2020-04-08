@@ -60,16 +60,17 @@ public class SplashActivity extends AppCompatActivity {
             finish();
             return;
         }
-        mProgressBar = findViewById(R.id.progressBar);
+        mProgressBar = findViewById(R.id.progressBar1);
         mTextSync = findViewById(R.id.textView10);
         mSharedPrefsManager = new SharedPrefsManager();
         mSharedPrefsManager.setContext(this);
 
  /*       mPerformBackgroundTasks = PerformBackgroundTasks.getInstance();
         mPerformBackgroundTasks.setContext(this);*/
-        mProgressBar.getIndeterminateDrawable().setColorFilter(
+
+        /*mProgressBar.getIndeterminateDrawable().setColorFilter(
                 ContextCompat.getColor(this, (new CommonUtils(this).accentColor(mSharedPrefsManager))),
-                PorterDuff.Mode.MULTIPLY);
+                PorterDuff.Mode.MULTIPLY);*/
 
 
         setTextStatus();
@@ -382,9 +383,9 @@ public class SplashActivity extends AppCompatActivity {
                     Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
 
                     intent.putExtra("SendAlbumId", bitmap);
-
+                    finish();
                     startActivity(intent);
-//                    finish();
+
 
                 }
             };

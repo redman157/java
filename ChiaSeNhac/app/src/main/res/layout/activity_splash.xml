@@ -25,13 +25,13 @@
 
         <ProgressBar
             android:id="@+id/progressBar1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="7dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="5dp"
             android:indeterminate="true"
             android:layout_above="@id/textView10"
             android:layout_centerHorizontal="true"
-            android:indeterminateTint="@color/blackGrey"
+            android:indeterminateTint="@color/grey"
             android:indeterminateTintMode="src_in"/>
 
         <ImageView
@@ -41,18 +41,10 @@
             android:src="@drawable/ic_music_notes_padded"
             android:scaleType="centerCrop"
             android:tint="@color/whiteOpaque"
-            android:background="@color/blackGrey"
+
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
-        <ProgressBar
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@id/textView10"
-            android:progressBackgroundTint="@color/white"
-            android:id="@+id/progressBar"
-            android:indeterminate="true" />
+
     </RelativeLayout>
 
 

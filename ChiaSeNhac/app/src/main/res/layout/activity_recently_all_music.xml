@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/ll_Back"
         android:weightSum="10"
-        android:layout_weight="1"
+        android:layout_weight="0.75"
         android:background="@color/transparent"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -86,7 +86,7 @@
     </LinearLayout>
     <ScrollView
         android:overScrollMode="always"
-        android:layout_weight="8"
+        android:layout_weight="8.25"
         android:nestedScrollingEnabled="true"
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -104,7 +104,7 @@
                 <com.droidheat.musicplayer.IconView
                     android:id="@+id/img_AlbumId"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
                     tools:ignore="NestedWeights" />

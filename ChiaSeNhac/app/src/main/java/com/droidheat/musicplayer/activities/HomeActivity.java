@@ -75,7 +75,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public Button mBtnTitle;
     private SharedPrefsManager mSharedPrefsManager;
     private ArrayList<SongModel> mSongs;
-    private MaterialPlayPauseButton mBtnPlay;
+    public MaterialPlayPauseButton mBtnPlay;
     private boolean isPlay;
 
     @Override
@@ -428,7 +428,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                             mRcOptionMenu.setVisibility(View.GONE);
                         }
                     });
-
 
                     isHide = false;
                 }

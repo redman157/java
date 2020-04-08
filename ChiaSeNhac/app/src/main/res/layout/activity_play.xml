@@ -11,7 +11,7 @@
     <LinearLayout
         android:id="@+id/ll_Back"
         android:weightSum="10"
-        android:layout_weight="1"
+        android:layout_weight="0.75"
 
         android:background="@color/transparent"
         android:orientation="horizontal"
@@ -88,7 +88,7 @@
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
-        android:layout_weight="8"
+        android:layout_weight="8.25"
         android:id="@+id/ll_vp_change_music"
         android:layout_width="match_parent"
         android:orientation="vertical"

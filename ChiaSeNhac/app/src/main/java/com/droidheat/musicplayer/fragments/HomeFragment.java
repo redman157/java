@@ -26,6 +26,7 @@ import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
 import com.droidheat.musicplayer.models.SongModel;
+import com.droidheat.musicplayer.services.MediaPlayerService;
 
 import java.util.ArrayList;
 
@@ -103,6 +104,16 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     public void onClick(String type, int position) {
         // set switch vị trí và type music cho play activity chạy
 
+        if (MediaPlayerService.mMediaPlayer!= null){
+            if (MediaPlayerService.mMediaPlayer.isPlaying()){
+                Intent intent = new Intent(getActivity(), MediaPlayerService.class);
+                intent.setAction(Constants.ACTION.PAUSE);
+                intent.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY,false);
+                getActivity().startService(intent);
+
+                ((HomeActivity)getActivity()).mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+            }
+        }
         mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION,position);
         mSharedPrefsManager.setString(Constants.PREFERENCES.TYPE, type);
 

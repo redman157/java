@@ -35,6 +35,7 @@ public class Constants {
         String TYPE_MUSIC = "TypeMusic";
     }
     public @interface VALUE {
+        int MAX_SLIDERS = 5;
         String SYNC = "sync";
         String TASK = "task";
         String ALL_NEW_SONGS = "all_new_songs";

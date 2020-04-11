@@ -272,16 +272,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         switch (item){
             case Constants.MENU.Set_Sleep_Timer:
                 startActivity(new Intent(this, TimerActivity.class));
+                mRcOptionMenu.setVisibility(View.GONE);
                 break;
             case Constants.MENU.Sync_Music:
                 finish();
-                startActivity(new Intent(this, SplashActivity.class).putExtra("sync", true));
+                Intent intent = new Intent(this, SplashActivity.class).putExtra(Constants.VALUE.SYNC,
+                        true);
+                startActivity(intent);
+                mRcOptionMenu.setVisibility(View.GONE);
                 break;
             case Constants.MENU.Settings:
                 startActivity(new Intent(this, SettingsActivity.class));
+                mRcOptionMenu.setVisibility(View.GONE);
                 break;
             case Constants.MENU.Equalizer:
                 startActivity(new Intent(this, EqualizerActivity.class));
+                mRcOptionMenu.setVisibility(View.GONE);
                 break;
             case Constants.MENU.Change_Theme:
                 final SharedPrefsManager sharedPrefsUtils = new SharedPrefsManager();
@@ -370,6 +376,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     }
                 });
                 dialog.show();
+
                 break;
 
         }

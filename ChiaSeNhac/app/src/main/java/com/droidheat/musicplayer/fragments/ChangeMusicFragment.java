@@ -6,6 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -55,7 +58,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     public ChangeMusicFragment(OnMusicChange onMusicChange) {
         this.onMusicChange = onMusicChange;
     }
-
+    private Dialog mDlAddPlayList, mDlAddMusic;
     public void setMusicMain(ArrayList<SongModel> musicMain) {
         this.musicMain = musicMain;
     }
@@ -88,6 +91,54 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongModel.getAlbumID(), mImgAlbumArt);
 
         return view;
+    }
+
+    private void showAddPlayList(){
+        mDlAddPlayList = new Dialog(getContext());
+        mDlAddPlayList.setContentView(R.layout.dialog_add_playlist);
+        mDlAddPlayList.setCanceledOnTouchOutside(false);
+        mDlAddPlayList.setCancelable(false);
+
+        TextView  textTitle = mDlAddPlayList.findViewById(R.id.text_title);
+        EditText editTitle = mDlAddPlayList.findViewById(R.id.edit_title);
+        Button btnCreate = mDlAddPlayList.findViewById(R.id.btnCreate);
+        Button btnCancel = mDlAddPlayList.findViewById(R.id.btnCancel);
+
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDlAddPlayList.cancel();
+            }
+        });
+
+        btnCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        mDlAddPlayList.show();
+    }
+
+    private void showAddMusic(){
+        mDlAddMusic = new Dialog(getContext());
+        mDlAddMusic.setContentView(R.layout.dialog_add_music);
+        ImageView imageView = mDlAddMusic.findViewById(R.id.img_add_music);
+        TextView textTitle = mDlAddMusic.findViewById(R.id.text_title_music);
+        ImageButton btnAddMusic = mDlAddMusic.findViewById(R.id.imgb_add_music);
+        Button btnAdd = mDlAddMusic.findViewById(R.id.btnAddMusic);
+
+        ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongModel.getAlbumID(), imageView);
+
+        textTitle.setText(mSongModel.getTitle());
+        btnAddMusic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAddPlayList();
+            }
+        });
+        mDlAddMusic.show();
     }
 
     private void initView(){
@@ -130,6 +181,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
 
                 break;
             case R.id.item_img_addToPlayListImageView:
+                showAddMusic();
                 break;
         }
     }

@@ -49,7 +49,7 @@
         <Switch
             android:layout_weight="2"
             android:trackTint="@color/whiteOpaque"
-            android:id="@+id/enabled"
+            android:id="@+id/sw_enabled"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"
@@ -231,7 +231,7 @@
                                     android:splitTrack="false"
                                     android:thumbTint="@color/white"
                                     android:theme="@style/Widget.AppCompat.SeekBar"
-                                    app:seekBarRotation="CW90" /> <!-- Rotation: CW90 or CW270 -->
+                                    app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
                             </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
 
                             <TextView
@@ -261,7 +261,7 @@
                                     android:splitTrack="false"
                                     android:thumbTint="@color/white"
                                     android:theme="@style/Widget.AppCompat.SeekBar"
-                                    app:seekBarRotation="CW90" /> <!-- Rotation: CW90 or CW270 -->
+                                    app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
                             </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
 
                             <TextView
@@ -291,7 +291,7 @@
                                     android:splitTrack="false"
                                     android:thumbTint="@color/white"
                                     android:theme="@style/Widget.AppCompat.SeekBar"
-                                    app:seekBarRotation="CW90" /> <!-- Rotation: CW90 or CW270 -->
+                                    app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
                             </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
 
                             <TextView
@@ -321,7 +321,7 @@
                                     android:splitTrack="false"
                                     android:thumbTint="@color/white"
                                     android:theme="@style/Widget.AppCompat.SeekBar"
-                                    app:seekBarRotation="CW90" /> <!-- Rotation: CW90 or CW270 -->
+                                    app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
                             </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
 
                             <TextView
@@ -351,7 +351,7 @@
                                     android:thumbTint="@color/white"
                                     android:theme="@style/Widget.AppCompat.SeekBar"
                                     android:splitTrack="false"
-                                    app:seekBarRotation="CW90" /> <!-- Rotation: CW90 or CW270 -->
+                                    app:seekBarRotation="CW270" /> <!-- Rotation: CW90 or CW270 -->
                             </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
 
                             <TextView
@@ -366,7 +366,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/flat"
+                android:id="@+id/btnFlat"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="0.75"

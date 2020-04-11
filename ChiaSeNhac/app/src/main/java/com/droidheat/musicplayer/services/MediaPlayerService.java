@@ -13,6 +13,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.audiofx.BassBoost;
+import android.media.audiofx.Equalizer;
+import android.media.audiofx.Virtualizer;
 import android.media.session.MediaSessionManager;
 import android.os.Binder;
 import android.os.Build;
@@ -856,6 +859,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
          * remembered location
          * We reset this location to zero when we start playing a new song
          */
+        /*
+         * Setting Equalizer
+         */
+        setEqualizer();
+
+        /*
+         * Setting metaData
+         */
+        setGraphics();
+
 
         if (newPosition != -1){
             resumeMedia(newPosition);
@@ -986,26 +999,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         }
     };
 
-  /*  private BroadcastReceiver brSeekBar = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
 
-           *//* int seekPos = intent.getIntExtra("seekbar_service", 0);
-
-            if (seekPos != 0) {
-                newPosition = seekPos;
-
-                if (mMediaPlayer.isPlaying()) {
-                    handler.removeCallbacks(sendUpdatesToUI);
-                    mMediaTransportControls.seekTo(seekPos);
-                    setupHandler();
-                }else {
-                    resumePosition = seekPos;
-                    mMediaTransportControls.seekTo(newPosition);
-                }
-            }*//*
-        }
-    };*/
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
@@ -1045,5 +1039,39 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             Log.d(tag,"==============");*/
         }
     }
-
+    Equalizer eq;
+    BassBoost bassBoost;
+    Virtualizer virtualizer;
+    private void setEqualizer(){
+        boolean isEqInSettings =
+                mSharedPrefsManager.getBoolean(Constants.PREFERENCES.turnEqualizer, false);
+        int currentEqProfile =
+                mSharedPrefsManager.getInteger(Constants.PREFERENCES.currentEqProfile, 0);
+        try {
+            eq = new Equalizer(0, mMediaPlayer.getAudioSessionId());
+            eq.setEnabled(isEqInSettings);
+            for (int i = 0; i < eq.getNumberOfBands(); i++) {
+                eq.setBandLevel((short) i, (short) mSharedPrefsManager.getInteger(
+                        "profile" + currentEqProfile + "Band" + i, 0));
+            }
+            Log.d("CCC", "Equalizer successfully initiated with profile " + currentEqProfile);
+        } catch (Exception e) {
+            (new CommonUtils(this)).showTheToast("Unable to run Equalizer");
+        }
+        try {
+            bassBoost = new BassBoost(0, mMediaPlayer.getAudioSessionId());
+            bassBoost.setEnabled(isEqInSettings);
+            bassBoost.setStrength((short)  mSharedPrefsManager.getInteger(Constants.PREFERENCES.bassLevel + currentEqProfile,
+                    0));
+        } catch (Exception ignored) {}
+        try {
+            virtualizer = new Virtualizer(0, mMediaPlayer.getAudioSessionId());
+            virtualizer.setEnabled(isEqInSettings);
+            virtualizer.setStrength((short) mSharedPrefsManager.getInteger(Constants.PREFERENCES.vzLevel + currentEqProfile, 0));
+        } catch (Exception ignored) {}
+    }
+    private void setGraphics(){
+        mSharedPrefsManager.setInteger(Constants.PREFERENCES.audio_session_id,
+                mMediaPlayer.getAudioSessionId());
+    }
 }

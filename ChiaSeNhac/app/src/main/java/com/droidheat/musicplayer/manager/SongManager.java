@@ -516,7 +516,7 @@ public class SongManager {
                 alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 alertDialog.setContentView(R.layout.dialog_add_playlist);
 
-                final EditText input = alertDialog.findViewById(R.id.editText);
+                final EditText input = alertDialog.findViewById(R.id.edit_title);
                 input.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context,
                         (new CommonUtils(context)).accentColor(mSharedPrefsManager))));
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -596,7 +596,7 @@ public class SongManager {
                 alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 alertDialog.setContentView(R.layout.dialog_add_playlist);
 
-                final EditText input = alertDialog.findViewById(R.id.editText);
+                final EditText input = alertDialog.findViewById(R.id.edit_title);
                 input.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context
                         , (new CommonUtils(context)).accentColor(mSharedPrefsManager))));
                 InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);

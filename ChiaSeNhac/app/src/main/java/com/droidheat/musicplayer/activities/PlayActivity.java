@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -31,6 +33,8 @@ import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.ChangeMusicPagerAdapter;
 import com.droidheat.musicplayer.fragments.ChangeMusicFragment;
 import com.droidheat.musicplayer.models.SongModel;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -214,6 +218,8 @@ public class PlayActivity extends BaseActivity
             mAdapter.addData(fChangeMusicFragment, mSongs.get(idx));
         }
     }
+
+
 
     private void showMusicAbout(){
         mDlAboutMusic = new Dialog(this);

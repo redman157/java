@@ -24,7 +24,7 @@ public class EqualizerAdapter extends RecyclerView.Adapter<EqualizerAdapter.View
 
     private OnClickItemListener onClickItemListener;
     public interface OnClickItemListener{
-        void onClickItem(String item);
+        void onClickItem(String item, int pos);
     }
 
     public void setOnClickItemListener(OnClickItemListener onClickItemListener){
@@ -39,7 +39,7 @@ public class EqualizerAdapter extends RecyclerView.Adapter<EqualizerAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final String item = equalizers.get(position);
         holder.setData(item);
 
@@ -47,7 +47,7 @@ public class EqualizerAdapter extends RecyclerView.Adapter<EqualizerAdapter.View
             @Override
             public void onClick(View v) {
 
-                onClickItemListener.onClickItem(item);
+                onClickItemListener.onClickItem(item, position);
             }
         });
     }

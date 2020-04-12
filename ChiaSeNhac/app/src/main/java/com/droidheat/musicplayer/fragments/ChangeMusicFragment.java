@@ -1,6 +1,7 @@
 package com.droidheat.musicplayer.fragments;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -124,6 +126,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     private void showAddMusic(){
         mDlAddMusic = new Dialog(getContext());
         mDlAddMusic.setContentView(R.layout.dialog_add_music);
+
         ImageView imageView = mDlAddMusic.findViewById(R.id.img_add_music);
         TextView textTitle = mDlAddMusic.findViewById(R.id.text_title_music);
         ImageButton btnAddMusic = mDlAddMusic.findViewById(R.id.imgb_add_music);
@@ -136,6 +139,13 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
             @Override
             public void onClick(View v) {
                 showAddPlayList();
+            }
+        });
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
         mDlAddMusic.show();

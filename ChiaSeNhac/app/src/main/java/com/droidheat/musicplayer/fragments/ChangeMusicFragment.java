@@ -1,9 +1,7 @@
 package com.droidheat.musicplayer.fragments;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +11,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,8 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.OnMusicChange;
 import com.droidheat.musicplayer.R;
-import com.droidheat.musicplayer.activities.PlayActivity;
 import com.droidheat.musicplayer.adapters.MusicAdapter;
+import com.droidheat.musicplayer.database.PlaylistSongs;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
@@ -64,7 +62,8 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     public void setMusicMain(ArrayList<SongModel> musicMain) {
         this.musicMain = musicMain;
     }
-
+    private PlaylistSongs mPlaylistSongsDB;
+    private SongManager mSongManager;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +75,10 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     @Override
     public void onStart() {
         super.onStart();
-
+        mPlaylistSongsDB = PlaylistSongs.getInstance();
+        mPlaylistSongsDB.newRenderDB(getContext());
+        mSongManager = SongManager.getInstance();
+        mSongManager.setContext(getContext());
     }
 
     @Nullable
@@ -102,7 +104,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         mDlAddPlayList.setCancelable(false);
 
         TextView  textTitle = mDlAddPlayList.findViewById(R.id.text_title);
-        EditText editTitle = mDlAddPlayList.findViewById(R.id.edit_title);
+        final EditText editTitle = mDlAddPlayList.findViewById(R.id.edit_title);
         Button btnCreate = mDlAddPlayList.findViewById(R.id.btnCreate);
         Button btnCancel = mDlAddPlayList.findViewById(R.id.btnCancel);
 
@@ -117,7 +119,15 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mPlaylistSongsDB.open();
+                String name = editTitle.getText().toString();
+                if (!name.isEmpty()){
+                    if (!mSongManager.isExistsPlayList(name)) {
+                        mSongManager.addPlaylist(name);
+                        Toast.makeText(getContext(), "Create PlayList Name: "+name, Toast.LENGTH_SHORT).show();
+                    }
 
+                }
             }
         });
         mDlAddPlayList.show();
@@ -130,7 +140,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         ImageView imageView = mDlAddMusic.findViewById(R.id.img_add_music);
         TextView textTitle = mDlAddMusic.findViewById(R.id.text_title_music);
         ImageButton btnAddMusic = mDlAddMusic.findViewById(R.id.imgb_add_music);
-        Button btnAdd = mDlAddMusic.findViewById(R.id.btnAddMusic);
+        final Button btnAdd = mDlAddMusic.findViewById(R.id.btnAddMusic);
 
         ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongModel.getAlbumID(), imageView);
 
@@ -145,6 +155,9 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mSongManager.isExistsPlayList(btnAdd.getText().toString())){
+
+                }
 
             }
         });

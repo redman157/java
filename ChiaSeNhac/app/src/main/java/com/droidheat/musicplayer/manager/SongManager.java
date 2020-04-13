@@ -257,7 +257,7 @@ public class SongManager {
         db.close();
     }
 
-    public boolean ifPlaylistPresent(String name) {
+    public boolean isExistsPlayList(String name) {
         Playlist db =  Playlist.getInstance();
         db.newRenderDB(context);
         db.open();

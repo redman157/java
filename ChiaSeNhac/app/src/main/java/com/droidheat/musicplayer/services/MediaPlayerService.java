@@ -81,6 +81,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private boolean isPlayActivity;
     private int newPosition;
     private int position;
+
     private Intent iIntentSeekBar, iPlayNewMusic, iCheckPlayActivity, iPlayPauseActivity;
     private Intent iPrevToActivity, iNextToActivity;
     private androidx.core.app.NotificationCompat.Builder notificationBuilder = null;
@@ -95,6 +96,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             return MediaPlayerService.this;
         }
     }
+
+
 
     @Nullable
     @Override
@@ -142,9 +145,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        Log.d(tag,"Service --- onStartCommand:  Enter ===== Action: "+intent.getAction());
         isPlayActivity = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-
         position = SongManager.getInstance().getCurrentMusic();
 
         Log.d("BBB",
@@ -992,8 +993,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private BroadcastReceiver becomingNoisyReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-//            pauseMedia();
-//            initNotification(Constants.ACTION.PAUSE);
+            pauseMedia();
+            initNotification(Constants.NOTIFICATION.PAUSE, SongManager.getInstance().getCurrentMusic());
            /* buildNotification(Constants.NOTIFICATION.PAUSE,
                     mSongs.get(SongManager.getInstance().getCurrentMusic()));*/
         }

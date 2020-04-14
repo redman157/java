@@ -18,7 +18,7 @@ public class Playlist {
     private String TAG = "PLAYLISTLOG";
     /* renamed from: db */
     private SQLiteDatabase database;
-    private ReaderDB myDBHelper;
+    private ReaderSQL myDBHelper;
 
     private static Playlist instance;
     public static Playlist getInstance(){
@@ -32,15 +32,17 @@ public class Playlist {
 
     }
 
+
+
     public void newRenderDB(Context context){
         this.context = context;
-        this.myDBHelper = new ReaderDB(context);
+        this.myDBHelper = new ReaderSQL(context, Database.PLAYLIST.DATABASE_NAME, null, 1);
 
     }
 
-    public Playlist open() {
+    public Playlist open(String sql) {
+        myDBHelper.queryData(sql);
 
-        this.database = this.myDBHelper.getWritableDatabase();
         return this;
     }
 
@@ -54,24 +56,25 @@ public class Playlist {
     public long addRow(String row) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Database.PLAYLIST.TITLE, row);
-        return this.database.insert(Database.PLAYLIST.TABLE_NAME, "NULL", contentValues);
+        return this.database.insert(Database.PLAYLIST.TABLE_NAME,
+                null, contentValues);
     }
 
     public ArrayList<HashMap<String, String>> getAllRows() {
         Cursor query = this.database.query(Database.PLAYLIST.TABLE_NAME,
                 Database.PLAYLIST.ALL_KEYS,
                 null, null, null, null, null);
-        ArrayList<HashMap<String, String>> arrayList = new ArrayList<>();
+        ArrayList<HashMap<String, String>> allRowList = new ArrayList<>();
         if (query.moveToFirst()) {
             do {
                 HashMap hashMap = new HashMap();
-                hashMap.put("ID", query.getString(0));
-                hashMap.put("title", query.getString(1));
-                arrayList.add(hashMap);
+                hashMap.put(Constants.VALUE.ID, query.getString(0));
+                hashMap.put(Constants.VALUE.title, query.getString(1));
+                allRowList.add(hashMap);
             } while (query.moveToNext());
         }
         query.close();
-        return arrayList;
+        return allRowList;
     }
 
     public int getCount() {
@@ -85,7 +88,8 @@ public class Playlist {
         String columnIndex;
 
         Cursor query = this.database.query(true,
-                Database.PLAYLIST.TABLE_NAME, Database.PLAYLIST.ALL_KEYS, Database.PLAYLIST.SQL_CONTROL_ROW_LIST +id,
+                Database.PLAYLIST.TABLE_NAME, Database.PLAYLIST.ALL_KEYS,
+                Database.PLAYLIST.SQL_CONTROL_ROW_LIST +id,
                 null, null, null, null, null);
         if (query != null) {
             query.moveToFirst();
@@ -163,7 +167,7 @@ public class Playlist {
     public class ReaderDB extends SQLiteOpenHelper {
         // If you change the database schema, you must increment the database version.
         public static final int DATABASE_VERSION = 3;
-        public static final String DATABASE_NAME = "categories.db";
+        public static final String DATABASE_NAME = "playlist.db";
 
         public ReaderDB(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);

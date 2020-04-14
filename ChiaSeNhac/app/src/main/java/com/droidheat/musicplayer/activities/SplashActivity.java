@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.droidheat.musicplayer.BaseActivity;
 import com.droidheat.musicplayer.database.Playlist;
 import com.droidheat.musicplayer.manager.CommonUtils;
 import com.droidheat.musicplayer.Constants;
@@ -45,7 +46,7 @@ public class SplashActivity extends AppCompatActivity {
     private String TAG = "SplashActivityLog";
     private boolean sync = false;
     private ProgressBar mProgressBar;
-    private TextView mTextSync;
+    public TextView mTextSync;
     private SongManager mSongManager;
     private SharedPrefsManager mSharedPrefsManager;
 
@@ -64,15 +65,6 @@ public class SplashActivity extends AppCompatActivity {
         mTextSync = findViewById(R.id.textView10);
         mSharedPrefsManager = new SharedPrefsManager();
         mSharedPrefsManager.setContext(this);
-
- /*       mPerformBackgroundTasks = PerformBackgroundTasks.getInstance();
-        mPerformBackgroundTasks.setContext(this);*/
-
-        /*mProgressBar.getIndeterminateDrawable().setColorFilter(
-                ContextCompat.getColor(this, (new CommonUtils(this).accentColor(mSharedPrefsManager))),
-                PorterDuff.Mode.MULTIPLY);*/
-
-
         setTextStatus();
 
         checkPermission();
@@ -365,11 +357,12 @@ public class SplashActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            //setUpdatedTextView(values[0]);
+            mTextSync.setText("Loading: "+values);
         }
 
         @Override
         protected void onPostExecute(Long aLong) {
+            mTextSync.setText("Done");
             CountDownTimer count = new CountDownTimer(1000,3000) {
                 @Override
                 public void onTick(long millisUntilFinished) {

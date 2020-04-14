@@ -10,23 +10,23 @@ import com.droidheat.musicplayer.models.SongModel;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FavouriteList {
+public class FavouriteSongs {
     private Context context;
 
     /* renamed from: db */
     private SQLiteDatabase database;
     private ReaderDB myDBHelper;
 
-    private static FavouriteList instance;
+    private static FavouriteSongs instance;
 
-    public static FavouriteList getInstance() {
+    public static FavouriteSongs getInstance() {
         if (instance == null){
-            instance = new FavouriteList();
+            instance = new FavouriteSongs();
         }
         return instance;
     }
 
-    private FavouriteList() {
+    private FavouriteSongs() {
     }
 
     public void newRenderDB(Context context){
@@ -35,12 +35,12 @@ public class FavouriteList {
 //        this.myDBHelper = new ReaderDB(context, database);
     }
 
-    public FavouriteList open() {
+    public FavouriteSongs open() {
         this.database = myDBHelper.getWritableDatabase();
         return this;
     }
 
-    public FavouriteList close() {
+    public FavouriteSongs close() {
         this.myDBHelper.close();
         return this;
     }

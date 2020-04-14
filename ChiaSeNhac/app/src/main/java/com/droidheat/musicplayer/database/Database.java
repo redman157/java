@@ -2,6 +2,7 @@ package com.droidheat.musicplayer.database;
 
 public class Database {
     public @interface CATEGORY{
+        String DATABASE_NAME = "categories.db";
         String TEXT_TYPE = " TEXT";
         String COMMA_SEP = ",";
         String TABLE_NAME = "category";
@@ -37,10 +38,11 @@ public class Database {
         String SQL_QUERY_LIST = "SELECT * FROM " + TABLE_NAME;
         String SQL_CONTROL_ROW_LIST = PLAYLIST.COLUMN_NAME_ID+"=";
         String SQL_SEARCH_LIST = PLAYLIST.TITLE+"==";
-        String SQL_CONTROL_ROW_SONG = PLAYSONGS.COLUMN_NAME_ID+"=";
+        String SQL_CONTROL_ROW_SONG = PLAYLISTSONGS.COLUMN_NAME_ID+"=";
     }
 
     public @interface FAVOURITE{
+        String DATABASE_NAME = "Favs.db";
         String TEXT_TYPE = " TEXT";
         String COMMA_SEP = ",";
         String TABLE_NAME = "fav";
@@ -70,9 +72,11 @@ public class Database {
         String SQL_QUERY_LIST = "SELECT * FROM " + TABLE_NAME;
         String SQL_CONTROL_ROW_LIST = PLAYLIST.COLUMN_NAME_ID+"=";
         String SQL_SEARCH_LIST = PLAYLIST.TITLE+"==";
-        String SQL_CONTROL_ROW_SONG = PLAYSONGS.COLUMN_NAME_ID+"=";
+        String SQL_CONTROL_ROW_SONG = PLAYLISTSONGS.COLUMN_NAME_ID+"=";
     }
     public @interface PLAYLIST {
+        String DATABASE_NAME = "playlist.db";
+
         String TABLE_NAME = "queue";
         String TEXT_TYPE = " TEXT";
         String TITLE = "title";
@@ -91,9 +95,10 @@ public class Database {
         String SQL_QUERY_LIST = "SELECT * FROM " + TABLE_NAME;
         String SQL_CONTROL_ROW_LIST = PLAYLIST.COLUMN_NAME_ID+"=";
         String SQL_SEARCH_LIST = PLAYLIST.TITLE+"==";
-        String SQL_CONTROL_ROW_SONG = PLAYSONGS.COLUMN_NAME_ID+"=";
+        String SQL_CONTROL_ROW_SONG = PLAYLISTSONGS.COLUMN_NAME_ID+"=";
     }
-    public  @interface PLAYSONGS {
+    public  @interface PLAYLISTSONGS {
+        String DATABASE_NAME = "playlistsongs.db";
         String TEXT_TYPE = " TEXT";
         String COMMA_SEP = ",";
         String TABLE_NAME = "playlistsongs";
@@ -111,7 +116,7 @@ public class Database {
         String SQL_QUERY_LIST = "SELECT * FROM " + TABLE_NAME;
         String SQL_CONTROL_ROW_LIST = PLAYLIST.COLUMN_NAME_ID+"=";
         String SQL_SEARCH_LIST = PLAYLIST.TITLE+"==";
-        String SQL_CONTROL_ROW_SONG = PLAYSONGS.COLUMN_NAME_ID+"=";
+        String SQL_CONTROL_ROW_SONG = PLAYLISTSONGS.COLUMN_NAME_ID+"=";
         String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + TABLE_NAME + " (" +
                         COLUMN_NAME_ID + " INTEGER PRIMARY Database AUTOINCREMENT" + COMMA_SEP +

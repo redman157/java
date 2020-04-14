@@ -33,7 +33,7 @@ import androidx.core.content.ContextCompat;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.database.CategorySongs;
-import com.droidheat.musicplayer.database.FavouriteList;
+import com.droidheat.musicplayer.database.FavouriteSongs;
 import com.droidheat.musicplayer.database.Playlist;
 import com.droidheat.musicplayer.database.PlaylistSongs;
 import com.droidheat.musicplayer.adapters.PlaylistFragmentAdapterSimple;
@@ -257,6 +257,7 @@ public class SongManager {
         db.close();
     }
 
+
     public boolean isExistsPlayList(String name) {
         Playlist db =  Playlist.getInstance();
         db.newRenderDB(context);
@@ -312,7 +313,7 @@ public class SongManager {
 
     public ArrayList<SongModel>favouriteSongs() {
         ArrayList<SongModel> list;
-        FavouriteList db = FavouriteList.getInstance();
+        FavouriteSongs db = FavouriteSongs.getInstance();
         db.newRenderDB(context);
         db.open();
         list = new ArrayList<>(db.getAllRows());
@@ -321,7 +322,7 @@ public class SongManager {
     }
 
     public boolean addToFavouriteSongs(SongModel row) {
-        FavouriteList db = FavouriteList.getInstance();
+        FavouriteSongs db = FavouriteSongs.getInstance();
         db.newRenderDB(context);
         db.open();
         db.addRow(row);
@@ -331,7 +332,7 @@ public class SongManager {
     }
 
     public void updateFavouritesList(ArrayList<SongModel> newFavList) {
-        FavouriteList db = FavouriteList.getInstance();
+        FavouriteSongs db = FavouriteSongs.getInstance();
         db.newRenderDB(context);
         db.open();
         db.deleteAll();

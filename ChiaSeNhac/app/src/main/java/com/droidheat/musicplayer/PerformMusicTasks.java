@@ -49,7 +49,6 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
 
     private void addPlayListFirst(String name){
         mPlaylist.newRenderDB(mActivity);
-        mPlaylist.open();
         if (!mSongManager.isExistsPlayList(name)){
             if (mPlaylist.getCount() == 0){
                 mSongManager.addPlaylist(name);

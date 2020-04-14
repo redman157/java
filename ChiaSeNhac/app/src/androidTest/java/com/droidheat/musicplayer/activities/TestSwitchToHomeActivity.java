@@ -1,5 +1,6 @@
 package com.droidheat.musicplayer.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
@@ -17,6 +18,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
+import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 
@@ -38,13 +43,21 @@ import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withSubstring;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+
+import static androidx.test.espresso.intent.Intents.intended;
+
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.assertTrue;
 
 import androidx.test.espresso.core.internal.deps.guava.collect.Iterables;
+import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
+
+
+
 import androidx.test.rule.ActivityTestRule;
+import androidx.test.rule.GrantPermissionRule;
 import androidx.test.runner.AndroidJUnit4;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
@@ -54,13 +67,21 @@ import com.droidheat.musicplayer.R;
 import java.util.Collection;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class TestSwitchToHomeActivity {
     @Rule
     public ActivityTestRule<SplashActivity> activityTestRule =
-            new ActivityTestRule<SplashActivity>(SplashActivity.class,true,true /*lazy launch
-            activity*/){
+            new ActivityTestRule<SplashActivity>(SplashActivity.class, true, true){
                 @Override
                 protected Intent getActivityIntent() {
                     /*added predefined intent data*/
@@ -69,6 +90,17 @@ public class TestSwitchToHomeActivity {
                     return intent;
                 }
             };
+
+    @Rule
+    public GrantPermissionRule mRuntimePermissionRule =
+            GrantPermissionRule
+                    .grant(Manifest.permission.READ_CONTACTS)
+                    .grant(Manifest.permission.WRITE_CONTACTS);
+
+    @Rule
+    public IntentsTestRule<SplashActivity> mActivityRule =
+            new IntentsTestRule<>(SplashActivity.class);
+
     @Before
     public void grantPhonePermission() {
         // In M+, trying to call a number will trigger a runtime dialog. Make sure
@@ -112,9 +144,8 @@ public class TestSwitchToHomeActivity {
             @Override
             public Matcher<View> getConstraints() {
                 return allOf(isDisplayed(), isAssignableFrom(TextView.class));
-//                                            ^^^^^^^^^^^^^^^^^^^
-// To check that the found view is TextView or it's subclass like EditText
-// so it will work for TextView and it's descendants
+                // To check that the found view is TextView or it's subclass like EditText
+                // so it will work for TextView and it's descendants
             }
 
             @Override
@@ -148,6 +179,26 @@ public class TestSwitchToHomeActivity {
             }
         });
         return stringHolder[0];
+    }
+    @Test
+    // test intent data 
+    public void triggerIntentTest() {
+        onView(withId(R.id.button)).perform(click());
+        intended(allOf(
+                hasAction(Intent.ACTION_CALL),
+                hasData(INTENT_DATA_PHONE_NUMBER),
+                toPackage(PACKAGE_ANDROID_DIALER)));
+    }
+
+    @Test
+    public void ensureListViewIsPresent() throws Exception {
+        onData(hasToString(containsString("Frodo")))
+                .perform(click());
+        onView(withText(startsWith("Clicked:"))).
+                inRoot(withDecorView(
+                        not(is(activityTestRule.getActivity().
+                                getWindow().getDecorView())))).
+                check(matches(isDisplayed()));
     }
 
 	public static Activity getActivityInstance(){
@@ -187,11 +238,11 @@ public class TestSwitchToHomeActivity {
         	}
 
         	@Override public String getDescription() {
-            	return "wait for " + (long) delay + "milliseconds";
+            	return "wait for " + delay + "milliseconds";
         	}
 
         	@Override public void perform(UiController uiController, View view) {
-            	uiController.loopMainThreadForAtLeast((long) delay);
+            	uiController.loopMainThreadForAtLeast(delay);
         	}
     	};
     }

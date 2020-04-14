@@ -205,7 +205,6 @@ public class SplashActivity extends AppCompatActivity {
                 Playlist mPlaylist = Playlist.getInstance();
 
                 mPlaylist.newRenderDB(SplashActivity.this);
-                mPlaylist.open();
 
                 if (mPlaylist.getCount() == 0) {
                     mSongManager.addPlaylist("Playlist 1");

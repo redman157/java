@@ -4,7 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
@@ -13,19 +13,19 @@ import android.widget.TextView;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtraWithKey;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.RootMatchers.withDecorView;
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 
@@ -36,12 +36,9 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
-import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withSubstring;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static androidx.test.espresso.intent.Intents.intended;
@@ -49,9 +46,7 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.assertTrue;
 
-import androidx.test.espresso.core.internal.deps.guava.collect.Iterables;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.filters.LargeTest;
 
 
@@ -62,7 +57,9 @@ import androidx.test.runner.AndroidJUnit4;
 import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import androidx.test.runner.lifecycle.Stage;
 
+import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
+import com.droidheat.musicplayer.manager.ImageUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -70,9 +67,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -80,25 +75,19 @@ import static org.hamcrest.Matchers.notNullValue;
 @LargeTest
 public class TestSwitchToHomeActivity {
     @Rule
-    public ActivityTestRule<SplashActivity> activityTestRule =
-            new ActivityTestRule<SplashActivity>(SplashActivity.class, true, true){
-                @Override
-                protected Intent getActivityIntent() {
-                    /*added predefined intent data*/
-                    Intent intent = new Intent();
-                    intent.putExtra("key","value");
-                    return intent;
-                }
-            };
+
+    public ActivityTestRule<SplashActivity> mSplashActivity =
+            new ActivityTestRule<SplashActivity>(SplashActivity.class);
 
     @Rule
+
     public GrantPermissionRule mRuntimePermissionRule =
             GrantPermissionRule
                     .grant(Manifest.permission.READ_CONTACTS)
                     .grant(Manifest.permission.WRITE_CONTACTS);
 
     @Rule
-    public IntentsTestRule<SplashActivity> mActivityRule =
+    public IntentsTestRule<SplashActivity> mSplashIntent =
             new IntentsTestRule<>(SplashActivity.class);
 
     @Before
@@ -121,9 +110,10 @@ public class TestSwitchToHomeActivity {
 
     	/* @NOTE: chờ 3s để chắc chắn sẽ chuyển qua HomeActivity */
 
+        onView(withId(R.id.textView10)).check(matches(isDisplayed()));
         String name = getText(withId(R.id.textView10));
         if(name.equals("Initiating..")){
-            onView(isRoot()).perform(waitFor(1000));
+            onView(isRoot()).perform(waitFor(3000));
 
             assertEquals(HomeActivity.class.getSimpleName(), getActivityInstance().getClass().getSimpleName());
             assertTrue(isRunning(getActivityInstance()));
@@ -131,6 +121,8 @@ public class TestSwitchToHomeActivity {
 
         }else if (name.equals("Syncing..")){
 
+            onView(isRoot()).perform(waitFor(5000));
+            onView(withId(R.id.textView10)).check(matches(withText("Done")));
         }
 
     }
@@ -138,6 +130,17 @@ public class TestSwitchToHomeActivity {
 	public void afterSwitchToHome(){
 
 	}
+
+	// test intent bằng data
+    @Test
+
+    public void triggerIntentTest() {
+        // check that the button is there
+        onView(isRoot()).perform(waitFor(4000));
+
+
+    }
+
     public static ViewAction setTextInTextView(final String value){
         return new ViewAction() {
             @SuppressWarnings("unchecked")
@@ -180,15 +183,7 @@ public class TestSwitchToHomeActivity {
         });
         return stringHolder[0];
     }
-    @Test
-    // test intent data 
-    public void triggerIntentTest() {
-        onView(withId(R.id.button)).perform(click());
-        intended(allOf(
-                hasAction(Intent.ACTION_CALL),
-                hasData(INTENT_DATA_PHONE_NUMBER),
-                toPackage(PACKAGE_ANDROID_DIALER)));
-    }
+
 
     @Test
     public void ensureListViewIsPresent() throws Exception {
@@ -196,7 +191,7 @@ public class TestSwitchToHomeActivity {
                 .perform(click());
         onView(withText(startsWith("Clicked:"))).
                 inRoot(withDecorView(
-                        not(is(activityTestRule.getActivity().
+                        not(is(mSplashActivity.getActivity().
                                 getWindow().getDecorView())))).
                 check(matches(isDisplayed()));
     }

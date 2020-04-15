@@ -277,7 +277,7 @@ public class SongManager {
     public void removePlaylistSong(int id, ArrayList<SongModel> newlist) {
         PlaylistSongs db =  PlaylistSongs.getInstance();
         db.newRenderDB(context);
-        db.open();
+
         db.deleteAll(id);
         for (int i = 0; i < newlist.size(); i++) {
             db.addRow(id, newlist.get(i));
@@ -290,7 +290,7 @@ public class SongManager {
         ArrayList<SongModel> list = new ArrayList<>();
         PlaylistSongs db = PlaylistSongs.getInstance();
         db.newRenderDB(context);
-        db.open();
+
         if (db.getCount(playlistID) > 0) {
             list = db.getAllRows(playlistID);
         }
@@ -301,7 +301,7 @@ public class SongManager {
     public void updatePlaylistSongs(int playlistID, ArrayList<SongModel> newList) {
         PlaylistSongs db = PlaylistSongs.getInstance();
         db.newRenderDB(context);
-        db.open();
+
         db.deleteAll(playlistID);
         for (int i = 0; i < newList.size(); i++) {
             db.addRow(playlistID, newList.get(i));
@@ -313,7 +313,7 @@ public class SongManager {
         ArrayList<SongModel> list;
         FavouriteSongs db = FavouriteSongs.getInstance();
         db.newRenderDB(context);
-        db.open();
+
         list = new ArrayList<>(db.getAllRows());
         db.close();
         return list;
@@ -322,7 +322,7 @@ public class SongManager {
     public boolean addToFavouriteSongs(SongModel row) {
         FavouriteSongs db = FavouriteSongs.getInstance();
         db.newRenderDB(context);
-        db.open();
+
         db.addRow(row);
         db.close();
         //TODO:MainActivity.shouldNotifyDataChanged = true;
@@ -332,7 +332,7 @@ public class SongManager {
     public void updateFavouritesList(ArrayList<SongModel> newFavList) {
         FavouriteSongs db = FavouriteSongs.getInstance();
         db.newRenderDB(context);
-        db.open();
+
         db.deleteAll();
         Collections.reverse(newFavList);
         for (int i = 0; i < newFavList.size(); i++) {
@@ -345,7 +345,7 @@ public class SongManager {
         ArrayList<SongModel> list;
         CategorySongs db = CategorySongs.getInstance();
         db.newRenderDB(context);
-        db.open();
+
         list = db.getAllRows(1);
         db.close();
         return list;
@@ -354,7 +354,6 @@ public class SongManager {
     public void updateMostPlayedList(ArrayList<SongModel> newList) {
         CategorySongs db = CategorySongs.getInstance();
         db.newRenderDB(context);
-        db.open();
         db.deleteAll(1);
         for (int i = 0; i < newList.size(); i++) {
             db.addRow(1, newList.get(i));
@@ -491,7 +490,7 @@ public class SongManager {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PlaylistSongs db = PlaylistSongs.getInstance();
                 db.newRenderDB(context);
-                db.open();
+
                 int playListID = Integer.parseInt(Objects.requireNonNull(getAllPlayLists().get(position).get("ID")));
                 for (int i = 0; i < arrayList.size(); i++) {
                     if (!db.getAllRows(playListID).contains(arrayList.get(i))) {
@@ -572,7 +571,7 @@ public class SongManager {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PlaylistSongs db = PlaylistSongs.getInstance();
                 db.newRenderDB(context);
-                db.open();
+
                 int playListID = Integer.parseInt(Objects.requireNonNull(getAllPlayLists().get(position).get("ID")));
                 if (!db.getAllRows(playListID).contains(hash)) {
                     db.addRow(playListID, hash);

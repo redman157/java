@@ -42,7 +42,7 @@ public class MusicTask extends AsyncTask<Void,Void, Void> {
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(context);
         db.newRenderDB(context);
-        db.open();
+
     }
 
     @Override

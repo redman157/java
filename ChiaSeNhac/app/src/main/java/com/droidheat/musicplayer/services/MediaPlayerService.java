@@ -1026,7 +1026,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         try {
             CategorySongs mCategorySongs = CategorySongs.getInstance();
             mCategorySongs.newRenderDB(this);
-            mCategorySongs.open();
+
             if (mCategorySongs.checkRow(path)) {
                 mCategorySongs.updateRow(path);
             } else {

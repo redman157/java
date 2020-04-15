@@ -15,7 +15,7 @@ public class FavouriteSongs {
 
     /* renamed from: db */
     private SQLiteDatabase database;
-    private ReaderDB myDBHelper;
+    private ReaderSQL myDBHelper;
 
     private static FavouriteSongs instance;
 
@@ -31,14 +31,11 @@ public class FavouriteSongs {
 
     public void newRenderDB(Context context){
         this.context = context;
-        this.myDBHelper = new ReaderDB(context);
+        this.myDBHelper = new ReaderSQL(context, Database.FAVOURITE.DATABASE_NAME, null, 1);
+        myDBHelper.queryData(Database.FAVOURITE.SQL_CREATE_ENTRIES);
 //        this.myDBHelper = new ReaderDB(context, database);
     }
 
-    public FavouriteSongs open() {
-        this.database = myDBHelper.getWritableDatabase();
-        return this;
-    }
 
     public FavouriteSongs close() {
         this.myDBHelper.close();

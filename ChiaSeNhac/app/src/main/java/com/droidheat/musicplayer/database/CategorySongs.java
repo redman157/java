@@ -17,7 +17,7 @@ public class CategorySongs {
 
     /* renamed from: db */
     private SQLiteDatabase database;
-    private ReaderDB myDBHelper;
+    private ReaderSQL myDBHelper;
 
 
     private static CategorySongs instance;
@@ -33,7 +33,8 @@ public class CategorySongs {
 
     public void newRenderDB(Context context){
         this.context = context;
-        myDBHelper = new ReaderDB(context);
+        myDBHelper = new ReaderSQL(context, Database.CATEGORY.DATABASE_NAME, null, 1 );
+        myDBHelper.queryData(Database.CATEGORY.SQL_CREATE_ENTRIES);
 //        this.myDBHelper = new ReaderDB(context, database);
     }
 

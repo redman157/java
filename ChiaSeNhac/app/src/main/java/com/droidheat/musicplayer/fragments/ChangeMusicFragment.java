@@ -119,7 +119,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         btnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPlaylistSongsDB.open();
+
                 String name = editTitle.getText().toString();
                 if (!name.isEmpty()){
                     if (!mSongManager.isExistsPlayList(name)) {

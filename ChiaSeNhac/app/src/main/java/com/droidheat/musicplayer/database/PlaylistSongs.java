@@ -15,7 +15,7 @@ public class PlaylistSongs {
     private Context context;
     /* renamed from: db */
     private SQLiteDatabase database;
-    private ReaderDB myDBHelper;
+    private ReaderSQL myDBHelper;
 
     private static PlaylistSongs instance;
 
@@ -33,14 +33,9 @@ public class PlaylistSongs {
         this.allPlaylistDB = Playlist.getInstance();
         this.context = context;
         this.allPlaylistDB.newRenderDB(context);
-        this.myDBHelper = new ReaderDB(context);
+        this.myDBHelper = new ReaderSQL(context, Database.PLAYLISTSONGS.DATABASE_NAME, null, 1);
 //        this.myDBHelper = new ReaderDB(context, database);
-
-    }
-
-    public PlaylistSongs open() {
-        this.database = myDBHelper.getWritableDatabase();
-        return this;
+        myDBHelper.queryData(Database.PLAYLISTSONGS.SQL_CREATE_ENTRIES);
     }
 
     public PlaylistSongs close() {

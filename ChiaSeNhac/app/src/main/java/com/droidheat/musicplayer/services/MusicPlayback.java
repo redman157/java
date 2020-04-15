@@ -763,7 +763,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
 
             mCategorySongs.newRenderDB(getApplicationContext());
 
-            mCategorySongs.open();
+
 
             if (mCategorySongs.checkRow(path)){
 

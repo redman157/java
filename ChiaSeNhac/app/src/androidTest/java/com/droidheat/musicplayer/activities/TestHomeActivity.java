@@ -1,12 +1,17 @@
 package com.droidheat.musicplayer.activities;
 
+import android.app.Instrumentation;
+import android.content.Context;
 import android.content.Intent;
+import android.support.test.InstrumentationRegistry;
 
+import static android.support.test.internal.util.Checks.checkNotNull;
 import static androidx.test.InstrumentationRegistry.getTargetContext;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Checks.checkArgument;
 import static androidx.test.espresso.matcher.ViewMatchers.assertThat;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
@@ -17,8 +22,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withSubstring;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static org.hamcrest.EasyMock2Matchers.equalTo;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertTrue;
 
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.core.internal.deps.guava.collect.Iterables;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -28,6 +36,10 @@ import androidx.test.runner.AndroidJUnit4;
 
 import com.droidheat.musicplayer.R;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -49,6 +61,28 @@ public class TestHomeActivity {
                     return intent;
                 }
             };
+    IntentServiceIdlingResource idlingResource;
+
+    @Before
+    public void before() {
+        Instrumentation instrumentation
+                = InstrumentationRegistry.getInstrumentation();
+        Context ctx = instrumentation.getTargetContext();
+        idlingResource = new IntentServiceIdlingResource(ctx);
+        Espresso.registerIdlingResources(idlingResource);
+    }
+    @After
+    public void after() {
+        Espresso.unregisterIdlingResources(idlingResource);
+
+    }
+    @Test
+    public void runSequence() {
+        // this triggers our intent service, as we registered
+        // Espresso for it, Espresso wait for it to finish
+
+        onView(withText("Broadcast")).check(matches(notNullValue()));
+    }
 
     @Test
     public void displayView(){
@@ -63,5 +97,35 @@ public class TestHomeActivity {
         onView(withId(R.id.nav_view)).check(matches(isCompletelyDisplayed()));
         onView(withId(R.id.vp_Home)).check(matches(isCompletelyDisplayed()));
     }
+    // custom Matcher so sánh text
+    public static Matcher<Object> withItemText(String itemText) {
+        // use preconditions to fail fast when a test is creating an invalid matcher.
+        checkArgument(itemText != null);
+        return withItemText(equalTo(itemText));
+    }
+    public static Matcher<Object> withItemText(final Matcher<String> matcherText) {
+        // use preconditions to fail fast when a test is creating an invalid matcher.
+        checkNotNull(matcherText);
+        return new TypeSafeMatcher<Object>() {
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("expected text: " + matcherText);
+            }
+
+            @Override
+            public void describeMismatchSafely(
+                    Object item,
+                    Description mismatchDescription) {
+                mismatchDescription.appendText("actual text: " + item.toString());
+            }
+
+            @Override
+            public boolean matchesSafely(Object item) {
+                return matcherText.equals(item);
+            }
+        };
+    }
+
 
 }

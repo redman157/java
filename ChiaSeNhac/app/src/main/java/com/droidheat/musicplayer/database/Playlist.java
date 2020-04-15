@@ -37,14 +37,9 @@ public class Playlist {
     public void newRenderDB(Context context){
         this.context = context;
         this.myDBHelper = new ReaderSQL(context, Database.PLAYLIST.DATABASE_NAME, null, 1);
-        open(Database.PLAYLIST.SQL_CREATE_ENTRIES);
+        myDBHelper.queryData(Database.PLAYLIST.SQL_CREATE_ENTRIES);
     }
 
-    public Playlist open(String sql) {
-        myDBHelper.queryData(sql);
-
-        return this;
-    }
 
     public Playlist close() {
 

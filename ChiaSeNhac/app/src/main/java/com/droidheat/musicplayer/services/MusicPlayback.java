@@ -289,7 +289,7 @@ public class MusicPlayback extends MediaBrowserServiceCompat implements
      * saveData() writes current song parameters to sharedPrefs which can be retrieved in
      * other activities or fragments as well as when we start app next time
      * musicID: is id of current item in queue
-     * title, artist, album, albumid: are all fields of SongModel()
+     * NAME_PLAYLIST, artist, album, albumid: are all fields of SongModel()
      *
      */
 

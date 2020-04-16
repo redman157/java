@@ -15,21 +15,15 @@ public class ReaderSQL extends SQLiteOpenHelper {
 
     public void queryData(String sql){
         SQLiteDatabase database = getWritableDatabase();
+
         database.execSQL(sql);
     }
 
-    public void queryData(String sql, SQLiteDatabase database){
-        database.execSQL(sql);
-    }
     public Cursor getData(String sql){
         SQLiteDatabase database = getReadableDatabase();
         return database.rawQuery(sql, null);
     }
 
-    public void updateData(String sql){
-        SQLiteDatabase database = getWritableDatabase();
-        database.execSQL(sql);
-    }
 
 
     @Override

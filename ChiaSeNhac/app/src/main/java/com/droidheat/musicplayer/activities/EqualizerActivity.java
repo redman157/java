@@ -193,7 +193,7 @@ public class EqualizerActivity extends AppCompatActivity implements OnClickListe
                 R.anim.fadeout);
         mRecycleEqualizer.setAnimation(fadeOut);
         mRecycleEqualizer.setVisibility(View.GONE);
-        // title list sẽ hiện
+        // NAME_PLAYLIST list sẽ hiện
         mTextOptionEqualizer.setAlpha(1);
         Animation fadeIn = AnimationUtils.loadAnimation(EqualizerActivity.this,
                 R.anim.fadein);

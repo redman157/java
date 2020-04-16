@@ -1,7 +1,5 @@
 package com.droidheat.musicplayer;
 
-import java.util.Timer;
-
 public class Constants {
     public @interface MANIFESTS {
         String READ_EXTERNAL_STORAGE  = "android.permission.READ_EXTERNAL_STORAGE";
@@ -37,7 +35,7 @@ public class Constants {
     public @interface VALUE {
         int MAX_SLIDERS = 5;
         String ID = "ID";
-        String title = "title";
+        String NAME_PLAYLIST = "NAME_PLAYLIST";
         String SYNC = "sync";
         String TASK = "task";
         String ALL_NEW_SONGS = "all_new_songs";
@@ -84,7 +82,7 @@ public class Constants {
         String bassLevel = "bassLevel";
         String vzLevel = "vzLevel";
         String MUSIC_ID = "musicID";
-        String TITLE = "title";
+        String TITLE = "NAME_PLAYLIST";
         String PATH = "path";
         String ARTIST = "artist";
         String ALBUM = "album";

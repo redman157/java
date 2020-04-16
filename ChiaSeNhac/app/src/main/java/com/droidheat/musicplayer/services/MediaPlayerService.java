@@ -28,8 +28,6 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
-
-import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
@@ -37,7 +35,6 @@ import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.activities.HomeActivity;
 import com.droidheat.musicplayer.database.CategorySongs;
-import com.droidheat.musicplayer.database.Playlist;
 import com.droidheat.musicplayer.manager.CommonUtils;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
@@ -326,7 +323,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
                         mSongs = (ArrayList<SongModel>) iAction.getSerializableExtra(Constants.INTENT.SET_MUSIC);
                         processEndOfList(position);
-                        SongManager.getInstance().addPlaylist("music_main");
+
                         mSongShuffle = null;
                     }
                     break;
@@ -419,7 +416,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
      * saveData() writes current song parameters to sharedPrefs which can be retrieved in
      * other activities or fragments as well as when we start app next time
      * musicID: is id of current item in queue
-     * title, artist, album, albumid: are all fields of SongModel()
+     * NAME_PLAYLIST, artist, album, albumid: are all fields of SongModel()
      *
      */
 

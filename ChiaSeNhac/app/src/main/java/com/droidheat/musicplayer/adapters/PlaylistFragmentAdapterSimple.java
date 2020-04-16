@@ -77,7 +77,7 @@ public class PlaylistFragmentAdapterSimple extends BaseAdapter {
             view.setVisibility(View.GONE);
         } else {
             view.setVisibility(View.VISIBLE);
-            viewHolder.text.setText((CharSequence) ((HashMap) this.data.get(i)).get("title"));
+            viewHolder.text.setText((CharSequence) ((HashMap) this.data.get(i)).get("NAME_PLAYLIST"));
         }
         return view;
     }

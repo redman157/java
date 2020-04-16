@@ -234,17 +234,20 @@ public class SongManager {
 
         ArrayList<HashMap<String, String>> list = new ArrayList<>();
         if (db.getCount() > 0) {
-            list = db.getAllRows();
+            list = db.getAllPlayList();
         }
         db.close();
         return list;
     }
 
     public HashMap<String, String> getPlaylist(int ID) {
+        HashMap<String, String> hash = null;
         Playlist db =  Playlist.getInstance();
         db.newRenderDB(context);
 
-        HashMap<String, String> hash = db.getRow(ID);
+        if (db.getPlayList(ID)!= null) {
+            hash =db.getPlayList(ID);
+        }
         db.close();
         return hash;
     }
@@ -252,8 +255,7 @@ public class SongManager {
     public void addPlaylist(String name) {
         Playlist db =  Playlist.getInstance();
         db.newRenderDB(context);
-
-        db.addRow(name);
+        db.addPlayList(name);
         db.close();
     }
 
@@ -261,17 +263,17 @@ public class SongManager {
     public boolean isExistsPlayList(String name) {
         Playlist db =  Playlist.getInstance();
         db.newRenderDB(context);
-        boolean result = db.searchPlaylist(name);
+        boolean result = db.searchPlayList(name);
         db.close();
         return result;
     }
 
-    public void deletePlaylist(int id) {
+    /*public void deletePlaylist(int id) {
         Playlist db =  Playlist.getInstance();
         db.newRenderDB(context);
-        db.deleteRow(id);
+        db.deletePlayList(id);
         db.close();
-    }
+    }*/
 
 
     public void removePlaylistSong(int id, ArrayList<SongModel> newlist) {
@@ -701,7 +703,7 @@ public class SongManager {
 
     private int getIndex(String itemName, ArrayList<HashMap<String, String>> list) {
         for (int i = 0; i < list.size(); i++) {
-            String auction = list.get(i).get("title");
+            String auction = list.get(i).get("NAME_PLAYLIST");
             if (itemName.equals(auction)) {
                 return i;
             }

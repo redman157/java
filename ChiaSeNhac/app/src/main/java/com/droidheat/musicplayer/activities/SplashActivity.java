@@ -1,11 +1,5 @@
 package com.droidheat.musicplayer.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.PermissionChecker;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -14,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,12 +17,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
 
-import com.droidheat.musicplayer.BaseActivity;
+import com.droidheat.musicplayer.Constants;
+import com.droidheat.musicplayer.PerformMusicTasks;
+import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.database.Playlist;
 import com.droidheat.musicplayer.manager.CommonUtils;
-import com.droidheat.musicplayer.Constants;
-import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
@@ -99,13 +97,13 @@ public class SplashActivity extends AppCompatActivity {
                 Log.d(TAG, "asking permission");
             } else if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE) == PermissionChecker.PERMISSION_GRANTED) {
-                new PerformBackgroundTasks(this, sync).execute("task");
+                new PerformMusicTasks(this, sync).execute("tasks");
             } else {
                 (new CommonUtils(this)).showTheToast("Please enable permission from " +
                         "Settings > Apps > Noad Player > Permissions.");
             }
         } else {
-            new PerformBackgroundTasks(this, sync).execute("task");
+            new PerformMusicTasks(this, sync).execute("tasks");
         }
 
     }
@@ -149,7 +147,7 @@ public class SplashActivity extends AppCompatActivity {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                new PerformBackgroundTasks(this, sync).execute("tasks");
+                new PerformMusicTasks(this, sync).execute("tasks");
                 //weGotPermissions();
                 // permission was granted, yay! Do the
                 // contacts-related task you need to do.

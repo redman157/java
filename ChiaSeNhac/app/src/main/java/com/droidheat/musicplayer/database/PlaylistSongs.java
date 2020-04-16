@@ -34,7 +34,6 @@ public class PlaylistSongs {
         this.context = context;
         this.allPlaylistDB.newRenderDB(context);
         this.myDBHelper = new ReaderSQL(context, Database.PLAYLISTSONGS.DATABASE_NAME, null, 1);
-//        this.myDBHelper = new ReaderDB(context, database);
         myDBHelper.queryData(Database.PLAYLISTSONGS.SQL_CREATE_ENTRIES);
     }
 

@@ -5,13 +5,11 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaMetadata;
-import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.widget.RemoteViews;
 
 import com.droidheat.musicplayer.activities.HomeActivity;
-import com.droidheat.musicplayer.services.MusicPlayback;
+import com.droidheat.musicplayer.services.MediaPlayerService;
 
 public class MusicWidget4x1 extends AppWidgetProvider {
     private int playbackState = 0;
@@ -33,10 +31,10 @@ public class MusicWidget4x1 extends AppWidgetProvider {
                 );
 
 
-                Intent previousIntent = new Intent(context, MusicPlayback.class);
-                Intent playIntent = new Intent(context, MusicPlayback.class);
-                Intent nextIntent = new Intent(context, MusicPlayback.class);
-                Intent repeatIntent = new Intent(context, MusicPlayback.class);
+                Intent previousIntent = new Intent(context, MediaPlayerService.class);
+                Intent playIntent = new Intent(context, MediaPlayerService.class);
+                Intent nextIntent = new Intent(context, MediaPlayerService.class);
+                Intent repeatIntent = new Intent(context, MediaPlayerService.class);
 
 
                 previousIntent.setAction(Constants.ACTION.PREVIOUS);
@@ -69,14 +67,16 @@ public class MusicWidget4x1 extends AppWidgetProvider {
                     views.setImageViewResource(R.id.playImageView, R.drawable.app_play);
                 }
 
-                if (MusicPlayback.mMediaSessionCompat
+
+                // chú ý tìm và search khúc này update UI widget
+              /*  if (MusicPlayback.mMediaSessionCompat
                         .getController().getMetadata().getBitmap(MediaMetadata.METADATA_KEY_ALBUM) != null){
                     views.setImageViewBitmap(R.id.albumArtImageView,
                             MusicPlayback.mMediaSessionCompat
                                     .getController().getMetadata().getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART));
                 }
                 views.setTextViewText(R.id.titleTextView, MusicPlayback.mMediaSessionCompat.getController().getMetadata().getString(MediaMetadataCompat.METADATA_KEY_TITLE));
-                views.setTextViewText(R.id.albumTextView, MusicPlayback.mMediaSessionCompat.getController().getMetadata().getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
+                views.setTextViewText(R.id.albumTextView, MusicPlayback.mMediaSessionCompat.getController().getMetadata().getString(MediaMetadataCompat.METADATA_KEY_ALBUM));*/
 
                 appWidgetManager.updateAppWidget(appWidgetId, views);
 

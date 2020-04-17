@@ -1,13 +1,6 @@
 package com.droidheat.musicplayer.activities;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,12 +12,15 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.droidheat.musicplayer.ChangeMusic;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.IconView;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.RecentlyAdderAdapter;
-import com.droidheat.musicplayer.fragments.MusicDockFragment;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
@@ -75,7 +71,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
 
         }
         mTextArtist.setText(mSongs.get(position).getArtist());
-        mTextTitle.setText(mSongs.get(position).getTitle());
+        mTextTitle.setText(mSongs.get(position).getSongName());
         imageUtils.getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
     }
 
@@ -177,7 +173,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
             ImageUtils.getInstance(RecentlyAllMusicActivity.this).getSmallImageByPicasso(
                     SongManager.getInstance().newSongs().get(position).getAlbumID(),
                     mImgMedia);
-            mTextTitle.setText(mSongs.get(position).getTitle());
+            mTextTitle.setText(mSongs.get(position).getSongName());
             mTextArtist.setText(mSongs.get(position).getArtist());
             }
         }

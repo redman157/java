@@ -34,9 +34,9 @@ public class Constants {
     }
     public @interface VALUE {
         int MAX_SLIDERS = 5;
-        String ID = "ID";
+        String ID = "COL_ID";
         String NAME_PLAYLIST = "NAME_PLAYLIST";
-        String SYNC = "sync";
+        String SYNC = "isSync";
         String TASK = "task";
         String ALL_NEW_SONGS = "all_new_songs";
         String NEW_SONGS = "new_songs";

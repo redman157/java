@@ -34,7 +34,6 @@ import androidx.core.app.NotificationCompat;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.activities.HomeActivity;
-import com.droidheat.musicplayer.database.CategorySongs;
 import com.droidheat.musicplayer.manager.CommonUtils;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
@@ -62,7 +61,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private SongManager mSongManager;
     private SharedPrefsManager mSharedPrefsManager;
     private AudioManager mAudioManager;
-    //AudioPlayer notification ID
+    //AudioPlayer notification COL_ID
 
     private final Handler handler = new Handler();
     private boolean isInitAudioError;
@@ -427,11 +426,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
             int mediaMax = mSongs.get(SongManager.getInstance().getCurrentMusic()).getTime();
            /* Log.d("MMM", "LogMediaPosition : Enter ==== MediaPosition: "+mediaPosition +" ==== " +
-                    "MediaMax: "+mediaMax +" ==== Song Title: "+ mSongs.get(SongManager.getInstance().getCurrentMusic()).getTitle());*/
+                    "MediaMax: "+mediaMax +" ==== Song Title: "+ mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());*/
             iIntentSeekBar.putExtra("current_pos", mediaPosition);
             iIntentSeekBar.putExtra("media_max", mediaMax);
             iIntentSeekBar.putExtra("song_title",
-                    mSongs.get(SongManager.getInstance().getCurrentMusic()).getTitle());
+                    mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
             sendBroadcast(iIntentSeekBar);
 
         }catch (Exception e){
@@ -605,7 +604,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist())
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbum())
-                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, songModel.getTitle())
+                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, songModel.getSongName())
                     .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, songModel.getTime())
                     .build());
         }
@@ -712,7 +711,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 .setLargeIcon(bitmap)
                 .setSubText(mSongs.get(position).getFileName())
 
-                .setContentTitle(mSongs.get(position).getTitle())
+                .setContentTitle(mSongs.get(position).getSongName())
                 .setContentText(mSongs.get(position).getArtist())
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 // click notification intent to home activity
@@ -752,7 +751,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     .setLargeIcon(bitmap)
                     .setSubText(mSongs.get(position).getFileName())
 
-                    .setContentTitle(mSongs.get(position).getTitle())
+                    .setContentTitle(mSongs.get(position).getSongName())
                     .setContentText(mSongs.get(position).getArtist())
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     // click notification intent to home activity
@@ -910,7 +909,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         Log.d(tag,
-                "initMediaPlayer ERROR " + what + " - Extra"+ extra + " - " + mSongs.get(SongManager.getInstance().getCurrentMusic()).getTitle());
+                "initMediaPlayer ERROR " + what + " - Extra"+ extra + " - " + mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
 
         isInitAudioError = true;
         //Invoked when there has been an error during an asynchronous operation.
@@ -1019,23 +1018,22 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     void addVoteToTrack(String path) {
-        path = path.trim();
+      /*  path = path.trim();
         try {
-            CategorySongs mCategorySongs = CategorySongs.getInstance();
-            mCategorySongs.newRenderDB(this);
+            mSongManager.getCategorySongsDB()
 
-            if (mCategorySongs.checkRow(path)) {
+            if (mSongManager.getCategorySongsDB().searchCategory(path)) {
                 mCategorySongs.updateRow(path);
             } else {
-                mCategorySongs.addRow(1, mSongs.get(SongManager.getInstance().getCurrentMusic()));
+                mCategorySongs.addCategory(1, mSongs.get(SongManager.getInstance().getCurrentMusic()));
             }
             Log.d(tag, mCategorySongs.checkRow(path) +"" );
-            mCategorySongs.close();
+            mCategorySongs.closeDatabase();
         } catch (Exception e) {
 
-            /*Log.d(tag, "addVoteToTrack crashed.");
-            Log.d(tag,"==============");*/
-        }
+            *//*Log.d(tag, "addVoteToTrack crashed.");
+            Log.d(tag,"==============");*//*
+        }*/
     }
     Equalizer eq;
     BassBoost bassBoost;

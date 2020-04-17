@@ -23,7 +23,7 @@ import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.OnMusicChange;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.MusicAdapter;
-import com.droidheat.musicplayer.database.PlaylistSongs;
+import com.droidheat.musicplayer.database.SongOfPlayList;
 import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
@@ -62,7 +62,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     public void setMusicMain(ArrayList<SongModel> musicMain) {
         this.musicMain = musicMain;
     }
-    private PlaylistSongs mPlaylistSongsDB;
+    private SongOfPlayList mSongOfPlayListDB;
     private SongManager mSongManager;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,8 +75,6 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     @Override
     public void onStart() {
         super.onStart();
-        mPlaylistSongsDB = PlaylistSongs.getInstance();
-        mPlaylistSongsDB.newRenderDB(getContext());
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(getContext());
     }
@@ -91,7 +89,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
 
         mTextPlaying.setText(mSongModel.getAlbum());
         mTextArtists.setText(mSongModel.getArtist());
-        mTextTittle.setText(mSongModel.getTitle());
+        mTextTittle.setText(mSongModel.getSongName());
         ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongModel.getAlbumID(), mImgAlbumArt);
 
         return view;
@@ -122,8 +120,8 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
 
                 String name = editTitle.getText().toString();
                 if (!name.isEmpty()){
-                    if (!mSongManager.isExistsPlayList(name)) {
-                        mSongManager.addPlaylist(name);
+                    if (!mSongManager.getAllPlaylistDB().searchPlayList(name)) {
+                        mSongManager.getAllPlaylistDB().addPlayList(name);
                         Toast.makeText(getContext(), "Create PlayList Name: "+name, Toast.LENGTH_SHORT).show();
                     }
 
@@ -144,7 +142,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
 
         ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongModel.getAlbumID(), imageView);
 
-        textTitle.setText(mSongModel.getTitle());
+        textTitle.setText(mSongModel.getSongName());
         btnAddMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,9 +153,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mSongManager.isExistsPlayList(btnAdd.getText().toString())){
-
-                }
+               // Add music cần search playlist rồi mới add music
 
             }
         });
@@ -193,7 +189,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
                 mMusicAdapter = new MusicAdapter(getContext(), mDlOptionMusic);
                 int pos = sharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1);
                 for (int i = 0; i < mSongModels.size(); i++) {
-                    if (mSongModels.get(i).getTitle().equals(musicMain.get(pos).getTitle())) {
+                    if (mSongModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
                         mMusicAdapter.setPosition(i);
 
                         showOptionMusic(mSongModels, i);

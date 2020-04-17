@@ -2,16 +2,12 @@ package com.droidheat.musicplayer.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,18 +22,9 @@ import androidx.core.content.PermissionChecker;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.PerformMusicTasks;
 import com.droidheat.musicplayer.R;
-import com.droidheat.musicplayer.database.Playlist;
 import com.droidheat.musicplayer.manager.CommonUtils;
-import com.droidheat.musicplayer.manager.ImageUtils;
 import com.droidheat.musicplayer.manager.SharedPrefsManager;
 import com.droidheat.musicplayer.manager.SongManager;
-import com.droidheat.musicplayer.models.SongModel;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Random;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -105,38 +92,18 @@ public class SplashActivity extends AppCompatActivity {
         } else {
             new PerformMusicTasks(this, sync).execute("tasks");
         }
-
     }
 
     private void setTextStatus() {
         mSongManager = SongManager.getInstance();
-        if (getIntent().getBooleanExtra(Constants.VALUE.SYNC, false)) {
-
+        sync = getIntent().getBooleanExtra(Constants.VALUE.SYNC, false);
+        if (sync) {
             mSongManager.setContext(this);
-            mSongManager.sync();
-            mTextSync.setText("Syncing..");
-            this.sync = true;
+            mSongManager.isSync(sync);
+            mTextSync.setText("Syncing...");
         } else {
-            mTextSync.setText("Initiating..");
+            mTextSync.setText("Initiating...");
         }
-
-    }
-
-    private void setDialogBack() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Request for permissions");
-        builder.setMessage("For music player to work we need your permission to access files on your device.");
-        builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
-                ActivityCompat.requestPermissions(SplashActivity.this, new String[]{"android.permission.READ_EXTERNAL_STORAGE"}, 1);
-            }
-        });
-        builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
-                SplashActivity.this.finish();
-            }
-        });
-        builder.show();
     }
 
     @Override
@@ -148,7 +115,7 @@ public class SplashActivity extends AppCompatActivity {
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                 new PerformMusicTasks(this, sync).execute("tasks");
-                //weGotPermissions();
+                // weGotPermissions();
                 // permission was granted, yay! Do the
                 // contacts-related task you need to do.
 
@@ -165,24 +132,25 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private class PerformBackgroundTasks extends AsyncTask<String, Integer, Long> {
+    /* @SuppressLint("StaticFieldLeak")
+   private class PerformBackgroundTasks extends AsyncTask<String, Integer, Long> {
         private WeakReference<Activity> weakReference;
-        private Boolean sync;
+        private Boolean isSync;
         private String TAG = "SplashActivityAsyncTaskLog";
         private SongManager mSongManager;
         private SharedPrefsManager sharedPrefsManager;
-        private Playlist playlist;
+        private AllPlaylist allPlaylist;
 
-        PerformBackgroundTasks(Activity activity, Boolean sync) {
+        PerformBackgroundTasks(Activity activity, Boolean isSync) {
             this.weakReference = new WeakReference<>(activity);
-            this.sync = sync;
+            this.isSync = isSync;
             this.mSongManager = SongManager.getInstance();
             this.mSongManager.setContext(activity);
             this.sharedPrefsManager = new SharedPrefsManager();
             this.sharedPrefsManager.setContext(activity);
-            this.playlist = Playlist.getInstance();
-            this.playlist.newRenderDB(activity);
+
+            this.allPlaylist = AllPlaylist.getInstance();
+            this.allPlaylist.newReaderDB(activity);
         }
         @Override
         protected Long doInBackground(String... params) {
@@ -199,58 +167,58 @@ public class SplashActivity extends AppCompatActivity {
             }
 
             try {
-                // -- Creating Playlist
-                Playlist mPlaylist = Playlist.getInstance();
+                // -- Creating AllPlaylist
+                AllPlaylist mAllPlaylist = AllPlaylist.getInstance();
 
-                mPlaylist.newRenderDB(SplashActivity.this);
+                mAllPlaylist.newReaderDB(SplashActivity.this);
 
-                if (mPlaylist.getCount() == 0) {
-                    mSongManager.addPlaylist("Playlist 1");
+                if (mAllPlaylist.getSize() == 0) {
+                    mSongManager.addPlaylist("AllPlaylist 1");
 
                 }
 
-                mPlaylist.close();
+                mAllPlaylist.closeDatabase();
 
-                if (sync) {
+                if (isSync) {
                     for (int song = 0; song < mSongManager.getAllPlayLists().size(); song++) {
                         int playlistID = Integer
                                 .parseInt(Objects.requireNonNull
                                         (mSongManager.getAllPlayLists()
-                                                .get(song).get("ID")));
+                                                .get(song).get("COL_ID")));
 
                         ArrayList<SongModel> mPlayListSongs = mSongManager.playlistSongs(playlistID);
 
                         if (!mPlayListSongs.isEmpty()) {
                             for (int item = 0; item < mPlayListSongs.size(); item++) {
-                                Log.d(TAG, "Playlist: Search if current song " + item + " is not similar with song in new songs list");
+                                Log.d(TAG, "AllPlaylist: Search if current song " + item + " is not similar with song in new songs list");
                                 if (!mSongManager.allSortSongs().contains(mPlayListSongs.get(item))) {
-                                    Log.d(TAG, "Playlist: current playlist song doesn't exist in allSortSongs," +
+                                    Log.d(TAG, "AllPlaylist: current allPlaylist song doesn't exist in allSortSongs," +
                                             " so lets see if only path is changed or user has moved the song");
                                     boolean isFound = false;
                                     for (int fItem = 0; fItem < mSongManager.allSortSongs().size(); fItem++) {
-                                        if ((mSongManager.allSortSongs().get(fItem).getTitle() +
+                                        if ((mSongManager.allSortSongs().get(fItem).getSongName() +
                                                 mSongManager.allSortSongs().get(fItem).getDuration())
-                                                .equals(mPlayListSongs.get(item).getTitle() +
+                                                .equals(mPlayListSongs.get(item).getSongName() +
                                                         mPlayListSongs.get(item).getDuration())) {
-                                            Log.d(TAG, "Playlist: song " + item + " does exist and is probably moved," +
+                                            Log.d(TAG, "AllPlaylist: song " + item + " does exist and is probably moved," +
                                                     " so lets change broken song with lasted");
                                             mPlayListSongs.remove(item);
                                             mPlayListSongs.add(item, mSongManager.allSortSongs().get(fItem));
-                                            Log.d(TAG, "Playlist: position doesn't change and we changed broken song. All good!");
+                                            Log.d(TAG, "AllPlaylist: position doesn't change and we changed broken song. All good!");
                                             isFound = true;
                                             fItem = mSongManager.allSortSongs().size();
                                         }
                                     }
                                     if (!isFound) {
-                                        Log.d(TAG, "Playlist: " + item + " song is deleted from device");
+                                        Log.d(TAG, "AllPlaylist: " + item + " song is deleted from device");
                                         mPlayListSongs.remove(item);
-                                        Log.d(TAG, "Playlist: since a song is removed," +
+                                        Log.d(TAG, "AllPlaylist: since a song is removed," +
                                                 " on doing next song loop will skip one song");
                                         item--;
-                                        Log.d(TAG, "Playlist: j-- to ensure for loop stays on same song");
+                                        Log.d(TAG, "AllPlaylist: j-- to ensure for loop stays on same song");
                                     }
                                 } else {
-                                    Log.d(TAG, "Playlist: Song " + item + " is okay");
+                                    Log.d(TAG, "AllPlaylist: Song " + item + " is okay");
                                 }
                                 if (isCancelled()) {
                                     break; // REMOVE IF NOT USED IN A FOR LOOP
@@ -258,7 +226,7 @@ public class SplashActivity extends AppCompatActivity {
                             }
                             // Update favourite songs list
                             mSongManager.updatePlaylistSongs(playlistID, mPlayListSongs);
-                            Log.d(TAG, "Playlist: done!");
+                            Log.d(TAG, "AllPlaylist: done!");
                         }
 
                         //Todo Re-add song but change fields
@@ -276,9 +244,9 @@ public class SplashActivity extends AppCompatActivity {
                                         " so lets see if only path is changed or user has moved the song");
                                 boolean isFound = false;
                                 for (int i = 0; i < mSongManager.allSortSongs().size(); i++) {
-                                    if ((mSongManager.allSortSongs().get(i).getTitle() +
+                                    if ((mSongManager.allSortSongs().get(i).getSongName() +
                                             mSongManager.allSortSongs().get(i).getDuration())
-                                            .equals(mFavSongs.get(j).getTitle() +
+                                            .equals(mFavSongs.get(j).getSongName() +
                                                     mFavSongs.get(j).getDuration())) {
                                         Log.d(TAG, "Favourites: songs does exist and is probably moved," +
                                                 " so lets change broken song with lasted");
@@ -314,9 +282,9 @@ public class SplashActivity extends AppCompatActivity {
                                         " so lets see if only path is changed or user has moved the song");
                                 boolean isFound = false;
                                 for (int i = 0; i < mSongManager.allSortSongs().size(); i++) {
-                                    if ((mSongManager.allSortSongs().get(i).getTitle() +
+                                    if ((mSongManager.allSortSongs().get(i).getSongName() +
                                             mSongManager.allSortSongs().get(i).getDuration())
-                                            .equals(mostPlayed.get(j).getTitle() +
+                                            .equals(mostPlayed.get(j).getSongName() +
                                                     mostPlayed.get(j).getDuration())) {
                                         Log.d(TAG, "MostPlayed: songs does exist and is probably moved," +
                                                 " so lets change broken song with lasted");
@@ -343,7 +311,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 }
             } catch (Exception e) {
-                Log.d(TAG,"Unable to perform sync");
+                Log.d(TAG,"Unable to perform isSync");
                 e.printStackTrace();
                 Log.d(TAG, e.getMessage());
 
@@ -382,5 +350,5 @@ public class SplashActivity extends AppCompatActivity {
             count.start();
 
         }
-    }
+    }*/
 }

@@ -1,12 +1,5 @@
 package com.droidheat.musicplayer.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,11 +10,17 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.droidheat.musicplayer.BaseActivity;
 import com.droidheat.musicplayer.Constants;
@@ -40,7 +39,6 @@ import com.droidheat.musicplayer.models.SongModel;
 import com.droidheat.musicplayer.services.MediaPlayerService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
-
 
 import java.util.ArrayList;
 
@@ -248,9 +246,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             mSongs = SongManager.getInstance().newSongs();
         }
         processEndOfList(SongManager.getInstance().getCurrentMusic());
-        Log.d("PPP", mSongs.get(SongManager.getInstance().getCurrentMusic()).getTitle());
+        Log.d("PPP", mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
         mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
-        mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getTitle());
+        mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
         imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
 
     }

@@ -1,9 +1,6 @@
 package com.droidheat.musicplayer;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
 
 import com.droidheat.musicplayer.fragments.MusicDockFragment;
 import com.droidheat.musicplayer.manager.ImageUtils;
@@ -62,7 +59,7 @@ public class ChangeMusic {
         switch (type){
             case Constants.VALUE.ALL_SONGS:
                 mMusicDockFragment.mTextTitle.setText(
-                        SongManager.getInstance().allSortSongs().get(position).getTitle());
+                        SongManager.getInstance().allSortSongs().get(position).getSongName());
                 mMusicDockFragment.mTextArtists.setText(
                         SongManager.getInstance().allSortSongs().get(position).getArtist());
 
@@ -74,7 +71,7 @@ public class ChangeMusic {
                 break;
             case Constants.VALUE.NEW_SONGS:
                 mMusicDockFragment.mTextTitle.setText(
-                        SongManager.getInstance().newSongs().get(position).getTitle());
+                        SongManager.getInstance().newSongs().get(position).getSongName());
                 mMusicDockFragment.mTextArtists.setText(
                         SongManager.getInstance().newSongs().get(position).getArtist());
 

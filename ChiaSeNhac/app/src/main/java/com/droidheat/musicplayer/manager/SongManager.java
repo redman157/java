@@ -2,29 +2,18 @@ package com.droidheat.musicplayer.manager;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -32,32 +21,30 @@ import androidx.core.content.ContextCompat;
 
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.R;
+import com.droidheat.musicplayer.database.AllPlaylist;
 import com.droidheat.musicplayer.database.CategorySongs;
-import com.droidheat.musicplayer.database.FavouriteSongs;
-import com.droidheat.musicplayer.database.Playlist;
-import com.droidheat.musicplayer.database.PlaylistSongs;
-import com.droidheat.musicplayer.adapters.PlaylistFragmentAdapterSimple;
+import com.droidheat.musicplayer.database.SongOfPlayList;
 import com.droidheat.musicplayer.models.SongModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
-import java.util.TimeZone;
-import java.util.TreeMap;
 
 public class SongManager {
-    private ArrayList<HashMap<String, String>> albums = new ArrayList<>();
-    private ArrayList<HashMap<String, String>> artists = new ArrayList<>();
-    private  ArrayList<SongModel> mainList = new ArrayList<>();
+    /*private ArrayList<HashMap<String, String>> getAlbumsList = new ArrayList<>();
+    private ArrayList<HashMap<String, String>> artists = new ArrayList<>();*/
+
+    private Map<String, ArrayList<SongModel>> albumLists = new HashMap<>();
+    private Map<String, ArrayList<SongModel>> artistLists = new HashMap<>();
+    private Map<String, ArrayList<SongModel>> folderLists = new HashMap<>();
+    private ArrayList<SongModel> mainList = new ArrayList<>();
     private ArrayList<SongModel> queue = new ArrayList<>();
     private String TAG = "SongsManagerConsole";
     /* access modifiers changed from: private */
@@ -65,6 +52,10 @@ public class SongManager {
     /* access modifiers changed from: private */
     private SharedPrefsManager mSharedPrefsManager;
     private int totalSongs;
+    private AllPlaylist mAllPlaylist;
+    private SongOfPlayList mSongOfPlayList;
+    private CategorySongs mCategorySongs;
+
     @SuppressLint("StaticFieldLeak")
     private static SongManager instance;
 
@@ -79,34 +70,31 @@ public class SongManager {
 
     }
 
-    public ArrayList<SongModel> getMainList() {
-        return mainList;
-    }
-
-    public void setMainList(ArrayList<SongModel> mainList) {
-        this.mainList = mainList;
-    }
-
-    public ArrayList<SongModel> getQueue() {
-        return queue;
-    }
-
     public Context getContext() {
         return context;
     }
 
     public void setContext(Context context) {
         this.context = context;
-
+        mAllPlaylist = new AllPlaylist(context);
+        mSongOfPlayList = new SongOfPlayList(context);
+        mCategorySongs = new CategorySongs(context);
         this.mSharedPrefsManager = new SharedPrefsManager();
         this.mSharedPrefsManager.setContext(context);
         totalSongs = mSharedPrefsManager.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1);
 
+    }
+
+    public void initDatabase(){
+
+    }
+    public void installData(){
         // lần đầu tiên cài app
         if (totalSongs == -1) {
             grabIfEmpty();
             if (queue.isEmpty()) {
                 try {
+                    // sao lưu file
                     Type type = new TypeToken<ArrayList<SongModel>>() {
                     }.getType();
                     ArrayList<SongModel> restoreData = new Gson().fromJson(mSharedPrefsManager.getString(Constants.PREFERENCES.KEY, null), type);
@@ -121,7 +109,7 @@ public class SongManager {
             if (totalSongs == mainList.size()){
                 return;
             }else {
-                grabData();
+                crawlData();
             }
         }
     }
@@ -130,18 +118,10 @@ public class SongManager {
         int pos = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION, -1);
         return pos;
     }
-    public int getPrevMusic(){
-        int pos = mSharedPrefsManager.getInteger(Constants.PREFERENCES.POSITION_BACK, -1);
-        return pos;
-    }
-    public void setPrevMusic(int position) {
-        mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION_BACK, position);
-    }
 
     public void setCurrentMusic(int position) {
         mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION, position);
     }
-
 
     public ArrayList<SongModel> queue() {
         if (queue.isEmpty()){
@@ -159,7 +139,7 @@ public class SongManager {
         Collections.sort(songs, new Comparator<SongModel>() {
             @Override
             public int compare(SongModel song1, SongModel song2) {
-                return song1.getTitle().compareTo(song2.getTitle());
+                return song1.getSongName().compareTo(song2.getSongName());
             }
         });
         return songs;
@@ -181,10 +161,17 @@ public class SongManager {
         return shuffleSongs;
     }
 
-    public ArrayList<HashMap<String, String>> albums() {
-        grabIfEmpty(); // albums
+    /*public ArrayList<HashMap<String, String>> getAlbumsList() {
+        grabIfEmpty(); // getAlbumsList
         return albums;
+    }*/
+
+
+/*    public ArrayList<HashMap<String, String>> artists() {
+        grabIfEmpty(); // artists
+        return artists;
     }
+    */
 
     public ArrayList<SongModel> albumSongs(String album) {
         ArrayList<SongModel> songs = new ArrayList<>();
@@ -198,10 +185,7 @@ public class SongManager {
         return songs;
     }
 
-    public ArrayList<HashMap<String, String>> artists() {
-        grabIfEmpty(); // artists
-        return artists;
-    }
+
 
     public List<String> getAlbumIds(String rawAlbumIds) {
         String SPLIT_EXPRESSION = ";,,;,;;";
@@ -224,155 +208,20 @@ public class SongManager {
         return songs;
     }
 
-    /*
-     * Playlists
-     */
-
-    public ArrayList<HashMap<String, String>> getAllPlayLists() {
-        Playlist db =  Playlist.getInstance();
-        db.newRenderDB(context);
-
-        ArrayList<HashMap<String, String>> list = new ArrayList<>();
-        if (db.getCount() > 0) {
-            list = db.getAllPlayList();
-        }
-        db.close();
-        return list;
-    }
-
-    public HashMap<String, String> getPlaylist(int ID) {
-        HashMap<String, String> hash = null;
-        Playlist db =  Playlist.getInstance();
-        db.newRenderDB(context);
-
-        if (db.getPlayList(ID)!= null) {
-            hash =db.getPlayList(ID);
-        }
-        db.close();
-        return hash;
-    }
-
-    public void addPlaylist(String name) {
-        Playlist db =  Playlist.getInstance();
-        db.newRenderDB(context);
-        db.addPlayList(name);
-        db.close();
-    }
-
-
-    public boolean isExistsPlayList(String name) {
-        Playlist db =  Playlist.getInstance();
-        db.newRenderDB(context);
-        boolean result = db.searchPlayList(name);
-        db.close();
-        return result;
-    }
-
-    /*public void deletePlaylist(int id) {
-        Playlist db =  Playlist.getInstance();
-        db.newRenderDB(context);
-        db.deletePlayList(id);
-        db.close();
-    }*/
-
-
-    public void removePlaylistSong(int id, ArrayList<SongModel> newlist) {
-        PlaylistSongs db =  PlaylistSongs.getInstance();
-        db.newRenderDB(context);
-
-        db.deleteAll(id);
-        for (int i = 0; i < newlist.size(); i++) {
-            db.addRow(id, newlist.get(i));
-        }
-        //TODO:MainActivity.shouldNotifyDataChanged = true;
-        db.close();
-    }
-
-    public ArrayList<SongModel> playlistSongs(int playlistID) {
-        ArrayList<SongModel> list = new ArrayList<>();
-        PlaylistSongs db = PlaylistSongs.getInstance();
-        db.newRenderDB(context);
-
-        if (db.getCount(playlistID) > 0) {
-            list = db.getAllRows(playlistID);
-        }
-        db.close();
-        return list;
-    }
-
-    public void updatePlaylistSongs(int playlistID, ArrayList<SongModel> newList) {
-        PlaylistSongs db = PlaylistSongs.getInstance();
-        db.newRenderDB(context);
-
-        db.deleteAll(playlistID);
-        for (int i = 0; i < newList.size(); i++) {
-            db.addRow(playlistID, newList.get(i));
-        }
-        db.close();
-    }
-
-    public ArrayList<SongModel>favouriteSongs() {
-        ArrayList<SongModel> list;
-        FavouriteSongs db = FavouriteSongs.getInstance();
-        db.newRenderDB(context);
-
-        list = new ArrayList<>(db.getAllRows());
-        db.close();
-        return list;
-    }
-
-    public boolean addToFavouriteSongs(SongModel row) {
-        FavouriteSongs db = FavouriteSongs.getInstance();
-        db.newRenderDB(context);
-
-        db.addRow(row);
-        db.close();
-        //TODO:MainActivity.shouldNotifyDataChanged = true;
-        return true;
-    }
-
-    public void updateFavouritesList(ArrayList<SongModel> newFavList) {
-        FavouriteSongs db = FavouriteSongs.getInstance();
-        db.newRenderDB(context);
-
-        db.deleteAll();
-        Collections.reverse(newFavList);
-        for (int i = 0; i < newFavList.size(); i++) {
-            db.addRow(newFavList.get(i));
-        }
-        db.close();
-    }
-
-    public ArrayList<SongModel> mostPlayedSongs() {
-        ArrayList<SongModel> list;
-        CategorySongs db = CategorySongs.getInstance();
-        db.newRenderDB(context);
-
-        list = db.getAllRows(1);
-        db.close();
-        return list;
-    }
-
-    public void updateMostPlayedList(ArrayList<SongModel> newList) {
-        CategorySongs db = CategorySongs.getInstance();
-        db.newRenderDB(context);
-        db.deleteAll(1);
-        for (int i = 0; i < newList.size(); i++) {
-            db.addRow(1, newList.get(i));
-        }
-        db.close();
-    }
 
     /*
      * Actions
      */
 
-    public void sync() {
-        mainList.clear();
-        albums.clear();
-        artists.clear();
-        queue.clear();
-        grabIfEmpty(); // sync
+    public void isSync(boolean sync) {
+        if (sync) {
+            mainList.clear();
+            albumLists.clear();
+            folderLists.clear();
+            artistLists.clear();
+            queue.clear();
+        }
+        grabIfEmpty(); // isSync
     }
 
     public void addToQueue(SongModel song) {
@@ -392,7 +241,7 @@ public class SongManager {
 
     public void playNext(SongModel song) {
         queue().add(getCurrentMusic() + 1, song);
-        (new CommonUtils(context)).showTheToast("Playing next: " + song.getTitle());
+        (new CommonUtils(context)).showTheToast("Playing next: " + song.getSongName());
     }
 
     public  boolean replaceQueue(final ArrayList<SongModel> list) {
@@ -425,7 +274,7 @@ public class SongManager {
             } else if (options[i] == R.id.add_to_queue_musicUtils) {
                 name = "Add to Queue";
             } else if (options[i] == R.id.add_to_playlist_musicUtils) {
-                name = "Add to Playlist";
+                name = "Add to AllPlaylist";
             } else if (options[i] == R.id.shuffle_play_musicUtils) {
                 name = "Shuffle Play";
             } else if (options[i] == R.id.use_as_ringtone_musicUtils) {
@@ -467,175 +316,6 @@ public class SongManager {
         }
     }
 
-
-
-
-    public void playNext(ArrayList<SongModel> arrayList) {
-        for (int i = arrayList.size() - 1; i >= 0; i--) {
-            playNext(arrayList.get(i));
-        }
-        (new CommonUtils(context)).showTheToast("Playing this list next!");
-    }
-
-    public void addToPlaylist(final ArrayList<SongModel> arrayList) {
-        final Dialog dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_addtoplaylist);
-
-        // set the custom dialog components - text, image and button
-        ListView listView = dialog.findViewById(R.id.listView);
-        ImageView relAdd = dialog.findViewById(R.id.add_playlist);
-        final PlaylistFragmentAdapterSimple playlistAdapter = new PlaylistFragmentAdapterSimple
-                (context);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PlaylistSongs db = PlaylistSongs.getInstance();
-                db.newRenderDB(context);
-
-                int playListID = Integer.parseInt(Objects.requireNonNull(getAllPlayLists().get(position).get("ID")));
-                for (int i = 0; i < arrayList.size(); i++) {
-                    if (!db.getAllRows(playListID).contains(arrayList.get(i))) {
-                        db.addRow(playListID, arrayList.get(i));
-                    }
-                }
-                (new CommonUtils(context)).showTheToast(arrayList.size() +
-                        (arrayList.size() > 1 ? " songs are" : " song is") + " successfully added to playlist! ");
-                db.close();
-                if (dialog.isShowing()) {
-                    dialog.cancel();
-                }
-
-            }
-        });
-
-        relAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog alertDialog = new Dialog(context);
-                alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                alertDialog.setContentView(R.layout.dialog_add_playlist);
-
-                final EditText input = alertDialog.findViewById(R.id.edit_title);
-                input.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context,
-                        (new CommonUtils(context)).accentColor(mSharedPrefsManager))));
-                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
-
-                Button btnCreate = alertDialog.findViewById(R.id.btnCreate);
-                btnCreate.setTextColor(ContextCompat.getColor(context,
-                        (new CommonUtils(context)).accentColor(mSharedPrefsManager)));
-                btnCreate.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String name = input.getText().toString();
-                        if (!name.isEmpty()) {
-                            addPlaylist(name);
-                            playlistAdapter.notifyDataSetChanged();
-                            alertDialog.cancel();
-                        } else {
-                            Toast.makeText(context, "Please enter playlist name.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-                Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
-                btnCancel.setTextColor(ContextCompat.getColor(context,
-                        (new CommonUtils(context)).accentColor(mSharedPrefsManager)));
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.cancel();
-                    }
-                });
-                alertDialog.show();
-            }
-
-        });
-        listView.setAdapter(playlistAdapter);
-        dialog.show();
-    }
-
-    public void addToPlaylist(final SongModel hash) {
-        final Dialog dialog = new Dialog(context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_addtoplaylist);
-
-        // set the custom dialog components - text, image and button
-        ListView listView = dialog.findViewById(R.id.listView);
-        ImageView relAdd = dialog.findViewById(R.id.add_playlist);
-        ImageView albumArt = dialog.findViewById(R.id.albumArt);
-        ImageUtils.getInstance(getContext()).getImageByPicasso(hash.getAlbumID(), albumArt);
-        final PlaylistFragmentAdapterSimple playlistAdapter = new PlaylistFragmentAdapterSimple
-                (context);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PlaylistSongs db = PlaylistSongs.getInstance();
-                db.newRenderDB(context);
-
-                int playListID = Integer.parseInt(Objects.requireNonNull(getAllPlayLists().get(position).get("ID")));
-                if (!db.getAllRows(playListID).contains(hash)) {
-                    db.addRow(playListID, hash);
-                    (new CommonUtils(context)).showTheToast(hash.getTitle() + " is added to playlist! ");
-                } else {
-                    (new CommonUtils(context)).showTheToast("Error: Song is already in Playlist!");
-                }
-                db.close();
-                if (dialog.isShowing()) {
-                    dialog.cancel();
-                }
-
-            }
-        });
-
-        relAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Dialog alertDialog = new Dialog(context);
-                alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                alertDialog.setContentView(R.layout.dialog_add_playlist);
-
-                final EditText input = alertDialog.findViewById(R.id.edit_title);
-                input.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(context
-                        , (new CommonUtils(context)).accentColor(mSharedPrefsManager))));
-                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
-
-                Button btnCreate = alertDialog.findViewById(R.id.btnCreate);
-                btnCreate.setTextColor(ContextCompat.getColor(context,
-                        (new CommonUtils(context)).accentColor(mSharedPrefsManager)));
-                btnCreate.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String name = input.getText().toString();
-                        if (!name.isEmpty()) {
-                            addPlaylist(name);
-                            playlistAdapter.notifyDataSetChanged();
-                            alertDialog.cancel();
-                        } else {
-                            Toast.makeText(context, "Please enter playlist name.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-                Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
-                btnCancel.setTextColor(ContextCompat.getColor(context,
-                        (new CommonUtils(context)).accentColor(mSharedPrefsManager)));
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.cancel();
-                    }
-                });
-                alertDialog.show();
-            }
-
-        });
-        listView.setAdapter(playlistAdapter);
-        dialog.show();
-    }
-
     public  void shufflePlay(int id, ArrayList<SongModel> array) {
         ArrayList<SongModel> arrayList = new ArrayList<>(array);
         if (arrayList.size() > 0) {
@@ -661,9 +341,9 @@ public class SongManager {
 
     public AlertDialog info(SongModel songModel) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(songModel.getTitle());
+        builder.setTitle(songModel.getSongName());
         builder.setMessage("\nFile Name: " + songModel.getFileName() + "\n\n" +
-                "Song Title: " + songModel.getTitle() + "\n\n" +
+                "Song Title: " + songModel.getSongName() + "\n\n" +
                 "Album: " + songModel.getAlbum() + "\n\n" +
                 "Artist: " + songModel.getArtist() + "\n\n" +
                 "File location: " + songModel.getPath());
@@ -708,7 +388,6 @@ public class SongManager {
                 return i;
             }
         }
-
         return -1;
     }
 
@@ -735,196 +414,186 @@ public class SongManager {
 
     private void grabIfEmpty() {
         if (mainList.isEmpty()) {
-            grabData();
+            crawlData();
             Log.d(TAG, "Grabbing data for player...");
         } else {
             Log.d(TAG, "Data is present. Just setting context.");
         }
     }
 
-    private void grabData() {
-
+    private void crawlData() {
         String[] STAR = {"*"};
 
         boolean excludeShortSounds = mSharedPrefsManager.getBoolean(Constants.PREFERENCES.excludeShortSounds, false);
         boolean excludeWhatsApp = mSharedPrefsManager.getBoolean(Constants.PREFERENCES.excludeWhatsAppSounds, false);
 
-        Cursor cursor;
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-        cursor = context.getContentResolver().query(uri, STAR, selection, null, null);
-        Log.d(TAG, "Uri: "+uri.getPath() + " ==== Selection: "+ selection+ " ====== Cursor: "+cursor.getCount());
+        Cursor musicCursor = context.getContentResolver().query(uri, STAR, selection, null, null);
+        Log.d(TAG, "Uri: "+uri.getPath() + " ==== Selection: "+ selection+ " ====== Cursor: "+musicCursor.getCount());
 
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
+        if (musicCursor != null) {
+            if (musicCursor.moveToFirst()) {
                 do {
-                    String duration = cursor
-                            .getString(cursor
+                    String duration = musicCursor
+                            .getString(musicCursor
                                     .getColumnIndex(MediaStore.Audio.Media.DURATION));
-                    int currentDuration = Math.round(Integer
-                            .parseInt(duration));
+                    int currentDuration = Math.round(Integer.parseInt(duration));
 
                     if (currentDuration > ((excludeShortSounds) ? 60000 : 0)) {
-                        if (!excludeWhatsApp || !cursor.getString(cursor
+                        if (!excludeWhatsApp || !musicCursor.getString(musicCursor
                                 .getColumnIndex(MediaStore.Audio.Media.ALBUM)).equals("WhatsApp Audio")) {
 
-                            String songName = cursor
+                            String songName = musicCursor
                                     .getString(
-                                            cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
+                                            musicCursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
                                     .replace("_", " ").trim().replaceAll(" +", " ");
-                            String path = cursor.getString(cursor
+                            String path = musicCursor.getString(musicCursor
                                     .getColumnIndex(MediaStore.Audio.Media.DATA));
-                            String title = cursor.getString(cursor
+                            String title = musicCursor.getString(musicCursor
                                     .getColumnIndex(MediaStore.Audio.Media.TITLE)).replace("_", " ").trim().replaceAll(" +", " ");
-                            String artistName = cursor.getString(cursor
+                            String artistName = musicCursor.getString(musicCursor
                                     .getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                            String albumName = cursor.getString(cursor
+                            String albumName = musicCursor.getString(musicCursor
                                     .getColumnIndex(MediaStore.Audio.Media.ALBUM));
 
+                            long id = musicCursor.getColumnIndex
+                                    (MediaStore.Audio.Media._ID);
 
-                            String albumID = cursor
+                            String albumID = musicCursor
                                     .getString(
-                                            cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
+                                            musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
                                     );
 
-                            TimeZone tz = TimeZone.getTimeZone("UTC");
-                            SimpleDateFormat df = new SimpleDateFormat("mm : ss", Locale.getDefault());
-                            df.setTimeZone(tz);
-                            String time = String.valueOf(df.format(currentDuration));
-
                             // Adding song to list
-                            SongModel songModel = new SongModel();
-                            songModel.setFileName(songName);
-                            songModel.setTitle(title);
-                            songModel.setArtist(artistName);
-                            songModel.setAlbum(albumName);
-                            songModel.setAlbumID(albumID);
-                            songModel.setPath(path);
-                            songModel.setDuration(time);
-                            songModel.setTime(currentDuration);
-                            mainList.add(songModel);
+                            SongModel.Builder builder = new SongModel.Builder();
+                            builder.setFileName(songName);
+                            builder.setSongName(title);
+                            builder.setArtist(artistName);
+                            builder.setAlbum(albumName);
+                            builder.setAlbumID(albumID);
+                            builder.setPath(path);
+                            builder.setTime(currentDuration);
+                            builder.setID(String.valueOf(id));
+
+                            mainList.add(builder.generate());
                         }
                     }
                 }
-                while (cursor.moveToNext());
+                while (musicCursor.moveToNext());
             }
 
-            setMainList(mainList);
+            setMainMusic(mainList);
             mSharedPrefsManager.setInteger(Constants.PREFERENCES.TOTAL_SONGS, mainList.size());
-            cursor.close();
+            musicCursor.close();
         }
 
-        /*
-         * Albums Data
-         */
+        filterData(mainList);
+        Log.d(TAG, "crawlData() performed");
+    }
+
+    /*
+     * Albums Data && Artist Data && folder Data
+     */
+    private void filterData(ArrayList<SongModel> mainList){
 
         ArrayList<SongModel> allSongList = new ArrayList<>(mainList);
-        ArrayList<HashMap<String, String>> list = new ArrayList<>();
-        for (int i = 0; i < allSongList.size(); i++) {
-            String name = allSongList.get(i).getAlbum();
-            String artist = allSongList.get(i).getArtist();
-            int albumIndex = -1;
-            if (list.size() > 0) {
-                for (int j = 0; j < list.size(); j++) {
-                    String auction = list.get(j).get("album");
-                    if (name.equals(auction)) {
-                        albumIndex = j;
-                    }
-                }
-            }
-            if (albumIndex == -1) {
 
-                HashMap<String, String> song = new HashMap<>();
-                song.put("album", name);
-                song.put("artist", artist);
-                list.add(song);
-            }
-        }
+        for (int song = 0; song < allSongList.size(); song++) {
+            String artist = allSongList.get(song).getArtist();
+            String album = allSongList.get(song).getAlbum();
+            String folder = allSongList.get(song).getPath();
 
-        ArrayList<HashMap<String, String>> list2 = new ArrayList<>();
-        Map<String, String> sortedMap = new TreeMap<>();
-        for (int i = 0; i < list.size(); i++) {
-            sortedMap.put(Objects.requireNonNull(list.get(i).get("album")),
-                    Objects.requireNonNull(list.get(i).get("album")));
-        }
-        for (Map.Entry<String, String> entry : sortedMap.entrySet()) {
-            HashMap<String, String> song = new HashMap<>();
-            String title = entry.getValue();
-            int index = getIndexAlbum(title, list);
-            song.put("album", list.get(index).get("album"));
-            song.put("artist", list.get(index).get("artist"));
-            list2.add(song);
-        }
-
-        albums.addAll(list2);
-
-        /*
-         * Artists Data
-         */
-        String SPLIT_EXPRESSION = ";,,;,;;";
-        list.clear();
-        list2.clear();
-        sortedMap.clear();
-
-        for (int i = 0; i < allSongList.size(); i++) {
-
-            String name = allSongList.get(i).getArtist();
-            String albums = allSongList.get(i).getAlbum();
-
-            int albumIndex = -1;
-            if (list.size() > 0) {
-                for (int j = 0; j < list.size(); j++) {
-                    String auction = list.get(j).get("artist");
-                    if (name.equals(auction)) {
-                        albumIndex = j;
-                    }
+            while (true) {
+                if (artistLists.get(artist) != null) {
+                    artistLists.get(artist).add(allSongList.get(song));
+                    break;
+                } else {
+                    artistLists.put(artist, new ArrayList<SongModel>());
                 }
             }
 
-            if (albumIndex > -1) {
-                if (albums != null) {
-                    String[] albumSplit = Objects.requireNonNull(list.get(albumIndex).get("albums")).split(SPLIT_EXPRESSION);
-                    boolean found = false;
-                    for (String anAlbumSplit : albumSplit) {
-                        if (anAlbumSplit.trim().equals(albums)) {
-                            found = true;
-                        }
-                    }
-                    if (!found) {
-                        albums = list.get(albumIndex).get("albums") + SPLIT_EXPRESSION + allSongList.get(i).getAlbum();
-                    }
-
+            while (true) {
+                if (albumLists.get(album) != null) {
+                    albumLists.get(album).add(allSongList.get(song));
+                    break;
+                } else {
+                    albumLists.put(album, new ArrayList<SongModel>());
                 }
             }
 
-            if (albumIndex == -1) {
-
-                HashMap<String, String> song = new HashMap<>();
-                song.put("artist", name);
-                song.put("albums", albums);
-                list.add(song);
-            } else {
-                HashMap<String, String> song = new HashMap<>();
-                song.put("artist", name);
-                song.put("albums", albums);
-                list.add(albumIndex, song);
+            while (true) {
+                if (folderLists.get(folder) != null) {
+                    folderLists.get(folder).add(allSongList.get(song));
+                    break;
+                } else {
+                    folderLists.put(folder, new ArrayList<SongModel>());
+                }
             }
         }
-        for (int i = 0; i < list.size(); i++) {
-            sortedMap.put(Objects.requireNonNull(list.get(i).get("artist")),
-                    Objects.requireNonNull(list.get(i).get("artist")));
-        }
-        for (Map.Entry<String, String> entry : sortedMap.entrySet()) {
-            HashMap<String, String> song = new HashMap<>();
-            String title = entry.getValue();
-            int index = getIndexArtist(title, list);
-            song.put("artist", list.get(index).get("artist"));
-            song.put("albums", list.get(index).get("albums"));
-            list2.add(song);
-        }
-
-        artists.addAll(list2);
-
-        Log.d(TAG, "grabData() performed");
     }
+
+    public Map<String, ArrayList<SongModel>> getAlbum() {
+        grabIfEmpty();
+        return albumLists;
+    }
+
+    public void setAlbum(Map<String, ArrayList<SongModel>> albumLists) {
+        this.albumLists = albumLists;
+    }
+
+    public Map<String, ArrayList<SongModel>> getArtist() {
+        grabIfEmpty();
+        return artistLists;
+    }
+
+    public void setArtist(Map<String, ArrayList<SongModel>> artistLists) {
+        this.artistLists = artistLists;
+    }
+
+    public Map<String, ArrayList<SongModel>> getFolder() {
+        grabIfEmpty();
+        return folderLists;
+    }
+
+    public void setFolder(Map<String, ArrayList<SongModel>> folderLists) {
+        this.folderLists = folderLists;
+    }
+
+    public ArrayList<SongModel> getMainMusic() {
+        return mainList;
+    }
+
+    public void setMainMusic(ArrayList<SongModel> mainList) {
+        this.mainList = mainList;
+    }
+
+    public ArrayList<SongModel> getQueue() {
+        return queue;
+    }
+
+    public AllPlaylist getAllPlaylistDB() {
+        return mAllPlaylist;
+    }
+
+    public void setAllPlaylistDB(AllPlaylist allPlaylistDB) {
+        this.mAllPlaylist = allPlaylistDB;
+    }
+
+    public SongOfPlayList getSongOfPlayListDB() {
+        return mSongOfPlayList;
+    }
+
+    public void setSongOfPlayListDB(SongOfPlayList songOfPlayListDB) {
+        this.mSongOfPlayList = songOfPlayListDB;
+    }
+
+    public CategorySongs getCategorySongsDB() {
+        return mCategorySongs;
+    }
+
+    public void setCategorySongsDB(CategorySongs categorySongsDB) {
+        this.mCategorySongs = categorySongsDB;
+    }
+
 }

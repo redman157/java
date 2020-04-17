@@ -2,11 +2,9 @@ package com.droidheat.musicplayer.adapters;
 
 import android.content.Context;
 
-import android.icu.util.LocaleData;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -107,7 +105,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
 
         public void set(final SongModel song) {
             //UI setting code
-            mTextName.setText(song.getTitle());
+            mTextName.setText(song.getSongName());
             mTextArtist.setText(song.getArtist());
             mTextTime.setText(format.format(song.getTime()));
             mImgMusic.setClipToOutline(true);

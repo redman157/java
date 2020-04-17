@@ -17,8 +17,6 @@ public class ViewOnClick implements View.OnClickListener {
     public ViewOnClick(int resource){
         this.resource = resource;
         this.allSongs = mSongManager.allSortSongs();
-        this.mostSongs = mSongManager.mostPlayedSongs();
-        this.favSongs = mSongManager.favouriteSongs();
         this.newSongs = mSongManager.newSongs();
     }
     public ViewOnClick(int resource,String type){

@@ -91,7 +91,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     }
 
     private void assignView(){
-  /*      ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getTitle());
+  /*      ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getSongName());
         ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
         ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
                 mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);*/
@@ -117,7 +117,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
         mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION,position);
         mSharedPrefsManager.setString(Constants.PREFERENCES.TYPE, type);
 
-        ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getTitle());
+        ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getSongName());
         ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
         ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
                 mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);

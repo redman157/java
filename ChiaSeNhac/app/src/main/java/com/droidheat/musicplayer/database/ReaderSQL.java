@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 public class ReaderSQL extends SQLiteOpenHelper {
-
+    String TAG = "ReaderSQL_LOG";
     public ReaderSQL(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -23,7 +23,6 @@ public class ReaderSQL extends SQLiteOpenHelper {
         SQLiteDatabase database = getReadableDatabase();
         return database.rawQuery(sql, null);
     }
-
 
 
     @Override

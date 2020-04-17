@@ -1,11 +1,9 @@
 package com.droidheat.musicplayer.adapters;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.OnMusicChange;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.manager.ImageUtils;
@@ -112,7 +109,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
         public void setData(int pos){
             SongModel songModel = getListMusic().get(pos);
             if (mOptionMusic == pos){
-//                Log.d("KKK", "setData: "+getListMusic().get(pos).getTitle());
+//                Log.d("KKK", "setData: "+getListMusic().get(pos).getSongName());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     textTitle.setTextColor(mContext.getColor(R.color.red));
                 }else {
@@ -129,7 +126,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
             mImageUtils.getSmallImageByPicasso(songModel.getAlbumID(), imageView);
             textTime.setText(format.format(songModel.getTime()));
             textArtist.setText(songModel.getArtist());
-            textTitle.setText(songModel.getTitle());
+            textTitle.setText(songModel.getSongName());
         }
     }
 }

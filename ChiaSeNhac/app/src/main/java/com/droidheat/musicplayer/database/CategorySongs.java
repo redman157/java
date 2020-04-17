@@ -1,12 +1,12 @@
 package com.droidheat.musicplayer.database;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteException;
+import android.util.Log;
+import android.widget.Toast;
 
-import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.models.SongModel;
 
 import java.util.ArrayList;
@@ -14,37 +14,21 @@ import java.util.ArrayList;
 public class CategorySongs {
 
     private Context context;
-
+    private String TAG = "CategorySongsLog";
     /* renamed from: db */
     private SQLiteDatabase database;
-    private ReaderSQL myDBHelper;
+    private ReaderSQL mCategory;
 
 
-    private static CategorySongs instance;
-    public static CategorySongs getInstance() {
-        if ( instance == null){
-            instance = new CategorySongs();
-        }
-        return instance;
-    }
-
-    private CategorySongs() {
-    }
-
-    public void newRenderDB(Context context){
+    public CategorySongs(Context context){
         this.context = context;
-        myDBHelper = new ReaderSQL(context, Database.CATEGORY.DATABASE_NAME, null, 1 );
-        myDBHelper.queryData(Database.CATEGORY.SQL_CREATE_ENTRIES);
-//        this.myDBHelper = new ReaderDB(context, database);
+        mCategory = new ReaderSQL(context, Database.CATEGORY.DATABASE_NAME, null, 1 );
+        mCategory.queryData(Database.CATEGORY.SQL_CREATE_ENTRIES);
     }
 
-    public CategorySongs open() {
-        database = myDBHelper.getWritableDatabase();
-        return this;
-    }
 
-    public CategorySongs close() {
-        this.myDBHelper.close();
+    public CategorySongs closeDatabase() {
+        this.mCategory.close();
         return this;
     }
 
@@ -52,193 +36,166 @@ public class CategorySongs {
         return str.replaceAll("[^A-Za-z0-9()\\[\\]]", "");
     }
 
-    public long addRow(long playListId, SongModel songModel) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(Database.CATEGORY.TITLE, songModel.getTitle());
-        contentValues.put(Database.CATEGORY.CATEGORY, Long.toString(playListId));
-        contentValues.put(Database.CATEGORY.VOTES, "0");
-        contentValues.put(Database.CATEGORY.PATH, songModel.getPath());
-        contentValues.put(Database.CATEGORY.ARTIST, songModel.getArtist());
-        contentValues.put(Database.CATEGORY.ALBUM, songModel.getAlbum());
-        contentValues.put(Database.CATEGORY.NAME, songModel.getFileName());
-        contentValues.put(Database.CATEGORY.FAKEPATH, dropInvalidString(songModel.getPath()));
-        contentValues.put(Database.CATEGORY.DURATION, songModel.getDuration());
-        contentValues.put(Database.CATEGORY.ALBUM_ID, songModel.getAlbumID());
-        return database.insert(Database.CATEGORY.TABLE_NAME, "NULL", contentValues);
-    }
-
-    public ArrayList<SongModel> getAllRows(int id) {
-        String row = Database.CATEGORY.CATEGORY +"="+id;
-
-        SQLiteDatabase sQLiteDatabase = database;
-        String tableName = Database.CATEGORY.TABLE_NAME;
-        String[] allKeys = Database.CATEGORY.ALL_KEYS;
-        String votes = Database.CATEGORY.VOTES+ " DESC";
-
-        Cursor cursor = sQLiteDatabase.query(tableName, allKeys, row,
-                null, null, null, votes);
-        ArrayList<SongModel> models = new ArrayList<>();
-        if (cursor.moveToFirst()) {
-            do {
-                SongModel model = new SongModel();
-                model.setTitle(cursor.getString(3));
-                model.setPath(cursor.getString(4));
-                model.setArtist(cursor.getString(5));
-                model.setAlbum(cursor.getString(6));
-                model.setFileName(cursor.getString(7));
-                model.setDuration(cursor.getString(8));
-                model.setAlbumID(cursor.getString(9));
-                models.add(model);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return models;
-    }
-
-    public boolean deleteRow(long rowId, long category) {
-        String where = Database.CATEGORY.COLUMN_NAME_ID+"="+rowId+" AND "+ Database.CATEGORY.CATEGORY+"="+category;
-
-        return this.database.delete(Database.CATEGORY.TABLE_NAME, where, null) != 0;
-    }
-
-    public boolean deleteRowByPath(String path) {
-        String where = Database.CATEGORY.PATH +"=" +path;
-
+    public boolean isSelect(Cursor cursor){
+        cursor = mCategory.getData(Database.CATEGORY.QUERY);
         try {
-            if (this.database.delete(Database.CATEGORY.TABLE_NAME, where, null) != 0) {
+            if (cursor != null) {
+                cursor.moveToFirst();
                 return true;
             }
-            return false;
-        } catch (Exception unused) {
-            return false;
-        }
-    }
-
-    public int getCount(long id) {
-        String countId = "SELECT * FROM "+ Database.CATEGORY.TABLE_NAME+" WHERE "+ Database.CATEGORY.CATEGORY+"="+id;
-
-        Cursor rawQuery = this.database.rawQuery(countId, null);
-        int count = rawQuery.getCount();
-        rawQuery.close();
-        return count;
-    }
-
-    public boolean deleteAll(int id) {
-        try {
-            Cursor allRowsCursor = getAllRowsCursor();
-            long columnIndexOrThrow = (long) allRowsCursor.getColumnIndexOrThrow(Database.CATEGORY.COLUMN_NAME_ID);
-            if (allRowsCursor.moveToFirst()) {
-                do {
-                    deleteRow(allRowsCursor.getLong((int) columnIndexOrThrow), (long) id);
-                } while (allRowsCursor.moveToNext());
-            }
-            allRowsCursor.close();
-            return true;
-        } catch (Exception unused) {
-            return false;
-        }
-    }
-
-    public Cursor getAllRowsCursor() {
-        Cursor query = this.database.query(true, Database.CATEGORY.TABLE_NAME, Database.CATEGORY.ALL_KEYS, null, null, null, null, null, null);
-        if (query != null) {
-            query.moveToFirst();
-        }
-        return query;
-    }
-
-    public boolean checkRow(String path) {
-        String where = Database.CATEGORY.FAKEPATH + " = '" + dropInvalidString(path) + "';";
-        Cursor c = database.query(Database.CATEGORY.TABLE_NAME, Database.CATEGORY.ALL_KEYS,
-                where, null, null, null, null);
-        if (c.getCount() > 0) {
-            c.close();
-            return true;
-        } else {
-            c.close();
-            return false;
-        }
-    }
-
-    public boolean updateRow(String pathRow) {
-        String albumId;
-        String duration;
-        String name;
-        String album;
-        String artist;
-        String path;
-        String title;
-        int id;
-        String category;
-        String update = Database.CATEGORY.FAKEPATH +" = '"+dropInvalidString(pathRow)+"';";
-
-        Cursor query = this.database.query(Database.CATEGORY.TABLE_NAME, Database.CATEGORY.ALL_KEYS, update, null, null, null, null);
-        if (query != null) {
-            query.moveToFirst();
-            category = query.getString(1);
-            id = query.getInt(2) + 1;
-            title = query.getString(3);
-            path = query.getString(4);
-            artist = query.getString(5);
-            album = query.getString(6);
-            name = query.getString(7);
-            duration = query.getString(8);
-            albumId = query.getString(9);
-        } else {
-            category = null;
-            title = null;
-            path = null;
-            artist = null;
-            album = null;
-            name = null;
-            duration = null;
-            albumId = null;
-            id = 0;
-        }
-        if (query != null) {
-            query.close();
-        }
-
-        ContentValues values = new ContentValues();
-        values.put(Database.CATEGORY.CATEGORY, category);
-        values.put(Database.CATEGORY.VOTES, Integer.valueOf(id));
-        values.put(Constants.PREFERENCES.TITLE, title);
-        values.put(Constants.PREFERENCES.PATH, path);
-        values.put(Constants.PREFERENCES.ARTIST, artist);
-        values.put(Constants.PREFERENCES.ALBUM, album);
-        values.put(Constants.PREFERENCES.NAME, name);
-        values.put(Constants.PREFERENCES.DURATION, duration);
-        values.put(Constants.PREFERENCES.ALBUMID, albumId);
-        values.put(Database.CATEGORY.FAKEPATH, dropInvalidString(path));
-        if (this.database.update(Database.CATEGORY.TABLE_NAME, values, update, null) != 0) {
-            return true;
+        }catch (SQLiteException e){
+            Log.d(TAG, e.getMessage());
+        }finally {
+            closeDatabase();
         }
         return false;
     }
 
-    public class ReaderDB extends SQLiteOpenHelper {
-        // If you change the database schema, you must increment the database version.
-        public static final int DATABASE_VERSION = 3;
-        public static final String DATABASE_NAME = "categories.db";
+    // add Data
+    public void addCategory(SongModel song) {
+        String SQL_INSERT = "INSERT INTO "+ Database.CATEGORY.TABLE_NAME+
+                " Value(null, " +
+                "'"+ song.get_ID() +"'"      +","+
+                "'"+ "0" +"'" +","+
+                "'"+ song.getSongName() +"'" +","+
+                "'"+ song.getPath() +"'"     +","+
+                "'"+ song.getArtist() +"'"   +","+
+                "'"+ song.getAlbum() +"'"    +","+
+                "'"+ song.getAlbumID() +"'"  +","+
+                "'"+ song.getFileName()+"'"  +","+
+                "'"+ song.getTime()+"'"  +","+
+                "'"+ dropInvalidString(song.getPath())+"'"      +")";
 
-        public ReaderDB(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL(Database.CATEGORY.SQL_CREATE_ENTRIES);
-        }
-
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            // This database is only a cache for online data, so its upgrade policy is
-            // to simply to discard the data and start over
-            db.execSQL(Database.CATEGORY.SQL_DELETE_ENTRIES);
-            onCreate(db);
-        }
-
-        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            onUpgrade(db, oldVersion, newVersion);
-        }
+        mCategory.queryData(SQL_INSERT);
+        Toast.makeText(context, "Đã Add Bài Hát : "+song.getSongName(), Toast.LENGTH_SHORT).show();
+        closeDatabase();
 
     }
+
+    // lấy hết toàn bộ data
+    public ArrayList<SongModel> getAllCategory() {
+        Cursor data = mCategory.getData(Database.CATEGORY.QUERY);
+
+        ArrayList<SongModel> mSongs = new ArrayList<>();
+
+        if (isSelect(data)){
+            while (!data.isAfterLast()){
+                SongModel.Builder builder = new SongModel.Builder();
+                builder.setSongName(data.getString(3));
+                builder.setPath(data.getString(4));
+                builder.setArtist(data.getString(5));
+                builder.setAlbum(data.getString(6));
+                builder.setAlbumID(data.getString(7));
+                builder.setFileName(data.getString(9));
+                builder.setID(data.getString(1));
+                builder.setTime(data.getInt(8));
+
+                SongModel songModel = builder.generate();
+                mSongs.add(songModel);
+            }
+        }
+        closeDatabase();
+        return mSongs;
+    }
+
+    // tìm category
+    public boolean searchCategory(long category){
+        Cursor mCategoryData = mCategory.getData(Database.CATEGORY.QUERY);
+        try {
+            if (isSelect(mCategoryData) && getSize() != 0){
+                while (mCategoryData.moveToNext()){
+                    if (mCategoryData.getString(1).equals(String.valueOf(category))){
+                        return true;
+                    }
+                }
+            }
+        }catch (SQLiteException e){
+            Log.d(TAG, e.getMessage());
+        }finally {
+            closeDatabase();
+        }
+        return false;
+    }
+
+    // xóa category theo id
+    public void deleteCategory(int id){
+        String SQL_DELETE =
+                "DROP TABLE IF EXISTS "+ Database.CATEGORY.TABLE_NAME+" WHERE id= '"+id+ "' ";
+        mCategory.queryData(SQL_DELETE);
+        closeDatabase();
+    }
+
+    // xóa category theo category
+    public boolean deleteCategory(long category) {
+        String id = String.valueOf(category);
+        String SQL_DELETE =
+                "DROP TABLE IF EXISTS "+ Database.CATEGORY.TABLE_NAME+" WHERE " +
+                        "category= " +
+                        "'"+id+ "' ";
+        Cursor data = mCategory.getData(Database.CATEGORY.QUERY);
+
+        if (isSelect(data)){
+            if (searchCategory(category)){
+                mCategory.queryData(SQL_DELETE);
+                Toast.makeText(context, "Xóa Thành Công Thể Loại: "+category,
+                        Toast.LENGTH_SHORT).show();
+                closeDatabase();
+                return true;
+            }else {
+                Toast.makeText(context, "Xóa Không Thành Công Thể Loại: "+category,
+                        Toast.LENGTH_SHORT).show();
+
+                return false;
+            }
+        }else {
+            return false;
+        }
+    }
+
+    // xóa tất cả
+    public void deleteAll(int id) {
+        try {
+            mCategory.queryData(Database.CATEGORY.DELETE);
+
+        } catch (SQLiteException e) {
+            Log.d(TAG, e.getMessage());
+        }finally {
+            closeDatabase();
+        }
+    }
+
+
+    // kích thước data
+    public int getSize() {
+        Cursor songData = mCategory.getData(Database.CATEGORY.QUERY);
+        int count = 0;
+        try {
+            if (isSelect(songData)) {
+                count = songData.getCount();
+            }
+        } catch (SQLiteException e){
+            Log.d(TAG, e.getMessage());
+        } finally {
+            closeDatabase();
+        }
+        return count;
+    }
+
+    public void updateCategory(String fake_path, SongModel song){
+        String SQL_UPDATE = "UPDATE "+ Database.CATEGORY.TABLE_NAME+ " SET "+
+                Database.CATEGORY.NAME_CATEGORY + "='"+ song.getSongName()+"'" + "," +
+                Database.CATEGORY.PATH          + "='"+ song.getPath()+"'"     + "," +
+                Database.CATEGORY.ARTIST        + "='"+ song.getArtist()+"'"   + "," +
+                Database.CATEGORY.ALBUM         + "='"+ song.getAlbum()+"'"    + "," +
+                Database.CATEGORY.ALBUM_ID      + "='"+ song.getAlbumID()+"'"  + "," +
+                Database.CATEGORY.FILE_NAME     + "='"+ song.getFileName()+"'" + "," +
+                Database.CATEGORY.CATEGORY      + "='"+ song.get_ID()+"'"      + "," +
+                Database.CATEGORY.TIME          + "='"+ song.getTime()+"'" +
+                " WHERE " + "fake_path= '"+ fake_path +"'";
+        mCategory.queryData(SQL_UPDATE);
+        closeDatabase();
+    }
+
+
+
 }

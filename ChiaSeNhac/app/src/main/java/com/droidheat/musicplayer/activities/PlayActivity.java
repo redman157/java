@@ -1,13 +1,10 @@
 package com.droidheat.musicplayer.activities;
 
-import androidx.viewpager.widget.ViewPager;
-
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -15,31 +12,27 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.viewpager.widget.ViewPager;
+
 import com.droidheat.musicplayer.BaseActivity;
 import com.droidheat.musicplayer.Constants;
 import com.droidheat.musicplayer.OnMusicChange;
-import com.droidheat.musicplayer.manager.SharedPrefsManager;
-import com.droidheat.musicplayer.manager.SongManager;
-import com.droidheat.musicplayer.services.MediaPlayerService;
-import com.droidheat.musicplayer.PlayMusic;
 import com.droidheat.musicplayer.R;
 import com.droidheat.musicplayer.adapters.ChangeMusicPagerAdapter;
 import com.droidheat.musicplayer.fragments.ChangeMusicFragment;
+import com.droidheat.musicplayer.manager.SharedPrefsManager;
+import com.droidheat.musicplayer.manager.SongManager;
+import com.droidheat.musicplayer.manager.Utils;
 import com.droidheat.musicplayer.models.SongModel;
+import com.droidheat.musicplayer.services.MediaPlayerService;
 
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class PlayActivity extends BaseActivity
         implements ViewPager.OnPageChangeListener, View.OnClickListener,
@@ -50,12 +43,10 @@ public class PlayActivity extends BaseActivity
     private SongManager mSongManager;
     private SeekBar mSeekBarTime;
 
-    private PlayMusic mPlayMusic;
     public ImageButton mBtnPlayPause;
     private ImageButton mBtnBack, mBtnInfoMusic, mBtnMenu, mBtnPrev, mBtnRepeat, mBtnNext,
     mBtnSeeMore, mBtnAbout, mBtnShuffle, mBtnEqualizer;
     private SharedPrefsManager mSharedPrefsManager;
-    private Runnable mRunnable;
     private TextView mTextLeftTime, mTextRightTime;
     private String type;
     private int position;
@@ -192,10 +183,10 @@ public class PlayActivity extends BaseActivity
         initData(mSongs);
         if (position == 0) {
             mTextLeftTime.setText("00 : 00");
-            mTextRightTime.setText(mSongs.get(0).getDuration());
+            mTextRightTime.setText(Utils.formatTime(mSongs.get(0).getTime()));
         }else {
             mTextLeftTime.setText("00 : 00");
-            mTextRightTime.setText(mSongs.get(position).getDuration());
+            mTextRightTime.setText(Utils.formatTime(mSongs.get(position).getTime()));
         }
 
         setupViewPager(position);
@@ -235,12 +226,12 @@ public class PlayActivity extends BaseActivity
         TextView textLocation = mDlAboutMusic.findViewById(R.id.dialog_about_music_location);
         Button btnDone = mDlAboutMusic.findViewById(R.id.dialog_about_close);
 
-        textName.setText(mSongs.get(position).getTitle());
+        textName.setText(mSongs.get(position).getSongName());
         textFileName.setText("File Name: "+mSongs.get(position).getFileName());
-        textSong.setText("Song Title: "+mSongs.get(position).getTitle());
+        textSong.setText("Song Title: "+mSongs.get(position).getSongName());
         textAlbum.setText("Album: "+mSongs.get(position).getAlbum());
         textArtist.setText("Artist: "+mSongs.get(position).getArtist());
-        textTime.setText("Time Song: "+convertTime(mSongs.get(position).getTime()));
+        textTime.setText("Time Song: "+Utils.formatTime(mSongs.get(position).getTime()));
         textLocation.setText("File Location: "+mSongs.get(position).getPath());
 
         btnDone.setOnClickListener(this);
@@ -278,7 +269,7 @@ public class PlayActivity extends BaseActivity
         mSeekBarTime.setProgress(0);
         mSeekBarTime.setMax(mSongs.get(position).getTime());
         mTextLeftTime.setText("00 : 00");
-        mTextRightTime.setText(convertTime(mSongs.get(position).getTime()));
+        mTextRightTime.setText(Utils.formatTime(mSongs.get(position).getTime()));
 
 
 
@@ -520,14 +511,6 @@ public class PlayActivity extends BaseActivity
 
     }
 
-    private String convertTime(int currentDuration){
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        SimpleDateFormat df = new SimpleDateFormat("mm : ss", Locale.getDefault());
-        df.setTimeZone(tz);
-        String time = String.valueOf(df.format(currentDuration));
-        return time;
-    }
-
     private void updateUI(Intent serviceIntent) {
 
         int currentPos = serviceIntent.getIntExtra("current_pos", 0);
@@ -536,8 +519,8 @@ public class PlayActivity extends BaseActivity
 //        Log.d("BBB", "current Poss: "+currentPos + " ======= Media Max: "+mediaMax);
         mSeekBarTime.setMax(mediaMax);
         mSeekBarTime.setProgress(currentPos);
-        mTextLeftTime.setText(convertTime(currentPos));
-        mTextRightTime.setText(convertTime(mSongs.get(SongManager.getInstance().getCurrentMusic()).getTime()));
+        mTextLeftTime.setText(Utils.formatTime(currentPos));
+        mTextRightTime.setText(Utils.formatTime(mSongs.get(SongManager.getInstance().getCurrentMusic()).getTime()));
 
         if (mSongs.get(SongManager.getInstance().getCurrentMusic()).getTime() - currentPos < 1000){
             new CountDownTimer(2500, 1000) {
@@ -571,7 +554,7 @@ public class PlayActivity extends BaseActivity
         if (fromUser){
             seekPos = seekBar.getProgress();
             Log.d("MMM", "PlayActivity --- onProgressChanged: "+seekPos);
-            mTextLeftTime.setText(convertTime(seekPos));
+            mTextLeftTime.setText(Utils.formatTime(seekPos));
             mSharedPrefsManager.setInteger(Constants.PREFERENCES.POSITION_SONG, seekPos);
 
             Intent iSeekChoose = new Intent(this, MediaPlayerService.class);

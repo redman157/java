@@ -45,7 +45,6 @@
 
     <Button
         android:layout_weight="3"
-        android:text="PlayList1"
         android:textSize="@dimen/_15sdp"
         android:textAllCaps="false"
         android:paddingRight="@dimen/_15sdp"

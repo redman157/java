@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="10"
-    tools:context="com.droidheat.musicplayer.activities.PlayActivity">
+    tools:mContext="com.android.musicplayer.activities.PlayActivity">
 
     <LinearLayout
         android:id="@+id/ll_Back"

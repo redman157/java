@@ -7,7 +7,7 @@
     android:weightSum="10"
     android:layout_height="match_parent"
 
-    tools:mContext="com.droidheat.musicplayer.activities.EqualizerActivity">
+    tools:mContext="com.android.musicplayer.activities.EqualizerActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

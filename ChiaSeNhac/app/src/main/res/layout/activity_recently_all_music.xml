@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:weightSum="10"
     android:orientation="vertical"
-    tools:context=".activities.RecentlyAllMusicActivity">
+    tools:mContext=".activities.RecentlyAllMusicActivity">
     <LinearLayout
         android:id="@+id/ll_Back"
         android:weightSum="10"
@@ -101,7 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="vertical">
-                <com.droidheat.musicplayer.IconView
+                <com.android.musicplayer.IconView
                     android:id="@+id/img_AlbumId"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

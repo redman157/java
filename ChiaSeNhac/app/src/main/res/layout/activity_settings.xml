@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:mContext="com.android.musicplayer.activities.SettingsActivity">
+    tools:mContext="com.android.music_player.activities.SettingsActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

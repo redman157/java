@@ -14,10 +14,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.OnMusicChange;
+import com.android.music_player.OnClickItem;
 import com.android.music_player.R;
-import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.models.SongModel;
+import com.android.music_player.utils.DialogUtils;
+import com.android.music_player.utils.ImageUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,9 +54,10 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
         this.mListMusic = mListMusic;
     }
 
-    private OnMusicChange onMusicChange;
-    public void setMusicChange(OnMusicChange onMusicChange){
-        this.onMusicChange = onMusicChange;
+    private OnClickItem onClickItem;
+
+    public void setOnClick(OnClickItem onClickItem){
+        this.onClickItem = onClickItem;
     }
 
     @NonNull
@@ -84,10 +86,9 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
         holder.ll_option_music.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onMusicChange.onChange(position);
-                if (dialog.isShowing()){
-                    dialog.cancel();
-                }
+                onClickItem.onMusicChange(position);
+                // lúc hiện dialog nếu hiển thị thì sẽ ẩn đi
+                DialogUtils.cancelDialog();
             }
         });
     }

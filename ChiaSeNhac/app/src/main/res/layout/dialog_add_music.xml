@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:weightSum="10"
-    android:layout_height="@dimen/_170sdp">
+    android:layout_height="@dimen/_200sdp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -21,8 +21,8 @@
 
         <ImageButton
             android:id="@+id/imgb_add_music"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_marginTop="@dimen/_10sdp"
@@ -30,21 +30,20 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="@dimen/_5sdp"
             android:src="@drawable/app_add_playlist"
-            android:tint="@color/blackGrey" />
+            android:tint="@color/whiteOpaqueX4" />
 
-        <TextView
-            android:id="@+id/text_title_music"
-            android:layout_width="wrap_content"
 
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="@dimen/_5sdp"
-            android:textColor="@color/blackGrey"
-            android:textSize="@dimen/_15sdp" />
     </RelativeLayout>
-
+    <TextView
+        android:id="@+id/text_title_music"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:paddingLeft="@dimen/_5sdp"
+        android:textColor="@color/whiteOpaque"
+        android:textSize="@dimen/_15sdp" />
     <Button
-        android:layout_weight="3"
+        android:layout_weight="2"
         android:textSize="@dimen/_15sdp"
         android:textAllCaps="false"
         android:paddingRight="@dimen/_15sdp"
@@ -55,5 +54,5 @@
     <TextView
         android:background="@color/blackGrey"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="@dimen/_10sdp"/>
 </LinearLayout>

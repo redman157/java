@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -21,22 +20,23 @@ import android.widget.Toast;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.BaseActivity;
-import com.android.music_player.utils.Constants;
-import com.android.music_player.OnMusicChange;
+import com.android.music_player.OnClickItem;
 import com.android.music_player.R;
 import com.android.music_player.adapters.ChangeMusicPagerAdapter;
 import com.android.music_player.fragments.ChangeMusicFragment;
-import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.managers.SongManager;
-import com.android.music_player.utils.Utils;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.services.MediaPlayerService;
+import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.DialogUtils;
+import com.android.music_player.utils.SharedPrefsUtils;
+import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 
 public class PlayActivity extends BaseActivity
         implements ViewPager.OnPageChangeListener, View.OnClickListener,
-        OnMusicChange,
+        OnClickItem,
         SeekBar.OnSeekBarChangeListener {
     private ViewPager mVpMusic;
     private ChangeMusicPagerAdapter mAdapter;
@@ -63,7 +63,7 @@ public class PlayActivity extends BaseActivity
     private boolean isMore = false;
     private boolean isShuffle = false;
     private Dialog mDlAboutMusic;
-    private OnMusicChange onMusicChange;
+    private OnClickItem onClickItem;
 
 
     @Override
@@ -207,34 +207,6 @@ public class PlayActivity extends BaseActivity
             fChangeMusicFragment.setMusicMain(mSongs);
             mAdapter.addData(fChangeMusicFragment, mSongs.get(idx));
         }
-    }
-
-
-
-    private void showMusicAbout(){
-        mDlAboutMusic = new Dialog(this);
-
-        mDlAboutMusic.setContentView(R.layout.dialog_info_music);
-
-        TextView textName = mDlAboutMusic.findViewById(R.id.dialog_about_music_name);
-        TextView textFileName = mDlAboutMusic.findViewById(R.id.dialog_about_music_file_name);
-        TextView textSong = mDlAboutMusic.findViewById(R.id.dialog_about_music_title);
-        TextView textAlbum = mDlAboutMusic.findViewById(R.id.dialog_about_music_album);
-        TextView textArtist = mDlAboutMusic.findViewById(R.id.dialog_about_music_artist);
-        TextView textTime = mDlAboutMusic.findViewById(R.id.dialog_about_music_time);
-        TextView textLocation = mDlAboutMusic.findViewById(R.id.dialog_about_music_location);
-        Button btnDone = mDlAboutMusic.findViewById(R.id.dialog_about_close);
-
-        textName.setText(mSongs.get(position).getSongName());
-        textFileName.setText("File Name: "+mSongs.get(position).getFileName());
-        textSong.setText("Song Title: "+mSongs.get(position).getSongName());
-        textAlbum.setText("Album: "+mSongs.get(position).getAlbum());
-        textArtist.setText("Artist: "+mSongs.get(position).getArtist());
-        textTime.setText("Time Song: "+Utils.formatTime(mSongs.get(position).getTime()));
-        textLocation.setText("File Location: "+mSongs.get(position).getPath());
-
-        btnDone.setOnClickListener(this);
-        mDlAboutMusic.show();
     }
 
     @Override
@@ -470,7 +442,7 @@ public class PlayActivity extends BaseActivity
             case R.id.imb_SeeMenu:
                 break;
             case R.id.icon_about:
-                showMusicAbout();
+                DialogUtils.showMusicAbout(PlayActivity.this, mSongs.get(position));
                 break;
             case R.id.icon_shuffle:
                 if (!isShuffle){
@@ -504,10 +476,7 @@ public class PlayActivity extends BaseActivity
                     startService(inShuffle);
                 }
                 break;
-            case R.id.dialog_about_close:
-                mDlAboutMusic.cancel();
         }
-
     }
 
     private void updateUI(Intent serviceIntent) {
@@ -584,7 +553,7 @@ public class PlayActivity extends BaseActivity
     }
 
     @Override
-    public void onChange(int pos) {
+    public void onMusicChange(int pos) {
         mVpMusic.setCurrentItem(pos);
     }
 }

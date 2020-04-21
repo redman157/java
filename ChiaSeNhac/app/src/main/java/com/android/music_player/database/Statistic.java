@@ -32,8 +32,8 @@ public class Statistic {
                 " VALUES(" +
                 " null, " +
                 "'" + fileName+ "'"+ ","+
-                "'" + 0 + "'"      + ","+
-                "')";
+                "" + 0 + ""      + ","+
+                ")";
         mDatabase.queryData(SQL_ADD);
         closeDatabase();
     }

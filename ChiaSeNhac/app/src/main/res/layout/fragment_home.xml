@@ -219,7 +219,7 @@
                         android:drawableLeft="@drawable/app_playlist"
                         android:textSize="15dp"
                         android:textColor="@color/black"
-                        android:text="Việt"
+
                         android:id="@+id/text_Player_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -249,7 +249,6 @@
                         android:drawableLeft="@drawable/app_playlist"
                         android:textSize="15dp"
                         android:textColor="@color/black"
-                        android:text="Việt"
                         android:id="@+id/text_Player_2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>

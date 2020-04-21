@@ -3,6 +3,7 @@ package com.android.music_player.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 
 public class SharedPrefsUtils {
     private SharedPreferences preferences;
@@ -10,7 +11,7 @@ public class SharedPrefsUtils {
 
     public SharedPrefsUtils(Context context) {
         this.context = context;
-        preferences = context.getSharedPreferences()
+        this.preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void setString(String key, String value) {

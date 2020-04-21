@@ -16,18 +16,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.utils.Constants;
-
-
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.RecentlyAllMusicActivity;
 import com.android.music_player.adapters.RecentlyAdderAdapter;
-import com.android.music_player.utils.ImageUtils;
-import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.services.MediaPlayerService;
+import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
 
@@ -47,6 +45,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     private SharedPrefsUtils mSharedPrefsUtils;
     private ArrayList<SongModel> mSongs;
     private TextView text_Player_1, text_Player_2;
+    private SongManager mSongManager;
     public HomeFragment(Activity activity){
         mActivity = activity;
     }
@@ -54,7 +53,8 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
-
+        mSongManager = SongManager.getInstance();
+        mSongManager.setContext(getContext());
         mAdderAdapter = new RecentlyAdderAdapter(getContext(),
                 SongManager.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS );
@@ -92,7 +92,9 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     }
 
     private void assignView(){
-
+        ArrayList<String> getTwoPlayList = mSongManager.getRelationSongs().getMost();
+        text_Player_1.setText(getTwoPlayList.get(0));
+        text_Player_2.setText(getTwoPlayList.get(1));
         mImg_Shuffle_All.setOnClickListener(this);
         mBtnViewAll.setOnClickListener(this);
     }

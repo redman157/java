@@ -191,11 +191,12 @@ public class SongOfPlayList {
     public int getId(SongModel songModel){
         Cursor cursor = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
         if (isSelect(cursor)){
-            while (cursor.moveToNext()){
+            do {
                 if (cursor.getString(1).equals(songModel.getSongName())){
                     return cursor.getInt(0);
                 }
             }
+            while (cursor.moveToNext());
         }
         return -1;
     }

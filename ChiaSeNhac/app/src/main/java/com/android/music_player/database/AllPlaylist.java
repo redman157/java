@@ -37,20 +37,17 @@ public class AllPlaylist {
     }
 
     public boolean isSelect(Cursor cursor){
-        cursor = mDatabase.getData(Database.ALL_PLAY_LISTS.QUERY);
         try {
             if (cursor != null) {
                 cursor.moveToFirst();
-
                 return true;
             }
 
         }catch (SQLiteException e){
             Log.d(TAG, e.getMessage());
-        }finally {
-            cursor.close();
+        } finally {
+            closeDatabase();
         }
-
         return false;
     }
 
@@ -58,11 +55,11 @@ public class AllPlaylist {
 
         String SQL_INSERT =
                 "INSERT INTO "+ Database.ALL_PLAY_LISTS.TABLE_NAME
-                        +" VALUES(null, '"+ title +"')";
+
+                        +" VALUES(null,"+ 0 +", '"+ title +"')";
         mRelationSongs.addRow(title, -1);
         mDatabase.queryData(SQL_INSERT);
         closeDatabase();
-        Toast.makeText(mContext, "Đã Add PlayList: "+title, Toast.LENGTH_SHORT).show();
     }
 
     public void deletePlayList(int id) {
@@ -113,11 +110,12 @@ public class AllPlaylist {
         Cursor playListData = mDatabase.getData(Database.ALL_PLAY_LISTS.QUERY);
         try {
             if (isSelect(playListData) && getSize() > 0) {
-                while (playListData.moveToNext()) {
+                do {
                     if (playListData.getString(1).equals(namePlayList)) {
                         return true;
                     }
                 }
+                while (playListData.moveToNext());
             }
         }catch (SQLiteException e){
             Log.d(TAG, e.getMessage());
@@ -131,15 +129,15 @@ public class AllPlaylist {
 
     public ArrayList<String> getAllPlayList() {
         Cursor query = mDatabase.getData(Database.ALL_PLAY_LISTS.QUERY);
-
+        ArrayList<String> allPlayList = new ArrayList<>();
         try {
-            ArrayList<String> allPlayList = new ArrayList<>();
+
             if (isSelect(query) && getSize() > 0) {
                 do {
-                    allPlayList.add(query.getString(1));
+                    allPlayList.add(query.getString(2));
                 } while (query.moveToNext());
             }
-            query.close();
+
             return allPlayList;
         }catch (SQLiteException e){
             Log.d(TAG, e.getMessage());
@@ -169,14 +167,12 @@ public class AllPlaylist {
         String name = "";
         try {
             if (isSelect(playListData)) {
-                if (playListData.moveToFirst()) {
-                    while (!playListData.isAfterLast()) {
-                        if (playListData.getString(1).equals (title)) {
-                            name = playListData.getString(1);
-                            break;
-                        }
+                do {
+                    if (playListData.getString(1).equals (title)) {
+                        name = playListData.getString(1);
                     }
-                }
+                } while (!playListData.isAfterLast());
+
             }
             HashMap<String, String> hashMap = new HashMap<>();
             hashMap.put(Constants.VALUE.NAME_PLAYLIST, name);

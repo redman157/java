@@ -63,7 +63,7 @@ public class Database {
                         ID + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +
                         MOST_PLAYLIST + " INTEGER " + "," +
                         NAME_PLAY_LIST + " TEXT "    + ");";
-        String QUERY = "SELECT * FORM "+ ALL_PLAY_LISTS.TABLE_NAME;
+        String QUERY = "SELECT * FROM "+ ALL_PLAY_LISTS.TABLE_NAME;
         String DELETE = "DELETE FROM " + TABLE_NAME;
     }
 

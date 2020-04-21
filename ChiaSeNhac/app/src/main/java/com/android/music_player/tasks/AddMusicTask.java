@@ -40,14 +40,14 @@ public class AddMusicTask extends AsyncTask<Void, Void, Void>{
             mSongManager.getAllPlaylistDB().addPlayList(namePlayList);
         }
         // add bài hát
-        mSongManager.getSongOfPlayListDB().addSong(mSong);
-        // add id bài hát và name playlist tương ứng
-        mSongManager.getRelationSongs().addRow(namePlayList,
-                mSongManager.getSongOfPlayListDB().getId(mSong));
+        if (mSongManager.getSongOfPlayListDB().searchSong(mSong)){
+            mSongManager.getSongOfPlayListDB().addSong(mSong);
+            // add id bài hát và name playlist tương ứng
+            mSongManager.getRelationSongs().addRow(namePlayList,
+                    mSongManager.getSongOfPlayListDB().getId(mSong));
 
-        mSongManager.getStatistic().addFileName(namePlayList);
-
-
+            mSongManager.getStatistic().addFileName(namePlayList);
+        }
         return null;
     }
 

@@ -9,7 +9,6 @@ import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Database;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -53,48 +52,56 @@ public class RelationSongs {
         Cursor cursor = mDatabase.getData(Database.RELATION_SONGS.QUERY);
         String first = "";
         String second = "";
+
         Map<Integer, List<String>> playListMost = new HashMap<>();
         ArrayList<String> most = new ArrayList<>();
         try {
             if (isSelect(cursor)){
-                Integer[] sorted;
 
+                List<Integer> sorted;
+                Log.d(TAG, cursor.getCount()+" kích thước");
 
-                while (!cursor.isAfterLast()){
+                do {
+                    Log.d(TAG, "Enter");
                     int counter = cursor.getInt(1);
                     String playlist = cursor.getString(2);
-
+                    Log.d(TAG, playlist);
                     if (playListMost.get(counter) == null) {
                         playListMost.put(counter, new ArrayList<String>());
                     }
 
                     playListMost.get(counter).add(playlist);
-                }
+                } while (cursor.moveToNext());
+                sorted = new ArrayList<>(playListMost.keySet());
 
-                sorted = (Integer[]) playListMost.keySet().toArray();
+                if (sorted.size() > 0) {
+                    Collections.sort(sorted);
 
-                if (sorted.length > 0) {
-                    Arrays.sort(sorted, Collections.reverseOrder());
-
-                    first = playListMost.get(sorted[0]).get(0);
+                    first = playListMost.get(sorted.get(0)).get(0);
+                    Log.d(TAG, "first: "+first);
                     most.add(first);
-                    if (playListMost.get(sorted[0]).size() > 1) {
-                        second = playListMost.get(sorted[0]).get(1);
+                    if (playListMost.get(sorted.get(0)).size() > 1) {
+                        second = playListMost.get(sorted.get(0)).get(1);
+                        Log.d(TAG, "second: "+second);
                         most.add(second);
                     } else if (playListMost.size() > 1) {
-                        second = playListMost.get(sorted[1]).get(0);
+                        second = playListMost.get(sorted.get(1)).get(0);
+                        Log.d(TAG, "second: "+second);
                         most.add(second);
                     }
-
+                    return most;
 
                 } else {
                     return null;
                 }
+
             } else {
                 return null;
             }
         } catch (SQLiteException exception) {
             Log.d(TAG, exception.getMessage());
+        } finally {
+            closeDatabase();
         }
         return null;
     }
@@ -105,9 +112,10 @@ public class RelationSongs {
                 Database.RELATION_SONGS.TABLE_NAME+
                 " VALUES(" +
                 " null, " +
-                "'" + 0 +"' "            + ","+
+                "" + 0 +" "            + ","+
                 "'" + namePlayList+ "'"  + ","+
-                "'" + id_song + "'"      + "')";
+                "" + id_song + ""      + ")";
+
         mDatabase.queryData(SQL_ADD);
         closeDatabase();
     }
@@ -115,11 +123,12 @@ public class RelationSongs {
     public boolean compareIdSong(SongModel songModel){
         Cursor cursor = mDatabase.getData(Database.RELATION_SONGS.QUERY);
         if (isSelect(cursor)){
-            while (cursor.moveToNext()){
+            do {
                 if (cursor.getInt(2) == mSongOfPlayList.getId(songModel)){
                     return true;
                 }
             }
+            while (cursor.moveToNext());
         }
         return false;
     }
@@ -155,11 +164,12 @@ public class RelationSongs {
         Cursor cursor = mDatabase.getData(SQL_ALL_SONG);
         try {
             if (isSelect(cursor) && getSize() > 0){
-                while (cursor.moveToNext()){
+                do {
                     if (cursor.getString(2).equals(namePlayList)){
                         return mSongOfPlayList.getAllSong(cursor.getInt(2));
                     }
                 }
+                while (cursor.moveToNext());
             }
         } catch (SQLiteException e){
             Log.d(TAG, e.getMessage());

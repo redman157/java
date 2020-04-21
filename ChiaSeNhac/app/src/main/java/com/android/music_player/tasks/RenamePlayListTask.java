@@ -5,15 +5,16 @@ import android.os.AsyncTask;
 
 import com.android.music_player.managers.SongManager;
 
-public class RenamePlayListTask extends AsyncTask<String, Void, String> {
+public class RenamePlayListTask extends AsyncTask<Void, Void, String> {
     private Context mContext;
     private SongManager mSongManager;
-    private String main;
-    public RenamePlayListTask(Context context, String main){
+    private String main, change;
+    public RenamePlayListTask(Context context, String main, String change){
         mContext = context;
         this.main = main;
+        this.change = change;
     }
-    
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -22,9 +23,9 @@ public class RenamePlayListTask extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... strings) {
-        mSongManager.getAllPlaylistDB().updatePlayList(main, strings[0]);
-        return strings[0];
+    protected String doInBackground(Void... voids) {
+        mSongManager.getAllPlaylistDB().updatePlayList(main, change);
+        return change;
     }
 
     @Override

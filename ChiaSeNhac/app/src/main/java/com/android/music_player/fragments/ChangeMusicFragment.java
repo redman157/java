@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.music_player.tasks.AddMusicTask;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.OnMusicChange;
 import com.android.music_player.R;
@@ -138,7 +139,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         TextView textTitle = mDlAddMusic.findViewById(R.id.text_title_music);
         ImageButton btnAddMusic = mDlAddMusic.findViewById(R.id.imgb_add_music);
         final Button btnAdd = mDlAddMusic.findViewById(R.id.btnAddMusic);
-
+        btnAdd.setText("PlayList 1");
         ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongModel.getAlbumID(), imageView);
 
         textTitle.setText(mSongModel.getSongName());
@@ -154,7 +155,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
             @Override
             public void onClick(View v) {
                // Add music cần search playlist rồi mới add music
-                Toast.makeText(getContext(), "hehe", Toast.LENGTH_SHORT).show();
+                new AddMusicTask(getContext(),btnAdd.getText().toString() ,mSongModel );
             }
         });
         mDlAddMusic.show();

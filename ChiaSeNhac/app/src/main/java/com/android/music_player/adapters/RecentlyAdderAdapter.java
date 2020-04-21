@@ -24,16 +24,16 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdapter.ItemViewHolder> {
-    private final Context context;
+    private final Context mContext;
     private ArrayList<SongModel> items;
     private String type;
-    private SharedPrefsUtils prefsManager;
-    private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
+    private SharedPrefsUtils mSharedPrefsUtils;
+    private SimpleDateFormat mFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
     public RecentlyAdderAdapter(Context context, ArrayList<SongModel> items, String type) {
         this.items = items;
         this.type = type;
-        this.context = context;
-        prefsManager = new SharedPrefsUtils(context);
+        mContext = context;
+        mSharedPrefsUtils = new SharedPrefsUtils(context);
 
     }
 
@@ -67,7 +67,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
 
                 onClickItem.onClick(type, position);
 
-                prefsManager.setString(Constants.PREFERENCES.SaveAlbumID, items.get(position).getAlbumID());
+                mSharedPrefsUtils.setString(Constants.PREFERENCES.SaveAlbumID, items.get(position).getAlbumID());
             }
         });
 
@@ -107,10 +107,10 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
             //UI setting code
             mTextName.setText(song.getSongName());
             mTextArtist.setText(song.getArtist());
-            mTextTime.setText(format.format(song.getTime()));
+            mTextTime.setText(mFormat.format(song.getTime()));
             mImgMusic.setClipToOutline(true);
 
-            ImageUtils.getInstance(context).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);
+            ImageUtils.getInstance(mContext).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);
 
         }
     }

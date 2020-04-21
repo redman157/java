@@ -17,7 +17,8 @@ public class Statistic {
     public Statistic(Context context){
         this.mContext = context;
         this.mDatabase = new ReaderSQL(context, Database.ALL_PLAY_LISTS.DATABASE_NAME, null, 1);
-        mDatabase.queryData(Database.STATISTIC.CREATE_ENTRIES);
+        mDatabase.queryData(Database.STATISTIC.CREATE_TABLE);
+        mDatabase.close();
     }
 
     public Statistic closeDatabase() {
@@ -54,21 +55,39 @@ public class Statistic {
     }
 
     public int getNumber(String fileName){
-        Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
-        try {
-            if (isSelect(cursor)) {
-                while (cursor.moveToNext()){
-                    if (cursor.getString(1).equals(fileName)){
-                        return cursor.getInt(2);
-                    }
+        String QUERY_NUMBER = "SELECT most_song FROM "+Database.STATISTIC.TABLE_NAME+
+                "WHERE "+Database.STATISTIC.FILE_NAME+" = "+fileName;
+        Cursor cursor = mDatabase.getData(QUERY_NUMBER);
+        if (cursor == null){
+            addFileName(fileName);
+            return 0;
+        }else {
+            try {
+                if (isSelect(cursor)) {
+                    return cursor.getInt(2);
                 }
+            } catch (SQLiteException e) {
+                Log.d(TAG, e.getMessage());
+            } finally {
+                closeDatabase();
             }
-        }catch (SQLiteException e){
+            return -1;
+        }
+    }
+
+    public int getSize(){
+        Cursor data = mDatabase.getData(Database.STATISTIC.QUERY);
+        int count = 0;
+        try {
+            if (isSelect(data)) {
+                count = data.getCount();
+            }
+        } catch (SQLiteException e) {
             Log.d(TAG, e.getMessage());
-        }finally {
+        } finally {
             closeDatabase();
         }
-        return -1;
+        return count;
     }
 
     public boolean increase(String fileName){
@@ -80,14 +99,31 @@ public class Statistic {
             addFileName(fileName);
             return false;
         }else {
-            getNumber(fileName);
             String SQL_UPDATE =
-                    "UPDATE "+Database.STATISTIC.FILE_NAME +" SET "+Database.STATISTIC.MOST_SONG
-                    +"'"+ (getNumber(fileName) + 1)+"'"
+                    "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET "+Database.STATISTIC.MOST_SONG
+                    +" = "  +"'"+ (getNumber(fileName) + 1)+"'"
                             +" WHERE "+Database.STATISTIC.FILE_NAME+ " = "+fileName;
             mDatabase.queryData(SQL_QUERY);
             closeDatabase();
             return true;
+        }
+    }
+
+    public void resetSong(String fileName){
+        String SQL_UPDATE =
+                "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET " +
+                        Database.STATISTIC.MOST_SONG +" = " +"'" + 0 +"'"+
+                        " WHERE "+Database.STATISTIC.FILE_NAME+ " = "+fileName;
+        mDatabase.queryData(SQL_UPDATE);
+    }
+
+    public void resetAllSong(){
+        try {
+            mDatabase.queryData(Database.STATISTIC.DELETE);
+        } catch (SQLiteException e){
+            Log.d(TAG, e.getMessage());
+        } finally {
+            closeDatabase();
         }
     }
 }

@@ -13,7 +13,7 @@ import com.android.music_player.R;
 import java.util.ArrayList;
 
 public class OptionMenuAdapter extends RecyclerView.Adapter<OptionMenuAdapter.ViewHolder> {
-    private final Context context;
+    private Context mContext;
     private ArrayList<String> items;
     private OnClickItem onClickItem;
     public void OnClickItemMenu(OnClickItem onClickItem){
@@ -24,7 +24,7 @@ public class OptionMenuAdapter extends RecyclerView.Adapter<OptionMenuAdapter.Vi
     }
     public OptionMenuAdapter(ArrayList<String> items, Context context) {
         this.items = items;
-        this.context = context;
+        mContext = context;
     }
 
     @Override

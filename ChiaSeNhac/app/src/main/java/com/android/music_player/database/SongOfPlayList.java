@@ -12,7 +12,7 @@ import com.android.music_player.utils.Database;
 import java.util.ArrayList;
 
 public class SongOfPlayList {
-    private AllPlaylist mAllPlayList;
+
     private Context mContext;
     /* renamed from: db */
     private String TAG = "SongOfPlayListLog";
@@ -21,9 +21,9 @@ public class SongOfPlayList {
 
     public SongOfPlayList(Context mContext){
         this.mContext = mContext;
-        mAllPlayList= new AllPlaylist(mContext);
         mDatabase = new ReaderSQL(mContext, Database.SONGS_OF_PLAY_LIST.DATABASE_NAME, null, 1);
-        mDatabase.queryData(Database.SONGS_OF_PLAY_LIST.CREATE_ENTRIES);
+        mDatabase.queryData(Database.SONGS_OF_PLAY_LIST.CREATE_TABLE);
+        mDatabase.close();
     }
 
     public SongOfPlayList closeDatabase() {
@@ -70,6 +70,11 @@ public class SongOfPlayList {
         closeDatabase();
     }
 
+    public void deletePlayList(String namePlayList){
+        String SQL_DELETE =
+                "DROP TABLE IF EXISTS "+ Database.SONGS_OF_PLAY_LIST.TABLE_NAME+" WHERE name_play_list= '"+namePlayList+ "' ";
+    }
+
     public boolean deleteSong(SongModel song){
         String SQL_DELETE =
                 "DROP TABLE IF EXISTS "+ Database.SONGS_OF_PLAY_LIST.TABLE_NAME+" WHERE " +
@@ -87,36 +92,13 @@ public class SongOfPlayList {
         }
     }
 
-    public boolean isSongInPlayList(String namePlayList, String name_song){
-        Cursor dataSongOfPlayList = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
-
-        try {
-            if (mAllPlayList.searchPlayList(namePlayList)) {
-                if (isSelect(dataSongOfPlayList)) {
-                    while (dataSongOfPlayList.moveToNext()) {
-                        if (dataSongOfPlayList.getString(1).equals(name_song)) {
-                            return true;
-                        }
-                    }
-                } else {
-                    return false;
-                }
-            }
-            return false;
-        }catch (SQLiteException e){
-            Log.d(TAG, e.getMessage());
-        }finally {
-            closeDatabase();
-        }
-        return false;
-    }
 
     public boolean searchSong(SongModel song){
-        Cursor songsData = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
+        Cursor data = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
         try {
-            if (isSelect(songsData) && getSize() != 0){
-                while (songsData.moveToNext()){
-                    if (songsData.getString(1).equals(song.getSongName())){
+            if (isSelect(data) && getSize() > 0){
+                while (data.moveToNext()){
+                    if (data.getString(2).equals(song.getSongName())){
                         return true;
                     }
                 }
@@ -131,15 +113,15 @@ public class SongOfPlayList {
 
     public void updateSong(String name,SongModel song){
         String SQL_UPDATE = "UPDATE "+ Database.SONGS_OF_PLAY_LIST.TABLE_NAME+ " SET "+
-                Database.SONGS_OF_PLAY_LIST.NAME_SONG + "='"+ song.getSongName()+"'" + "," +
-                Database.SONGS_OF_PLAY_LIST.PATH      + "='"+ song.getPath()+"'"     + "," +
-                Database.SONGS_OF_PLAY_LIST.ARTIST    + "='"+ song.getArtist()+"'"   + "," +
-                Database.SONGS_OF_PLAY_LIST.ALBUM     + "='"+ song.getAlbum()+"'"    + "," +
-                Database.SONGS_OF_PLAY_LIST.ALBUM_ID  + "='"+ song.getAlbumID()+"'"  + "," +
-                Database.SONGS_OF_PLAY_LIST.FILE_NAME + "='"+ song.getFileName()+"'" + "," +
-                Database.SONGS_OF_PLAY_LIST.ID_SONG   + "='"+ song.get_ID()+"'"      + "," +
-                Database.SONGS_OF_PLAY_LIST.TIME      + "='"+ song.getTime()+"'" +
-                " WHERE " + "name_song= '"+ name +"'";
+                Database.SONGS_OF_PLAY_LIST.NAME_SONG + " = " + "'"+ song.getSongName()+"'" + "," +
+                Database.SONGS_OF_PLAY_LIST.PATH      + " = " + "'"+ song.getPath()+"'"     + "," +
+                Database.SONGS_OF_PLAY_LIST.ARTIST    + " = " + "'"+ song.getArtist()+"'"   + "," +
+                Database.SONGS_OF_PLAY_LIST.ALBUM     + " = " + "'"+ song.getAlbum()+"'"    + "," +
+                Database.SONGS_OF_PLAY_LIST.ALBUM_ID  + " = " + "'"+ song.getAlbumID()+"'"  + "," +
+                Database.SONGS_OF_PLAY_LIST.FILE_NAME + " = " + "'"+ song.getFileName()+"'" + "," +
+                Database.SONGS_OF_PLAY_LIST.ID_SONG   + " = " + "'"+ song.get_ID()+"'"      + "," +
+                Database.SONGS_OF_PLAY_LIST.TIME      + " = " + "'"+ song.getTime()+"'" +
+                " WHERE " + "name_song = '"+ name +"'";
         mDatabase.queryData(SQL_UPDATE);
         closeDatabase();
     }
@@ -151,25 +133,26 @@ public class SongOfPlayList {
         mDatabase.queryData(SQL_UPDATE);
         closeDatabase();
     }
-    public ArrayList<SongModel> getAllSong() {
-        Cursor data = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
 
+    public ArrayList<SongModel> getAllSong(int id) {
+        Cursor data = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
         ArrayList<SongModel> mSongs = new ArrayList<>();
         if (isSelect(data)){
-            while (!data.isAfterLast()){
+            while (data.moveToNext()){
+                if (data.getInt(0)== id ) {
+                    SongModel.Builder builder = new SongModel.Builder();
+                    builder.setSongName(data.getString(1));
+                    builder.setPath(data.getString(2));
+                    builder.setArtist(data.getString(3));
+                    builder.setAlbum(data.getString(4));
+                    builder.setAlbumID(data.getString(5));
+                    builder.setFileName(data.getString(6));
+                    builder.setID(data.getString(7));
+                    builder.setTime(data.getInt(8));
 
-                SongModel.Builder builder = new SongModel.Builder();
-                builder.setSongName(data.getString(1));
-                builder.setPath(data.getString(2));
-                builder.setArtist(data.getString(3));
-                builder.setAlbum(data.getString(4));
-                builder.setAlbumID(data.getString(5));
-                builder.setFileName(data.getString(6));
-                builder.setID(data.getString(7));
-                builder.setTime(data.getInt(8));
-
-                SongModel songModel = builder.generate();
-                mSongs.add(songModel);
+                    SongModel songModel = builder.generate();
+                    mSongs.add(songModel);
+                }
             }
         }
         closeDatabase();
@@ -205,6 +188,17 @@ public class SongOfPlayList {
         return null;
     }
 
+    public int getId(SongModel songModel){
+        Cursor cursor = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
+        if (isSelect(cursor)){
+            while (cursor.moveToNext()){
+                if (cursor.getString(1).equals(songModel.getSongName())){
+                    return cursor.getInt(0);
+                }
+            }
+        }
+        return -1;
+    }
 
     public int getSize() {
         Cursor songData = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);

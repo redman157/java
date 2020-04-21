@@ -10,6 +10,7 @@ public class SharedPrefsUtils {
 
     public SharedPrefsUtils(Context context) {
         this.context = context;
+        preferences = context.getSharedPreferences()
     }
 
     public void setString(String key, String value) {

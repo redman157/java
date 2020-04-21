@@ -22,7 +22,8 @@ public class CategorySongs {
     public CategorySongs(Context context){
         this.context = context;
         mDatabase = new ReaderSQL(context, Database.CATEGORY.DATABASE_NAME, null, 1 );
-        mDatabase.queryData(Database.CATEGORY.CREATE_ENTRIES);
+        mDatabase.queryData(Database.CATEGORY.CREATE_TABLE);
+        mDatabase.close();
     }
 
 

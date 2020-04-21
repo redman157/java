@@ -30,11 +30,11 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
 
     public PerformMusicTasks(Activity activity, Boolean sync) {
         mActivity = activity;
-
+        
         this.sync = sync;
         mSongManager = SongManager.getInstance();
-        mSongManager.setContext(mActivity);
-        mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
+
+
     }
 
     private void addPlayListFirst(){
@@ -47,6 +47,8 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
+        mSongManager.setContext(mActivity);
         mSongManager.installData();
 
     }
@@ -67,6 +69,8 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
             Log.d(tag, "Sync: "+sync);
             if (sync) {
 
+            }else {
+                cancel(true);
             }
 
         } catch (Exception e) {

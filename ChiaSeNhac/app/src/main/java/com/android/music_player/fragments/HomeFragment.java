@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,7 +37,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     private ArrayList<SongModel> mNewSongs;
     private View view;
 
-    private Button btn_ViewAll;
+    private Button mBtnViewAll;
     private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
     private ImageUtils mImageUtils;
@@ -45,7 +46,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     private Activity mActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
     private ArrayList<SongModel> mSongs;
-
+    private TextView text_Player_1, text_Player_2;
     public HomeFragment(Activity activity){
         mActivity = activity;
     }
@@ -85,13 +86,15 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
         mImg_Most_Player = view.findViewById(R.id.img_Most_Player);
         mImg_Recently_Add = view.findViewById(R.id.img_Recently_Add);
         mImg_Shuffle_All = view.findViewById(R.id.img_Shuffle_All);
-        btn_ViewAll= view.findViewById(R.id.btn_ViewAll);
+        mBtnViewAll = view.findViewById(R.id.btn_ViewAll);
+        text_Player_1 = view.findViewById(R.id.text_Player_1);
+        text_Player_2 = view.findViewById(R.id.text_Player_2);
     }
 
     private void assignView(){
 
         mImg_Shuffle_All.setOnClickListener(this);
-        btn_ViewAll.setOnClickListener(this);
+        mBtnViewAll.setOnClickListener(this);
     }
 
     @Override

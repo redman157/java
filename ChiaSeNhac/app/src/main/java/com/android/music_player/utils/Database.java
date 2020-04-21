@@ -17,7 +17,7 @@ public class Database {
 
         String TIME = "time";
 
-        String CREATE_ENTRIES =
+        String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                         COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + "," +
                         CATEGORY       + " TEXT "    + "," +
@@ -41,7 +41,7 @@ public class Database {
         String FILE_NAME = "file_name";
         String MOST_SONG = "most_song";
 
-        String CREATE_ENTRIES =
+        String CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + "," +
                     FILE_NAME + " TEXT "    + "," +
@@ -58,7 +58,7 @@ public class Database {
         String NAME_PLAY_LIST = "name_play_list";
         String ID = "id";
         String MOST_PLAYLIST = "most_playlist";
-        String CREATE_ENTRIES =
+        String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                         ID + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +
                         MOST_PLAYLIST + " INTEGER " + "," +
@@ -81,21 +81,37 @@ public class Database {
         String FAVORITE = "favorite";
         String ID_SONG = "id_song";
         String TIME = "time";
-        String MOST_SONG = "most_song";
 
         String QUERY = "SELECT * FROM " + TABLE_NAME;
         String DELETE = "DELETE FROM " + TABLE_NAME;
-        String CREATE_ENTRIES =
+        String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" +
                         COL_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +
-                        NAME_SONG   + " TEXT "    + "," +
-                        PATH        + " TEXT "    + "," +
-                        ARTIST      + " TEXT "    + "," +
-                        ALBUM       + " TEXT "    + "," +
-                        ALBUM_ID    + " TEXT "    + "," +
-                        FILE_NAME   + " TEXT "    + "," +
-                        ID_SONG     + " TEXT "    + "," +
-                        FAVORITE    + " INTEGER " + "," +
-                        TIME        + " INTEGER " + ");";
+                        NAME_SONG     + " TEXT "    + "," +
+                        PATH          + " TEXT "    + "," +
+                        ARTIST        + " TEXT "    + "," +
+                        ALBUM         + " TEXT "    + "," +
+                        ALBUM_ID      + " TEXT "    + "," +
+                        FILE_NAME     + " TEXT "    + "," +
+                        ID_SONG       + " TEXT "    + "," +
+                        FAVORITE      + " INTEGER " + "," +
+                        TIME          + " INTEGER " + ");";
+    }
+
+    public @interface RELATION_SONGS{
+        String NAME_PLAY_LIST = "name_play_list";
+        String ID_SONGS = "id_songs";
+        String ID = "id";
+        String MOST = "most_play_list";
+        String DATABASE_NAME = "relation_songs.db";
+        String TABLE_NAME = "relation_songs";
+        String CREATE_TABLE =
+                "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" +
+                        ID             + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +
+                        MOST           + " INTEGER "  + "," +
+                        NAME_PLAY_LIST + " STRING "  + "," +
+                        ID_SONGS       + " INTEGER " + ");";
+        String QUERY = "SELECT * FROM " + TABLE_NAME;
+        String DELETE = "DELETE FROM " + TABLE_NAME;
     }
 }

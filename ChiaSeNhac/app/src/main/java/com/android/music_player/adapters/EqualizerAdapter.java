@@ -14,11 +14,11 @@ import com.android.music_player.R;
 import java.util.ArrayList;
 
 public class EqualizerAdapter extends RecyclerView.Adapter<EqualizerAdapter.ViewHolder> {
-    private ArrayList<String> equalizers;
+    private ArrayList<String> mEqualizers;
     private Context mContext;
     public EqualizerAdapter( Context context,ArrayList<String> equalizers) {
-        this.equalizers = equalizers;
-        this.mContext = context;
+        mEqualizers = equalizers;
+        mContext = context;
     }
 
     private OnClickItemListener onClickItemListener;
@@ -39,7 +39,7 @@ public class EqualizerAdapter extends RecyclerView.Adapter<EqualizerAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        final String item = equalizers.get(position);
+        final String item = mEqualizers.get(position);
         holder.setData(item);
 
         holder.textView.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +53,7 @@ public class EqualizerAdapter extends RecyclerView.Adapter<EqualizerAdapter.View
 
     @Override
     public int getItemCount() {
-        return equalizers.size();
+        return mEqualizers.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

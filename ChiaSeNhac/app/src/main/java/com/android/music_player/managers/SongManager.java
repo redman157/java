@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import com.android.music_player.database.RelationSongs;
+import com.android.music_player.tasks.RenamePlayListTask;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.R;
 import com.android.music_player.database.AllPlaylist;
@@ -39,6 +41,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class SongManager {
     /*private ArrayList<HashMap<String, String>> getAlbumsList = new ArrayList<>();
@@ -59,6 +62,7 @@ public class SongManager {
     private SongOfPlayList mSongOfPlayList;
     private CategorySongs mCategorySongs;
     private Statistic mStatistic;
+    private RelationSongs mRelationSongs;
     @SuppressLint("StaticFieldLeak")
     private static SongManager instance;
 
@@ -87,10 +91,10 @@ public class SongManager {
         mSongOfPlayList = new SongOfPlayList(mContext);
         mCategorySongs = new CategorySongs(mContext);
         mStatistic = new Statistic(mContext);
+        mRelationSongs = new RelationSongs(mContext);
         mSharedPrefsUtils = new SharedPrefsUtils(mContext);
 
         mTotalSong = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1);
-
     }
     public void installData(){
         // lần đầu tiên cài app
@@ -405,7 +409,13 @@ public class SongManager {
 
     public void addMusic(String namePlayList ,SongModel song){
         if (!mAllPlaylist.searchPlayList(namePlayList)){
-            addMusic(song);
+            if (mSongOfPlayList.searchSong(song)){
+                Utils.ToastShort(mContext, "Bài hát đã có trong PlayList");
+            }else {
+                mSongOfPlayList.addSong(song);
+                mStatistic.addFileName(song.getFileName());
+                Utils.ToastShort(mContext, "Đã Thêm Bài hát vào PlayList: "+song.getSongName());
+            }
         }else {
             Utils.ToastShort(mContext, "Bài hát đã có trong playlist");
         }
@@ -463,22 +473,39 @@ public class SongManager {
 
     public String renamePlayList(String main, String change){
         String temp = "";
-        if (mAllPlaylist.searchPlayList(main)){
-            if (!change.equals("")){
-                if (main.equals(change)){
-                    Utils.ToastShort(mContext, "Vui lòng nhập tên không được trùng với PlayList " +
-                            "ban đầu");
-                }else {
-                    mAllPlaylist.updatePlayList(main, change);
+        if (main.equals("")){
+            Utils.ToastShort(mContext, "PlayList không thể tìm trống");
+        }else if (change.equals("")){
+            Utils.ToastShort(mContext, "Vui lòng nhập tên cần thay đổi");
+        }else if (main.equals(change)){
+            Utils.ToastShort(mContext, "Vui lòng nhập tên không được trùng với PlayList " +
+                    "ban đầu");
+        }else if (!main.equals("") && !change.equals("")) {
+            if (mAllPlaylist.searchPlayList(main)) {
+                try {
+                    temp = new RenamePlayListTask(mContext, main, change).execute().get();
                     Utils.ToastShort(mContext, "Đã đổi tên PlayList thành công ");
-                    temp = change;
                     return temp;
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
                 }
             }else {
-                Utils.ToastShort(mContext, "Vui lòng nhập tên cần thay đổi");
+                Utils.ToastShort(mContext, "Không tìm thấy PlayList để đổi");
             }
         }
         return temp;
+    }
+
+    public void changeMusic(String namePlayList, SongModel song){
+        if (song == null){
+
+        }else {
+            if (mSongOfPlayList.searchSong(song)){
+
+            }else {
+                Utils.ToastShort(mContext,"Không tìm thấy PlayList: "+namePlayList);
+            }
+        }
     }
 
     private void grabIfEmpty() {
@@ -671,5 +698,13 @@ public class SongManager {
 
     public void setStatistic(Statistic mStatistic) {
         this.mStatistic = mStatistic;
+    }
+
+    public RelationSongs getRelationSongs() {
+        return mRelationSongs;
+    }
+
+    public void setRelationSongs(RelationSongs mRelationSongs) {
+        this.mRelationSongs = mRelationSongs;
     }
 }

@@ -18,13 +18,15 @@ public class AllPlaylist {
     private Context mContext;
     private String TAG = "AllPlaylistLog";
     /* renamed from: db */
-
+    private RelationSongs mRelationSongs;
     private ReaderSQL mDatabase;
 
     public AllPlaylist(Context context){
         this.mContext = context;
         this.mDatabase = new ReaderSQL(context, Database.ALL_PLAY_LISTS.DATABASE_NAME, null, 1);
-        mDatabase.queryData(Database.ALL_PLAY_LISTS.CREATE_ENTRIES);
+        mRelationSongs = new RelationSongs(context);
+        mDatabase.queryData(Database.ALL_PLAY_LISTS.CREATE_TABLE);
+        mDatabase.close();
     }
 
     public AllPlaylist closeDatabase() {
@@ -57,7 +59,7 @@ public class AllPlaylist {
         String SQL_INSERT =
                 "INSERT INTO "+ Database.ALL_PLAY_LISTS.TABLE_NAME
                         +" VALUES(null, '"+ title +"')";
-
+        mRelationSongs.addRow(title, -1);
         mDatabase.queryData(SQL_INSERT);
         closeDatabase();
         Toast.makeText(mContext, "Đã Add PlayList: "+title, Toast.LENGTH_SHORT).show();
@@ -105,7 +107,6 @@ public class AllPlaylist {
                         " WHERE "+ Database.ALL_PLAY_LISTS.NAME_PLAY_LIST + "= '"+ main+ "' ";
         mDatabase.queryData(SQL_UPDATE);
 
-        Toast.makeText(mContext, "Đã Update PlayList: "+change, Toast.LENGTH_SHORT).show();
     }
 
     public boolean searchPlayList(String namePlayList){
@@ -133,7 +134,7 @@ public class AllPlaylist {
 
         try {
             ArrayList<String> allPlayList = new ArrayList<>();
-            if (isSelect(query)) {
+            if (isSelect(query) && getSize() > 0) {
                 do {
                     allPlayList.add(query.getString(1));
                 } while (query.moveToNext());

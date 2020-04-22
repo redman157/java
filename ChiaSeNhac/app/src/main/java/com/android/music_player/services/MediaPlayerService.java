@@ -132,7 +132,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         initMediaPlayer();
         initMediaSession();
 
-        registerReceiver(becomingNoisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
+//        registerReceiver(becomingNoisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         registerReceiver(brResetMusic,  new IntentFilter(Constants.ACTION.BROADCAST_RESET_AUDIO));
         registerReceiver(brStopMusic, new IntentFilter(Constants.ACTION.BROADCAST_STOP_AUDIO));
 //        registerReceiver(brSeekBar, new IntentFilter(Constants.ACTION.BROADCAST_SEEK_BAR));
@@ -179,7 +179,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         if (mSongs != null){
 //            unregisterReceiver(brPlayPause);
 //            unregisterReceiver(brSeekBar);
-            unregisterReceiver(becomingNoisyReceiver);
+//            unregisterReceiver(becomingNoisyReceiver);
         }
     }
 

@@ -91,6 +91,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
                 DialogUtils.cancelDialog();
             }
         });
+
     }
 
 

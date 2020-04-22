@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
+import com.android.music_player.utils.DialogUtils;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.ViewHo
         String title = mPlayLists.get(position);
         holder.addData(title);
         holder.setOnClick(title);
+        holder.setOnLongClick(title);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -61,6 +63,16 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.ViewHo
                 @Override
                 public void onClick(View v) {
                     onClickItem.onClick(title);
+                }
+            });
+        }
+
+        public void setOnLongClick(final String title){
+            textView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    DialogUtils.showDeletePlayList(mContext, title);
+                    return false;
                 }
             });
         }

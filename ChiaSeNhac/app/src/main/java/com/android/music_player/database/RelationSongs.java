@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Database;
 
@@ -57,12 +58,16 @@ public class RelationSongs {
         ArrayList<String> most = new ArrayList<>();
         try {
             if (isSelect(cursor)){
-
+                if (cursor.getCount() == 0){
+                    SongManager.getInstance().setContext(mContext);
+                    SongManager.getInstance().getAllPlaylistDB().addPlayList("PlayList 1");
+                    SongManager.getInstance().getAllPlaylistDB().addPlayList("PlayList 2");
+                }
                 List<Integer> sorted;
                 Log.d(TAG, cursor.getCount()+" kích thước");
 
                 do {
-                    Log.d(TAG, "Enter");
+                    Log.d(TAG, "Enter0");
                     int counter = cursor.getInt(1);
                     String playlist = cursor.getString(2);
                     Log.d(TAG, playlist);
@@ -73,7 +78,7 @@ public class RelationSongs {
                     playListMost.get(counter).add(playlist);
                 } while (cursor.moveToNext());
                 sorted = new ArrayList<>(playListMost.keySet());
-
+                Log.d(TAG, "Enter1");
                 if (sorted.size() > 0) {
                     Collections.sort(sorted);
 
@@ -138,6 +143,13 @@ public class RelationSongs {
                         +Database.RELATION_SONGS.ID_SONGS + " = "+ "'"+ id+"'"+
                         " WHERE "+Database.RELATION_SONGS.NAME_PLAY_LIST+ "="+ namePlayList;
         mDatabase.queryData(SQL_UPDATE);
+        closeDatabase();
+    }
+
+    public void deletePlayList(String namePlayList){
+        String SQL_DELETE = "DELETE FROM "+Database.RELATION_SONGS.TABLE_NAME +
+                " WHERE "+Database.RELATION_SONGS.NAME_PLAY_LIST+ " = "+"'"+namePlayList+"'";
+        mDatabase.queryData(SQL_DELETE);
         closeDatabase();
     }
 

@@ -207,6 +207,17 @@ public class SongManager {
      * Actions
      */
 
+    public SongModel getSong(String title){
+        for (int i = 0; i < mSongsMain.size();i++){
+            if (mSongsMain.get(i).getSongName().equals(title)){
+                return mSongsMain.get(i);
+            }
+        }
+        return null;
+    }
+
+
+
     public void isSync(boolean sync) {
         if (sync) {
             mSongsMain.clear();

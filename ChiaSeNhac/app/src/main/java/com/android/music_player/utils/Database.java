@@ -47,7 +47,7 @@ public class Database {
                     FILE_NAME + " TEXT "    + "," +
                     MOST_SONG + " INTEGER " + ");";
 
-        String DELETE = "DROP TABLE IF EXISTS " + TABLE_NAME;
+        String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
         String QUERY = "SELECT * FROM " + TABLE_NAME;
 
     }
@@ -64,7 +64,7 @@ public class Database {
                         MOST_PLAYLIST + " INTEGER " + "," +
                         NAME_PLAY_LIST + " TEXT "    + ");";
         String QUERY = "SELECT * FROM "+ ALL_PLAY_LISTS.TABLE_NAME;
-        String DELETE = "DELETE FROM " + TABLE_NAME;
+        String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
     }
 
     public @interface SONGS_OF_PLAY_LIST {
@@ -83,7 +83,7 @@ public class Database {
         String TIME = "time";
 
         String QUERY = "SELECT * FROM " + TABLE_NAME;
-        String DELETE = "DELETE FROM " + TABLE_NAME;
+        String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
         String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" +
                         COL_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +
@@ -112,6 +112,6 @@ public class Database {
                         NAME_PLAY_LIST + " STRING "  + "," +
                         ID_SONGS       + " INTEGER " + ");";
         String QUERY = "SELECT * FROM " + TABLE_NAME;
-        String DELETE = "DELETE FROM " + TABLE_NAME;
+        String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
     }
 }

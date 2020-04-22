@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.BaseActivity;
+import com.android.music_player.OnChangePlayList;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.R;
 import com.android.music_player.adapters.OptionMenuAdapter;
@@ -46,7 +47,7 @@ import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton;
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
-        OptionMenuAdapter.OnClickItem, ViewPager.OnPageChangeListener {
+        OptionMenuAdapter.OnClickItem, ViewPager.OnPageChangeListener{
     private View view_LayoutMenu;
 
     private TextView txt_Home, txt_Albums, txt_Artists, txt_Songs, txt_PlayLists;
@@ -60,7 +61,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private String tag = "BBB";
     private RecyclerView mRcOptionMenu;
     private BottomNavigationView mNavigationView;
-    private ArrayList<Fragment> mFragments;
     private ArrayList<String> mMenus;
     private ViewPagerAdapter mViewPagerAdapter;
     private boolean isHide = false;
@@ -73,13 +73,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public Button mBtnTitle;
     private SharedPrefsUtils mSharedPrefsUtils;
     private ArrayList<SongModel> mSongs;
+    private ArrayList<String> mMostPlayList;
+    private SongManager mSongManager;
     public MaterialPlayPauseButton mBtnPlay;
     private boolean isPlay;
+    private ArrayList<Fragment> mFragments = new ArrayList<>();
+
+    private OnChangePlayList onChangePlayList;
 
     @Override
     protected void onPause() {
         super.onPause();
-
+        Log.d("XXX", "Home Activity : onPause");
     }
 
     @Override
@@ -92,6 +97,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onStart() {
         super.onStart();
+        mSongManager = SongManager.getInstance();
+        mSongManager.setContext(this);
+        mMostPlayList = mSongManager.getRelationSongs().getMost();
+
+        Log.d("XXX", "HomeActivity --- onStart: "+mMostPlayList.size());
+        if (onChangePlayList != null) {
+            onChangePlayList.onChange(mMostPlayList);
+        }
+
         setTypeSong(mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, ""));
         Intent iService = new Intent(this, MediaPlayerService.class);
         iService.setAction(Constants.ACTION.SET_MUSIC);
@@ -99,7 +113,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         iService.putExtra(Constants.INTENT.SET_MUSIC, mSongs);
         startService(iService);
 
-        Log.d("KKK", "Home Activity --- onResume: "+isPlay);
         if (MediaPlayerService.mMediaPlayer != null) {
             if (MediaPlayerService.mMediaPlayer.isPlaying()) {
 
@@ -111,12 +124,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
         }
 
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("PPP", "onResume : Enter");
+
 
 
     }
@@ -127,6 +141,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         setContentView(R.layout.activity_home);
         // khởi tạo màn hình chính là home ta cần check position để gán sẵn vị trí luôn
         mSharedPrefsUtils = new SharedPrefsUtils(this);
+        mSongManager = SongManager.getInstance();
+        mSongManager.setContext(this);
+        mMostPlayList = mSongManager.getRelationSongs().getMost();
         initMenu();
         initView();
 
@@ -149,9 +166,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
     private void setupViewPager(ViewPager viewPager){
 
-        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        mViewPagerAdapter = new ViewPagerAdapter(this,getSupportFragmentManager());
+        HomeFragment homeFragment = new HomeFragment();
+        homeFragment.setOnChangePlayList(onChangePlayList);
 
-        mViewPagerAdapter.addFragment(new HomeFragment(this));
+
+        mViewPagerAdapter.addFragment(homeFragment);
         mViewPagerAdapter.addFragment(new AllSongsFragment());
         mViewPagerAdapter.addFragment(new AlbumGridFragment());
         mViewPagerAdapter.addFragment(new ArtistGridFragment());
@@ -408,11 +428,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case R.id.btn_title_media:
                 if (!SongManager.getInstance().queue().isEmpty()) {
-
+                    mRcOptionMenu.setVisibility(View.GONE);
                     Intent intent = new Intent(HomeActivity.this, PlayActivity.class);
                     intent.putExtra(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
                     intent.putExtra(Constants.INTENT.POSITION,
                             mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, 0));
+
+
                     startActivity(intent);
                 }
                 break;
@@ -438,6 +460,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case R.id.menu_search:
                 Intent intent = new Intent(this, SearchActivity.class);
+                mRcOptionMenu.setVisibility(View.GONE);
                 startActivity(intent);
                 break;
             case R.id.vp_Home:
@@ -473,5 +496,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void onPageScrollStateChanged(int state) {
 
     }
+
 
 }

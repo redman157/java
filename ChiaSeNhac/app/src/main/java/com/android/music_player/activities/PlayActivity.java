@@ -212,6 +212,8 @@ public class PlayActivity extends BaseActivity
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (positionOffset == 0.0 && positionOffsetPixels == 0) {
+            mSongManager.getStatistic().increase(mSongs.get(position).getSongName());
+
             Log.d("BBB", "PlayActivity --- onPageScrolled: "+position);
             SongManager.getInstance().setCurrentMusic(this.position);
             mSharedPrefsUtils.setString(Constants.PREFERENCES.SaveAlbumID,
@@ -442,7 +444,7 @@ public class PlayActivity extends BaseActivity
             case R.id.imb_SeeMenu:
                 break;
             case R.id.icon_about:
-                DialogUtils.showMusicAbout(PlayActivity.this, mSongs.get(position));
+                DialogUtils.showSongsInfo(PlayActivity.this, mSongs.get(position));
                 break;
             case R.id.icon_shuffle:
                 if (!isShuffle){

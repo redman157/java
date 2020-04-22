@@ -1,8 +1,10 @@
 package com.android.music_player.utils;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 
 public class DialogUtils {
     private static Dialog dialog;
+
     public DialogUtils(@NonNull Context context) {
 
     }
@@ -36,6 +39,7 @@ public class DialogUtils {
                 dialog.dismiss();
             }
         }
+
     }
 
 
@@ -56,7 +60,7 @@ public class DialogUtils {
         dialog.show();
     }
 
-    private static void showAddPlayList(final Context context){
+    private static void showCreatePlayList(final Context context){
         SongManager.getInstance().setContext(context);
         dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_add_playlist);
@@ -84,7 +88,9 @@ public class DialogUtils {
                 if (!name.isEmpty()){
                     if (!SongManager.getInstance().getAllPlaylistDB().searchPlayList(name)) {
                         SongManager.getInstance().getAllPlaylistDB().addPlayList(name);
-                        Toast.makeText(context, "Create PlayList Name: "+name, Toast.LENGTH_SHORT).show();
+                        Utils.ToastShort(context, "Create PlayList Name: "+name);
+                    }else {
+                        Utils.ToastShort(context, "Bài hát đã add vào playlist: "+name);
                     }
                 }
                 dialog.dismiss();
@@ -93,8 +99,8 @@ public class DialogUtils {
         dialog.show();
     }
 
-    public static void showAddMusic(final Context context, final SongModel songModel,
-                               final String title){
+    public static void showAddSongs(final Context context, final SongModel songModel,
+                                    final String title){
         SongManager.getInstance().setContext(context);
         dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_add_music);
@@ -112,7 +118,7 @@ public class DialogUtils {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                showAddPlayList(context);
+                showCreatePlayList(context);
             }
         });
 
@@ -129,7 +135,7 @@ public class DialogUtils {
     }
 
     @SuppressLint("SetTextI18n")
-    public static void showMusicAbout(Context context, SongModel songModel){
+    public static void showSongsInfo(Context context, SongModel songModel){
         dialog = new Dialog(context);
 
         dialog.setContentView(R.layout.dialog_info_music);
@@ -160,8 +166,8 @@ public class DialogUtils {
         dialog.show();
     }
 
-    public static void showOptionMusic(final Context context,
-                                       MusicAdapter musicAdapter, int pos){
+    public static void showSelectSong(final Context context,
+                                      MusicAdapter musicAdapter, int pos){
         dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_option_music);
         RecyclerView mRcOptionMusic = dialog.findViewById(R.id.rc_OptionMusic);
@@ -171,5 +177,32 @@ public class DialogUtils {
                 LinearLayoutManager.VERTICAL, false));
         mRcOptionMusic.getLayoutManager().scrollToPosition(pos);
         dialog.show();
+    }
+
+    public static void showDeletePlayList(final Context context, final String title){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SongManager.getInstance().setContext(context);
+                if (SongManager.getInstance().getAllPlaylistDB().deletePlayList(title)){
+                    cancelDialog();
+                    Toast.makeText(context, "Đã xóa Play List: "+ title, Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(context, "Chưa xóa Play List: "+ title, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

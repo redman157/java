@@ -2,6 +2,7 @@ package com.android.music_player.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
@@ -16,7 +17,7 @@ public class Statistic {
 
     public Statistic(Context context){
         this.mContext = context;
-        this.mDatabase = new ReaderSQL(context, Database.ALL_PLAY_LISTS.DATABASE_NAME, null, 1);
+        this.mDatabase = new ReaderSQL(context, Database.STATISTIC.DATABASE_NAME, null, 1);
         mDatabase.queryData(Database.STATISTIC.CREATE_TABLE);
         mDatabase.close();
     }
@@ -32,15 +33,13 @@ public class Statistic {
                 " VALUES(" +
                 " null, " +
                 "'" + fileName+ "'"+ ","+
-                "" + 0 + ""      + ","+
-                ")";
+                "" + 1 + ""      + ")";
         mDatabase.queryData(SQL_ADD);
         closeDatabase();
     }
 
 
     public boolean isSelect(Cursor cursor){
-        cursor = mDatabase.getData(Database.STATISTIC.QUERY);
         try {
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -55,26 +54,64 @@ public class Statistic {
     }
 
     public int getNumber(String fileName){
-        String QUERY_NUMBER = "SELECT most_song FROM "+Database.STATISTIC.TABLE_NAME+
-                "WHERE "+Database.STATISTIC.FILE_NAME+" = "+fileName;
-        Cursor cursor = mDatabase.getData(QUERY_NUMBER);
-        if (cursor == null){
-            addFileName(fileName);
-            return 0;
-        }else {
-            try {
-                if (isSelect(cursor)) {
-                    return cursor.getInt(2);
+        Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
+
+        try {
+            if (isSelect(cursor)){
+                do {
+                    if (cursor.getString(1).equals(fileName)){
+                        return cursor.getInt(2);
+                    }
                 }
-            } catch (SQLiteException e) {
-                Log.d(TAG, e.getMessage());
-            } finally {
-                closeDatabase();
+                while (cursor.moveToNext());
             }
-            return -1;
+        }catch (SQLiteException e){
+
+        }finally {
+            closeDatabase();
         }
+        return -2;
     }
 
+
+
+    public String getMost(){
+        Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
+        int max = 0;
+        String name = "";
+        try {
+            if (isSelect(cursor)){
+                do {
+                    if (cursor.getInt(2) >= max){
+                        max = cursor.getInt(2);
+                        name = cursor.getString(1);
+                    }
+                }while (cursor.moveToNext());
+                return name;
+            }
+        }catch (SQLiteException e){
+            Log.d(TAG, e.getMessage());
+        }catch (CursorIndexOutOfBoundsException e){
+            return "";
+        }
+        finally {
+            closeDatabase();
+        }
+        return null;
+       /* String name = null;
+        int max = 0;
+        if (isSelect(cursor)) {
+            do {
+                if (cursor.getInt(1) >= max){
+                    max = cursor.getInt(1);
+                    name = cursor.getString(2);
+
+                }
+            } while (cursor.moveToNext());
+            return name;
+        }
+        return null;*/
+    }
     public int getSize(){
         Cursor data = mDatabase.getData(Database.STATISTIC.QUERY);
         int count = 0;
@@ -91,24 +128,48 @@ public class Statistic {
     }
 
     public boolean increase(String fileName){
-        String SQL_QUERY = "SELECT "+Database.STATISTIC.FILE_NAME +" From "+Database.STATISTIC.TABLE_NAME
-                + " WHERE "+Database.STATISTIC.FILE_NAME+" = "+fileName;
 
-        Cursor cursor = mDatabase.getData(SQL_QUERY);
-        if (cursor == null){
+        if (!searchFileName(fileName) ){
+            Log.d(TAG, fileName +" --- searchFileName: true ");
             addFileName(fileName);
             return false;
         }else {
+            int s = (getNumber(fileName)) + 1;
+            Log.d(TAG, fileName +" --- searchFileName: false ");
+            Log.d(TAG, fileName+ ": "+s);
+
             String SQL_UPDATE =
                     "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET "+Database.STATISTIC.MOST_SONG
-                    +" = "  +"'"+ (getNumber(fileName) + 1)+"'"
-                            +" WHERE "+Database.STATISTIC.FILE_NAME+ " = "+fileName;
-            mDatabase.queryData(SQL_QUERY);
+                    +" = "  +""+ s +""
+                            +" WHERE "+Database.STATISTIC.FILE_NAME+ " = "+"'"+fileName+"'";
+            Log.d(TAG, SQL_UPDATE);
+            mDatabase.queryData(SQL_UPDATE);
             closeDatabase();
             return true;
         }
     }
 
+    public boolean searchFileName(String filePath){
+        Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
+        try {
+            if (isSelect(cursor)){
+                do  {
+
+                    if (cursor.getString(1).equals(filePath)){
+                        return true;
+                    }
+                }while (cursor.moveToNext());
+            }
+        }catch (SQLiteException e) {
+            Log.d(TAG, e.getMessage());
+        } catch (CursorIndexOutOfBoundsException e) {
+            return false;
+        } finally {
+            closeDatabase();
+        }
+
+        return false;
+    }
     public void resetSong(String fileName){
         String SQL_UPDATE =
                 "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET " +

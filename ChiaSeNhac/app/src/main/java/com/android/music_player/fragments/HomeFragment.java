@@ -3,6 +3,7 @@ package com.android.music_player.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.music_player.OnChangePlayList;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.RecentlyAllMusicActivity;
@@ -29,12 +31,12 @@ import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnClickItem, View.OnClickListener{
+public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnClickItem,
+        View.OnClickListener, OnChangePlayList {
     private RecyclerView mRc_Recently_Add;
     private RecentlyAdderAdapter mAdderAdapter;
     private ArrayList<SongModel> mNewSongs;
     private View view;
-
     private Button mBtnViewAll;
     private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
@@ -44,20 +46,36 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     private Activity mActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
     private ArrayList<SongModel> mSongs;
-    private TextView text_Player_1, text_Player_2;
+    private TextView text_Player_1, text_Player_2, text_Player_Songs;
     private SongManager mSongManager;
-    public HomeFragment(Activity activity){
-        mActivity = activity;
+    private  ArrayList<String> mMostPlayList;
+    private String play_list_1, play_list_2;
+    private OnChangePlayList onChangePlayList;
+    public void setOnChangePlayList(OnChangePlayList onChangePlayList){
+        this.onChangePlayList = onChangePlayList;
     }
+
+    public static HomeFragment newInstance(ArrayList<String> strings) {
+        Log.d("XXX", "HomeFragment newInstance: "+strings.size());
+        Bundle args = new Bundle();
+        args.putStringArrayList("most", strings);
+        HomeFragment fragment = new HomeFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
+
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(getContext());
+        mMostPlayList = mSongManager.getRelationSongs().getMost();
         mAdderAdapter = new RecentlyAdderAdapter(getContext(),
                 SongManager.getInstance().newSongs(),
-                Constants.VALUE.NEW_SONGS );
+                Constants.VALUE.NEW_SONGS);
         mAdderAdapter.OnClickItem(this);
         mNewSongs = SongManager.getInstance().newSongs();
     }
@@ -65,20 +83,28 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.fragment_home, null);
-            initView();
-            assignView();
+        Log.d("XXX", "HomeFragment -- onCreateView");
+        view = inflater.inflate(R.layout.fragment_home, null);
+        initView();
 
-            mRc_Recently_Add.setAdapter(mAdderAdapter);
-            mRc_Recently_Add.setNestedScrollingEnabled(false);
-            mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(getContext(),
-                    LinearLayoutManager.VERTICAL, false));
+        assignView();
 
-        }
+        mRc_Recently_Add.setAdapter(mAdderAdapter);
+        mRc_Recently_Add.setNestedScrollingEnabled(false);
+        mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(getContext(),
+                LinearLayoutManager.VERTICAL, false));
+
         return view;
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
     private void initView(){
+        text_Player_Songs = view.findViewById(R.id.text_Player_Songs);
         mRc_Recently_Add = view.findViewById(R.id.rc_recently_add);
         mImg_Player_Songs = view.findViewById(R.id.img_Player_Songs);
         mImg_Player_1 = view.findViewById(R.id.img_Player_1);
@@ -92,9 +118,15 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     }
 
     private void assignView(){
-        ArrayList<String> getTwoPlayList = mSongManager.getRelationSongs().getMost();
-        text_Player_1.setText(getTwoPlayList.get(0));
-        text_Player_2.setText(getTwoPlayList.get(1));
+        String musicHot = mSongManager.getStatistic().getMost();
+        ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(mSongManager.getSong(musicHot).getAlbumID(),mImg_Player_Songs);
+
+
+        text_Player_Songs.setText(musicHot);
+        text_Player_1.setText(mMostPlayList.get(0));
+        text_Player_2.setText(mMostPlayList.size() < 2? mMostPlayList.get(0):
+                mMostPlayList.get(1));
+
         mImg_Shuffle_All.setOnClickListener(this);
         mBtnViewAll.setOnClickListener(this);
     }
@@ -136,5 +168,11 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
             case R.id.img_Shuffle_All:
                 break;
         }
+    }
+
+    @Override
+    public void onChange(ArrayList<String> mostPlayList) {
+//        mMostPlayList = mostPlayList;
+        newInstance(mostPlayList);
     }
 }

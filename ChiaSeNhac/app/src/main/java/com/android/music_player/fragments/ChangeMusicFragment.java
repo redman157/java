@@ -124,7 +124,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
                         mMusicAdapter.setPosition(i);
                         mMusicAdapter.setListMusic(mSongModels);
                         mMusicAdapter.setOnClick(onClickItem);
-                        DialogUtils.showOptionMusic(getContext(),mMusicAdapter, i);
+                        DialogUtils.showSelectSong(getContext(),mMusicAdapter, i);
                     }
                 }
 
@@ -139,7 +139,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(String title) {
         DialogUtils.cancelDialog();
-        DialogUtils.showAddMusic(getContext(),mSongModel ,title);
+        DialogUtils.showAddSongs(getContext(),mSongModel ,title);
 
     }
 }

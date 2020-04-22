@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.Database;
@@ -70,17 +69,19 @@ public class AllPlaylist {
     }
 
     public boolean deletePlayList(String name_play_list) {
-        String SQL_DELETE =
-                "DROP TABLE IF EXISTS "+ Database.ALL_PLAY_LISTS.TABLE_NAME+" WHERE name_play_list= '"+name_play_list+ "' ";
+        String SQL_DELETE =  "DELETE FROM " +Database.ALL_PLAY_LISTS.TABLE_NAME
+                + " WHERE "+Database.ALL_PLAY_LISTS.NAME_PLAY_LIST+ " = "+"'"+name_play_list+"'";
 
+        /*String SQL_DELETE =
+                "DROP TABLE IF EXISTS "+ Database.ALL_PLAY_LISTS.TABLE_NAME+" WHERE " +
+                        "name_play_list = "+name_play_list+ "";*/
         if (searchPlayList(name_play_list) && getSize() > 0){
             mDatabase.queryData(SQL_DELETE);
-            Toast.makeText(mContext, "Xóa thành công PlayList: "+name_play_list, Toast.LENGTH_SHORT).show();
+            mRelationSongs.deletePlayList(name_play_list);
             closeDatabase();
             return true;
         }else {
-            Toast.makeText(mContext, "Xóa không thành công PlayList: "+name_play_list,
-                    Toast.LENGTH_SHORT).show();
+
             return false;
         }
     }
@@ -111,7 +112,7 @@ public class AllPlaylist {
         try {
             if (isSelect(playListData) && getSize() > 0) {
                 do {
-                    if (playListData.getString(1).equals(namePlayList)) {
+                    if (playListData.getString(2).equals(namePlayList)) {
                         return true;
                     }
                 }

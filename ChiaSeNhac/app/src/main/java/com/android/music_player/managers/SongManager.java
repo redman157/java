@@ -417,45 +417,88 @@ public class SongManager {
         return -1;
     }
 
+    public boolean isPlayListMost(){
+        if (mRelationSongs.getPlayListMost() != null){
 
-    public void addMusic(String namePlayList ,SongModel song){
-        if (!mAllPlaylist.searchPlayList(namePlayList)){
-            if (mSongOfPlayList.searchSong(song)){
-                Utils.ToastShort(mContext, "Bài hát đã có trong PlayList");
-            }else {
-                mSongOfPlayList.addSong(song);
-                mStatistic.addFileName(song.getFileName());
-                Utils.ToastShort(mContext, "Đã Thêm Bài hát vào PlayList: "+song.getSongName());
-            }
+            return true;
         }else {
-            Utils.ToastShort(mContext, "Bài hát đã có trong playlist");
+            return false;
         }
-
     }
 
-    public void addMusic(SongModel song){
+    public ArrayList<String> getPlayListMost(){
+        if (isPlayListMost()){
+            return mRelationSongs.getPlayListMost();
+        }else {
+            return  null;
+        }
+    }
+
+    public ArrayList<SongModel> getAllSongToPlayList(String playListName){
+        ArrayList<SongModel> songs = new ArrayList<>();
+        if (mAllPlaylist.searchPlayList(playListName)){
+            ArrayList<String> allSongName = mRelationSongs.getAllSongName(playListName);
+            if (allSongName != null && allSongName.size() > 0 ){
+                for (String songName : allSongName){
+                    songs.add(getSong(songName));
+                }
+                return songs;
+            }else {
+
+                Log.d(TAG, "SongManager --- getAllSongToPlayList: error getAllSongToPlayList");
+                return null;
+
+            }
+        }else {
+            return null;
+        }
+    }
+
+    public void addPlayListFirst(){
+        if (mAllPlaylist.getSize() == 0) {
+            mAllPlaylist.addPlayList("PlayList 1");
+            mAllPlaylist.addPlayList("PlayList 2");
+        }else {
+            Log.d(TAG, "SongManager --- addPlayListFirst size > 0");
+        }
+    }
+
+    public boolean addSongToPlayList(String title, SongModel song){
+
         if (mSongOfPlayList.searchSong(song)){
-            Utils.ToastShort(mContext, "Bài hát đã có trong PlayList");
+
+            return true;
         }else {
             mSongOfPlayList.addSong(song);
-            mStatistic.addFileName(song.getFileName());
-            Utils.ToastShort(mContext, "Đã Thêm Bài hát vào PlayList: "+song.getSongName());
+            mRelationSongs.addRow(title, mSongOfPlayList.getSongName(song));
+            return false;
         }
     }
 
-    public void addPlayList(String namePlayList){
-        if (!namePlayList.equals("") && namePlayList.length() > 3) {
-            if (mAllPlaylist.searchPlayList(namePlayList)) {
-                Utils.ToastShort(mContext, "PlayList Đã Add Rồi");
-            } else {
+    public void increase(SongModel songModel){
+        mStatistic.increase(songModel.getSongName());
 
-                mAllPlaylist.addPlayList(namePlayList);
+    }
+    public void increase(String title){
+        mStatistic.increase(title);
 
-                Utils.ToastShort(mContext, "Add PlayList: " + namePlayList);
-            }
+    }
+
+    public boolean addPlayList(String namePlayList){
+        if (mAllPlaylist.searchPlayList(namePlayList)){
+
+            return false;
         }else {
-            Utils.ToastShort(mContext,"Vui lòng nhập tên PlayList");
+            mAllPlaylist.addPlayList(namePlayList);
+            return true;
         }
+    }
+
+    public ArrayList<String> getAllPlayList(){
+        if (mAllPlaylist.getAllPlayList() == null){
+            addPlayListFirst();
+        }
+        return mAllPlaylist.getAllPlayList();
     }
 
     public boolean delete(String namePlayList, SongModel song){
@@ -472,11 +515,11 @@ public class SongManager {
             if (mAllPlaylist.searchPlayList(namePlayList) && mSongOfPlayList.searchSong(song)){
                 mSongOfPlayList.deleteSong(song);
                 Utils.ToastShort(mContext,
-                        "Xóa bài hát trong PlayList: "+namePlayList+" thành công: "+song.getSongName());
+                        "Xóa bài hát trong TITLE: "+namePlayList+" thành công: "+song.getSongName());
                 return true;
             }else {
                 Utils.ToastShort(mContext,
-                        "Xóa bài hát trong PlayList: "+namePlayList+" không thành công: "+song.getSongName());
+                        "Xóa bài hát trong TITLE: "+namePlayList+" không thành công: "+song.getSongName());
                 return false;
             }
         }
@@ -485,23 +528,23 @@ public class SongManager {
     public String renamePlayList(String main, String change){
         String temp = "";
         if (main.equals("")){
-            Utils.ToastShort(mContext, "PlayList không thể tìm trống");
+            Utils.ToastShort(mContext, "TITLE không thể tìm trống");
         }else if (change.equals("")){
             Utils.ToastShort(mContext, "Vui lòng nhập tên cần thay đổi");
         }else if (main.equals(change)){
-            Utils.ToastShort(mContext, "Vui lòng nhập tên không được trùng với PlayList " +
+            Utils.ToastShort(mContext, "Vui lòng nhập tên không được trùng với TITLE " +
                     "ban đầu");
         }else if (!main.equals("") && !change.equals("")) {
             if (mAllPlaylist.searchPlayList(main)) {
                 try {
                     temp = new RenamePlayListTask(mContext, main, change).execute().get();
-                    Utils.ToastShort(mContext, "Đã đổi tên PlayList thành công ");
+                    Utils.ToastShort(mContext, "Đã đổi tên TITLE thành công ");
                     return temp;
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }else {
-                Utils.ToastShort(mContext, "Không tìm thấy PlayList để đổi");
+                Utils.ToastShort(mContext, "Không tìm thấy TITLE để đổi");
             }
         }
         return temp;
@@ -514,7 +557,7 @@ public class SongManager {
             if (mSongOfPlayList.searchSong(song)){
 
             }else {
-                Utils.ToastShort(mContext,"Không tìm thấy PlayList: "+namePlayList);
+                Utils.ToastShort(mContext,"Không tìm thấy TITLE: "+namePlayList);
             }
         }
     }

@@ -37,15 +37,6 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
 
     }
 
-    private void addPlayListFirst(){
-        if (mSongManager.getAllPlaylistDB().getSize() == 0){
-            Log.d(tag, "enter : addPlayListFirst");
-            mSongManager.getAllPlaylistDB().addPlayList("PlayList 1");
-            mSongManager.getAllPlaylistDB().addPlayList("PlayList 2");
-        }
-    }
-
-
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -66,9 +57,7 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
         }
 
         try {
-
-            addPlayListFirst();
-
+            mSongManager.addPlayListFirst();
             Log.d(tag, "Sync: "+sync);
             if (sync) {
 

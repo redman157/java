@@ -46,17 +46,24 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     private View mViewLayoutPlay;
     private ImageButton mBtnPlay;
     private ImageView mImgMedia;
+    private SongManager mSongManager;
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recently_all_music);
+        mSongManager = SongManager.getInstance();
+        mSongManager.setContext(this);
         mSongs =SongManager.getInstance().newSongs();
         initView();
         assignView();
         type = getIntent().getStringExtra(Constants.INTENT.TYPE_MUSIC);
         setTypeSong(type);
-
-
 
     }
 
@@ -68,7 +75,9 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
             mSongs = SongManager.getInstance().allSortSongs();
         }else if (type.equals("")){
             mSongs = SongManager.getInstance().newSongs();
-
+        }else if (mSongManager.getAllPlaylistDB().searchPlayList(type)){
+            mSongs = mSongManager.getAllSongToPlayList(type);
+            Log.d("ZZZ", mSongs.size()+"");
         }
         mTextArtist.setText(mSongs.get(position).getArtist());
         mTextTitle.setText(mSongs.get(position).getSongName());

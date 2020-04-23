@@ -27,13 +27,13 @@ public class Statistic {
         return this;
     }
 
-    public void addFileName(String fileName){
+    public void addRow(String row){
         String SQL_ADD = "INSERT INTO "+
                 Database.STATISTIC.TABLE_NAME+
                 " VALUES(" +
                 " null, " +
-                "'" + fileName+ "'"+ ","+
-                "" + 1 + ""      + ")";
+                "'" + row+ "'"+ ","+
+                ""  + 1 + ""  + ")";
         mDatabase.queryData(SQL_ADD);
         closeDatabase();
     }
@@ -52,6 +52,7 @@ public class Statistic {
         }
         return false;
     }
+
 
     public int getNumber(String fileName){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
@@ -72,8 +73,6 @@ public class Statistic {
         }
         return -2;
     }
-
-
 
     public String getMost(){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
@@ -97,21 +96,9 @@ public class Statistic {
         finally {
             closeDatabase();
         }
-        return null;
-       /* String name = null;
-        int max = 0;
-        if (isSelect(cursor)) {
-            do {
-                if (cursor.getInt(1) >= max){
-                    max = cursor.getInt(1);
-                    name = cursor.getString(2);
-
-                }
-            } while (cursor.moveToNext());
-            return name;
-        }
-        return null;*/
+        return "";
     }
+
     public int getSize(){
         Cursor data = mDatabase.getData(Database.STATISTIC.QUERY);
         int count = 0;
@@ -127,21 +114,18 @@ public class Statistic {
         return count;
     }
 
-    public boolean increase(String fileName){
-
-        if (!searchFileName(fileName) ){
-            Log.d(TAG, fileName +" --- searchFileName: true ");
-            addFileName(fileName);
+    public boolean increase(String name){
+        if (!searchPlayList(name) ){
+            Log.d(TAG, name +" --- searchPlayList: true ");
+            addRow(name);
             return false;
         }else {
-            int s = (getNumber(fileName)) + 1;
-            Log.d(TAG, fileName +" --- searchFileName: false ");
-            Log.d(TAG, fileName+ ": "+s);
+            int most = (getNumber(name)) + 1;
 
             String SQL_UPDATE =
-                    "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET "+Database.STATISTIC.MOST_SONG
-                    +" = "  +""+ s +""
-                            +" WHERE "+Database.STATISTIC.FILE_NAME+ " = "+"'"+fileName+"'";
+                    "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET "+Database.STATISTIC.MOST
+                    +" = "  +""+ most +""
+                            +" WHERE "+Database.STATISTIC.TITLE + " = "+"'"+name+"'";
             Log.d(TAG, SQL_UPDATE);
             mDatabase.queryData(SQL_UPDATE);
             closeDatabase();
@@ -149,13 +133,12 @@ public class Statistic {
         }
     }
 
-    public boolean searchFileName(String filePath){
+    public boolean searchPlayList(String namePlayList){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
         try {
             if (isSelect(cursor)){
                 do  {
-
-                    if (cursor.getString(1).equals(filePath)){
+                    if (cursor.getString(1).equals(namePlayList)){
                         return true;
                     }
                 }while (cursor.moveToNext());
@@ -173,8 +156,8 @@ public class Statistic {
     public void resetSong(String fileName){
         String SQL_UPDATE =
                 "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET " +
-                        Database.STATISTIC.MOST_SONG +" = " +"'" + 0 +"'"+
-                        " WHERE "+Database.STATISTIC.FILE_NAME+ " = "+fileName;
+                        Database.STATISTIC.MOST +" = " +"'" + 0 +"'"+
+                        " WHERE "+Database.STATISTIC.TITLE + " = "+fileName;
         mDatabase.queryData(SQL_UPDATE);
     }
 

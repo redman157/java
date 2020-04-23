@@ -2,9 +2,11 @@ package com.android.music_player.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import com.android.music_player.managers.SongManager;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.Database;
 
@@ -54,9 +56,8 @@ public class AllPlaylist {
 
         String SQL_INSERT =
                 "INSERT INTO "+ Database.ALL_PLAY_LISTS.TABLE_NAME
-
-                        +" VALUES(null,"+ 0 +", '"+ title +"')";
-        mRelationSongs.addRow(title, -1);
+                        +" VALUES(null"  + ","+
+                        "'" + title +"'" + ")";
         mDatabase.queryData(SQL_INSERT);
         closeDatabase();
     }
@@ -104,15 +105,16 @@ public class AllPlaylist {
                         Database.ALL_PLAY_LISTS.NAME_PLAY_LIST + "= '"+ change +"'" +
                         " WHERE "+ Database.ALL_PLAY_LISTS.NAME_PLAY_LIST + "= '"+ main+ "' ";
         mDatabase.queryData(SQL_UPDATE);
-
+        closeDatabase();
     }
 
     public boolean searchPlayList(String namePlayList){
         Cursor playListData = mDatabase.getData(Database.ALL_PLAY_LISTS.QUERY);
         try {
-            if (isSelect(playListData) && getSize() > 0) {
+            if (isSelect(playListData)) {
                 do {
                     if (playListData.getString(2).equals(namePlayList)) {
+
                         return true;
                     }
                 }
@@ -120,7 +122,11 @@ public class AllPlaylist {
             }
         }catch (SQLiteException e){
             Log.d(TAG, e.getMessage());
-        }finally {
+        }catch (CursorIndexOutOfBoundsException e) {
+            // play list không có thì sẽ mặc định tạo
+            SongManager.getInstance().setContext(mContext);
+            SongManager.getInstance().addPlayListFirst();
+        } finally {
             closeDatabase();
         }
 
@@ -132,17 +138,19 @@ public class AllPlaylist {
         Cursor query = mDatabase.getData(Database.ALL_PLAY_LISTS.QUERY);
         ArrayList<String> allPlayList = new ArrayList<>();
         try {
-
-            if (isSelect(query) && getSize() > 0) {
+            if (isSelect(query)) {
                 do {
-                    allPlayList.add(query.getString(2));
+                    allPlayList.add(query.getString(1));
                 } while (query.moveToNext());
             }
 
             return allPlayList;
         }catch (SQLiteException e){
             Log.d(TAG, e.getMessage());
-        }finally {
+        }catch (CursorIndexOutOfBoundsException e){
+            return null;
+        }
+        finally {
             closeDatabase();
         }
         return null;
@@ -155,6 +163,7 @@ public class AllPlaylist {
             if (isSelect(cursor)) {
                 count = cursor.getCount();
             }
+            return count;
         } catch (SQLiteException e){
             Log.d(TAG, e.getMessage());
         } finally {

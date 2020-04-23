@@ -2,6 +2,7 @@ package com.android.music_player.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
@@ -32,7 +33,6 @@ public class SongOfPlayList {
     }
 
     public boolean isSelect(Cursor cursor){
-        cursor = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
         try {
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -48,7 +48,7 @@ public class SongOfPlayList {
 
     public void addSong(SongModel song) {
         String SQL_INSERT = "INSERT INTO " + Database.SONGS_OF_PLAY_LIST.TABLE_NAME +
-                " Value" +
+                "VALUES" +
                 "(" + "null"                   + "," +
                 "'" + song.getSongName() + "'" + "," +
                 "'" + song.getPath() + "'"     + "," +
@@ -57,8 +57,9 @@ public class SongOfPlayList {
                 "'" + song.getAlbumID() + "'"  + "," +
                 "'" + song.getFileName() + "'" + "," +
                 "'" + song.get_ID() + "'"      + "," +
-                "'" + 0 + "'"                  + "," +
-                "'" + song.getTime() + "'"     + ")";
+                "" + 0 + ""                    + "," +
+                "" + song.getTime() + ""       + ")";
+
         mDatabase.queryData(SQL_INSERT);
         closeDatabase();
     }
@@ -96,15 +97,19 @@ public class SongOfPlayList {
     public boolean searchSong(SongModel song){
         Cursor data = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
         try {
-            if (isSelect(data) && getSize() > 0){
-                while (data.moveToNext()){
-                    if (data.getString(2).equals(song.getSongName())){
+            if (isSelect(data)){
+                do {
+                    if (data.getString(1).equals(song.getSongName())){
+
                         return true;
                     }
                 }
+                while (data.moveToNext());
             }
         }catch (SQLiteException e){
             Log.d(TAG, e.getMessage());
+        }catch (CursorIndexOutOfBoundsException e) {
+            return false;
         }finally {
             closeDatabase();
         }
@@ -188,17 +193,23 @@ public class SongOfPlayList {
         return null;
     }
 
-    public int getId(SongModel songModel){
+    public String getSongName(SongModel songModel){
         Cursor cursor = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
-        if (isSelect(cursor)){
-            do {
-                if (cursor.getString(1).equals(songModel.getSongName())){
-                    return cursor.getInt(0);
+        try {
+            if (isSelect(cursor)) {
+                do {
+                    if (cursor.getString(1).equals(songModel.getSongName())) {
+                        return cursor.getString(1);
+                    }
                 }
+                while (cursor.moveToNext());
             }
-            while (cursor.moveToNext());
+        } catch (SQLiteException e){
+            Log.d(TAG, e.getMessage());
+        } finally {
+            closeDatabase();
         }
-        return -1;
+        return "";
     }
 
     public int getSize() {

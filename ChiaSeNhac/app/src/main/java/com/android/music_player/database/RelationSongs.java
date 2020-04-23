@@ -2,10 +2,10 @@ package com.android.music_player.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Database;
 
@@ -49,7 +49,7 @@ public class RelationSongs {
         return false;
     }
 
-    public ArrayList<String> getMost(){
+    public ArrayList<String> getPlayListMost(){
         Cursor cursor = mDatabase.getData(Database.RELATION_SONGS.QUERY);
         String first = "";
         String second = "";
@@ -58,11 +58,6 @@ public class RelationSongs {
         ArrayList<String> most = new ArrayList<>();
         try {
             if (isSelect(cursor)){
-                if (cursor.getCount() == 0){
-                    SongManager.getInstance().setContext(mContext);
-                    SongManager.getInstance().getAllPlaylistDB().addPlayList("PlayList 1");
-                    SongManager.getInstance().getAllPlaylistDB().addPlayList("PlayList 2");
-                }
                 List<Integer> sorted;
                 Log.d(TAG, cursor.getCount()+" kích thước");
 
@@ -105,21 +100,23 @@ public class RelationSongs {
             }
         } catch (SQLiteException exception) {
             Log.d(TAG, exception.getMessage());
-        } finally {
+        } catch (CursorIndexOutOfBoundsException e){
+            return null;
+        }
+        finally {
             closeDatabase();
         }
         return null;
     }
 
 
-    public void addRow(String namePlayList, int id_song){
+    public void addRow(String namePlayList, String nameSong){
         String SQL_ADD = "INSERT INTO "+
                 Database.RELATION_SONGS.TABLE_NAME+
                 " VALUES(" +
                 " null, " +
-                "" + 0 +" "            + ","+
                 "'" + namePlayList+ "'"  + ","+
-                "" + id_song + ""      + ")";
+                "'" + nameSong + "'"     + ")";
 
         mDatabase.queryData(SQL_ADD);
         closeDatabase();
@@ -129,7 +126,7 @@ public class RelationSongs {
         Cursor cursor = mDatabase.getData(Database.RELATION_SONGS.QUERY);
         if (isSelect(cursor)){
             do {
-                if (cursor.getInt(2) == mSongOfPlayList.getId(songModel)){
+                if (cursor.getString(2).equals(mSongOfPlayList.getSongName(songModel))){
                     return true;
                 }
             }
@@ -137,26 +134,27 @@ public class RelationSongs {
         }
         return false;
     }
+
     public void updateSongs(String namePlayList , int id){
         String SQL_UPDATE =
                 "UPDATE "+Database.RELATION_SONGS.TABLE_NAME +" SET "
-                        +Database.RELATION_SONGS.ID_SONGS + " = "+ "'"+ id+"'"+
-                        " WHERE "+Database.RELATION_SONGS.NAME_PLAY_LIST+ "="+ namePlayList;
+                        +Database.RELATION_SONGS.NAME_SONGS + " = "+ "'"+ id+"'"+
+                        " WHERE "+Database.RELATION_SONGS.NAME_PLAY_LISTS + "="+ namePlayList;
         mDatabase.queryData(SQL_UPDATE);
         closeDatabase();
     }
 
     public void deletePlayList(String namePlayList){
         String SQL_DELETE = "DELETE FROM "+Database.RELATION_SONGS.TABLE_NAME +
-                " WHERE "+Database.RELATION_SONGS.NAME_PLAY_LIST+ " = "+"'"+namePlayList+"'";
+                " WHERE "+Database.RELATION_SONGS.NAME_PLAY_LISTS + " = "+"'"+namePlayList+"'";
         mDatabase.queryData(SQL_DELETE);
         closeDatabase();
     }
 
     public void deleteSongs(String namePlayList){
         String SQL_DELETE =  "UPDATE "+Database.RELATION_SONGS.TABLE_NAME +" SET "
-                +Database.RELATION_SONGS.ID_SONGS + " = "+ "'"+ -1 +"'"+
-                " WHERE "+Database.RELATION_SONGS.NAME_PLAY_LIST+ "="+ namePlayList;
+                +Database.RELATION_SONGS.NAME_SONGS + " = "+ "'"+ -1 +"'"+
+                " WHERE "+Database.RELATION_SONGS.NAME_PLAY_LISTS + "="+ namePlayList;
         mDatabase.queryData(SQL_DELETE);
         closeDatabase();
     }
@@ -171,21 +169,24 @@ public class RelationSongs {
         }
     }
 
-    public ArrayList<SongModel> getAllSong(String namePlayList){
+    public ArrayList<String> getAllSongName(String namePlayList){
         String SQL_ALL_SONG = Database.RELATION_SONGS.QUERY;
         Cursor cursor = mDatabase.getData(SQL_ALL_SONG);
+        ArrayList<String> nameSongs = new ArrayList<>();
+
         try {
-            if (isSelect(cursor) && getSize() > 0){
+            if (isSelect(cursor)){
                 do {
-                    if (cursor.getString(2).equals(namePlayList)){
-                        return mSongOfPlayList.getAllSong(cursor.getInt(2));
+                    if (cursor.getString(1).equals(namePlayList)){
+                        nameSongs.add(cursor.getString(2));
                     }
                 }
                 while (cursor.moveToNext());
+                return nameSongs;
             }
         } catch (SQLiteException e){
             Log.d(TAG, e.getMessage());
-        }finally {
+        } finally {
             closeDatabase();
         }
         return null;

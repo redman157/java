@@ -73,7 +73,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public Button mBtnTitle;
     private SharedPrefsUtils mSharedPrefsUtils;
     private ArrayList<SongModel> mSongs;
-    private ArrayList<String> mMostPlayList;
+//    private ArrayList<String> mMostPlayList;
     private SongManager mSongManager;
     public MaterialPlayPauseButton mBtnPlay;
     private boolean isPlay;
@@ -99,12 +99,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         super.onStart();
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
-        mMostPlayList = mSongManager.getRelationSongs().getMost();
+       /* mMostPlayList = mSongManager.getRelationSongs().getPlayListMost();
 
         Log.d("XXX", "HomeActivity --- onStart: "+mMostPlayList.size());
         if (onChangePlayList != null) {
             onChangePlayList.onChange(mMostPlayList);
-        }
+        }*/
 
         setTypeSong(mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, ""));
         Intent iService = new Intent(this, MediaPlayerService.class);
@@ -143,7 +143,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mSharedPrefsUtils = new SharedPrefsUtils(this);
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
-        mMostPlayList = mSongManager.getRelationSongs().getMost();
+//        mMostPlayList = mSongManager.getRelationSongs().getPlayListMost();
         initMenu();
         initView();
 

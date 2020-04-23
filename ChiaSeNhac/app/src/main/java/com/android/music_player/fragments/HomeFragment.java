@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.OnChangePlayList;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
+import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.activities.RecentlyAllMusicActivity;
 import com.android.music_player.adapters.RecentlyAdderAdapter;
 import com.android.music_player.managers.SongManager;
@@ -72,7 +73,8 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
 
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(getContext());
-        mMostPlayList = mSongManager.getRelationSongs().getMost();
+
+        mMostPlayList = mSongManager.getPlayListMost();
         mAdderAdapter = new RecentlyAdderAdapter(getContext(),
                 SongManager.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS);
@@ -85,6 +87,9 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d("XXX", "HomeFragment -- onCreateView");
         view = inflater.inflate(R.layout.fragment_home, null);
+
+        mSongManager = SongManager.getInstance();
+        mSongManager.setContext(getContext());
         initView();
 
         assignView();
@@ -118,15 +123,27 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     }
 
     private void assignView(){
-        String musicHot = mSongManager.getStatistic().getMost();
-        ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(mSongManager.getSong(musicHot).getAlbumID(),mImg_Player_Songs);
-
-
-        text_Player_Songs.setText(musicHot);
-        text_Player_1.setText(mMostPlayList.get(0));
-        text_Player_2.setText(mMostPlayList.size() < 2? mMostPlayList.get(0):
-                mMostPlayList.get(1));
-
+        String musicHot = null;
+        if (!mSongManager.getStatistic().getMost().equals("")) {
+            musicHot = mSongManager.getStatistic().getMost();
+            text_Player_Songs.setText(musicHot);
+            ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongManager.getSong(musicHot).getAlbumID(),
+                    mImg_Player_Songs);
+        }else {
+            text_Player_Songs.setText("");
+            mImg_Player_Songs.setImageResource(R.drawable.ic_music_notes_padded);
+        }
+        if (mMostPlayList != null) {
+            text_Player_1.setText(mMostPlayList.get(0));
+            text_Player_2.setText(mMostPlayList.size() < 2 ? mMostPlayList.get(0) :
+                    mMostPlayList.get(1));
+        }else {
+            text_Player_1.setText("Play List 1");
+            text_Player_2.setText("Play List 2");
+        }
+        mImg_Player_Songs.setOnClickListener(this);
+        mImg_Player_1.setOnClickListener(this);
+        mImg_Player_2.setOnClickListener(this);
         mImg_Shuffle_All.setOnClickListener(this);
         mBtnViewAll.setOnClickListener(this);
     }
@@ -160,12 +177,34 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_ViewAll:
-                Intent intent = new Intent(getContext(), RecentlyAllMusicActivity.class);
-                intent.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
-
-                startActivity(intent);
+                mRc_Recently_Add.setVisibility(View.GONE);
+                Intent iViewAll = new Intent(getContext(), RecentlyAllMusicActivity.class);
+                iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
+                startActivity(iViewAll);
                 break;
             case R.id.img_Shuffle_All:
+                break;
+            case R.id.img_Player_2:
+                mRc_Recently_Add.setVisibility(View.GONE);
+                Intent intent = new Intent(getContext(), RecentlyAllMusicActivity.class);
+                intent.putExtra(Constants.INTENT.TYPE_MUSIC, text_Player_2.getText().toString());
+                startActivity(intent);
+                break;
+
+            case R.id.img_Player_1:
+                mRc_Recently_Add.setVisibility(View.GONE);
+                Intent iPlayList_2 = new Intent(getContext(), RecentlyAllMusicActivity.class);
+                iPlayList_2.putExtra(Constants.INTENT.TYPE_MUSIC,
+                        text_Player_1.getText().toString());
+
+                startActivity(iPlayList_2);
+                break;
+            case R.id.img_Most_Player:
+                mRc_Recently_Add.setVisibility(View.GONE);
+                Intent iMostPlay = new Intent(getContext(), PlayActivity.class);
+                iMostPlay.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
+
+                startActivity(iMostPlay);
                 break;
         }
     }

@@ -22,7 +22,6 @@ import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.tasks.AddMusicTask;
 
 import java.util.ArrayList;
 
@@ -48,7 +47,7 @@ public class DialogUtils {
         dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_show_all_play_list);
 
-        ArrayList<String> allPlayList = SongManager.getInstance().getAllPlaylistDB().getAllPlayList();
+        ArrayList<String> allPlayList = SongManager.getInstance().getAllPlayList();
         if (allPlayList != null && allPlayList.size() > 0) {
             RecyclerView recyclerView = dialog.findViewById(R.id.rc_All_Play_List);
             PlayListAdapter playListAdapter = new PlayListAdapter(context, allPlayList);
@@ -84,14 +83,16 @@ public class DialogUtils {
             @Override
             public void onClick(View v) {
 
-                String name = editTitle.getText().toString();
-                if (!name.isEmpty()){
-                    if (!SongManager.getInstance().getAllPlaylistDB().searchPlayList(name)) {
-                        SongManager.getInstance().getAllPlaylistDB().addPlayList(name);
-                        Utils.ToastShort(context, "Create PlayList Name: "+name);
-                    }else {
-                        Utils.ToastShort(context, "Bài hát đã add vào playlist: "+name);
+                String namePlayList = editTitle.getText().toString();
+                if (!namePlayList.isEmpty()){
+                    if (SongManager.getInstance().addPlayList(namePlayList)) {
+                        Utils.ToastShort(context, "Create TITLE Name: "+namePlayList);
                     }
+                    else {
+                        Utils.ToastShort(context, "Bài hát đã add vào playlist: "+namePlayList);
+                    }
+                }else {
+                    Utils.ToastShort(context, "Name play list not empty !!!");
                 }
                 dialog.dismiss();
             }
@@ -104,6 +105,7 @@ public class DialogUtils {
         SongManager.getInstance().setContext(context);
         dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_add_music);
+
 
         ImageView imageView = dialog.findViewById(R.id.img_add_music);
         TextView textTitle = dialog.findViewById(R.id.text_title_music);
@@ -126,8 +128,16 @@ public class DialogUtils {
             @Override
             public void onClick(View v) {
                 // Add music cần search playlist rồi mới add music
-                new AddMusicTask(context,title ,songModel );
-                Utils.ToastShort(context,"Bạn Đã Add Bài: "+songModel.getSongName());
+
+                // add bài hát
+                if (SongManager.getInstance().addSongToPlayList(title, songModel)){
+
+                    Utils.ToastShort(context,"Đã Add Bài: "+songModel.getSongName());
+                }else {
+                    Utils.ToastShort(
+                            context,"Add Bài: "+songModel.getSongName());
+                }
+
                 dialog.dismiss();
             }
         });

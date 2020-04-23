@@ -181,11 +181,12 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:drawableLeft="@drawable/ic_artists_black_24dp"
+                        android:drawableTint="@color/white"
                         android:drawablePadding="6dp"
                         android:paddingBottom="7dp"
                         android:paddingLeft="12dp"
-                        android:textColor="@color/black"
-                        android:textSize="15dp" />
+                        android:textColor="@color/white"
+                        android:textSize="12dp" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 

@@ -56,7 +56,6 @@ public class PlayActivity extends BaseActivity
     private Intent iPlayPause;
     public   int seekPos;
     private LinearLayout ll_vp_change_music;
-    private int size;
     private LinearLayout mLinearSeeMore;
     private boolean isChange, isPlaying;
     private boolean isRepeat = false;
@@ -64,8 +63,8 @@ public class PlayActivity extends BaseActivity
     private boolean isShuffle = false;
     private Dialog mDlAboutMusic;
     private OnClickItem onClickItem;
-
-
+    private boolean continous;
+    private Intent iCheckPlayActivity;
     @Override
     protected void onStart() {
         super.onStart();
@@ -113,25 +112,12 @@ public class PlayActivity extends BaseActivity
         // nhận giá trị postion và type ở home fragment và recently activity
         type = this.getIntent().getStringExtra(Constants.INTENT.TYPE);
         position = this.getIntent().getIntExtra(Constants.INTENT.POSITION, 0);
-        Log.d("BBB", "Play Activity --- onCreate: "+position +" === Type: "+type);
-        setTypeSong(type);
+        continous = getIntent().getBooleanExtra(Constants.INTENT.SONG_CONTINOUS,false);
+
+        mSongs = mSongManager.setType(type);
         initView();
         assignView();
-        size = mSongs.size() - 1;
-
-        Intent iSetMusic = new Intent(this, MediaPlayerService.class);
-        iSetMusic.setAction(Constants.ACTION.SET_MUSIC);
-        iSetMusic.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-        iSetMusic.putExtra(Constants.INTENT.SET_MUSIC, mSongs);
-        startService(iSetMusic);
-    }
-
-    private void setTypeSong(String type){
-        if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)){
-            mSongs = SongManager.getInstance().newSongs();
-        }else if (type.equals(Constants.VALUE.ALL_SONGS)){
-            mSongs = SongManager.getInstance().allSortSongs();
-        }
+        Utils.ChangeSongService(PlayActivity.this, true, mSongs);
     }
 
     @Override
@@ -192,8 +178,6 @@ public class PlayActivity extends BaseActivity
     }
 
     private void setupViewPager(int position){
-
-
         mVpMusic.setAdapter(mAdapter);
         mVpMusic.setCurrentItem(position);
         mVpMusic.addOnPageChangeListener(this);
@@ -212,6 +196,7 @@ public class PlayActivity extends BaseActivity
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (positionOffset == 0.0 && positionOffsetPixels == 0) {
+
             mSongManager.increase(mSongs.get(position));
 
             Log.d("BBB", "PlayActivity --- onPageScrolled: "+position);
@@ -220,40 +205,36 @@ public class PlayActivity extends BaseActivity
                     mSongs.get(this.position).getAlbumID());
 
             seekPos = 0;
-            MediaPlayerService.mMediaPlayer.stop();
+            if (MediaPlayerService.mMediaPlayer!= null) {
+                MediaPlayerService.mMediaPlayer.stop();
+            }
 
             mTextLeftTime.setText("00 : 00");
-            mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-            Intent intent = new Intent(this, MediaPlayerService.class);
-            intent.setAction(Constants.ACTION.PLAY);
-            intent.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-            startService(intent);
+            if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+            }else {
+                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+            }
+//            Utils.PlayMediaService(this,true);
         }
 
     }
 
-
     @Override
     public void onPageSelected(int position) {
         this.position = position;
-
         Log.d("BBB", "Play Activity --- onPageSelected: "+position);
-
         mSeekBarTime.setProgress(0);
         mSeekBarTime.setMax(mSongs.get(position).getTime());
         mTextLeftTime.setText("00 : 00");
         mTextRightTime.setText(Utils.formatTime(mSongs.get(position).getTime()));
-
-
-
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
 
     }
-
-    // -- Broadcast Receiver to update position of seekbar from service --
+    // -- Broadcast Receiver to updateData position of seekbar from service --
     private BroadcastReceiver brSeekBar = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent serviceIntent) {
@@ -284,21 +265,24 @@ public class PlayActivity extends BaseActivity
             boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
 
             if (isPlayingMedia) {
-
+                Log.d("BBB", "PlayActivity --- brCheckPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = true;
-                Intent iPlayMedia = new Intent(PlayActivity.this, MediaPlayerService.class);
-                iPlayMedia.setAction(Constants.ACTION.PAUSE);
-                iPlayMedia.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-                startService(iPlayMedia);
-            } else {
 
+                Utils.PauseMediaService(PlayActivity.this,true);
+            } else {
+                Log.d("BBB", "PlayActivity --- brCheckPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
-                Intent iPlayMedia = new Intent(PlayActivity.this, MediaPlayerService.class);
-                iPlayMedia.setAction(Constants.ACTION.PLAY);
-                iPlayMedia.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-                startService(iPlayMedia);
+                if (continous ){
+                    int curr = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION_SONG, 0);
+                    if (curr != 0){
+                        Utils.ContinueMediaService(PlayActivity.this, true, curr);
+                    }
+                }else {
+                    Utils.PlayMediaService(PlayActivity.this,true);
+                }
+
             }
         }
     };
@@ -339,70 +323,42 @@ public class PlayActivity extends BaseActivity
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.icon_play:
-                SongManager.getInstance().setCurrentMusic(position);
                 // khi bấm play check play trước đã, trong broad cast check play sẽ play video
-                Intent iPlay = new Intent(this, MediaPlayerService.class);
-                iPlay.setAction(Constants.ACTION.IS_PLAY);
-                iPlay.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-
-                startService(iPlay);
+                SongManager.getInstance().setCurrentMusic(position);
+                Utils.isPlayMediaService(PlayActivity.this, true, mSongManager.setType(type));
                 break;
             case R.id.icon_next:
                 // khi nhấn next truyền intent xuống service -> do bundle là getString về null
-
                 mBtnNext.setClickable(true);
                 mBtnNext.setImageDrawable(getResources().getDrawable(R.drawable.ic_next_white));
 
                 Log.d("BBB",
                         "PlayActivity --- icon_next: " + (position));
-
-                Intent iNext = new Intent(this, MediaPlayerService.class);
-                iNext.setAction(Constants.ACTION.NEXT);
-                iNext.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-                startService(iNext);
-
+                Utils.NextMediaService(PlayActivity.this,true);
 
                 break;
             case R.id.icon_prev:
-                    mBtnPrev.setClickable(true);
-                    mBtnPrev.setImageResource(R.drawable.ic_previous_white);
+                mBtnPrev.setClickable(true);
+                mBtnPrev.setImageResource(R.drawable.ic_previous_white);
 
-                    Log.d("BBB",
-                            "PlayActivity --- icon_prev: " + (SongManager.getInstance().getCurrentMusic() - 1));
-
-                    Intent iPrevious = new Intent(this, MediaPlayerService.class);
-                    iPrevious.setAction(Constants.ACTION.PREVIOUS);
-                    iPrevious.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-                    startService(iPrevious);
-//                    mVpMusic.setCurrentItem(position - 1);
-
-
+                Log.d("BBB", "PlayActivity --- icon_prev: " + (SongManager.getInstance().getCurrentMusic() - 1));
+                Utils.PreviousMediaService(PlayActivity.this,true);
                 break;
             case R.id.icon_repeat:
                 if (!isRepeat){
                     mBtnRepeat.setImageResource(R.drawable.ic_repeat_blue);
                     SongManager.getInstance().setCurrentMusic(position);
-                    Intent iRepeat = new Intent(PlayActivity.this, MediaPlayerService.class);
-                    iRepeat.setAction(Constants.ACTION.REPEAT);
-                    iRepeat.putExtra(Constants.INTENT.IS_REPEAT, true);
-                    iRepeat.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-                    startService(iRepeat);
                     isRepeat = true;
+                    Utils.RepeatMediaService(PlayActivity.this,true,isRepeat);
                     Toast.makeText(this, "Turn On Repeat Music", Toast.LENGTH_SHORT).show();
                     unregisterReceiver(brPlayNew);
                 }else {
                     mBtnRepeat.setImageResource(R.drawable.ic_repeat_white);
                     isRepeat = false;
-                    Intent iRepeat = new Intent(PlayActivity.this, MediaPlayerService.class);
-                    iRepeat.setAction(Constants.ACTION.REPEAT);
-                    iRepeat.putExtra(Constants.INTENT.IS_REPEAT, false);
-                    iRepeat.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-                    startService(iRepeat);
+                    Utils.RepeatMediaService(PlayActivity.this,true,isRepeat);
                     registerReceiver(brPlayNew,
                             new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
-                    Toast.makeText(this, "Turn Off Repeat Music", Toast.LENGTH_SHORT).show();
-
-
+                    Utils.ToastShort(PlayActivity.this,"Turn Off Repeat Music");
                 }
                 break;
             case R.id.icon_image_More:
@@ -432,8 +388,10 @@ public class PlayActivity extends BaseActivity
                 // dc giá trị sẵn để xuất màn hình tất cả có ở Changmusic khi thao tác
 
                 Intent iBackMusic = new Intent(this, HomeActivity.class);
-                startActivity(iBackMusic);
                 finish();
+                startActivity(iBackMusic);
+
+                overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
                 break;
             case R.id.imb_InfoMusic:
 
@@ -458,24 +416,15 @@ public class PlayActivity extends BaseActivity
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_blue);
                     Toast.makeText(this, "Turn On Shuffle Music", Toast.LENGTH_SHORT).show();
 
-                    Intent inShuffle = new Intent(PlayActivity.this, MediaPlayerService.class);
-                    inShuffle.setAction(Constants.ACTION.SET_MUSIC);
-                    inShuffle.putExtra(Constants.INTENT.SET_MUSIC, songShuffle);
-                    inShuffle.putExtra(Constants.INTENT.IS_SHUFFLE, true);
-                    inShuffle.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-                    startService(inShuffle);
+                    Utils.ShuffleMediaService(PlayActivity.this, songShuffle, true, isShuffle);
                 }else {
                     isShuffle = false;
 
 
                     ChangeMusicFragment.newInstance(null);
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_white);
-                    Toast.makeText(this, "Turn Off Shuffle Music", Toast.LENGTH_SHORT).show();
-                    Intent inShuffle = new Intent(PlayActivity.this, MediaPlayerService.class);
-                    inShuffle.setAction(Constants.ACTION.SET_MUSIC);
-                    inShuffle.putExtra(Constants.INTENT.IS_SHUFFLE, false);
-                    inShuffle.putExtra(Constants.INTENT.SET_MUSIC, mSongs);
-                    startService(inShuffle);
+                    Utils.ToastShort(PlayActivity.this,"Turn Off Shuffle Music");
+                    Utils.ShuffleMediaService(PlayActivity.this, null, true, isShuffle);
                 }
                 break;
         }
@@ -498,22 +447,16 @@ public class PlayActivity extends BaseActivity
                 public void onTick(long l) {
 
                 }
-
                 @Override
                 public void onFinish() {
                     if (!isRepeat) {
                         mVpMusic.setCurrentItem(SongManager.getInstance().getCurrentMusic() + 1, true);
                     }else {
-                        Intent iPlayNext = new Intent(PlayActivity.this, MediaPlayerService.class);
-                        iPlayNext.setAction(Constants.ACTION.PLAY);
-                        iPlayNext.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-                        startService(iPlayNext);
+                       Utils.PlayMediaService(PlayActivity.this, true);
                     }
                 }
             }.start();
         }
-
-
     }
 
     @Override
@@ -525,13 +468,8 @@ public class PlayActivity extends BaseActivity
             seekPos = seekBar.getProgress();
             Log.d("MMM", "PlayActivity --- onProgressChanged: "+seekPos);
             mTextLeftTime.setText(Utils.formatTime(seekPos));
-            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, seekPos);
 
-            Intent iSeekChoose = new Intent(this, MediaPlayerService.class);
-            iSeekChoose.setAction(Constants.ACTION.SEEK);
-            iSeekChoose.putExtra(Constants.INTENT.POSITION_SONG, seekPos);
-            iSeekChoose.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, true);
-            startService(iSeekChoose);
+            Utils.ContinueMediaService(PlayActivity.this,true, seekPos);
         }
     }
 
@@ -540,7 +478,6 @@ public class PlayActivity extends BaseActivity
         Log.d("MMM", "PlayActivity --- onStartTrackingTouch: "+seekPos);
         if (seekPos != 0) {
             seekBar.setProgress(seekPos);
-
         }
     }
 
@@ -549,9 +486,7 @@ public class PlayActivity extends BaseActivity
         Log.d("MMM", "PlayActivity --- onStopTrackingTouch: "+seekPos);
         if (seekPos != 0) {
             seekBar.setProgress(seekPos);
-
         }
-
     }
 
     @Override

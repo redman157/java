@@ -17,6 +17,7 @@ public class Constants {
     }
 
     public @interface INTENT{
+        String SONG_CONTINOUS = "SongContinous";
         String IS_PLAY_ACTIVITY = "isPlayActivity";
         String POSITION = "position";
         String POSITION_SONG = "position_song";
@@ -29,11 +30,13 @@ public class Constants {
         String IS_SHUFFLE = "isShuffle";
         String IS_REPEAT = "isRepeat";
         String IS_PLAY = "isPlay";
-        String SET_MUSIC = "SetMusic";
+        String CHANGE_MUSIC = "ChangeMusic";
         String TYPE_MUSIC = "TypeMusic";
     }
     public @interface VALUE {
         int MAX_SLIDERS = 5;
+        String SONG = "Song";
+        String PLAY_LIST = "PlayList";
         String ID = "ID";
         String NAME_PLAYLIST = "NAME_PLAYLIST";
         String SYNC = "isSync";
@@ -98,7 +101,7 @@ public class Constants {
     }
 
     public @interface ACTION{
-        String SET_MUSIC = "SetMusic";
+        String CHANGE_MUSIC = "ChangeMusic";
         String STOP = "com.droidheat.musicplayer.action.STOP";
         String ACTION_PERSISTENT_NOTIFICATION = "com.droidheat.musicplayer.action.PERSISTENT_NOTIFICATION";
         String PLAY = "com.droidheat.musicplayer.action.PLAY";

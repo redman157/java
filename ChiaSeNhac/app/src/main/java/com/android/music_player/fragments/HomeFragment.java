@@ -78,6 +78,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
         mAdderAdapter = new RecentlyAdderAdapter(getContext(),
                 SongManager.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS);
+        mAdderAdapter.notifyDataSetChanged();
         mAdderAdapter.OnClickItem(this);
         mNewSongs = SongManager.getInstance().newSongs();
     }
@@ -124,8 +125,9 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
 
     private void assignView(){
         String musicHot = null;
-        if (!mSongManager.getStatistic().getMost().equals("")) {
-            musicHot = mSongManager.getStatistic().getMost();
+        if (!mSongManager.getStatistic().getMost(Constants.VALUE.SONG).equals("")) {
+            musicHot = mSongManager.getStatistic().getMost(Constants.VALUE.SONG);
+
             text_Player_Songs.setText(musicHot);
             ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongManager.getSong(musicHot).getAlbumID(),
                     mImg_Player_Songs);
@@ -150,25 +152,30 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
 
     @Override
     public void onClick(String type, int position) {
-        // set switch vị trí và type music cho play activity chạy
+        int curr = position;
+        int prev = SongManager.getInstance().getCurrentMusic();
 
-        if (MediaPlayerService.mMediaPlayer!= null){
-            if (MediaPlayerService.mMediaPlayer.isPlaying()){
-                Intent intent = new Intent(getActivity(), MediaPlayerService.class);
-                intent.setAction(Constants.ACTION.PAUSE);
-                intent.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY,false);
-                getActivity().startService(intent);
+        // set switch vị t{rí và type music cho play activity chạy
+        if (!mNewSongs.get(curr).getSongName().equals(mNewSongs.get(prev).getSongName())){
+            if (MediaPlayerService.mMediaPlayer!= null){
+                if (MediaPlayerService.mMediaPlayer.isPlaying()){
+                    Intent intent = new Intent(getActivity(), MediaPlayerService.class);
+                    intent.setAction(Constants.ACTION.PAUSE);
+                    intent.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY,false);
+                    getActivity().startService(intent);
 
-                ((HomeActivity)getActivity()).mBtnPlay.setImageResource(R.drawable.ic_media_pause_light);
+                    ((HomeActivity)getActivity()).mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
+                }
             }
         }
         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION,position);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
-
         ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getSongName());
         ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
         ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
                 mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);
+
+
 
     }
 
@@ -180,6 +187,8 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
                 mRc_Recently_Add.setVisibility(View.GONE);
                 Intent iViewAll = new Intent(getContext(), RecentlyAllMusicActivity.class);
                 iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
+
+                getActivity().finish();
                 startActivity(iViewAll);
                 break;
             case R.id.img_Shuffle_All:
@@ -188,6 +197,8 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
                 mRc_Recently_Add.setVisibility(View.GONE);
                 Intent intent = new Intent(getContext(), RecentlyAllMusicActivity.class);
                 intent.putExtra(Constants.INTENT.TYPE_MUSIC, text_Player_2.getText().toString());
+
+                getActivity().finish();
                 startActivity(intent);
                 break;
 
@@ -196,7 +207,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
                 Intent iPlayList_2 = new Intent(getContext(), RecentlyAllMusicActivity.class);
                 iPlayList_2.putExtra(Constants.INTENT.TYPE_MUSIC,
                         text_Player_1.getText().toString());
-
+                getActivity().finish();
                 startActivity(iPlayList_2);
                 break;
             case R.id.img_Most_Player:

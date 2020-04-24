@@ -70,7 +70,7 @@ public class MusicWidget4x1 extends AppWidgetProvider {
                 }
 
 
-                // chú ý tìm và search khúc này update UI widget
+                // chú ý tìm và search khúc này updateData UI widget
               /*  if (MusicPlayback.mMediaSessionCompat
                         .getController().getMetadata().getBitmap(MediaMetadata.METADATA_KEY_ALBUM) != null){
                     views.setImageViewBitmap(R.id.albumArtImageView,

@@ -19,15 +19,15 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
-import com.android.music_player.database.RelationSongs;
-import com.android.music_player.tasks.RenamePlayListTask;
-import com.android.music_player.utils.Constants;
 import com.android.music_player.R;
 import com.android.music_player.database.AllPlaylist;
 import com.android.music_player.database.CategorySongs;
+import com.android.music_player.database.RelationSongs;
 import com.android.music_player.database.SongOfPlayList;
 import com.android.music_player.database.Statistic;
 import com.android.music_player.models.SongModel;
+import com.android.music_player.tasks.RenamePlayListTask;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
 import com.google.gson.Gson;
@@ -129,6 +129,25 @@ public class SongManager {
 
     public void setCurrentMusic(int position) {
         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, position);
+    }
+
+    public ArrayList<SongModel> setType(String type){
+        ArrayList<SongModel> song = new ArrayList<>();
+        if (mAllPlaylist.searchPlayList(type)) {
+            song = getAllSongToPlayList(type);
+
+            return song;
+        }else {
+            if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
+                song = SongManager.getInstance().newSongs();
+                return song;
+            } else if (type.equals(Constants.VALUE.ALL_SONGS)) {
+                song = SongManager.getInstance().allSortSongs();
+                return song;
+            }
+        }
+        return null;
+
     }
 
     public ArrayList<SongModel> queue() {
@@ -418,7 +437,7 @@ public class SongManager {
     }
 
     public boolean isPlayListMost(){
-        if (mRelationSongs.getPlayListMost() != null){
+        if (!mStatistic.getMost(Constants.VALUE.PLAY_LIST).equals("")){
 
             return true;
         }else {
@@ -428,7 +447,7 @@ public class SongManager {
 
     public ArrayList<String> getPlayListMost(){
         if (isPlayListMost()){
-            return mRelationSongs.getPlayListMost();
+            return mStatistic.getPlayListMost();
         }else {
             return  null;
         }
@@ -456,8 +475,9 @@ public class SongManager {
 
     public void addPlayListFirst(){
         if (mAllPlaylist.getSize() == 0) {
-            mAllPlaylist.addPlayList("PlayList 1");
-            mAllPlaylist.addPlayList("PlayList 2");
+            mAllPlaylist.addPlayList("Play List 1");
+            mAllPlaylist.addPlayList("Play List 2");
+
         }else {
             Log.d(TAG, "SongManager --- addPlayListFirst size > 0");
         }
@@ -476,11 +496,11 @@ public class SongManager {
     }
 
     public void increase(SongModel songModel){
-        mStatistic.increase(songModel.getSongName());
+        mStatistic.increase(Constants.VALUE.SONG,songModel.getSongName());
 
     }
     public void increase(String title){
-        mStatistic.increase(title);
+        mStatistic.increase(Constants.VALUE.PLAY_LIST,title);
 
     }
 

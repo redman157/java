@@ -41,12 +41,13 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     private String type;
     private ArrayList<SongModel> mSongs;
     private TextView mTextArtist, mTextTitle;
-    private ImageUtils imageUtils;
+
     private Button mBtnTitle;
     private View mViewLayoutPlay;
     private ImageButton mBtnPlay;
     private ImageView mImgMedia;
     private SongManager mSongManager;
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -59,31 +60,42 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_recently_all_music);
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
-        mSongs =SongManager.getInstance().newSongs();
-        initView();
-        assignView();
+
+        mSharedPrefsUtils = new SharedPrefsUtils(this);
+        mSongs = SongManager.getInstance().newSongs();
         type = getIntent().getStringExtra(Constants.INTENT.TYPE_MUSIC);
+
+        initView();
         setTypeSong(type);
+        assignView();
+
 
     }
 
-    private void setTypeSong(String type){
+    private void setTypeSong(String type) {
+
         int position = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, 0);
-        if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)){
-            mSongs = SongManager.getInstance().newSongs();
-        }else if (type.equals(Constants.VALUE.ALL_SONGS)){
-            mSongs = SongManager.getInstance().allSortSongs();
-        }else if (type.equals("")){
-            mSongs = SongManager.getInstance().newSongs();
-        }else if (mSongManager.getAllPlaylistDB().searchPlayList(type)){
-            mSongs = mSongManager.getAllSongToPlayList(type);
-            Log.d("ZZZ", mSongs.size()+"");
-        }
-        mTextArtist.setText(mSongs.get(position).getArtist());
-        mTextTitle.setText(mSongs.get(position).getSongName());
-        imageUtils.getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
-    }
+        if (mSongManager.getAllPlaylistDB().searchPlayList(type)) {
 
+            mSongs = mSongManager.getAllSongToPlayList(type);
+            mTextArtist.setText(mSongs.get(0).getArtist());
+            mTextTitle.setText(mSongs.get(0).getSongName());
+            ImageUtils.getInstance(this).getSmallImageByPicasso(mSongs.get(0).getAlbumID(), mImgMedia);
+        } else {
+
+            if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
+                mSongs = SongManager.getInstance().newSongs();
+            } else if (type.equals(Constants.VALUE.ALL_SONGS)) {
+                mSongs = SongManager.getInstance().allSortSongs();
+            } else if (type.equals("")) {
+                mSongs = SongManager.getInstance().newSongs();
+            }
+            mTextArtist.setText(mSongs.get(position).getArtist());
+            mTextTitle.setText(mSongs.get(position).getSongName());
+            ImageUtils.getInstance(this).getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
+        }
+
+    }
 
 
     private void initView() {
@@ -107,13 +119,10 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     private void assignView() {
         mBtnTitle.setOnClickListener(this);
         mBtnPlay.setOnClickListener(this);
-        imageUtils = ImageUtils.getInstance(this);
-        mSharedPrefsUtils = new SharedPrefsUtils(this);
 
-        recentlyAdderAdapter = new RecentlyAdderAdapter(
-                this,
-                mSongs,
-                Constants.VALUE.ALL_NEW_SONGS);
+
+        recentlyAdderAdapter = new RecentlyAdderAdapter(this, mSongs, type);
+        recentlyAdderAdapter.OnClickItem(this);
 //        mRcRecentlyAdd.setNestedScrollingEnabled(false);
         mRcRecentlyAdd.setHasFixedSize(true);
         recentlyAdderAdapter.OnClickItem(this);
@@ -149,18 +158,19 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.imb_BackMusic:
 
                 Intent iBackMusic = new Intent(this, HomeActivity.class);
+                this.finish();
                 startActivity(iBackMusic);
                 break;
             case R.id.btn_title_media:
                 Intent playMedia = new Intent(this, PlayActivity.class);
                 playMedia.putExtra(Constants.INTENT.POSITION,
-                        mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION,0));
+                        mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, 0));
                 playMedia.putExtra(Constants.INTENT.TYPE,
-                        mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE,""));
+                        mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, ""));
                 startActivity(playMedia);
                 break;
             case R.id.imbt_Play_media:
@@ -175,16 +185,19 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, position);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.SaveAlbumID, mSongs.get(position).getAlbumID());
         mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
-        if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
-            ImageUtils.getInstance(RecentlyAllMusicActivity.this).getSmallImageByPicasso(
-                    SongManager.getInstance().newSongs().get(position).getAlbumID(),
-                    mImgAlbumId);
-            ImageUtils.getInstance(RecentlyAllMusicActivity.this).getSmallImageByPicasso(
-                    SongManager.getInstance().newSongs().get(position).getAlbumID(),
-                    mImgMedia);
-            mTextTitle.setText(mSongs.get(position).getSongName());
-            mTextArtist.setText(mSongs.get(position).getArtist());
-            }
-        }
+
+
+        ImageUtils.getInstance(RecentlyAllMusicActivity.this).getSmallImageByPicasso(
+                mSongs.get(position).getAlbumID(),
+                mImgAlbumId);
+        ImageUtils.getInstance(RecentlyAllMusicActivity.this).getSmallImageByPicasso(
+                mSongs.get(position).getAlbumID(),
+                mImgMedia);
+        mTextTitle.setText(mSongs.get(position).getSongName());
+        mTextArtist.setText(mSongs.get(position).getArtist());
+
     }
+
+}
+
 

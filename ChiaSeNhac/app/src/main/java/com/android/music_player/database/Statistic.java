@@ -6,7 +6,14 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.Database;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Statistic {
 
@@ -27,13 +34,14 @@ public class Statistic {
         return this;
     }
 
-    public void addRow(String row){
+    public void addRow(String type,String row){
         String SQL_ADD = "INSERT INTO "+
                 Database.STATISTIC.TABLE_NAME+
                 " VALUES(" +
                 " null, " +
-                "'" + row+ "'"+ ","+
-                ""  + 1 + ""  + ")";
+                "'" + type+ "'"+ ","+
+                "'" + row + "'"+ ","+
+                ""  + 1  + ""  + ")";
         mDatabase.queryData(SQL_ADD);
         closeDatabase();
     }
@@ -54,14 +62,14 @@ public class Statistic {
     }
 
 
-    public int getNumber(String fileName){
+    public int getNumber(String type,String name){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
 
         try {
             if (isSelect(cursor)){
                 do {
-                    if (cursor.getString(1).equals(fileName)){
-                        return cursor.getInt(2);
+                    if (cursor.getString(1).equals(type) && cursor.getString(2).equals(name) ){
+                        return cursor.getInt(3);
                     }
                 }
                 while (cursor.moveToNext());
@@ -73,17 +81,79 @@ public class Statistic {
         }
         return -2;
     }
+    public ArrayList<String> getPlayListMost(){
+        Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
+        String first = "";
+        String second = "";
 
-    public String getMost(){
+        Map<Integer, List<String>> playListMost = new HashMap<>();
+        ArrayList<String> most = new ArrayList<>();
+        try {
+            if (isSelect(cursor)){
+                if (cursor.getString(1).equals(Constants.VALUE.PLAY_LIST)) {
+                    List<Integer> sorted;
+                    Log.d(TAG, cursor.getCount() + " kích thước");
+
+                    do {
+                        Log.d(TAG, "Enter0");
+                        int counter = cursor.getInt(1);
+                        String playlist = cursor.getString(2);
+                        Log.d(TAG, playlist);
+                        if (playListMost.get(counter) == null) {
+                            playListMost.put(counter, new ArrayList<String>());
+                        }
+
+                        playListMost.get(counter).add(playlist);
+                    } while (cursor.moveToNext());
+
+                    sorted = new ArrayList<>(playListMost.keySet());
+                    Log.d(TAG, "Enter1");
+                    if (sorted.size() > 0) {
+                        Collections.sort(sorted);
+
+                        first = playListMost.get(sorted.get(0)).get(0);
+                        Log.d(TAG, "first: " + first);
+                        most.add(first);
+                        if (playListMost.get(sorted.get(0)).size() > 1) {
+                            second = playListMost.get(sorted.get(0)).get(1);
+                            Log.d(TAG, "second: " + second);
+                            most.add(second);
+                        } else if (playListMost.size() > 1) {
+                            second = playListMost.get(sorted.get(1)).get(0);
+                            Log.d(TAG, "second: " + second);
+                            most.add(second);
+                        }
+                        return most;
+
+                    } else {
+                        return null;
+                    }
+                }
+            } else {
+                return null;
+            }
+        } catch (SQLiteException exception) {
+            Log.d(TAG, exception.getMessage());
+        } catch (CursorIndexOutOfBoundsException e){
+            return null;
+        }
+        finally {
+            closeDatabase();
+        }
+        return null;
+    }
+    public String getMost(String type){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
         int max = 0;
         String name = "";
         try {
             if (isSelect(cursor)){
                 do {
-                    if (cursor.getInt(2) >= max){
-                        max = cursor.getInt(2);
-                        name = cursor.getString(1);
+                    if (cursor.getString(1).equals(type)) {
+                        if (cursor.getInt(3) >= max) {
+                            max = cursor.getInt(3);
+                            name = cursor.getString(2);
+                        }
                     }
                 }while (cursor.moveToNext());
                 return name;
@@ -114,14 +184,14 @@ public class Statistic {
         return count;
     }
 
-    public boolean increase(String name){
-        if (!searchPlayList(name) ){
-            Log.d(TAG, name +" --- searchPlayList: true ");
-            addRow(name);
+    public boolean increase(String type, String name){
+        if (!search(type ,name) ){
+            Log.d(TAG, name +" --- search: true ");
+            addRow(type ,name);
             return false;
         }else {
-            int most = (getNumber(name)) + 1;
-
+            int most = (getNumber(type, name)) + 1;
+            Log.d(TAG, most +" --- search: false ");
             String SQL_UPDATE =
                     "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET "+Database.STATISTIC.MOST
                     +" = "  +""+ most +""
@@ -133,13 +203,15 @@ public class Statistic {
         }
     }
 
-    public boolean searchPlayList(String namePlayList){
+    public boolean search(String type, String namePlayList){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
         try {
             if (isSelect(cursor)){
                 do  {
-                    if (cursor.getString(1).equals(namePlayList)){
-                        return true;
+                    if (cursor.getString(1).equals(type)) {
+                        if (cursor.getString(2).equals(namePlayList)) {
+                            return true;
+                        }
                     }
                 }while (cursor.moveToNext());
             }

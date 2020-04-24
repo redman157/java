@@ -1,7 +1,6 @@
 package com.android.music_player.adapters;
 
 import android.content.Context;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +11,11 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.utils.Constants;
 import com.android.music_player.R;
+import com.android.music_player.models.SongModel;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
-import com.android.music_player.managers.SongManager;
-import com.android.music_player.models.SongModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,7 +64,6 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
             public void onClick(View v) {
 
                 onClickItem.onClick(type, position);
-
                 mSharedPrefsUtils.setString(Constants.PREFERENCES.SaveAlbumID, items.get(position).getAlbumID());
             }
         });
@@ -75,7 +72,7 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
 
     @Override
     public int getItemCount() {
-        if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
+        /*if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
             return items.size();
         }else {
             if (SongManager.getInstance().queue().size() < 15){
@@ -83,7 +80,8 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
             }else {
                 return 15;
             }
-        }
+        }*/
+        return items.size();
     }
 
 

@@ -9,19 +9,21 @@ import androidx.annotation.Nullable;
 
 public class ReaderSQL extends SQLiteOpenHelper {
     String TAG = "ReaderSQL_LOG";
+    private SQLiteDatabase database;
     public ReaderSQL(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
     public void queryData(String sql){
-        SQLiteDatabase database = getWritableDatabase();
+        database = getWritableDatabase();
         database.execSQL(sql);
     }
 
     public Cursor getData(String sql){
-        SQLiteDatabase database = getReadableDatabase();
+        database = getReadableDatabase();
         return database.rawQuery(sql, null);
     }
+
 
 
     @Override

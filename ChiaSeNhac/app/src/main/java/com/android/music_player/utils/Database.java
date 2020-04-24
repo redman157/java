@@ -41,11 +41,14 @@ public class Database {
         String TITLE = "title";
         String MOST = "most";
         String SONG_MOST = "song_most";
+        String TYPE_NAME = "type_name";
+
         String CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + "," +
-                    TITLE + " TEXT "    + "," +
-                    MOST  + " INTEGER " + ");";
+                    TYPE_NAME       + " TEXT "  + "," +
+                    TITLE           + " TEXT "    + "," +
+                    MOST            + " INTEGER " + ");";
 
         String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
         String QUERY = "SELECT * FROM " + TABLE_NAME;
@@ -102,9 +105,11 @@ public class Database {
         String ID = "id";
         String DATABASE_NAME = "relation_songs.db";
         String TABLE_NAME = "relation_songs";
+
         String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" +
                         ID             + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +
+
                         NAME_PLAY_LISTS + " TEXT "  + "," +
                         NAME_SONGS      + " TEXT " + ");";
         String QUERY = "SELECT * FROM " + TABLE_NAME;

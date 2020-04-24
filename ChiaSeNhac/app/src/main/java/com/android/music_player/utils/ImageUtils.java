@@ -69,7 +69,7 @@ public class ImageUtils {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < songs.size(); i++) {
             list.add(songs.get(i).getAlbumID());
-            if (i == 20) {break; } // 20 should be enough, remove this line if you want to query whole list
+            if (i == 20) {break; } // 20 should be enough, remove this line if you want to queryData whole list
         }
         getImageByPicasso(list, image, 0, list.size() - 1);
     }

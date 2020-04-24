@@ -1,7 +1,10 @@
 package com.android.music_player.activities;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -24,7 +27,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.BaseActivity;
 import com.android.music_player.OnChangePlayList;
-import com.android.music_player.utils.Constants;
 import com.android.music_player.R;
 import com.android.music_player.adapters.OptionMenuAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
@@ -33,11 +35,13 @@ import com.android.music_player.fragments.AllSongsFragment;
 import com.android.music_player.fragments.ArtistGridFragment;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.PlaylistFragment;
-import com.android.music_player.utils.ImageUtils;
-import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.services.MediaPlayerService;
+import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.SharedPrefsUtils;
+import com.android.music_player.utils.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
@@ -76,7 +80,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 //    private ArrayList<String> mMostPlayList;
     private SongManager mSongManager;
     public MaterialPlayPauseButton mBtnPlay;
-    private boolean isPlay;
+    private String type;
+
     private ArrayList<Fragment> mFragments = new ArrayList<>();
 
     private OnChangePlayList onChangePlayList;
@@ -95,23 +100,43 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(brPlayPauseActivity);
+    }
+
+    private BroadcastReceiver brPlayPauseActivity = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent serviceIntent) {
+            // activity gửi broadcast từ service >> activity
+            boolean isPlayingNoti =
+                    serviceIntent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION,
+                            false);
+
+            if (isPlayingNoti) {
+                mBtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
+            } else {
+                mBtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
+
+            }
+        }
+    };
+
+
+    @Override
     protected void onStart() {
         super.onStart();
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
-       /* mMostPlayList = mSongManager.getRelationSongs().getPlayListMost();
-
-        Log.d("XXX", "HomeActivity --- onStart: "+mMostPlayList.size());
-        if (onChangePlayList != null) {
-            onChangePlayList.onChange(mMostPlayList);
-        }*/
+        registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
 
         setTypeSong(mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, ""));
-        Intent iService = new Intent(this, MediaPlayerService.class);
-        iService.setAction(Constants.ACTION.SET_MUSIC);
-        iService.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, false);
-        iService.putExtra(Constants.INTENT.SET_MUSIC, mSongs);
-        startService(iService);
+
+        type = mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
+        mSongs = mSongManager.setType(type);
+        Utils.ChangeSongService(this, false,mSongs);
+
+
 
         if (MediaPlayerService.mMediaPlayer != null) {
             if (MediaPlayerService.mMediaPlayer.isPlaying()) {
@@ -131,8 +156,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onResume() {
         super.onResume();
 
-
-
     }
 
     @Override
@@ -148,7 +171,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         initView();
 
         imageUtils = ImageUtils.getInstance(this);
-        setTypeSong(mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, ""));
+
 
         assignView();
         Intent iService = new Intent(this, MediaPlayerService.class);
@@ -169,7 +192,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mViewPagerAdapter = new ViewPagerAdapter(this,getSupportFragmentManager());
         HomeFragment homeFragment = new HomeFragment();
         homeFragment.setOnChangePlayList(onChangePlayList);
-
 
         mViewPagerAdapter.addFragment(homeFragment);
         mViewPagerAdapter.addFragment(new AllSongsFragment());
@@ -257,12 +279,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     private void setTypeSong(String type){
         Log.d("PPP", "setTypeSong: "+SongManager.getInstance().getCurrentMusic());
-        if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)){
-            mSongs = SongManager.getInstance().newSongs();
-        }else if (type.equals(Constants.VALUE.ALL_SONGS)){
-            mSongs = SongManager.getInstance().allSortSongs();
-        }else if (type.equals("")){
-            mSongs = SongManager.getInstance().newSongs();
+        if (mSongManager.getAllPlaylistDB().searchPlayList(type)) {
+            mSongs = mSongManager.getAllSongToPlayList(type);
+        }else {
+            if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
+                mSongs = SongManager.getInstance().newSongs();
+            } else if (type.equals(Constants.VALUE.ALL_SONGS)) {
+                mSongs = SongManager.getInstance().allSortSongs();
+            } else if (type.equals("")) {
+                mSongs = SongManager.getInstance().newSongs();
+            }
         }
         processEndOfList(SongManager.getInstance().getCurrentMusic());
         Log.d("PPP", mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
@@ -427,16 +453,21 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
                 break;
             case R.id.btn_title_media:
-                if (!SongManager.getInstance().queue().isEmpty()) {
-                    mRcOptionMenu.setVisibility(View.GONE);
-                    Intent intent = new Intent(HomeActivity.this, PlayActivity.class);
-                    intent.putExtra(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
-                    intent.putExtra(Constants.INTENT.POSITION,
-                            mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, 0));
 
-
-                    startActivity(intent);
+                mRcOptionMenu.setVisibility(View.GONE);
+                Intent intent = new Intent(HomeActivity.this, PlayActivity.class);
+                intent.putExtra(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
+                if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+                    intent.putExtra(Constants.INTENT.SONG_CONTINOUS, true);
+                }else {
+                    intent.putExtra(Constants.INTENT.SONG_CONTINOUS, false);
                 }
+                intent.putExtra(Constants.INTENT.POSITION,
+                        mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, 0));
+
+                finish();
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                 break;
             case R.id.menu_item:
 
@@ -459,9 +490,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.menu_search:
-                Intent intent = new Intent(this, SearchActivity.class);
+                Intent iSearch = new Intent(this, SearchActivity.class);
                 mRcOptionMenu.setVisibility(View.GONE);
-                startActivity(intent);
+                startActivity(iSearch);
                 break;
             case R.id.vp_Home:
                 if (mRcOptionMenu.getVisibility() == View.GONE){

@@ -58,6 +58,7 @@ public class AllPlaylist {
                 "INSERT INTO "+ Database.ALL_PLAY_LISTS.TABLE_NAME
                         +" VALUES(null"  + ","+
                         "'" + title +"'" + ")";
+
         mDatabase.queryData(SQL_INSERT);
         closeDatabase();
     }
@@ -113,7 +114,7 @@ public class AllPlaylist {
         try {
             if (isSelect(playListData)) {
                 do {
-                    if (playListData.getString(2).equals(namePlayList)) {
+                    if (playListData.getString(1).equals(namePlayList)) {
 
                         return true;
                     }
@@ -126,6 +127,7 @@ public class AllPlaylist {
             // play list không có thì sẽ mặc định tạo
             SongManager.getInstance().setContext(mContext);
             SongManager.getInstance().addPlayListFirst();
+            return  false;
         } finally {
             closeDatabase();
         }

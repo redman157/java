@@ -57,7 +57,10 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
         }
 
         try {
-            mSongManager.addPlayListFirst();
+            // lần đầu tiên cài app
+            if(mSongManager.isPlayListMost()){
+                mSongManager.addPlayListFirst();
+            }
             Log.d(tag, "Sync: "+sync);
             if (sync) {
 

@@ -111,7 +111,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
         public void setData(int pos){
             SongModel songModel = getListMusic().get(pos);
             if (mOptionMusic == pos){
-//                Log.d("KKK", "setData: "+getListMusic().get(pos).getSongName());
+//                Log.d("KKK", "setData: "+getListMusic().getData(pos).getSongName());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     textTitle.setTextColor(mContext.getColor(R.color.red));
                 }else {

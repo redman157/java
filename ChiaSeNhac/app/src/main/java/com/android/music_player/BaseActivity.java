@@ -10,9 +10,9 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.services.MediaPlayerService;
+import com.android.music_player.utils.SharedPrefsUtils;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private boolean serviceBound = false;
@@ -63,7 +63,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            // We've bound to LocalService, cast the IBinder and getData LocalService instance
             MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
             mediaPlayerService = binder.getService();
             serviceBound = true;

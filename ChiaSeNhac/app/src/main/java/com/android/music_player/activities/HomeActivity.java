@@ -458,9 +458,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 Intent intent = new Intent(HomeActivity.this, PlayActivity.class);
                 intent.putExtra(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
                 if (MediaPlayerService.mMediaPlayer.isPlaying()) {
-                    intent.putExtra(Constants.INTENT.SONG_CONTINOUS, true);
+                    intent.putExtra(Constants.INTENT.SONG_CONTINUE, true);
                 }else {
-                    intent.putExtra(Constants.INTENT.SONG_CONTINOUS, false);
+                    intent.putExtra(Constants.INTENT.SONG_CONTINUE, false);
                 }
                 intent.putExtra(Constants.INTENT.POSITION,
                         mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, 0));

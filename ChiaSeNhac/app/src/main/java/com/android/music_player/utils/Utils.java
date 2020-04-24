@@ -58,7 +58,7 @@ public class Utils {
     public static void ChangeSongService(Context context, boolean isPlayActivity,
                                          ArrayList<SongModel> songs){
         Intent iSetMusic = new Intent(context, MediaPlayerService.class);
-        iSetMusic.setAction(Constants.ACTION.CHANGE_MUSIC);
+        iSetMusic.setAction(Constants.ACTION.CHANGE_SONG);
         iSetMusic.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
         iSetMusic.putExtra(Constants.INTENT.CHANGE_MUSIC, songs);
         context.startService(iSetMusic);
@@ -103,6 +103,13 @@ public class Utils {
         context.startService(iPrevious);
     }
 
+    public static void StopMediaService(Context context ,boolean isPlayActivity){
+        Intent iPrevious = new Intent(context, MediaPlayerService.class);
+        iPrevious.setAction(Constants.ACTION.STOP);
+        iPrevious.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
+        context.startService(iPrevious);
+    }
+
     public static void RepeatMediaService(Context context ,boolean isPlayActivity, boolean isRepeat){
         Intent iRepeat = new Intent(context, MediaPlayerService.class);
         iRepeat.setAction(Constants.ACTION.REPEAT);
@@ -114,7 +121,7 @@ public class Utils {
     public static void ShuffleMediaService(Context context ,ArrayList<SongModel> songShuffle,
                                            boolean isPlayActivity, boolean isShuffle){
         Intent inShuffle = new Intent(context, MediaPlayerService.class);
-        inShuffle.setAction(Constants.ACTION.CHANGE_MUSIC);
+        inShuffle.setAction(Constants.ACTION.CHANGE_SONG);
         inShuffle.putExtra(Constants.INTENT.CHANGE_MUSIC, songShuffle);
         inShuffle.putExtra(Constants.INTENT.IS_SHUFFLE, isShuffle);
         inShuffle.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);

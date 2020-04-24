@@ -265,7 +265,7 @@ public class SongManager {
 
     public void playNext(SongModel song) {
         queue().add(getCurrentMusic() + 1, song);
-        Utils.ToastLong(mContext, "Playing next: " + song.getSongName());
+        Utils.ToastLong(mContext, "PLAYING next: " + song.getSongName());
     }
 
     public  boolean replaceQueue(final ArrayList<SongModel> list) {

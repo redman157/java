@@ -66,15 +66,15 @@
             android:exported="false"
             tools:ignore="ExtraText">
             <intent-filter>
-                <action android:name="com.droidheat.musicplayer.action.IS_PLAY"/>
-                <action android:name="com.droidheat.musicplayer.action.SEEK"/>
-                <action android:name="com.droidheat.musicplayer.action.CLOSE" />
-                <action android:name="com.droidheat.musicplayer.action.PLAY_PAUSE" />
-                <action android:name="com.droidheat.musicplayer.action.PLAY" />
-                <action android:name="com.droidheat.musicplayer.action.REPEAT" />
-                <action android:name="com.droidheat.musicplayer.action.TRACK_PREV" />
-                <action android:name="com.droidheat.musicplayer.action.TRACK_NEXT" />
-                <action android:name="com.droidheat.musicplayer.action.PERSISTENT_NOTIFICATION" />
+                <action android:name="com.android.music_player.action.IS_PLAY"/>
+                <action android:name="com.android.music_player.action.SEEK"/>
+                <action android:name="com.android.music_player.action.CLOSE" />
+                <action android:name="com.android.music_player.action.PLAY_PAUSE" />
+                <action android:name="com.android.music_player.action.PLAY" />
+                <action android:name="com.android.music_player.action.REPEAT" />
+                <action android:name="com.android.music_player.action.PREV" />
+                <action android:name="com.android.music_player.action.NEXT" />
+                <action android:name="com.android.music_player.action.PERSISTENT_NOTIFICATION" />
                 <action android:name="android.intent.action.HEADSET_PLUG" />
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />

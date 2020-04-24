@@ -212,7 +212,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                         return;
                     }
 
-                    Log.d("BBB", "Service --- onPlay:" + position);
+                    Log.d(tag, "Service --- onPlay:" + (mSongs.get(position)));
                     playMedia(mSongs.get(position).getPath());
                     initNotification(Constants.NOTIFICATION.PLAY, position);
                 } finally {
@@ -237,7 +237,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             public void onSkipToNext() {
                 try {
                     super.onSkipToNext();
-                    Log.d("BBB", "Service --- onSkipToNext: "+isPlayActivity );
+                    Log.d(tag, "Service --- onSkipToNext: "+isPlayActivity );
                     if (isPlayActivity) {
                         if (!isRepeat) {
                             SongManager.getInstance().setCurrentMusic(position + 1);
@@ -269,7 +269,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             public void onSkipToPrevious() {
                 try {
                     super.onSkipToPrevious();
-                    Log.d("BBB", "Service --- onSkipToPrevious: " + isPlayActivity);
+                    Log.d(tag, "Service --- onSkipToPrevious: " + isPlayActivity);
                     if (isPlayActivity) {
                         if (!isRepeat) {
                             SongManager.getInstance().setCurrentMusic(position - 1);
@@ -277,7 +277,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                             resumePosition = -1;
                             skipToPrevious();
                         }
-                        Log.d("BBB", "Service --- onSkipToPrevious: " + SongManager.getInstance().getCurrentMusic());
+                        Log.d(tag, "Service --- onSkipToPrevious: " + SongManager.getInstance().getCurrentMusic());
 
                         initNotification(Constants.NOTIFICATION.PAUSE,
                                 SongManager.getInstance().getCurrentMusic());
@@ -379,7 +379,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                         status = NEXT;
                         mMediaTransportControls.skipToNext();
                         this.iNextToActivity = iAction;
-                        Log.d("BBB",
+                        Log.d(tag,
                                 "Service --- Action NExt: " + iAction.getStringExtra(Constants.INTENT.NEXT_TO_SERVICE));
                     } else {
                         Log.d(tag, "Service --- handleUIActions: " + status.toString());
@@ -477,9 +477,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     "MediaMax: "+mediaMax +" ==== Song Title: "+ mSongs.getData(SongManager.getInstance().getCurrentMusic()).getSongName());*/
             iIntentSeekBar.putExtra("current_pos", mediaPosition);
             mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, mediaPosition);
-            Log.d("BBB",
+            Log.d(tag,
                     "Service --- LogMediaPosition --- mSharedPrefsUtils: "+ (mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION_SONG, -1)));
-            Log.d("BBB",
+            Log.d(tag,
                     "Service --- LogMediaPosition --- mediaPosition: "+ (mediaPosition));
             iIntentSeekBar.putExtra("media_max", mediaMax);
             iIntentSeekBar.putExtra("song_title",
@@ -540,7 +540,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private void pauseMedia() {
         if (mMediaPlayer.isPlaying()) {
             resumePosition = mMediaPlayer.getCurrentPosition();
-            Log.d(tag, "Service ---- pauseMedia: "+ resumePosition);
+            Log.d(tag, "Service --- pauseMedia: "+ resumePosition);
             handler.removeCallbacks(sendUpdatesToUI);
             mMediaPlayer.pause();
 
@@ -569,7 +569,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void skipToPrevious(){
         Log.d(tag, "skipToPrevious: Enter");
-        Log.d("BBB", "Service --- skipToPrevious: "+SongManager.getInstance().getCurrentMusic());
+        Log.d(tag, "Service --- skipToPrevious: "+SongManager.getInstance().getCurrentMusic());
 
         if (iPrevToActivity != null) {
             Bundle bdPrev = iPrevToActivity.getExtras();
@@ -582,7 +582,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                         SongManager.getInstance().getCurrentMusic());
                 sendBroadcast(iPlayNewMusic);
             }else {
-                Log.d("BBB", "Service --- skipToPrevious: bdPrev is null");
+                Log.d(tag, "Service --- skipToPrevious: bdPrev is null");
             }
 
         }
@@ -601,7 +601,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 // truyền noti, action lên activity
                 // tương tự với previous
                 String nextToActivity = bdNext.getString(Constants.INTENT.NEXT_TO_SERVICE);
-                Log.d("BBB", "Service --- skipToNext: bdNext: "+nextToActivity);
+                Log.d(tag, "Service --- skipToNext: bdNext: "+nextToActivity);
                 iPlayNewMusic.putExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY, nextToActivity);
                 iPlayNewMusic.putExtra(Constants.INTENT.POSITION,
                         SongManager.getInstance().getCurrentMusic());
@@ -609,7 +609,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
             } else {
 
-                Log.d("BBB", "Service --- SkipToNext: dbNext is null");
+                Log.d(tag, "Service --- SkipToNext: dbNext is null");
 
             }
         }else {
@@ -896,16 +896,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
              * Setting metaData
              */
             setGraphics();
-            Log.d("BBB", "Service --- onPrepared: " + position);
-        /*if (resumePosition != -1){
-            resumeMedia(resumePosition);
-//            resumePosition = -1;
-        }else {
-
-
-        }*/
+            Log.d(tag, "Service --- onPrepared: " + (mSongs.get(position).getSongName()));
             int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION_SONG,0);
-            Log.d("BBB", "Service --- onPrepared: "+pos);
+            Log.d(tag, "Service ---  "+(mSongs.get(position).getSongName())+": "+pos);
             if (pos != 0){
                 mediaPlayer.seekTo(pos);
             }
@@ -934,7 +927,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                         mSongs = mSongShuffle;
 
                     } else {
-                        Log.d("BBB", "Service --- onCompletion: Enter");
+                        Log.d(tag, "Service --- onCompletion: Enter");
                         if (!isPlayActivity && position < mSongs.size() - 1) {
                             SongManager.getInstance().setCurrentMusic(position + 1);
 

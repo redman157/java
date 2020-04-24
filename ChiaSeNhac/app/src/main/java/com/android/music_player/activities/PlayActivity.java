@@ -61,7 +61,7 @@ public class PlayActivity extends BaseActivity
     private boolean isMore = false;
     private boolean isShuffle = false;
     private boolean isContinue;
-
+    private String tag = "BBB";
     @Override
     protected void onStart() {
         super.onStart();
@@ -73,6 +73,12 @@ public class PlayActivity extends BaseActivity
             registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
             registerReceiver(brPlayNew, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
             receiverRegistered = true;
+        }
+
+        if (isPlaying) {
+            mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
+        } else {
+            mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
         }
     }
 
@@ -187,7 +193,7 @@ public class PlayActivity extends BaseActivity
         if (positionOffset == 0.0 && positionOffsetPixels == 0) {
 //            Utils.StopMediaService(this,true);
             mSongManager.increase(mSongs.get(position));
-            Log.d("BBB", "PlayActivity --- onPageScrolled: "+position);
+            Log.d(tag, "PlayActivity --- onPageScrolled: "+position);
             SongManager.getInstance().setCurrentMusic(this.position);
             mSharedPrefsUtils.setString(Constants.PREFERENCES.SaveAlbumID,
                     mSongs.get(this.position).getAlbumID());
@@ -200,7 +206,7 @@ public class PlayActivity extends BaseActivity
     @Override
     public void onPageSelected(int position) {
         this.position = position;
-        Log.d("BBB", "Play Activity --- onPageSelected: "+position);
+        Log.d(tag, "Play Activity --- onPageSelected: "+position);
         mSeekBarTime.setProgress(0);
         mSeekBarTime.setMax(mSongs.get(position).getTime());
         mTextLeftTime.setText("00 : 00");
@@ -242,13 +248,13 @@ public class PlayActivity extends BaseActivity
             boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
 
             if (isPlayingMedia) {
-                Log.d("BBB", "PlayActivity --- brIsPlayService:" +true);
+                Log.d(tag, "PlayActivity --- brIsPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = true;
 
                 Utils.PauseMediaService(PlayActivity.this,true);
             } else {
-                Log.d("BBB", "PlayActivity --- brIsPlayService:" +false);
+                Log.d(tag, "PlayActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
                 Utils.PlayMediaService(PlayActivity.this,true);
@@ -286,7 +292,7 @@ public class PlayActivity extends BaseActivity
                     // còn null thì sẽ làm 1 việc khác
                     // là tác động của viewpager next -> truyền  service -> và trả về kết quả
                     int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
-                    Log.d("BBB", "PlayActivity --- PreviousToService: "+pos);
+                    Log.d(tag, "PlayActivity --- PreviousToService: "+pos);
                     mVpMusic.setCurrentItem(pos, true);
                 }
             }
@@ -306,8 +312,7 @@ public class PlayActivity extends BaseActivity
                 mBtnNext.setClickable(true);
                 mBtnNext.setImageDrawable(getResources().getDrawable(R.drawable.ic_next_white));
 
-                Log.d("BBB",
-                        "PlayActivity --- icon_next: " + (position));
+                Log.d(tag, "PlayActivity --- icon_next: " + (position));
                 Utils.NextMediaService(PlayActivity.this,true);
 
                 break;
@@ -315,7 +320,7 @@ public class PlayActivity extends BaseActivity
                 mBtnPrev.setClickable(true);
                 mBtnPrev.setImageResource(R.drawable.ic_previous_white);
 
-                Log.d("BBB", "PlayActivity --- icon_prev: " + (SongManager.getInstance().getCurrentMusic() - 1));
+                Log.d(tag, "PlayActivity --- icon_prev: " + (SongManager.getInstance().getCurrentMusic() - 1));
                 Utils.PreviousMediaService(PlayActivity.this,true);
                 break;
             case R.id.icon_repeat:
@@ -405,7 +410,6 @@ public class PlayActivity extends BaseActivity
     }
 
     private void updateUI(Intent serviceIntent) {
-
         int currentPos = serviceIntent.getIntExtra("current_pos", 0);
         int mediaMax = serviceIntent.getIntExtra("media_max", 0);
         String songTitle = serviceIntent.getStringExtra("song_title");

@@ -78,7 +78,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     protected void onStop() {
 
         super.onStop();
-
     }
 
     @Override
@@ -184,7 +183,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_searchBtn:
-                Toast.makeText(this, "Chao Ban button", Toast.LENGTH_SHORT).show();
+                finish();
+                startActivity(new Intent(this, SearchActivity.class));
                 break;
             case R.id.sleep_timer:
                 finish();

@@ -33,7 +33,7 @@
 
                 android:layout_height="match_parent"
 
-                android:src="@drawable/ic_music_note_black_24dp"/>
+                android:src="@drawable/ic_music_note_white_24dp"/>
             <LinearLayout
                 android:layout_weight="7"
                 android:layout_width="@dimen/_200sdp"

@@ -637,7 +637,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
      ----------------------------------------------------------------*******/
     private void updateMetaData(SongModel songModel){
         Bitmap albumArt = BitmapFactory.decodeResource(getResources(),
-                R.drawable.ic_music_note_black_24dp);
+                R.drawable.ic_music_note_white_24dp);
         // Update the current metadata
         if (SongManager.getInstance().getCurrentMusic() != -1){
             mMediaSessionCompat.setMetadata(new MediaMetadataCompat.Builder()
@@ -746,7 +746,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 // Set the Notification color
                 .setColorized(true).setColor(getResources().getColor(R.color.white))
 //                .setLargeIcon()
-                .setSmallIcon(R.drawable.ic_music_note_black_24dp)
+                .setSmallIcon(R.drawable.ic_music_note_white_24dp)
                 .setLargeIcon(bitmap)
                 .setSubText(mSongs.get(position).getFileName())
 
@@ -786,7 +786,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 // Set the Notification color
                 .setColorized(true).setColor(getResources().getColor(R.color.white))
 //                .setLargeIcon()
-                .setSmallIcon(R.drawable.ic_music_note_black_24dp)
+                .setSmallIcon(R.drawable.ic_music_note_white_24dp)
                 .setLargeIcon(bitmap)
                 .setSubText(mSongs.get(position).getFileName())
 

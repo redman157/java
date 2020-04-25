@@ -25,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="com.android.music_player.activities.RecentlyAllMusicActivity" />
+        <activity android:name="com.android.music_player.activities.SongActivity" />
         <activity android:name="com.android.music_player.activities.PlayActivity" />
         <activity android:name="com.android.music_player.activities.EqualizerActivity" />
         <activity android:name="com.android.music_player.activities.SettingsActivity" />

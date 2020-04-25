@@ -4,37 +4,31 @@
     android:layout_height="wrap_content"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-
     android:layout_marginLeft="@dimen/_15sdp"
     android:layout_marginRight="@dimen/_15sdp"
     android:background="@color/whiteOpaqueX2">
 
     <LinearLayout
-
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-
-
+        android:layout_height="56dp"
         android:orientation="horizontal"
         android:weightSum="10"
-        android:background="?android:attr/selectableItemBackground"
-        android:layout_marginStart="8dp">
+        android:background="?android:attr/selectableItemBackground">
 
         <androidx.cardview.widget.CardView
+            android:layout_marginLeft="@dimen/_5sdp"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_gravity="center"
             card_view:cardElevation="5dp"
             card_view:cardCornerRadius="5dp"
-
-            android:layout_height="40dp">
+            android:layout_height="36dp">
             <ImageView
                 android:layout_width="match_parent"
                 android:id="@+id/img_albumArt_media"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-
                 android:src="@drawable/ic_music_notes_padded"/>
 
         </androidx.cardview.widget.CardView>
@@ -52,8 +46,7 @@
                 android:layout_alignParentTop="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_marginEnd="?android:attr/actionBarSize"
-                android:theme="@android:style/ThemeOverlay.Material.Dark"
-                 />
+                android:theme="@android:style/ThemeOverlay.Material.Dark" />
 
             <RelativeLayout
                 android:id="@+id/relativeLayout1"

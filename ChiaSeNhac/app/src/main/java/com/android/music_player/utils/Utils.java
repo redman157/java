@@ -32,22 +32,22 @@ public class Utils {
     }
 
     public static int accentColor(SharedPrefsUtils mSharedPrefsUtils) {
-        switch (mSharedPrefsUtils.getString("accentColor", "pink")) {
-            case "green":
+        switch (mSharedPrefsUtils.getString("ACCENT_COLOR", "PINK")) {
+            case "GREEN":
                 return R.color.green;
-            case "orange":
+            case "ORANGE":
                 return R.color.orange;
-            case "pink":
+            case "PINK":
                 return R.color.pink;
-            case "cyan":
+            case "CYAN":
                 return R.color.cyan;
-            case "yellow":
+            case "YELLOW":
                 return R.color.yellow;
-            case "purple":
+            case "PURPLE":
                 return R.color.purple;
-            case "red":
+            case "RED":
                 return R.color.red;
-            case "grey":
+            case "GREY":
                 return R.color.grey;
             default:
                 return R.color.pink;

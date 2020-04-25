@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:weightSum="10"
     android:orientation="vertical"
-    tools:mContext=".activities.RecentlyAllMusicActivity">
+    tools:context=".activities.SongActivity">
     <LinearLayout
         android:id="@+id/ll_Back"
         android:weightSum="10"
@@ -50,7 +50,7 @@
             tools:ignore="NestedWeights">
             <ImageButton
                 android:id="@+id/imb_SearchMusic"
-                android:src="@drawable/ic_search_white_24dp"
+                android:src="@drawable/ic_search_black_24dp"
                 android:adjustViewBounds="true"
                 android:baselineAligned="true"
                 android:clickable="true"

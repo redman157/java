@@ -50,18 +50,18 @@ public class Constants {
         String SaveAlbumID = "SaveAlbumID";
         String KEY = "key";
         String TOTAL_SONGS = "total_song";
-        String audio_session_id = "audio_session_id";
+        String AUDIO_SESSION_ID = "AudioSessionId";
         String TYPE = "type";
         String POSITION = "position";
-        String state = "state";
+        String STATE = "State";
 
-        String accentColor = "accentColor";
-        String excludeShortSounds = "excludeShortSounds";
-        String excludeWhatsAppSounds = "excludeWhatsAppSounds";
-        String turnEqualizer = "turnEqualizer";
-        String currentEqProfile = "currentEqProfile";
-        String bassLevel = "bassLevel";
-        String vzLevel = "vzLevel";
+        String ACCENT_COLOR = "AccentColor";
+        String EXCLUDE_SHORT_SOUNDS = "ExcludeShortSounds";
+        String EXCLUDE_WHATS_APP_SOUNDS = "ExcludeWhatsAppSounds";
+        String TURN_EQUALIZER = "TurnEqualizer";
+        String CURRENT_EQUALIZER_PROFILE = "CurrentEqualizerProfile";
+        String BASS_LEVEL = "BassLevel";
+        String VIRTUAL_LEVEL = "VirtualLevel";
     }
 
     public @interface ACTION{
@@ -84,14 +84,14 @@ public class Constants {
     }
 
     public @interface COLOR{
-        String orange = "orange";
-        String red = "red";
-        String cyan = "cyan";
-        String green = "green";
-        String yellow = "yellow";
-        String pink = "pink";
-        String purple = "purple";
-        String grey = "grey";
+        String ORANGE = "Orange";
+        String RED = "Red";
+        String CYAN = "Cyan";
+        String GREEN = "Green";
+        String YELLOW = "Yellow";
+        String PINK = "Pink";
+        String PURPLE = "Purple";
+        String GREY = "Grey";
     }
 
     public @interface MENU{

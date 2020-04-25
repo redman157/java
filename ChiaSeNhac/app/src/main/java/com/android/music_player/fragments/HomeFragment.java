@@ -21,8 +21,8 @@ import com.android.music_player.OnChangePlayList;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.PlayActivity;
-import com.android.music_player.activities.RecentlyAllMusicActivity;
-import com.android.music_player.adapters.RecentlyAdderAdapter;
+import com.android.music_player.activities.SongActivity;
+import com.android.music_player.adapters.SongsAdapter;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.services.MediaPlayerService;
@@ -32,10 +32,10 @@ import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnClickItem,
+public class HomeFragment extends Fragment implements SongsAdapter.OnClickItem,
         View.OnClickListener, OnChangePlayList {
     private RecyclerView mRc_Recently_Add;
-    private RecentlyAdderAdapter mAdderAdapter;
+    private SongsAdapter mAdderAdapter;
     private ArrayList<SongModel> mNewSongs;
     private View view;
     private Button mBtnViewAll;
@@ -75,9 +75,10 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
         mSongManager.setContext(getContext());
 
         mMostPlayList = mSongManager.getPlayListMost();
-        mAdderAdapter = new RecentlyAdderAdapter(getContext(),
+        mAdderAdapter = new SongsAdapter(getContext(),
                 SongManager.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS);
+        mAdderAdapter.setLimit(true);
         mAdderAdapter.notifyDataSetChanged();
         mAdderAdapter.OnClickItem(this);
         mNewSongs = SongManager.getInstance().newSongs();
@@ -152,10 +153,11 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
 
     @Override
     public void onClick(String type, int position) {
+
         int curr = position;
         int prev = SongManager.getInstance().getCurrentMusic();
 
-        // set switch vị t{rí và type music cho play activity chạy
+        // set switch vị trí và type music cho play activity chạy
         if (!mNewSongs.get(curr).getSongName().equals(mNewSongs.get(prev).getSongName())){
             if (MediaPlayerService.mMediaPlayer!= null){
                 if (MediaPlayerService.mMediaPlayer.isPlaying()){
@@ -164,19 +166,17 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
                     intent.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY,false);
                     getActivity().startService(intent);
 
-                    ((HomeActivity)getActivity()).mBtnPlay.setImageResource(R.drawable.ic_media_play_light);
+                    ((HomeActivity)getActivity()).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 }
             }
         }
         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION,position);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
+        ((HomeActivity)getActivity()).mLlPlayMedia.setVisibility(View.VISIBLE);
         ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getSongName());
         ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
         ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
                 mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);
-
-
-
     }
 
 
@@ -185,7 +185,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
         switch (v.getId()){
             case R.id.btn_ViewAll:
                 mRc_Recently_Add.setVisibility(View.GONE);
-                Intent iViewAll = new Intent(getContext(), RecentlyAllMusicActivity.class);
+                Intent iViewAll = new Intent(getContext(), SongActivity.class);
                 iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
 
                 getActivity().finish();
@@ -195,7 +195,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
                 break;
             case R.id.img_Player_2:
                 mRc_Recently_Add.setVisibility(View.GONE);
-                Intent intent = new Intent(getContext(), RecentlyAllMusicActivity.class);
+                Intent intent = new Intent(getContext(), SongActivity.class);
                 intent.putExtra(Constants.INTENT.TYPE_MUSIC, text_Player_2.getText().toString());
 
                 getActivity().finish();
@@ -204,7 +204,7 @@ public class HomeFragment extends Fragment implements RecentlyAdderAdapter.OnCli
 
             case R.id.img_Player_1:
                 mRc_Recently_Add.setVisibility(View.GONE);
-                Intent iPlayList_2 = new Intent(getContext(), RecentlyAllMusicActivity.class);
+                Intent iPlayList_2 = new Intent(getContext(), SongActivity.class);
                 iPlayList_2.putExtra(Constants.INTENT.TYPE_MUSIC,
                         text_Player_1.getText().toString());
                 getActivity().finish();

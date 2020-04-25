@@ -21,13 +21,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdapter.ItemViewHolder> {
+public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ItemViewHolder> {
     private final Context mContext;
     private ArrayList<SongModel> items;
     private String type;
     private SharedPrefsUtils mSharedPrefsUtils;
     private SimpleDateFormat mFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
-    public RecentlyAdderAdapter(Context context, ArrayList<SongModel> items, String type) {
+    private int limit = 10;
+    private boolean isLimit;
+    public void setLimit(boolean isLimit){
+        this.isLimit = isLimit;
+    }
+    public SongsAdapter(Context context, ArrayList<SongModel> items, String type) {
         this.items = items;
         this.type = type;
         mContext = context;
@@ -72,16 +77,11 @@ public class RecentlyAdderAdapter extends RecyclerView.Adapter<RecentlyAdderAdap
 
     @Override
     public int getItemCount() {
-        /*if (type.equals(Constants.VALUE.ALL_NEW_SONGS)){
-            return items.size();
+        if (isLimit){
+            return limit;
         }else {
-            if (SongManager.getInstance().queue().size() < 15){
-                return SongManager.getInstance().queue().size();
-            }else {
-                return 15;
-            }
-        }*/
-        return items.size();
+            return items.size();
+        }
     }
 
 

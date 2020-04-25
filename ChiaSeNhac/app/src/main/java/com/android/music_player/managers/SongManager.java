@@ -141,13 +141,24 @@ public class SongManager {
             if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
                 song = SongManager.getInstance().newSongs();
                 return song;
-            } else if (type.equals(Constants.VALUE.ALL_SONGS)) {
+            } else if (type.equals(Constants.VALUE.ALL_SONGS) || type.equals("")) {
                 song = SongManager.getInstance().allSortSongs();
                 return song;
             }
         }
         return null;
+    }
 
+    private void processEndOfList(int position){
+        int size = mSongsMain.size() ;
+        if (position >= size){
+            SongManager.getInstance().setCurrentMusic(0);
+
+        }else if (position < 0){
+            SongManager.getInstance().setCurrentMusic(size - 1);
+        }else {
+            SongManager.getInstance().setCurrentMusic(position);
+        }
     }
 
     public ArrayList<SongModel> queue() {
@@ -594,8 +605,8 @@ public class SongManager {
     private void crawlData() {
         String[] STAR = {"*"};
 
-        boolean excludeShortSounds = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.excludeShortSounds, false);
-        boolean excludeWhatsApp = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.excludeWhatsAppSounds, false);
+        boolean excludeShortSounds = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_SHORT_SOUNDS, false);
+        boolean excludeWhatsApp = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_WHATS_APP_SOUNDS, false);
 
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";

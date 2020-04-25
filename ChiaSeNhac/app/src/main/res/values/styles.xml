@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/black</item>
@@ -14,19 +14,18 @@
         <item name="android:buttonStyle">?android:borderlessButtonStyle</item>
     </style>
 
-    <style name="BaseAppTheme" parent="android:Theme.Material">
-        <!-- enable window content transitions -->
-        <item name="android:windowActivityTransitions">true</item>
+    
+    <style name="CustomToolBarStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/black</item>
+    </style>
 
-        <!-- specify enter and exit transitions -->
-        <!--<item name="android:windowEnterTransition">@transition/explode</item>
-        <item name="android:windowExitTransition">@transition/explode</item>
--->
-        <!-- specify shared element transitions -->
-        <item name="android:windowSharedElementEnterTransition">
-            @transition/change_image_transform</item>
-        <item name="android:windowSharedElementExitTransition">
-            @transition/change_image_transform</item>
+    <style name="CustomPopupStyle" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name="android:background">@color/white</item>
+        <item name="overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">0dp</item>
     </style>
 
     <!-- HomeActivity -->

@@ -17,7 +17,7 @@ public class MusicWidget4x1 extends AppWidgetProvider {
     private int playbackState = 0;
     @Override
     public void onReceive(Context context, Intent intent) {
-        playbackState = intent.getIntExtra(Constants.PREFERENCES.state, 0);
+        playbackState = intent.getIntExtra(Constants.PREFERENCES.STATE, 0);
         super.onReceive(context, intent);
     }
 

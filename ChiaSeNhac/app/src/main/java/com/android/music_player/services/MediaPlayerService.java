@@ -883,7 +883,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         /*
-         * Getting to saved location of song if playback state is none i.e. first instance of music playback
+         * Getting to saved location of song if playback STATE is none i.e. first instance of music playback
          * , and if we are playing same track we were playing before, if track is new then we won't seek to last
          * remembered location
          * We reset this location to zero when we start playing a new song
@@ -1009,8 +1009,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         }
     };
 
-
-
   /*  private BroadcastReceiver brCheckPlayService = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1067,7 +1065,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         }else {
             SongManager.getInstance().setCurrentMusic(position);
         }
-
     }
 
     void addVoteToTrack(String path) {
@@ -1093,9 +1090,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     Virtualizer virtualizer;
     private void setEqualizer(){
         boolean isEqInSettings =
-                mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.turnEqualizer, false);
+                mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.TURN_EQUALIZER, false);
         int currentEqProfile =
-                mSharedPrefsUtils.getInteger(Constants.PREFERENCES.currentEqProfile, 0);
+                mSharedPrefsUtils.getInteger(Constants.PREFERENCES.CURRENT_EQUALIZER_PROFILE, 0);
         try {
             eq = new Equalizer(0, mMediaPlayer.getAudioSessionId());
             eq.setEnabled(isEqInSettings);
@@ -1111,17 +1108,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         try {
             bassBoost = new BassBoost(0, mMediaPlayer.getAudioSessionId());
             bassBoost.setEnabled(isEqInSettings);
-            bassBoost.setStrength((short)  mSharedPrefsUtils.getInteger(Constants.PREFERENCES.bassLevel + currentEqProfile,
+            bassBoost.setStrength((short)  mSharedPrefsUtils.getInteger(Constants.PREFERENCES.BASS_LEVEL + currentEqProfile,
                     0));
         } catch (Exception ignored) {}
         try {
             virtualizer = new Virtualizer(0, mMediaPlayer.getAudioSessionId());
             virtualizer.setEnabled(isEqInSettings);
-            virtualizer.setStrength((short) mSharedPrefsUtils.getInteger(Constants.PREFERENCES.vzLevel + currentEqProfile, 0));
+            virtualizer.setStrength((short) mSharedPrefsUtils.getInteger(Constants.PREFERENCES.VIRTUAL_LEVEL + currentEqProfile, 0));
         } catch (Exception ignored) {}
     }
     private void setGraphics(){
-        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.audio_session_id,
+        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.AUDIO_SESSION_ID,
                 mMediaPlayer.getAudioSessionId());
     }
 }

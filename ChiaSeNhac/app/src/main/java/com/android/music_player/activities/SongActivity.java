@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.IconView;
 import com.android.music_player.R;
-import com.android.music_player.adapters.RecentlyAdderAdapter;
+import com.android.music_player.adapters.SongsAdapter;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.managers.SongManager;
@@ -29,14 +29,14 @@ import com.android.music_player.models.SongModel;
 import java.util.ArrayList;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
-public class RecentlyAllMusicActivity extends AppCompatActivity implements
-        View.OnScrollChangeListener, View.OnClickListener, RecentlyAdderAdapter.OnClickItem {
+public class SongActivity extends AppCompatActivity implements
+        View.OnScrollChangeListener, View.OnClickListener, SongsAdapter.OnClickItem {
     private LinearLayout mLinearStatusPlayMusic;
     private IconView mImgAlbumId;
-    private RecyclerView mRcRecentlyAdd;
+    private RecyclerView mRcSongs;
     private ScrollView mScrollView;
     private ImageButton mBtnBack;
-    private RecentlyAdderAdapter recentlyAdderAdapter;
+    private SongsAdapter mSongsAdapter;
     private SharedPrefsUtils mSharedPrefsUtils;
     private String type;
     private ArrayList<SongModel> mSongs;
@@ -68,8 +68,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
         initView();
         setTypeSong(type);
         assignView();
-
-
+        
     }
 
     private void setTypeSong(String type) {
@@ -108,7 +107,7 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
 
         mBtnBack = findViewById(R.id.imb_BackMusic);
         mLinearStatusPlayMusic = findViewById(R.id.ll_StatusPlayMusic);
-        mRcRecentlyAdd = findViewById(R.id.rc_recently_add);
+        mRcSongs = findViewById(R.id.rc_recently_add);
         mImgAlbumId = findViewById(R.id.img_AlbumId);
         mScrollView = findViewById(R.id.scrollView);
         ImageUtils.getInstance(this).getSmallImageByPicasso(
@@ -119,16 +118,14 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
     private void assignView() {
         mBtnTitle.setOnClickListener(this);
         mBtnPlay.setOnClickListener(this);
-
-
-        recentlyAdderAdapter = new RecentlyAdderAdapter(this, mSongs, type);
-        recentlyAdderAdapter.OnClickItem(this);
-//        mRcRecentlyAdd.setNestedScrollingEnabled(false);
-        mRcRecentlyAdd.setHasFixedSize(true);
-        recentlyAdderAdapter.OnClickItem(this);
-        mRcRecentlyAdd.setLayoutManager(new LinearLayoutManager(this,
+        mSongsAdapter = new SongsAdapter(this, mSongs, type);
+        mSongsAdapter.setLimit(false);
+        mSongsAdapter.OnClickItem(this);
+        mRcSongs.setHasFixedSize(true);
+        mSongsAdapter.OnClickItem(this);
+        mRcSongs.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false));
-        mRcRecentlyAdd.setAdapter(recentlyAdderAdapter);
+        mRcSongs.setAdapter(mSongsAdapter);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -187,10 +184,10 @@ public class RecentlyAllMusicActivity extends AppCompatActivity implements
         mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
 
 
-        ImageUtils.getInstance(RecentlyAllMusicActivity.this).getSmallImageByPicasso(
+        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
                 mSongs.get(position).getAlbumID(),
                 mImgAlbumId);
-        ImageUtils.getInstance(RecentlyAllMusicActivity.this).getSmallImageByPicasso(
+        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
                 mSongs.get(position).getAlbumID(),
                 mImgMedia);
         mTextTitle.setText(mSongs.get(position).getSongName());

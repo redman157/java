@@ -1,6 +1,5 @@
 package com.android.music_player.activities;
 
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
@@ -50,7 +48,7 @@ public class PlayActivity extends BaseActivity
     private SeekBar mSeekBarTime;
 
     public ImageButton mBtnPlayPause;
-    private ImageButton mBtnMenu, mBtnPrev, mBtnRepeat, mBtnNext,
+    private ImageButton mBtnPrev, mBtnRepeat, mBtnNext,
     mBtnSeeMore, mBtnAbout, mBtnShuffle, mBtnEqualizer;
     private SharedPrefsUtils mSharedPrefsUtils;
     private TextView mTextLeftTime, mTextRightTime;
@@ -72,6 +70,7 @@ public class PlayActivity extends BaseActivity
     private String tag = "BBB";
     @Override
     protected void onStart() {
+
         super.onStart();
         iSeekBar = new Intent(Constants.ACTION.BROADCAST_SEEK_BAR);
         iPlayPause = new Intent(Constants.ACTION.BROADCAST_PLAY_PAUSE);
@@ -83,11 +82,34 @@ public class PlayActivity extends BaseActivity
             receiverRegistered = true;
         }
 
-        if (isPlaying) {
-            mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
-        } else {
+
+        if (isContinue) {
             mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
+        } else {
+            mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
         }
+        Log.d("CCC", "PlayActivity --- OnStart: Enter");
+        // nhận giá trị postion và type ở home fragment và recently activity
+        Log.d("CCC", "PlayActivity --- isContinue: "+isContinue);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("CCC", "PlayActivity --- onPause: Enter");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("CCC", "PlayActivity --- onResume: Enter");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d("CCC", "PlayActivity --- onRestart: Enter");
     }
 
     @Override
@@ -101,32 +123,44 @@ public class PlayActivity extends BaseActivity
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+        Log.d("CCC", "PlayActivity --- onDestroy: Enter");
     }
-    
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("CCC", "PlayActivity --- onStop: Enter");
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
-        initView();
-        setSupportActionBar(mToolBar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_close));
-
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
-
-        // nhận giá trị postion và type ở home fragment và recently activity
         type = this.getIntent().getStringExtra(Constants.INTENT.TYPE);
         position = this.getIntent().getIntExtra(Constants.INTENT.POSITION, 0);
         isContinue = getIntent().getBooleanExtra(Constants.INTENT.SONG_CONTINUE,false);
 
 
         mSongs = mSongManager.setType(type);
-        assignView();
+        initView();
+        setSupportActionBar(mToolBar);
 
-        Utils.ChangeSongService(PlayActivity.this, true, mSongs);
+        ActionBar actionBar = getSupportActionBar();
+
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_close_black_24dp));
+
+        assignView();
+        if (MediaPlayerService.mMediaPlayer.isPlaying()){
+            // Media play vẫn chạy
+        }else {
+            Utils.ChangeSongService(PlayActivity.this, true, mSongs);
+        }
+        Log.d("CCC", "PlayActivity --- onCreate: Enter");
+        Log.d("CCC", "PlayActivity --- isContinue: "+isContinue);
     }
 
     @Override
@@ -193,13 +227,11 @@ public class PlayActivity extends BaseActivity
         mSeekBarTime = findViewById(R.id.sb_leftTime);
         mBtnShuffle = findViewById(R.id.icon_shuffle);
         mBtnAbout = findViewById(R.id.icon_about);
-        mSeekBarTime.setMax(mSongs.get(SongManager.getInstance().getCurrentMusic()).getTime());
+
     }
 
     private void assignView(){
         mBtnEqualizer.setOnClickListener(this);
-
-        mBtnMenu.setOnClickListener(this);
         mBtnPlayPause.setOnClickListener(this);
         mBtnPrev.setOnClickListener(this);
         mBtnRepeat.setOnClickListener(this);
@@ -208,7 +240,7 @@ public class PlayActivity extends BaseActivity
         mBtnAbout.setOnClickListener(this);
         mBtnShuffle.setOnClickListener(this);
         mSeekBarTime.setOnSeekBarChangeListener(this);
-
+        mSeekBarTime.setMax(mSongs.get(SongManager.getInstance().getCurrentMusic()).getTime());
 
         initData(mSongs);
         if (position == 0) {
@@ -302,13 +334,13 @@ public class PlayActivity extends BaseActivity
                 Log.d(tag, "PlayActivity --- brIsPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = true;
-
+                Log.d("CCC", "PlayActivity --- brIsPlayService: "+isPlaying);
                 Utils.PauseMediaService(PlayActivity.this,true);
             } else {
                 Log.d(tag, "PlayActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
-
+                Log.d("CCC", "PlayActivity --- brIsPlayService: "+isPlaying);
                 if (isContinue){
                     int curr = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION_SONG, 0);
                     if (curr != 0){
@@ -327,7 +359,7 @@ public class PlayActivity extends BaseActivity
         public void onReceive(Context context, Intent intent) {
             if (!isRepeat) {
                 String actionNoti = intent.getStringExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY);
-//                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
+                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
                 int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
                 mVpMusic.setCurrentItem(pos, true);
 

@@ -146,6 +146,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         registerReceiver(brStopMusic, new IntentFilter(Constants.ACTION.BROADCAST_STOP_AUDIO));
 //        registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
         registerReceiver(brCloseNotification, new IntentFilter(Constants.ACTION.CLOSE_NOTIFICATION));
+
+        Log.d("CCC", "Servicer --- onCreate: Enter");
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -162,8 +164,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             //Handle Intent action from MediaSession.TransportControls
             handleUIActions(intent);
         }
+        Log.d("CCC", "Servicer --- onStartCommand: Enter --- "+intent.getAction());
         return START_NOT_STICKY;
     }
+
 
     @Override
     public void onDestroy() {
@@ -317,22 +321,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             public void onSeekTo(long position) {
                 super.onSeekTo(position);
                 if (status == PLAYED) {
-                    handler.removeCallbacks(sendUpdatesToUI);
+//                    handler.removeCallbacks(sendUpdatesToUI);
                     mMediaPlayer.seekTo((int) position);
                     mMediaPlayer.start();
                 }else {
 
                     mMediaPlayer.seekTo((int) position);
                 }
-               /* if (mMediaPlayer.isPlaying()) {
-                    Log.d("BBB", "Service --- onSeekTo: True");
-                    mMediaPlayer.seekTo((int) (long) position);
-
-                }else {
-                    Log.d("BBB", "Service --- onSeekTo: False");
-                    resumePosition = (int) position;
-                }
-*/
             }
         });
     }
@@ -915,7 +910,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public void onSeekComplete(MediaPlayer mp) {
         Log.d("MMM", "Service --- onSeekComplete Enter");
-        handler.removeCallbacks(sendUpdatesToUI);
+//        handler.removeCallbacks(sendUpdatesToUI);
     }
 
     @Override

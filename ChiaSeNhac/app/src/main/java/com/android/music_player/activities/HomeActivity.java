@@ -40,7 +40,6 @@ import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
@@ -112,13 +111,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 Log.d(tag, "PlayActivity --- brIsPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = true;
-
+                mLlPlayMedia.setVisibility(View.VISIBLE);
 
             } else {
                 Log.d(tag, "PlayActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
-
+                mLlPlayMedia.setVisibility(View.GONE);
             }
         }
     };

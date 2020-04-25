@@ -5,7 +5,7 @@
         android:id="@+id/action_drive_mode"
         android:orderInCategory="103"
         app:showAsAction="always"
-        android:icon="@drawable/ic_drive_eta_white_24dp"
+        android:icon="@drawable/ic_drive_eta_black_24dp"
         android:title="@string/drive_mode"/>
 
     <item

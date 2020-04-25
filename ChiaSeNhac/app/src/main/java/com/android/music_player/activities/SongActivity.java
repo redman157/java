@@ -76,7 +76,7 @@ public class SongActivity extends AppCompatActivity implements
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_close));
+
 
         setTypeSong(type);
         assignView();

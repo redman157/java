@@ -1,5 +1,6 @@
 package com.android.music_player.activities;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +8,10 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
@@ -16,6 +20,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.BaseActivity;
@@ -43,7 +50,7 @@ public class PlayActivity extends BaseActivity
     private SeekBar mSeekBarTime;
 
     public ImageButton mBtnPlayPause;
-    private ImageButton mBtnBack, mBtnInfoMusic, mBtnMenu, mBtnPrev, mBtnRepeat, mBtnNext,
+    private ImageButton mBtnMenu, mBtnPrev, mBtnRepeat, mBtnNext,
     mBtnSeeMore, mBtnAbout, mBtnShuffle, mBtnEqualizer;
     private SharedPrefsUtils mSharedPrefsUtils;
     private TextView mTextLeftTime, mTextRightTime;
@@ -61,6 +68,7 @@ public class PlayActivity extends BaseActivity
     private boolean isMore = false;
     private boolean isShuffle = false;
     private boolean isContinue;
+    private Toolbar mToolBar;
     private String tag = "BBB";
     @Override
     protected void onStart() {
@@ -99,6 +107,11 @@ public class PlayActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+        initView();
+        setSupportActionBar(mToolBar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_close));
 
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
@@ -109,11 +122,50 @@ public class PlayActivity extends BaseActivity
         position = this.getIntent().getIntExtra(Constants.INTENT.POSITION, 0);
         isContinue = getIntent().getBooleanExtra(Constants.INTENT.SONG_CONTINUE,false);
 
+
         mSongs = mSongManager.setType(type);
-        initView();
         assignView();
+
         Utils.ChangeSongService(PlayActivity.this, true, mSongs);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.play, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent iBackMusic = new Intent(this, HomeActivity.class);
+                finish();
+                startActivity(iBackMusic);
+                overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
+                break;
+            case R.id.action_drive_mode:
+                break;
+            case R.id.goto_album:
+                break;
+            case R.id.goto_artist:
+                break;
+            case R.id.add_to_playlist:
+                break;
+            case R.id.info:
+
+                break;
+            case R.id.equalizer:
+                finish();
+                startActivity(new Intent(this, EqualizerActivity.class));
+                break;
+
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -121,6 +173,7 @@ public class PlayActivity extends BaseActivity
     }
 
     private void initView() {
+        mToolBar = findViewById(R.id.tb_PlayActivity);
         mBtnEqualizer = findViewById(R.id.icon_equalizer);
         mLinearSeeMore = findViewById(R.id.ll_see_more);
         mTextLeftTime = findViewById(R.id.text_leftTime);
@@ -130,9 +183,7 @@ public class PlayActivity extends BaseActivity
         mBtnRepeat = findViewById(R.id.icon_repeat);
         mBtnNext = findViewById(R.id.icon_next);
         mBtnSeeMore = findViewById(R.id.icon_image_More);
-        mBtnBack = findViewById(R.id.imb_BackMusic);
-        mBtnInfoMusic = findViewById(R.id.imb_InfoMusic);
-        mBtnMenu = findViewById(R.id.imb_SeeMenu);
+
         ll_vp_change_music = findViewById(R.id.ll_vp_change_music);
         mVpMusic = findViewById(R.id.vp_change_music);
 
@@ -147,8 +198,7 @@ public class PlayActivity extends BaseActivity
 
     private void assignView(){
         mBtnEqualizer.setOnClickListener(this);
-        mBtnBack.setOnClickListener(this);
-        mBtnInfoMusic.setOnClickListener(this);
+
         mBtnMenu.setOnClickListener(this);
         mBtnPlayPause.setOnClickListener(this);
         mBtnPrev.setOnClickListener(this);
@@ -345,27 +395,13 @@ public class PlayActivity extends BaseActivity
                             mLinearSeeMore.setVisibility(View.GONE);
                         }
                     });
-
                 }
                 break;
-            case R.id.imb_BackMusic:
-                // khi back ngược về ta cần phải lưu dc position khi tắt app bật lên ta phải có
-                // dc giá trị sẵn để xuất màn hình tất cả có ở Changmusic khi thao tác
 
-                Intent iBackMusic = new Intent(this, HomeActivity.class);
-                finish();
-                startActivity(iBackMusic);
-
-                overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
-                break;
-            case R.id.imb_InfoMusic:
-
-                break;
             case R.id.icon_equalizer:
                 startActivity(new Intent(this, EqualizerActivity.class));
                 break;
-            case R.id.imb_SeeMenu:
-                break;
+
             case R.id.icon_about:
                 DialogUtils.showSongsInfo(PlayActivity.this, mSongs.get(position));
                 break;

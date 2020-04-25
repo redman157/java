@@ -86,7 +86,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
         mTextPlaying.setText(mSongModel.getAlbum());
         mTextArtists.setText(mSongModel.getArtist());
         mTextTittle.setText(mSongModel.getSongName());
-        ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongModel.getAlbumID(), mImgAlbumArt);
+        ImageUtils.getInstance(getContext()).getSmallImage(mSongModel.getAlbumID(), mImgAlbumArt);
 
         return view;
     }

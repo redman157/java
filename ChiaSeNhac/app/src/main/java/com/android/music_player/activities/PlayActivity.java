@@ -191,7 +191,7 @@ public class PlayActivity extends BaseActivity
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (positionOffset == 0.0 && positionOffsetPixels == 0) {
-//            Utils.StopMediaService(this,true);
+
             mSongManager.increase(mSongs.get(position));
             Log.d(tag, "PlayActivity --- onPageScrolled: "+position);
             SongManager.getInstance().setCurrentMusic(this.position);
@@ -200,6 +200,7 @@ public class PlayActivity extends BaseActivity
             seekPos = 0;
             mTextLeftTime.setText("00 : 00");
             mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+
         }
     }
 
@@ -257,15 +258,15 @@ public class PlayActivity extends BaseActivity
                 Log.d(tag, "PlayActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
-                Utils.PlayMediaService(PlayActivity.this,true);
-                /*if (isContinue){
+
+                if (isContinue){
                     int curr = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION_SONG, 0);
                     if (curr != 0){
                         Utils.ContinueMediaService(PlayActivity.this, true, curr);
                     }
                 }else {
-
-                }*/
+                    Utils.PlayMediaService(PlayActivity.this,true);
+                }
 
             }
         }
@@ -276,25 +277,10 @@ public class PlayActivity extends BaseActivity
         public void onReceive(Context context, Intent intent) {
             if (!isRepeat) {
                 String actionNoti = intent.getStringExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY);
-                if (actionNoti != null) {
-                    // action noti có giá trị thì sẽ swipe theo viewpager
-                    if (actionNoti.equals("NextToService")) {
-                        Log.d("KKK", "PlayActiviy --- brPlayNew: NextToService");
-                        int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
-                        Log.d("KKK", "PlayActiviy --- brPlayNew: "+pos);
+//                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
+                int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
+                mVpMusic.setCurrentItem(pos, true);
 
-                            mVpMusic.setCurrentItem(pos, true);
-                    } else if (actionNoti.equals("PreviousToService")) {
-                        int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
-                            mVpMusic.setCurrentItem(pos, true);
-                    }
-                }else {
-                    // còn null thì sẽ làm 1 việc khác
-                    // là tác động của viewpager next -> truyền  service -> và trả về kết quả
-                    int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
-                    Log.d(tag, "PlayActivity --- PreviousToService: "+pos);
-                    mVpMusic.setCurrentItem(pos, true);
-                }
             }
         }
     };

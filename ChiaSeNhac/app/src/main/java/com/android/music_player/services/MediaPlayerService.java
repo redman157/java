@@ -171,6 +171,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         if (mMediaPlayer != null) {
             SongManager.getInstance().setCurrentMusic(position);
             stopMedia();
+            mMediaPlayer.release();
             mMediaPlayer = null;
         }
         if (mAudioManager != null) {
@@ -236,6 +237,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             @Override
             public void onSkipToNext() {
                 try {
+                    status = NEXT;
                     super.onSkipToNext();
                     Log.d(tag, "Service --- onSkipToNext: "+isPlayActivity );
                     if (isPlayActivity) {
@@ -243,6 +245,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                             SongManager.getInstance().setCurrentMusic(position + 1);
                             processEndOfList(SongManager.getInstance().getCurrentMusic());
                             resumePosition = -1;
+                            handler.removeCallbacks(sendUpdatesToUI);
+                            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
                             skipToNext();
                         }
 
@@ -262,12 +266,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 }finally {
                     status = PAUSED;
                 }
-
             }
 
             @Override
             public void onSkipToPrevious() {
                 try {
+                    status = PREVIOUS;
                     super.onSkipToPrevious();
                     Log.d(tag, "Service --- onSkipToPrevious: " + isPlayActivity);
                     if (isPlayActivity) {
@@ -303,6 +307,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     removeNotification();
                     //Stop the service
                     stopMedia();
+
                 }finally {
                     status = STOPPED;
                 }
@@ -553,7 +558,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 if (mMediaPlayer.isPlaying()) {
                     Log.d(tag, "stopMedia: Enter");
                     mMediaPlayer.stop();
-                    mMediaPlayer.release();
+
                 }
                 handler.removeCallbacks(sendUpdatesToUI);
             } catch (Exception e) {
@@ -608,16 +613,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 sendBroadcast(iPlayNewMusic);
 
             } else {
-
                 Log.d(tag, "Service --- SkipToNext: dbNext is null");
-
             }
         }else {
             Log.d(tag, "Service --- skipToNext: else iNextToActivity == null");
         }
         stopMedia();
-        mMediaPlayer.reset();
-
     }
     private Runnable sendUpdatesToUI = new Runnable() {
         public void run() {
@@ -652,6 +653,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(NOTIFICATION_ID);
         stopMedia();
+
     }
     private void createChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -903,9 +905,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 mediaPlayer.seekTo(pos);
             }
             mediaPlayer.start();
+            setupHandler();
         }finally {
             status = PLAYED;
-            setupHandler();
+
         }
 
     }

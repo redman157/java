@@ -170,6 +170,7 @@ public class HomeFragment extends Fragment implements SongsAdapter.OnClickItem,
                 }
             }
         }
+        Log.d("ZZZ","onClick: "+position);
         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION,position);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
         ((HomeActivity)getActivity()).mLlPlayMedia.setVisibility(View.VISIBLE);

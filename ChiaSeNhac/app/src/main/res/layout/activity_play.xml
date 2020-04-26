@@ -28,7 +28,7 @@
         android:orientation="vertical"
         android:layout_height="wrap_content">
 
-        <androidx.viewpager.widget.ViewPager
+        <com.android.music_player.CustomViewPager
             android:id="@+id/vp_change_music"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -110,7 +110,6 @@
 
             <ImageButton
                 android:adjustViewBounds="true"
-
                 android:id="@+id/icon_equalizer"
                 android:layout_width="32dp"
                 android:layout_height="match_parent"

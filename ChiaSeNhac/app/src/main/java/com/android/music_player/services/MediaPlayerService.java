@@ -617,13 +617,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
     private Runnable sendUpdatesToUI = new Runnable() {
         public void run() {
+            Log.d("CCC", "Servicer --- sendUpdatesToUI: Enter");
             LogMediaPosition();
             handler.postDelayed(this, 1000);
-
         }
     };
     // ---Send seek bar info to activity----
     private void setupHandler() {
+
         handler.removeCallbacks(sendUpdatesToUI);
         handler.postDelayed(sendUpdatesToUI, 1);
     }
@@ -896,11 +897,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             Log.d(tag, "Service --- onPrepared: " + (mSongs.get(position).getSongName()));
             int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION_SONG,0);
             Log.d(tag, "Service ---  "+(mSongs.get(position).getSongName())+": "+pos);
+            setupHandler();
             if (pos != 0){
                 mediaPlayer.seekTo(pos);
             }
+
             mediaPlayer.start();
-            setupHandler();
+
         }finally {
             status = PLAYED;
 
@@ -1051,7 +1054,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     private void processEndOfList(int position){
-        int size = mSongs.size() ;
+        int size = mSongs.size();
         if (position >= size){
             SongManager.getInstance().setCurrentMusic(0);
 

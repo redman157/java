@@ -17,26 +17,22 @@
         android:animateLayoutChanges="true"
         android:theme="@style/CustomToolBarStyle"
         app:popupTheme="@style/CustomPopupStyle"/>
-    <RelativeLayout
-        android:layout_below="@id/tb_HomeActivity"
-        android:id="@+id/ll_StatusHome"
-        android:layout_above="@id/ll_play_media"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_Home"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/vp_Home"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
+        android:layout_below="@id/tb_HomeActivity"
+        android:layout_above="@id/ll_play_media"
+        android:layout_height="wrap_content" />
+
 
     <LinearLayout
+        android:layout_above="@id/nav_view"
         android:id="@+id/ll_play_media"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_above="@id/nav_view"
+        android:layout_height="wrap_content"
         android:background="@color/blackGrey"
-        android:layout_height="wrap_content">
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -55,6 +51,7 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:background="@color/navigationBar"
         app:itemIconSize="20dp"
         app:itemIconTint="@drawable/navigation_select"

@@ -37,7 +37,6 @@
     <color name="dialogBackground">#252525</color>
     <color name="progressBarBackground">#44ffffff</color>
     <color name="navigationBar">#000000</color>
-
     <color name="textColorTitle">#ffffff</color>
     <color name="textColorSubTitle">#999</color>
     <color name="unselected_text">#999</color>

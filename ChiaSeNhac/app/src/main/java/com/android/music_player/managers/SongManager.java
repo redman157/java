@@ -149,8 +149,8 @@ public class SongManager {
         return null;
     }
 
-    private void processEndOfList(int position){
-        int size = mSongsMain.size() ;
+    public void processEndOfList(int position, ArrayList<SongModel> songs){
+        int size = songs.size() - 1 ;
         if (position >= size){
             SongManager.getInstance().setCurrentMusic(0);
 

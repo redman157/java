@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -95,8 +96,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                             false);
             if (isPlayingNoti) {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
+                processEndOfList(SongManager.getInstance().getCurrentMusic());
+                mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
+                mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
+                imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
             } else {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
+                processEndOfList(SongManager.getInstance().getCurrentMusic());
+                mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
+                mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
+                imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
             }
         }
     };
@@ -111,13 +120,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 Log.d(tag, "PlayActivity --- brIsPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = true;
-                mLlPlayMedia.setVisibility(View.VISIBLE);
 
             } else {
                 Log.d(tag, "PlayActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
-                mLlPlayMedia.setVisibility(View.GONE);
+
             }
         }
     };
@@ -130,10 +138,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mSongManager.setContext(this);
         registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
         registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
-
-        type = mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
         mSongs = mSongManager.setType(type);
-        Utils.ChangeSongService(this, false,mSongs);
+        type = mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
 
         /*if (MediaPlayerService.mMediaPlayer != null) {
             if (MediaPlayerService.mMediaPlayer.isPlaying()) {
@@ -160,16 +166,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         setContentView(R.layout.activity_home);
         // khởi tạo màn hình chính là home ta cần check position để gán sẵn vị trí luôn
         initView();
+
         mSharedPrefsUtils = new SharedPrefsUtils(this);
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
-
+        type = mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
+        mSongs = mSongManager.setType(type);
+        Utils.ChangeSongService(this, false,mSongs);
         setSupportActionBar(mToolBar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
 
         imageUtils = ImageUtils.getInstance(this);
         assignView();
+
+        processEndOfList(SongManager.getInstance().getCurrentMusic());
+        Log.d("PPP", mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
+        mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
+        mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
+        imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
     }
 
     @Override
@@ -314,21 +329,29 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     private void initView() {
         mLlPlayMedia = findViewById(R.id.ll_play_media);
+
         mToolBar = findViewById(R.id.tb_HomeActivity);
         mViewPlayMedia = findViewById(R.id.layout_play_media);
+
         mTextTitle = mViewPlayMedia.findViewById(R.id.text_title_media);
         mTextArtist = mViewPlayMedia.findViewById(R.id.text_artists_media);
         mBtnPlayPause = mViewPlayMedia.findViewById(R.id.imbt_Play_media);
         mBtnTitle = mViewPlayMedia.findViewById(R.id.btn_title_media);
         mImgMedia = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
 
+
         if (MediaPlayerService.mMediaPlayer != null) {
             if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+                mLlPlayMedia.setVisibility(View.VISIBLE);
             } else {
+
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                mLlPlayMedia.setVisibility(View.GONE);
             }
         }else {
+            mLlPlayMedia.setVisibility(View.GONE);
             mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
         }
         mNavigationView = findViewById(R.id.nav_view);
@@ -349,35 +372,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            if (mLlPlayMedia.getVisibility() == View.VISIBLE){
+                mLlPlayMedia.setVisibility(View.GONE);
+            }
             switch (menuItem.getItemId()){
+
                 case R.id.navigation_home:
-                    if (mLlPlayMedia.getVisibility() == View.VISIBLE){
-                        mLlPlayMedia.setVisibility(View.GONE);
-                    }
                     mViewPager_Home.setCurrentItem(0);
                     return true;
                 case R.id.navigation_songs:
-                    if (mLlPlayMedia.getVisibility() == View.VISIBLE){
-                        mLlPlayMedia.setVisibility(View.GONE);
-                    }
                     mViewPager_Home.setCurrentItem(1);
                     return true;
                 case R.id.navigation_albums:
-                    if (mLlPlayMedia.getVisibility() == View.VISIBLE){
-                        mLlPlayMedia.setVisibility(View.GONE);
-                    }
                     mViewPager_Home.setCurrentItem(2);
                     return true;
                 case R.id.navigation_artists:
-                    if (mLlPlayMedia.getVisibility() == View.VISIBLE){
-                        mLlPlayMedia.setVisibility(View.GONE);
-                    }
                     mViewPager_Home.setCurrentItem(3);
                     return true;
                 case R.id.navigation_playlists:
-                    if (mLlPlayMedia.getVisibility() == View.VISIBLE){
-                        mLlPlayMedia.setVisibility(View.GONE);
-                    }
                     mViewPager_Home.setCurrentItem(4);
                     return true;
             }
@@ -398,15 +410,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 mSongs = SongManager.getInstance().newSongs();
             }
         }
-        processEndOfList(SongManager.getInstance().getCurrentMusic());
-        Log.d("PPP", mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
-        mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
-        mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
-        imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
+
 
     }
 
-    private void processEndOfList(int position){
+    private int processEndOfList(int position){
         Log.d("CCC", "processEndOfList: "+position);
         int size = mSongs.size() - 1;
         if (position == size || position > size){
@@ -417,6 +425,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }else {
             SongManager.getInstance().setCurrentMusic(position);
         }
+
+        return mSongManager.getCurrentMusic();
     }
 
     @Override
@@ -453,9 +463,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     intent.putExtra(Constants.INTENT.SONG_CONTINUE, true);
                 }else {
                     intent.putExtra(Constants.INTENT.SONG_CONTINUE, false);
+                    mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
                 }
                 intent.putExtra(Constants.INTENT.POSITION,
-                        mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, 0));
+                       mSongManager.getCurrentMusic());
 
                 finish();
                 startActivity(intent);
@@ -479,9 +490,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private int currentViewPagerPosition = 0;
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (mLlPlayMedia.getVisibility() == View.VISIBLE){
+      /*  if (mLlPlayMedia.getVisibility() == View.VISIBLE){
             mLlPlayMedia.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     @Override

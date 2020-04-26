@@ -87,6 +87,13 @@ public class Utils {
         context.startService(iPlay);
     }
 
+    public static void isPlayMediaService(Context context ,boolean isPlayActivity){
+        Intent iPlay = new Intent(context, MediaPlayerService.class);
+        iPlay.setAction(Constants.ACTION.IS_PLAY);
+        iPlay.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
+        context.startService(iPlay);
+    }
+
 
     public static void NextMediaService(Context context ,boolean isPlayActivity){
         Intent iNext = new Intent(context, MediaPlayerService.class);

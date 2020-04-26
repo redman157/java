@@ -82,7 +82,7 @@ public class PlayActivity extends BaseActivity
             receiverRegistered = true;
         }
 
-
+        Utils.isPlayMediaService(this, true);
         if (isContinue) {
             mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
         } else {
@@ -154,11 +154,9 @@ public class PlayActivity extends BaseActivity
         getSupportActionBar().setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_close_black_24dp));
 
         assignView();
-        if (MediaPlayerService.mMediaPlayer.isPlaying()){
-            // Media play vẫn chạy
-        }else {
-            Utils.ChangeSongService(PlayActivity.this, true, mSongs);
-        }
+
+        Utils.ChangeSongService(PlayActivity.this, true, mSongs);
+
         Log.d("CCC", "PlayActivity --- onCreate: Enter");
         Log.d("CCC", "PlayActivity --- isContinue: "+isContinue);
     }

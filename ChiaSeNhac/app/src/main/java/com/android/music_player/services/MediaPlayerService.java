@@ -610,15 +610,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             iNext.setAction(null);
             iPrev.setAction(null);
         }
-        // tại đây khi tác động noti xuống service -> bundle ở onSkipNext khác null
-       /* Bundle bdPrevious = new Bundle();
-        bdPrevious.putString(Constants.INTENT.PREVIOUS_TO_SERVICE, "PreviousToService");
-        iPrev.putExtras(bdPrevious);
-
-        Bundle bdNext = new Bundle();
-        bdNext.putString(Constants.INTENT.NEXT_TO_SERVICE, "NextToService");
-        iNext.putExtras(bdNext);
-*/
 
         if (type.equals(Constants.NOTIFICATION.PLAY)){
             icon_Action = R.drawable.ic_pause_black;
@@ -842,14 +833,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             Log.d(tag, "onCompletion");
             if (mSongs != null) {
                 if (!isRepeat) {
-                    if (isShuffle) {
-                        mSongs = mSongShuffle;
-                    } else {
-                        Log.d(tag, "Service --- onCompletion: Enter");
-                        skipToNext();
-                    }
-                }else {
-
+                    skipToNext();
+                }else if (isRepeat){
+                    
+                }else if (isShuffle){
+                    mSongs = mSongShuffle;
                 }
             }
         } finally {

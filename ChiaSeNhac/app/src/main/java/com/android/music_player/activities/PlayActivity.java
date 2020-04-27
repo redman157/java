@@ -337,18 +337,19 @@ public class PlayActivity extends BaseActivity
             // activity gửi broadcast xuống service
             boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
 
-            if (isPlayingMedia) {
-                Log.d(tag, "PlayActivity --- brIsPlayService:" +true);
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                isPlaying = true;
-                Utils.PauseMediaService(PlayActivity.this);
-            } else {
-                Log.d(tag, "PlayActivity --- brIsPlayService:" +false);
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                isPlaying = false;
-                Utils.PlayMediaService(PlayActivity.this);
+                if (isPlayingMedia) {
+                    Log.d(tag, "PlayActivity --- brIsPlayService:" + true);
+                    mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+                    isPlaying = true;
+                    Utils.PauseMediaService(PlayActivity.this);
+                } else {
+                    Log.d(tag, "PlayActivity --- brIsPlayService:" + false);
+                    mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                    isPlaying = false;
+                    Utils.PlayMediaService(PlayActivity.this);
 
-            }
+                }
+
         }
     };
 
@@ -371,17 +372,13 @@ public class PlayActivity extends BaseActivity
                         mBtnNext.setEnabled(true);
                         mBtnPrev.setEnabled(true);
                         mBtnPlayPause.setEnabled(true);
-
-                        if (!isRepeat) {
-
-                            int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
-                            mVpMusic.setCurrentItem(pos, true);
-                            mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                        }else {
-                            Utils.PlayMediaService(PlayActivity.this);
-                        }
+                        int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
+                        mVpMusic.setCurrentItem(pos, true);
+                        mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                     }
                 }.start();
+            }else {
+                Utils.PlayMediaService(context);
             }
         }
     };

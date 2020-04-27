@@ -1,6 +1,5 @@
 package com.android.music_player.adapters;
 
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -42,7 +41,7 @@ public class ChangeMusicPagerAdapter extends FragmentPagerAdapter {
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         super.destroyItem(container, position, object);
-        Log.d("CCC", "ChangeMusicPagerAdapter --- destroyItem: "+position);
+
     }
 
     public static class ZoomOutPageTransformer  implements ViewPager.PageTransformer{

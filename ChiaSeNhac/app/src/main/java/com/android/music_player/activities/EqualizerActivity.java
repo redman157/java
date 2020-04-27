@@ -218,8 +218,6 @@ public class EqualizerActivity extends AppCompatActivity implements OnClickListe
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        Log.d("CCC",
-                "Equalizer --- onCheckedChanged: "+ mSharedPrefsUtils.getInteger(Constants.PREFERENCES.AUDIO_SESSION_ID, 0) );
         mSharedPrefsUtils.setBoolean(Constants.PREFERENCES.TURN_EQUALIZER, isChecked);
         Equalizer equalizer = new Equalizer(0,
                 mSharedPrefsUtils.getInteger(Constants.PREFERENCES.AUDIO_SESSION_ID, 0));
@@ -266,7 +264,6 @@ public class EqualizerActivity extends AppCompatActivity implements OnClickListe
             mSharedPrefsUtils.setInteger(Constants.PREFERENCES.VIRTUAL_LEVEL + mCurrentEqProfile, progress);
         }else {
             int new_progress = minEQLevel + (maxEQLevel - minEQLevel ) * progress / 100;
-            Log.d("CCC", "Equalizer --- onProgressChanged: "+ new_progress);
             for (int i = 0; i < num_sliders; i++) {
                 if (sliders[i] == seekBar) {
                     if (eq.getEnabled()) {

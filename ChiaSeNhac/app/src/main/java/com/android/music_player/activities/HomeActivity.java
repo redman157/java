@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,7 +62,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private SongManager mSongManager;
     public MaterialPlayPauseButton mBtnPlayPause;
     private boolean isPlaying;
-    private String type;
+
     private ArrayList<Fragment> mFragments = new ArrayList<>();
     public LinearLayout mLlPlayMedia;
     private OnChangePlayList onChangePlayList;
@@ -96,13 +95,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                             false);
             if (isPlayingNoti) {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
-                processEndOfList(SongManager.getInstance().getCurrentMusic());
+//                processEndOfList(SongManager.getInstance().getCurrentMusic());
                 mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
                 mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
                 imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
             } else {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
-                processEndOfList(SongManager.getInstance().getCurrentMusic());
+//                processEndOfList(SongManager.getInstance().getCurrentMusic());
                 mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
                 mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
                 imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
@@ -138,19 +137,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mSongManager.setContext(this);
         registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
         registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
-        mSongs = mSongManager.setType(type);
-        type = mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
+        mSongs = mSongManager.getCurrentSongs();
 
-        /*if (MediaPlayerService.mMediaPlayer != null) {
-            if (MediaPlayerService.mMediaPlayer.isPlaying()) {
 
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-            } else {
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-            }
-        }else {
-            mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-        }*/
     }
 
     @Override
@@ -170,9 +159,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mSharedPrefsUtils = new SharedPrefsUtils(this);
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
-        type = mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
-        mSongs = mSongManager.setType(type);
-        Utils.ChangeSongService(this, false,mSongs);
+
+        mSongs = mSongManager.getCurrentSongs();
+        Utils.ChangeSongService(this,mSongs);
         setSupportActionBar(mToolBar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
@@ -180,7 +169,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         imageUtils = ImageUtils.getInstance(this);
         assignView();
 
-        processEndOfList(SongManager.getInstance().getCurrentMusic());
+//        processEndOfList(SongManager.getInstance().getCurrentMusic());
         Log.d("PPP", mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
         mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
         mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
@@ -397,38 +386,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
     };
 
-    private void setTypeSong(String type){
-        Log.d("PPP", "setTypeSong: "+SongManager.getInstance().getCurrentMusic());
-        if (mSongManager.getAllPlaylistDB().searchPlayList(type)) {
-            mSongs = mSongManager.getAllSongToPlayList(type);
-        }else {
-            if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
-                mSongs = SongManager.getInstance().newSongs();
-            } else if (type.equals(Constants.VALUE.ALL_SONGS)) {
-                mSongs = SongManager.getInstance().allSortSongs();
-            } else if (type.equals("")) {
-                mSongs = SongManager.getInstance().newSongs();
-            }
-        }
-
-
-    }
-
-    private int processEndOfList(int position){
-        Log.d("CCC", "processEndOfList: "+position);
-        int size = mSongs.size() - 1;
-        if (position == size || position > size){
-            SongManager.getInstance().setCurrentMusic(0);
-
-        }else if (position < 0){
-            SongManager.getInstance().setCurrentMusic(69);
-        }else {
-            SongManager.getInstance().setCurrentMusic(position);
-        }
-
-        return mSongManager.getCurrentMusic();
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -440,14 +397,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                         mBtnPlayPause.setState(MaterialPlayPauseDrawable.State.Pause);
                         Intent iPause = new Intent(this, MediaPlayerService.class);
                         iPause.setAction(Constants.ACTION.PAUSE);
-                        iPause.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, false);
+
                         startService(iPause);
                     }else {
                         mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                         mBtnPlayPause.setState(MaterialPlayPauseDrawable.State.Play);
                         Intent iPlay = new Intent(this, MediaPlayerService.class);
                         iPlay.setAction(Constants.ACTION.PLAY);
-                        iPlay.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, false);
                         startService(iPlay);
                     }
                 }
@@ -469,6 +425,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                        mSongManager.getCurrentMusic());
 
                 finish();
+
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
                 break;

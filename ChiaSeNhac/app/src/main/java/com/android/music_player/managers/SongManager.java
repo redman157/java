@@ -65,7 +65,7 @@ public class SongManager {
     private RelationSongs mRelationSongs;
     @SuppressLint("StaticFieldLeak")
     private static SongManager instance;
-
+    private String type;
     public static SongManager getInstance() {
         if (instance == null){
             instance = new SongManager();
@@ -128,10 +128,11 @@ public class SongManager {
     }
 
     public void setCurrentMusic(int position) {
-        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, position);
+        processEndOfList(position);
     }
 
-    public ArrayList<SongModel> setType(String type){
+    public ArrayList<SongModel> getCurrentSongs(){
+        this.type = mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
         ArrayList<SongModel> song = new ArrayList<>();
         if (mAllPlaylist.searchPlayList(type)) {
             song = getAllSongToPlayList(type);
@@ -149,15 +150,17 @@ public class SongManager {
         return null;
     }
 
-    public void processEndOfList(int position, ArrayList<SongModel> songs){
-        int size = songs.size() - 1 ;
-        if (position >= size){
-            SongManager.getInstance().setCurrentMusic(0);
-
-        }else if (position < 0){
-            SongManager.getInstance().setCurrentMusic(size - 1);
-        }else {
-            SongManager.getInstance().setCurrentMusic(position);
+    public void processEndOfList(int position){
+        if (getCurrentSongs()!= null) {
+            int size = (getCurrentSongs().size());
+            if (position >= size) {
+                SongManager.getInstance().setCurrentMusic(0);
+                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, 0);
+            } else if (position < 0) {
+                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, size - 1);
+            } else {
+                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, position);
+            }
         }
     }
 

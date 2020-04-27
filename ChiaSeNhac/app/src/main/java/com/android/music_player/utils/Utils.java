@@ -55,42 +55,38 @@ public class Utils {
         }
     }
 
-    public static void ChangeSongService(Context context, boolean isPlayActivity,
+    public static void ChangeSongService(Context context,
                                          ArrayList<SongModel> songs){
         Intent iSetMusic = new Intent(context, MediaPlayerService.class);
         iSetMusic.setAction(Constants.ACTION.CHANGE_SONG);
-        iSetMusic.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
         iSetMusic.putExtra(Constants.INTENT.CHANGE_MUSIC, songs);
         context.startService(iSetMusic);
     }
 
-    public static void PlayMediaService(Context context ,boolean isPlayActivity){
+    public static void PlayMediaService(Context context){
         Intent intent = new Intent(context, MediaPlayerService.class);
         intent.setAction(Constants.ACTION.PLAY);
-        intent.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
         context.startService(intent);
     }
 
-    public static void PauseMediaService(Context context ,boolean isPlayActivity){
+    public static void PauseMediaService(Context context){
         Intent iPlayMedia = new Intent(context ,MediaPlayerService.class);
         iPlayMedia.setAction(Constants.ACTION.PAUSE);
-        iPlayMedia.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
         context.startService(iPlayMedia);
     }
 
-    public static void isPlayMediaService(Context context ,boolean isPlayActivity,
+    public static void isPlayMediaService(Context context ,
                                           ArrayList<SongModel> songs){
         Intent iPlay = new Intent(context, MediaPlayerService.class);
         iPlay.setAction(Constants.ACTION.IS_PLAY);
         iPlay.putExtra(Constants.INTENT.CHANGE_MUSIC, songs);
-        iPlay.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
+
         context.startService(iPlay);
     }
 
-    public static void isPlayMediaService(Context context ,boolean isPlayActivity){
+    public static void isPlayMediaService(Context context){
         Intent iPlay = new Intent(context, MediaPlayerService.class);
         iPlay.setAction(Constants.ACTION.IS_PLAY);
-        iPlay.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
         context.startService(iPlay);
     }
 
@@ -110,37 +106,32 @@ public class Utils {
         context.startService(iPrevious);
     }
 
-    public static void StopMediaService(Context context ,boolean isPlayActivity){
+    public static void StopMediaService(Context context){
         Intent iPrevious = new Intent(context, MediaPlayerService.class);
         iPrevious.setAction(Constants.ACTION.STOP);
-        iPrevious.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
         context.startService(iPrevious);
     }
 
-    public static void RepeatMediaService(Context context ,boolean isPlayActivity, boolean isRepeat){
+    public static void RepeatMediaService(Context context, boolean isRepeat){
         Intent iRepeat = new Intent(context, MediaPlayerService.class);
         iRepeat.setAction(Constants.ACTION.REPEAT);
         iRepeat.putExtra(Constants.INTENT.IS_REPEAT, isRepeat);
-        iRepeat.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
         context.startService(iRepeat);
     }
 
     public static void ShuffleMediaService(Context context ,ArrayList<SongModel> songShuffle,
-                                           boolean isPlayActivity, boolean isShuffle){
+                                           boolean isShuffle){
         Intent inShuffle = new Intent(context, MediaPlayerService.class);
         inShuffle.setAction(Constants.ACTION.CHANGE_SONG);
         inShuffle.putExtra(Constants.INTENT.CHANGE_MUSIC, songShuffle);
         inShuffle.putExtra(Constants.INTENT.IS_SHUFFLE, isShuffle);
-        inShuffle.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
         context.startService(inShuffle);
     }
 
-    public static void ContinueMediaService(Context context,
-                                            boolean isPlayActivity, int seekPos){
+    public static void ContinueMediaService(Context context, int seekPos){
         Intent iSeekChoose = new Intent(context, MediaPlayerService.class);
         iSeekChoose.setAction(Constants.ACTION.SEEK);
         iSeekChoose.putExtra(Constants.INTENT.POSITION_SONG, seekPos);
-        iSeekChoose.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
         context.startService(iSeekChoose);
     }
 

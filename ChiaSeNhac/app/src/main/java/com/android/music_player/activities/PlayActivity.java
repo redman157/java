@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +59,7 @@ public class PlayActivity extends BaseActivity
     private boolean receiverRegistered;
     public Intent iSeekBar;
     private Intent iPlayPause;
-    public   int seekPos;
+    public int seekPos, currentPos;
     private LinearLayout ll_vp_change_music;
     private LinearLayout mLinearSeeMore;
     private boolean isChange, isPlaying;
@@ -68,6 +67,7 @@ public class PlayActivity extends BaseActivity
     private boolean isMore = false;
     private boolean isShuffle = false;
     private boolean isContinue;
+
     private Toolbar mToolBar;
     private String tag = "BBB";
     @Override
@@ -83,8 +83,9 @@ public class PlayActivity extends BaseActivity
             registerReceiver(brPlayNew, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
             receiverRegistered = true;
         }
+        mSongs = mSongManager.getCurrentSongs();
+        Utils.ChangeSongService(PlayActivity.this, mSongs);
 
-        Utils.ChangeSongService(PlayActivity.this, true, mSongs);
         isContinue = getIntent().getBooleanExtra(Constants.INTENT.SONG_CONTINUE,false);
         if (MediaPlayerService.mMediaPlayer!= null) {
             if (!MediaPlayerService.mMediaPlayer.isPlaying()) {
@@ -96,11 +97,6 @@ public class PlayActivity extends BaseActivity
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
             }
         }
-
-        Log.d("CCC", "PlayActivity --- OnStart: Enter");
-        // nhận giá trị postion và type ở home fragment và recently activity
-        Log.d("CCC", "PlayActivity --- isContinue: "+isContinue);
-
     }
 
     @Override
@@ -132,13 +128,12 @@ public class PlayActivity extends BaseActivity
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        Log.d("CCC", "PlayActivity --- onDestroy: Enter");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("CCC", "PlayActivity --- onStop: Enter");
+
     }
 
     @Override
@@ -153,12 +148,14 @@ public class PlayActivity extends BaseActivity
         type = this.getIntent().getStringExtra(Constants.INTENT.TYPE);
         position = this.getIntent().getIntExtra(Constants.INTENT.POSITION, 0);
         isContinue = getIntent().getBooleanExtra(Constants.INTENT.SONG_CONTINUE,false);
-        Log.d("CCC","PlayActivity --- onCreate: position "+position);
-        mSongs = mSongManager.setType(type);
+
+        //save current song
+        mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
+        mSongs = mSongManager.getCurrentSongs();
 
 
         initView();
-        Utils.ChangeSongService(PlayActivity.this, true, mSongs);
+        Utils.ChangeSongService(PlayActivity.this, mSongs);
 
         setSupportActionBar(mToolBar);
         ActionBar actionBar = getSupportActionBar();
@@ -167,8 +164,6 @@ public class PlayActivity extends BaseActivity
 
         assignView();
 
-        Log.d("CCC", "PlayActivity --- onCreate: Enter");
-        Log.d("CCC", "PlayActivity --- isContinue: "+isContinue);
     }
 
     @Override
@@ -315,7 +310,7 @@ public class PlayActivity extends BaseActivity
     private BroadcastReceiver brSeekBar = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent serviceIntent) {
-            Log.d("CCC", "PlayActivity --- brSeekBar: Enter");
+
             updateUI(serviceIntent);
         }
     };
@@ -346,15 +341,12 @@ public class PlayActivity extends BaseActivity
                 Log.d(tag, "PlayActivity --- brIsPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = true;
-                Log.d("CCC", "PlayActivity --- brIsPlayService: "+isPlaying);
-                Utils.PauseMediaService(PlayActivity.this,true);
+                Utils.PauseMediaService(PlayActivity.this);
             } else {
                 Log.d(tag, "PlayActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = false;
-
-                Log.d("CCC", "PlayActivity --- brIsPlayService: "+isPlaying);
-                Utils.PlayMediaService(PlayActivity.this,true);
+                Utils.PlayMediaService(PlayActivity.this);
 
             }
         }
@@ -362,13 +354,34 @@ public class PlayActivity extends BaseActivity
 
     private BroadcastReceiver brPlayNew = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
             if (!isRepeat) {
                 String actionNoti = intent.getStringExtra(Constants.INTENT.NOTI_SERVICE_TO_ACTIVITY);
 //                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
-                int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
-                mVpMusic.setCurrentItem(pos, true);
+                new CountDownTimer(500, 1000) {
+                    @Override
+                    public void onTick(long l) {
+                        mBtnNext.setEnabled(false);
+                        mBtnPrev.setEnabled(false);
+                        mBtnPlayPause.setEnabled(false);
 
+                    }
+                    @Override
+                    public void onFinish() {
+                        mBtnNext.setEnabled(true);
+                        mBtnPrev.setEnabled(true);
+                        mBtnPlayPause.setEnabled(true);
+
+                        if (!isRepeat) {
+
+                            int pos = intent.getIntExtra(Constants.INTENT.POSITION, -1);
+                            mVpMusic.setCurrentItem(pos, true);
+                            mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                        }else {
+                            Utils.PlayMediaService(PlayActivity.this);
+                        }
+                    }
+                }.start();
             }
         }
     };
@@ -379,7 +392,7 @@ public class PlayActivity extends BaseActivity
             case R.id.icon_play:
                 // khi bấm play check play trước đã, trong broad cast check play sẽ play video
                 SongManager.getInstance().setCurrentMusic(position);
-                Utils.isPlayMediaService(PlayActivity.this, true, mSongManager.setType(type));
+                Utils.isPlayMediaService(PlayActivity.this, mSongs);
                 break;
             case R.id.icon_next:
                 // khi nhấn next truyền intent xuống service -> do bundle là getString về null
@@ -402,13 +415,13 @@ public class PlayActivity extends BaseActivity
                     mBtnRepeat.setImageResource(R.drawable.ic_repeat_blue);
                     SongManager.getInstance().setCurrentMusic(position);
                     isRepeat = true;
-                    Utils.RepeatMediaService(PlayActivity.this,true, isRepeat);
+                    Utils.RepeatMediaService(PlayActivity.this, true);
                     Toast.makeText(this, "Turn On Repeat Music", Toast.LENGTH_SHORT).show();
                     unregisterReceiver(brPlayNew);
                 }else {
                     mBtnRepeat.setImageResource(R.drawable.ic_repeat_white);
                     isRepeat = false;
-                    Utils.RepeatMediaService(PlayActivity.this,true, isRepeat);
+                    Utils.RepeatMediaService(PlayActivity.this, false);
                     registerReceiver(brPlayNew,
                             new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
                     Utils.ToastShort(PlayActivity.this,"Turn Off Repeat Music");
@@ -453,44 +466,27 @@ public class PlayActivity extends BaseActivity
                     ChangeMusicFragment.newInstance(songShuffle);
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_blue);
                     Toast.makeText(this, "Turn On Shuffle Music", Toast.LENGTH_SHORT).show();
-                    Utils.ShuffleMediaService(PlayActivity.this, songShuffle, true, isShuffle);
+                    Utils.ShuffleMediaService(PlayActivity.this, songShuffle, true);
                 }else {
                     isShuffle = false;
                     ChangeMusicFragment.newInstance(null);
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_white);
                     Utils.ToastShort(PlayActivity.this,"Turn Off Shuffle Music");
-                    Utils.ShuffleMediaService(PlayActivity.this, null, true, isShuffle);
+                    Utils.ShuffleMediaService(PlayActivity.this, null, false);
                 }
                 break;
         }
     }
 
     private void updateUI(Intent serviceIntent) {
-        int currentPos = serviceIntent.getIntExtra("current_pos", 0);
+        currentPos = serviceIntent.getIntExtra("current_pos", 0);
         int mediaMax = serviceIntent.getIntExtra("media_max", 0);
         String songTitle = serviceIntent.getStringExtra("song_title");
-//        Log.d("BBB", "current Poss: "+currentPos + " ======= Media Max: "+mediaMax);
+
         mSeekBarTime.setMax(mediaMax);
         mSeekBarTime.setProgress(currentPos);
         mTextLeftTime.setText(Utils.formatTime(currentPos));
         mTextRightTime.setText(Utils.formatTime(mSongs.get(SongManager.getInstance().getCurrentMusic()).getTime()));
-
-        if (mSongs.get(SongManager.getInstance().getCurrentMusic()).getTime() - currentPos < 1000){
-            new CountDownTimer(2500, 1000) {
-                @Override
-                public void onTick(long l) {
-
-                }
-                @Override
-                public void onFinish() {
-                    if (!isRepeat) {
-                        mVpMusic.setCurrentItem(SongManager.getInstance().getCurrentMusic() + 1, true);
-                    }else {
-                       Utils.PlayMediaService(PlayActivity.this, true);
-                    }
-                }
-            }.start();
-        }
     }
 
     @Override
@@ -502,8 +498,8 @@ public class PlayActivity extends BaseActivity
             seekPos = seekBar.getProgress();
             Log.d("MMM", "PlayActivity --- onProgressChanged: "+seekPos);
             mTextLeftTime.setText(Utils.formatTime(seekPos));
-            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,seekPos);
-            Utils.ContinueMediaService(PlayActivity.this,true, seekPos);
+//            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,seekPos);
+            Utils.ContinueMediaService(PlayActivity.this, seekPos);
         }
     }
 

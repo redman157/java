@@ -1,41 +1,63 @@
 package com.android.music_player.adapters;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.music_player.OnClickItem;
 import com.android.music_player.fragments.ChangeMusicFragment;
+import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
+import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 
-public class ChangeMusicPagerAdapter extends FragmentPagerAdapter {
-    private ArrayList<ChangeMusicFragment> mFragments = new ArrayList<>();
+public class ChangeMusicPagerAdapter extends FragmentStatePagerAdapter implements OnClickItem {
+    private Context context;
+    private ArrayList<Fragment> fragments=  new ArrayList<>();
+    private ArrayList<SongModel> mSongModels;
 
-    public ChangeMusicPagerAdapter(@NonNull FragmentManager fm) {
+
+    public ChangeMusicPagerAdapter(Context context,@NonNull FragmentManager fm) {
         super(fm);
+        this.context = context;
     }
 
-    public void addData(ChangeMusicFragment fragment, SongModel songModel) {
-        fragment.setSongModel(songModel);
-        mFragments.add(fragment);
+    public void addData(ArrayList<SongModel> songModels) {
+        mSongModels = songModels;
+    }
 
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
+    }
+
+
+
+    @Override
+    public void onMusicChange(int pos) {
+        SongManager.getInstance().setPositionCurrent(pos - 1);
+        Utils.NextMediaService(context);
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        return mFragments.get(position);
+        ChangeMusicFragment fChangeMusicFragment = new ChangeMusicFragment(this);
+        fChangeMusicFragment.setMusicMain(mSongModels);
+        fChangeMusicFragment.setSongModel(mSongModels.get(position));
+        return fChangeMusicFragment;
     }
 
     @Override
     public int getCount() {
-        return mFragments.size();
+        return mSongModels.size();
     }
 
     @Override
@@ -45,10 +67,8 @@ public class ChangeMusicPagerAdapter extends FragmentPagerAdapter {
     }
 
     public static class ZoomOutPageTransformer  implements ViewPager.PageTransformer{
-
         private static final float MIN_SCALE = 0.85f;
         private static final float MIN_ALPHA = 0.5f;
-
         public void transformPage(View view, float position) {
             int pageWidth = view.getWidth();
             int pageHeight = view.getHeight();

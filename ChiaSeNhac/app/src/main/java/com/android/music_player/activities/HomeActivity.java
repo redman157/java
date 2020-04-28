@@ -38,7 +38,6 @@ import com.android.music_player.services.MediaPlayerService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
-import com.android.music_player.utils.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -95,16 +94,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                             false);
             if (isPlayingNoti) {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
-//                processEndOfList(SongManager.getInstance().getCurrentMusic());
-                mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
-                mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
-                imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
+//                processEndOfList(SongManager.getInstance().getPositionCurrent());
+                mTextArtist.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getArtist());
+                mTextTitle.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
+                imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
             } else {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
-//                processEndOfList(SongManager.getInstance().getCurrentMusic());
-                mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
-                mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
-                imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
+//                processEndOfList(SongManager.getInstance().getPositionCurrent());
+                mTextArtist.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getArtist());
+                mTextTitle.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
+                imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
             }
         }
     };
@@ -138,8 +137,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
         registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
         mSongs = mSongManager.getCurrentSongs();
-
-
     }
 
     @Override
@@ -161,7 +158,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mSongManager.setContext(this);
 
         mSongs = mSongManager.getCurrentSongs();
-        Utils.ChangeSongService(this,mSongs);
+//        Utils.ChangeSongService(this,mSongs);
         setSupportActionBar(mToolBar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
@@ -169,11 +166,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         imageUtils = ImageUtils.getInstance(this);
         assignView();
 
-//        processEndOfList(SongManager.getInstance().getCurrentMusic());
-        Log.d("PPP", mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
-        mTextArtist.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getArtist());
-        mTextTitle.setText(mSongs.get(SongManager.getInstance().getCurrentMusic()).getSongName());
-        imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getCurrentMusic()).getAlbumID(), mImgMedia);
+//        processEndOfList(SongManager.getInstance().getPositionCurrent());
+        Log.d("PPP", mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
+        mTextArtist.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getArtist());
+        mTextTitle.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
+        imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
     }
 
     @Override
@@ -422,7 +419,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
                 }
                 intent.putExtra(Constants.INTENT.POSITION,
-                       mSongManager.getCurrentMusic());
+                       mSongManager.getPositionCurrent());
 
                 finish();
 

@@ -91,18 +91,17 @@ public class Utils {
     }
 
 
-    public static void NextMediaService(Context context ,boolean isPlayActivity){
+    public static void NextMediaService(Context context){
         Intent iNext = new Intent(context, MediaPlayerService.class);
         iNext.setAction(Constants.ACTION.NEXT);
-        iNext.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
         context.startService(iNext);
     }
 
 
-    public static void PreviousMediaService(Context context ,boolean isPlayActivity){
+    public static void PreviousMediaService(Context context){
         Intent iPrevious = new Intent(context, MediaPlayerService.class);
         iPrevious.setAction(Constants.ACTION.PREVIOUS);
-        iPrevious.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY, isPlayActivity);
+
         context.startService(iPrevious);
     }
 
@@ -122,7 +121,7 @@ public class Utils {
     public static void ShuffleMediaService(Context context ,ArrayList<SongModel> songShuffle,
                                            boolean isShuffle){
         Intent inShuffle = new Intent(context, MediaPlayerService.class);
-        inShuffle.setAction(Constants.ACTION.CHANGE_SONG);
+        inShuffle.setAction(Constants.ACTION.SHUFFLE);
         inShuffle.putExtra(Constants.INTENT.CHANGE_MUSIC, songShuffle);
         inShuffle.putExtra(Constants.INTENT.IS_SHUFFLE, isShuffle);
         context.startService(inShuffle);

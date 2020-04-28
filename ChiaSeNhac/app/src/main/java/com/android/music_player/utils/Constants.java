@@ -75,7 +75,7 @@ public class Constants {
         String CLOSE_NOTIFICATION = "com.android.music_player.action.CLOSE_NOTIFICATION";
         String SEEK = "com.android.music_player.action.SEEK";
         String IS_PLAY = "com.android.music_player.action.IS_PLAY";
-
+        String SHUFFLE = "com.android.music_player.action.SHUFFLE";
         String BROADCAST_STOP_AUDIO = "com.android.music_player.action.StopAudio";
         String BROADCAST_PLAY_NEW_AUDIO = "com.android.music_player.action.PlayNewAudio";
         String BROADCAST_SEEK_BAR = "com.android.music_player.action.seekprogress";

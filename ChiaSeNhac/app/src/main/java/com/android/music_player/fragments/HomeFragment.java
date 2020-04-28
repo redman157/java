@@ -155,7 +155,7 @@ public class HomeFragment extends Fragment implements SongsAdapter.OnClickItem,
     public void onClick(String type, int position) {
 
         int curr = position;
-        int prev = SongManager.getInstance().getCurrentMusic();
+        int prev = SongManager.getInstance().getPositionCurrent();
 
         // set switch vị trí và type music cho play activity chạy
         if (!mNewSongs.get(curr).getSongName().equals(mNewSongs.get(prev).getSongName())){
@@ -165,14 +165,13 @@ public class HomeFragment extends Fragment implements SongsAdapter.OnClickItem,
                     intent.setAction(Constants.ACTION.PAUSE);
                     intent.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY,false);
                     getActivity().startService(intent);
-
-                    ((HomeActivity)getActivity()).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 }
             }
+            ((HomeActivity)getActivity()).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
         }
-        Log.d("ZZZ","onClick: "+position);
-        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION,position);
-        mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
+
+        mSongManager.setPositionCurrent(position);
+        mSongManager.setTypeCurrent(type);
         ((HomeActivity)getActivity()).mLlPlayMedia.setVisibility(View.VISIBLE);
         ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getSongName());
         ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
@@ -188,7 +187,6 @@ public class HomeFragment extends Fragment implements SongsAdapter.OnClickItem,
                 mRc_Recently_Add.setVisibility(View.GONE);
                 Intent iViewAll = new Intent(getContext(), SongActivity.class);
                 iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
-
                 getActivity().finish();
                 startActivity(iViewAll);
                 break;

@@ -122,17 +122,45 @@ public class SongManager {
         }
     }
 
-    public int getCurrentMusic() {
+    public void setTypeCurrent(String type){
+        mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
+    }
+
+    public String getTypeCurrent(){
+        return mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
+    }
+
+    public int getPositionCurrent() {
         int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, -1);
         return pos;
     }
 
-    public void setCurrentMusic(int position) {
+    public void setPositionCurrent(int position) {
         processEndOfList(position);
     }
 
     public ArrayList<SongModel> getCurrentSongs(){
-        this.type = mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
+        this.type = getTypeCurrent();
+        Log.d("BBB", "SongManager --- getCurrentSongs: "+type);
+        ArrayList<SongModel> song = new ArrayList<>();
+        if (mAllPlaylist.searchPlayList(type)) {
+            song = getAllSongToPlayList(type);
+
+            return song;
+        }else {
+            if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
+                song = SongManager.getInstance().newSongs();
+                return song;
+            } else if (type.equals(Constants.VALUE.ALL_SONGS) || type.equals("")) {
+                song = SongManager.getInstance().allSortSongs();
+                return song;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<SongModel> getCurrentSongs(String type){
+        Log.d("BBB", "SongManager --- getCurrentSongs: "+type);
         ArrayList<SongModel> song = new ArrayList<>();
         if (mAllPlaylist.searchPlayList(type)) {
             song = getAllSongToPlayList(type);
@@ -154,7 +182,7 @@ public class SongManager {
         if (getCurrentSongs()!= null) {
             int size = (getCurrentSongs().size());
             if (position >= size) {
-                SongManager.getInstance().setCurrentMusic(0);
+                SongManager.getInstance().setPositionCurrent(0);
                 mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, 0);
             } else if (position < 0) {
                 mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, size - 1);
@@ -278,7 +306,7 @@ public class SongManager {
     }
 
     public void playNext(SongModel song) {
-        queue().add(getCurrentMusic() + 1, song);
+        queue().add(getPositionCurrent() + 1, song);
         Utils.ToastLong(mContext, "PLAYING next: " + song.getSongName());
     }
 
@@ -342,7 +370,7 @@ public class SongManager {
             File file = new File(array.get(id).getPath());
             if (file.exists()) {
                 replaceQueue(array);
-                setCurrentMusic(id);
+                setPositionCurrent(id);
                 Intent intent = new Intent(Constants.ACTION.PLAY);
                 ContextCompat.startForegroundService(mContext, createExplicitFromImplicitIntent(intent));
 
@@ -601,7 +629,7 @@ public class SongManager {
             crawlData();
             Log.d(TAG, "Grabbing data for player...");
         } else {
-            Log.d(TAG, "Data is present. Just setting mContext.");
+            Log.d(TAG, "Data is present. Just setting context.");
         }
     }
 

@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -25,14 +24,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.utils.Constants;
 import com.android.music_player.IconView;
 import com.android.music_player.R;
 import com.android.music_player.adapters.SongsAdapter;
-import com.android.music_player.utils.ImageUtils;
-import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
+import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
 
@@ -69,15 +68,19 @@ public class SongActivity extends AppCompatActivity implements
         mSongManager.setContext(this);
         initView();
         mSharedPrefsUtils = new SharedPrefsUtils(this);
-        mSongs = SongManager.getInstance().newSongs();
+
         type = getIntent().getStringExtra(Constants.INTENT.TYPE_MUSIC);
 
+        mSongs = mSongManager.getCurrentSongs(type);
         setSupportActionBar(mToolBar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
+        mTextArtist.setText(mSongs.get(mSongManager.getPositionCurrent()).getArtist());
+        mTextTitle.setText(mSongs.get(mSongManager.getPositionCurrent()).getSongName());
+        ImageUtils.getInstance(this).getSmallImageByPicasso(mSongs.get(mSongManager.getPositionCurrent()).getAlbumID(), mImgMedia);
         setTypeSong(type);
         assignView();
     }
@@ -297,9 +300,9 @@ public class SongActivity extends AppCompatActivity implements
             case R.id.btn_title_media:
                 Intent playMedia = new Intent(this, PlayActivity.class);
                 playMedia.putExtra(Constants.INTENT.POSITION,
-                        mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, 0));
+                        mSongManager.getPositionCurrent());
                 playMedia.putExtra(Constants.INTENT.TYPE,
-                        mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, ""));
+                        mSongManager.getTypeCurrent());
                 startActivity(playMedia);
                 break;
             case R.id.imbt_Play_media:
@@ -311,9 +314,9 @@ public class SongActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(String type, int position) {
-        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, position);
+        mSongManager.setPositionCurrent(position);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.SaveAlbumID, mSongs.get(position).getAlbumID());
-        mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
+        mSongManager.setTypeCurrent(type);
         if (mLl_Play_Media.getVisibility() == View.GONE){
             mLl_Play_Media.setVisibility(View.VISIBLE);
         }

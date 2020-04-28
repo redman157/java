@@ -105,6 +105,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
             imageView = itemView.findViewById(R.id.item_music_img_music);
             textTime = itemView.findViewById(R.id.item_music_text_time);
             textTitle = itemView.findViewById(R.id.item_music_text_title);
+
             textArtist = itemView.findViewById(R.id.item_music_text_artists);
         }
 
@@ -119,7 +120,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
                 }
             }else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    textTitle.setTextColor(mContext.getColor(R.color.white));
+                    textTitle.setTextColor(mContext.getColor(R.color.black));
                 }else {
                     textTitle.setTextColor(Color.parseColor("#FFFFFFFF"));
                 }

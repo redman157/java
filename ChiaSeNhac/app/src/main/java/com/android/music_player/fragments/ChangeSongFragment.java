@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.OnClickItem;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.R;
 import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class ChangeMusicFragment extends Fragment implements View.OnClickListener, PlayListAdapter.OnClickItem {
+public class ChangeSongFragment extends Fragment implements View.OnClickListener, PlayListAdapter.OnClickItem {
     private SongModel mSongModel;
     private ImageView mImgAlbumArt, mImgShowList, mImgAddPlayList;
     private TextView mTextTittle, mTextArtists, text_leftTime, text_rightTime;
@@ -51,9 +51,9 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
     public ArrayList<SongModel> getMusicMain() {
         return musicMain;
     }
-    private OnClickItem onClickItem;
-    public ChangeMusicFragment(OnClickItem onClickItem) {
-        this.onClickItem = onClickItem;
+    private OnClickItemListener onClickItemListener;
+    public ChangeSongFragment(OnClickItemListener onClickItemListener) {
+        this.onClickItemListener = onClickItemListener;
 
     }
     private Dialog mDlAddPlayList, mDlAddMusic, mDlAllPlayList;
@@ -123,7 +123,7 @@ public class ChangeMusicFragment extends Fragment implements View.OnClickListene
                     if (mSongModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
                         mMusicAdapter.setPosition(i);
                         mMusicAdapter.setListMusic(mSongModels);
-                        mMusicAdapter.setOnClick(onClickItem);
+                        mMusicAdapter.setOnClick(onClickItemListener);
                         DialogUtils.showSelectSong(getContext(),mMusicAdapter, i);
                     }
                 }

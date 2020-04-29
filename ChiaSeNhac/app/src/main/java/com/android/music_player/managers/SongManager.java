@@ -52,6 +52,7 @@ public class SongManager {
     private Map<String, ArrayList<SongModel>> mFolderLists = new HashMap<>();
     private ArrayList<SongModel> mSongsMain = new ArrayList<>();
     private ArrayList<SongModel> queue = new ArrayList<>();
+    private ArrayList<SongModel> shuffleSongs = new ArrayList<>();
     private String TAG = "SongsManagerConsole";
     /* access modifiers changed from: private */
     private Context mContext;
@@ -141,7 +142,7 @@ public class SongManager {
 
     public ArrayList<SongModel> getCurrentSongs(){
         this.type = getTypeCurrent();
-        Log.d("BBB", "SongManager --- getCurrentSongs: "+type);
+//        Log.d("BBB", "SongManager --- getCurrentSongs: "+type);
         ArrayList<SongModel> song = new ArrayList<>();
         if (mAllPlaylist.searchPlayList(type)) {
             song = getAllSongToPlayList(type);
@@ -154,13 +155,16 @@ public class SongManager {
             } else if (type.equals(Constants.VALUE.ALL_SONGS) || type.equals("")) {
                 song = SongManager.getInstance().allSortSongs();
                 return song;
+            } else if (type.equals(Constants.VALUE.SHUFFLE)){
+                song = SongManager.getInstance().getShuffleSongs();
+                return song;
             }
         }
         return null;
     }
 
     public ArrayList<SongModel> getCurrentSongs(String type){
-        Log.d("BBB", "SongManager --- getCurrentSongs: "+type);
+//        Log.d("BBB", "SongManager --- getCurrentSongs: "+type);
         ArrayList<SongModel> song = new ArrayList<>();
         if (mAllPlaylist.searchPlayList(type)) {
             song = getAllSongToPlayList(type);
@@ -277,7 +281,14 @@ public class SongManager {
         return null;
     }
 
+    public void setShuffleSongs(ArrayList<SongModel> shuffleSongs){
+        this.shuffleSongs = shuffleSongs;
 
+    }
+
+    public ArrayList<SongModel> getShuffleSongs(){
+        return shuffleSongs;
+    }
 
     public void isSync(boolean sync) {
         if (sync) {

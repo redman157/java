@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
@@ -40,8 +41,8 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ItemViewHold
 
     }
 
-    private OnClickItem onClickItem;
-    public void OnClickItem(OnClickItem onClickItem) {
+    private OnClickItemListener onClickItem;
+    public void OnClickItem(OnClickItemListener onClickItem) {
         this.onClickItem = onClickItem;
     }
     public interface OnClickItem {
@@ -69,7 +70,8 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ItemViewHold
             public void onClick(View v) {
 
                 onClickItem.onClick(type, position);
-                mSharedPrefsUtils.setString(Constants.PREFERENCES.SaveAlbumID, items.get(position).getAlbumID());
+
+                mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, items.get(position).getAlbumID());
             }
         });
 

@@ -1,6 +1,5 @@
 package com.android.music_player.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,23 +16,24 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.OnChangePlayList;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.activities.SongActivity;
 import com.android.music_player.adapters.SongsAdapter;
+import com.android.music_player.interfaces.OnChangePlayListListener;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.services.MediaPlayerService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-public class HomeFragment extends Fragment implements SongsAdapter.OnClickItem,
-        View.OnClickListener, OnChangePlayList {
+public class HomeFragment extends Fragment implements OnClickItemListener,
+        View.OnClickListener, OnChangePlayListListener {
     private RecyclerView mRc_Recently_Add;
     private SongsAdapter mAdderAdapter;
     private ArrayList<SongModel> mNewSongs;
@@ -43,17 +43,18 @@ public class HomeFragment extends Fragment implements SongsAdapter.OnClickItem,
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
     private ImageUtils mImageUtils;
     private String type;
-    private int position;
-    private Activity mActivity;
+
+
     private SharedPrefsUtils mSharedPrefsUtils;
     private ArrayList<SongModel> mSongs;
     private TextView text_Player_1, text_Player_2, text_Player_Songs;
     private SongManager mSongManager;
     private  ArrayList<String> mMostPlayList;
     private String play_list_1, play_list_2;
-    private OnChangePlayList onChangePlayList;
-    public void setOnChangePlayList(OnChangePlayList onChangePlayList){
-        this.onChangePlayList = onChangePlayList;
+    private OnChangePlayListListener onChangePlayListListener;
+
+    public void setOnChangePlayListListener(OnChangePlayListListener onChangePlayListListener){
+        this.onChangePlayListListener = onChangePlayListListener;
     }
 
     public static HomeFragment newInstance(ArrayList<String> strings) {
@@ -64,6 +65,7 @@ public class HomeFragment extends Fragment implements SongsAdapter.OnClickItem,
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -152,31 +154,31 @@ public class HomeFragment extends Fragment implements SongsAdapter.OnClickItem,
     }
 
     @Override
-    public void onClick(String type, int position) {
+    public void onClick(int pos) {
 
-        int curr = position;
-        int prev = SongManager.getInstance().getPositionCurrent();
+    }
 
+
+    @Override
+    public void onClick(String type, final int position) {
         // set switch vị trí và type music cho play activity chạy
-        if (!mNewSongs.get(curr).getSongName().equals(mNewSongs.get(prev).getSongName())){
-            if (MediaPlayerService.mMediaPlayer!= null){
-                if (MediaPlayerService.mMediaPlayer.isPlaying()){
-                    Intent intent = new Intent(getActivity(), MediaPlayerService.class);
-                    intent.setAction(Constants.ACTION.PAUSE);
-                    intent.putExtra(Constants.INTENT.IS_PLAY_ACTIVITY,false);
-                    getActivity().startService(intent);
-                }
-            }
-            ((HomeActivity)getActivity()).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-        }
 
-        mSongManager.setPositionCurrent(position);
+        if (position != SongManager.getInstance().getPositionCurrent()) {
+            ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+            ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = false;
+        }else {
+            ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+            ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
+        }
         mSongManager.setTypeCurrent(type);
         ((HomeActivity)getActivity()).mLlPlayMedia.setVisibility(View.VISIBLE);
+        ((HomeActivity)getActivity()).choosePosition = position;
         ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getSongName());
         ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
         ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
                 mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);
+
+
     }
 
 
@@ -220,7 +222,7 @@ public class HomeFragment extends Fragment implements SongsAdapter.OnClickItem,
     }
 
     @Override
-    public void onChange(ArrayList<String> mostPlayList) {
+    public void onClickItem(ArrayList<String> mostPlayList) {
 //        mMostPlayList = mostPlayList;
         newInstance(mostPlayList);
     }

@@ -8,7 +8,6 @@ import android.util.Log;
 
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.Database;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -10,23 +10,26 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.music_player.OnClickItem;
-import com.android.music_player.fragments.ChangeMusicFragment;
+import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.activities.PlayActivity;
+import com.android.music_player.fragments.ChangeSongFragment;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 
-public class ChangeMusicPagerAdapter extends FragmentStatePagerAdapter implements OnClickItem {
+public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements OnClickItemListener {
     private Context context;
     private ArrayList<Fragment> fragments=  new ArrayList<>();
     private ArrayList<SongModel> mSongModels;
+    private SongManager mSongManager;
 
-
-    public ChangeMusicPagerAdapter(Context context,@NonNull FragmentManager fm) {
+    public ChangeSongPagerAdapter(Context context, @NonNull FragmentManager fm) {
         super(fm);
         this.context = context;
+        mSongManager = SongManager.getInstance();
+        mSongManager.setContext(context);
     }
 
     public void addData(ArrayList<SongModel> songModels) {
@@ -41,18 +44,28 @@ public class ChangeMusicPagerAdapter extends FragmentStatePagerAdapter implement
 
 
     @Override
-    public void onMusicChange(int pos) {
+    public void onClick(int pos) {
         SongManager.getInstance().setPositionCurrent(pos - 1);
+        if (((PlayActivity)context).isShuffle){
+
+        }else {
+
+        }
         Utils.NextMediaService(context);
+    }
+
+    @Override
+    public void onClick(String type, int index) {
+
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        ChangeMusicFragment fChangeMusicFragment = new ChangeMusicFragment(this);
-        fChangeMusicFragment.setMusicMain(mSongModels);
-        fChangeMusicFragment.setSongModel(mSongModels.get(position));
-        return fChangeMusicFragment;
+        ChangeSongFragment fChangeSongFragment = new ChangeSongFragment(this);
+        fChangeSongFragment.setMusicMain(mSongModels);
+        fChangeSongFragment.setSongModel(mSongModels.get(position));
+        return fChangeSongFragment;
     }
 
     @Override

@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.IconView;
 import com.android.music_player.R;
 import com.android.music_player.adapters.SongsAdapter;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class SongActivity extends AppCompatActivity implements
-        View.OnScrollChangeListener, View.OnClickListener, SongsAdapter.OnClickItem {
+        View.OnScrollChangeListener, View.OnClickListener, OnClickItemListener {
     private LinearLayout mLl_Play_Media;
     private IconView mImgAlbumId;
     private RecyclerView mRcSongs;
@@ -299,7 +300,7 @@ public class SongActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.btn_title_media:
                 Intent playMedia = new Intent(this, PlayActivity.class);
-                playMedia.putExtra(Constants.INTENT.POSITION,
+                playMedia.putExtra(Constants.INTENT.CHOOSE_POS,
                         mSongManager.getPositionCurrent());
                 playMedia.putExtra(Constants.INTENT.TYPE,
                         mSongManager.getTypeCurrent());
@@ -313,9 +314,14 @@ public class SongActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onClick(int pos) {
+
+    }
+
+    @Override
     public void onClick(String type, int position) {
         mSongManager.setPositionCurrent(position);
-        mSharedPrefsUtils.setString(Constants.PREFERENCES.SaveAlbumID, mSongs.get(position).getAlbumID());
+        mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mSongs.get(position).getAlbumID());
         mSongManager.setTypeCurrent(type);
         if (mLl_Play_Media.getVisibility() == View.GONE){
             mLl_Play_Media.setVisibility(View.VISIBLE);

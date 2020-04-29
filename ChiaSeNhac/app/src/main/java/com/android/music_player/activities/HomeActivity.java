@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -24,7 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.BaseActivity;
-import com.android.music_player.OnChangePlayList;
+import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.R;
 import com.android.music_player.adapters.ViewPagerAdapter;
 import com.android.music_player.fragments.AlbumGridFragment;
@@ -35,15 +34,16 @@ import com.android.music_player.fragments.PlaylistFragment;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.services.MediaPlayerService;
+import com.android.music_player.utils.BundleUtils;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
+import com.android.music_player.utils.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton;
-import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener, ViewPager.OnPageChangeListener{
     private ViewPager mViewPager_Home;
@@ -61,10 +61,51 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private SongManager mSongManager;
     public MaterialPlayPauseButton mBtnPlayPause;
     private boolean isPlaying;
-
+    private int currentMedia, mediaMax;
+    private String songTitle;
     private ArrayList<Fragment> mFragments = new ArrayList<>();
     public LinearLayout mLlPlayMedia;
-    private OnChangePlayList onChangePlayList;
+    public int choosePosition;
+    public boolean isContinue;
+    private OnChangePlayListListener onChangePlayListListener;
+    private BundleUtils bundleUtils;
+
+    private BroadcastReceiver brPlayPauseActivity = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent serviceIntent) {
+            // activity gửi broadcast từ service >> activity
+            boolean isPlayingNoti =
+                    serviceIntent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION,
+                            false);
+            if (isPlayingNoti) {
+                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
+            } else {
+                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
+            }
+            setSongCurrent(mSongs);
+        }
+    };
+
+    private BroadcastReceiver brIsPlayService = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // activity gửi broadcast xuống service
+            boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
+
+            if (isPlayingMedia) {
+                Log.d(tag, "PlayActivity --- brIsPlayService:" +true);
+                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                isPlaying = true;
+                Utils.PauseMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent() );
+            } else {
+                Log.d(tag, "PlayActivity --- brIsPlayService:" +false);
+                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+                isPlaying = false;
+                Utils.PlayMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent());
+            }
+        }
+    };
+
 
     @Override
     protected void onPause() {
@@ -85,58 +126,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         this.unregisterReceiver(brIsPlayService);
     }
 
-    private BroadcastReceiver brPlayPauseActivity = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent serviceIntent) {
-            // activity gửi broadcast từ service >> activity
-            boolean isPlayingNoti =
-                    serviceIntent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION,
-                            false);
-            if (isPlayingNoti) {
-                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
-//                processEndOfList(SongManager.getInstance().getPositionCurrent());
-                mTextArtist.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getArtist());
-                mTextTitle.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
-                imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
-            } else {
-                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
-//                processEndOfList(SongManager.getInstance().getPositionCurrent());
-                mTextArtist.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getArtist());
-                mTextTitle.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
-                imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
-            }
-        }
-    };
-
-    private BroadcastReceiver brIsPlayService = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // activity gửi broadcast xuống service
-            boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
-
-            if (isPlayingMedia) {
-                Log.d(tag, "PlayActivity --- brIsPlayService:" +true);
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                isPlaying = true;
-
-            } else {
-                Log.d(tag, "PlayActivity --- brIsPlayService:" +false);
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                isPlaying = false;
-
-            }
-        }
-    };
-
 
     @Override
     protected void onStart() {
         super.onStart();
-        mSongManager = SongManager.getInstance();
-        mSongManager.setContext(this);
         registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
         registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
+        mSongManager = SongManager.getInstance();
+        mSongManager.setContext(this);
         mSongs = mSongManager.getCurrentSongs();
+//        setSongCurrent(mSongs);
     }
 
     @Override
@@ -156,22 +155,101 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mSharedPrefsUtils = new SharedPrefsUtils(this);
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
-
         mSongs = mSongManager.getCurrentSongs();
-//        Utils.ChangeSongService(this,mSongs);
+        imageUtils = ImageUtils.getInstance(this);
+
+        setupToolbar();
+        assignView();
+        setSongCurrent(mSongs);
+    }
+
+    private void setupToolbar() {
         setSupportActionBar(mToolBar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
-
-        imageUtils = ImageUtils.getInstance(this);
-        assignView();
-
-//        processEndOfList(SongManager.getInstance().getPositionCurrent());
-        Log.d("PPP", mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
-        mTextArtist.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getArtist());
-        mTextTitle.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
-        imageUtils.getSmallImageByPicasso(mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
     }
+
+    public void setSongCurrent(ArrayList<SongModel> song){
+        mTextArtist.setText(song.get(SongManager.getInstance().getPositionCurrent()).getArtist());
+        mTextTitle.setText(song.get(SongManager.getInstance().getPositionCurrent()).getSongName());
+        imageUtils.getSmallImageByPicasso(song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
+    }
+
+    private void setupViewPager(ViewPager viewPager){
+        mViewPagerAdapter = new ViewPagerAdapter(this,getSupportFragmentManager());
+        HomeFragment homeFragment = new HomeFragment();
+        homeFragment.setOnChangePlayListListener(onChangePlayListListener);
+
+        mViewPagerAdapter.addFragment(homeFragment);
+        mViewPagerAdapter.addFragment(new AllSongsFragment());
+        mViewPagerAdapter.addFragment(new AlbumGridFragment());
+        mViewPagerAdapter.addFragment(new ArtistGridFragment());
+        mViewPagerAdapter.addFragment(new PlaylistFragment());
+
+        viewPager.setAdapter(mViewPagerAdapter);
+        viewPager.setCurrentItem(0);
+        viewPager.addOnPageChangeListener(this);
+        viewPager.setOnClickListener(this);
+    }
+
+    private void initView() {
+        mLlPlayMedia = findViewById(R.id.ll_play_media);
+        mToolBar = findViewById(R.id.tb_HomeActivity);
+        mViewPlayMedia = findViewById(R.id.layout_play_media);
+        mTextTitle = mViewPlayMedia.findViewById(R.id.text_title_media);
+        mTextArtist = mViewPlayMedia.findViewById(R.id.text_artists_media);
+        mBtnPlayPause = mViewPlayMedia.findViewById(R.id.imbt_Play_media);
+        mBtnTitle = mViewPlayMedia.findViewById(R.id.btn_title_media);
+        mImgMedia = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
+
+        mNavigationView = findViewById(R.id.nav_view);
+        mNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        mViewPager_Home = findViewById(R.id.vp_Home);
+        setupViewPager(mViewPager_Home);
+
+        if (MediaPlayerService.mMediaPlayer != null) {
+            if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+                mLlPlayMedia.setVisibility(View.VISIBLE);
+            } else {
+                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                mLlPlayMedia.setVisibility(View.GONE);
+            }
+        }else {
+            mLlPlayMedia.setVisibility(View.GONE);
+            mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+        }
+
+    }
+
+    private void assignView(){
+        mBtnPlayPause.setOnClickListener(this);
+        mBtnPlayPause.setAnimationDuration(1500);
+        mBtnTitle.setOnClickListener(this);
+        mViewPlayMedia.setOnClickListener(this);
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            if (mLlPlayMedia.getVisibility() == View.VISIBLE){
+                mLlPlayMedia.setVisibility(View.GONE);
+            }
+            switch (menuItem.getItemId()){
+
+                case R.id.navigation_home:
+                    mViewPager_Home.setCurrentItem(0);
+                    return true;
+                case R.id.navigation_library:
+                    mViewPager_Home.setCurrentItem(1);
+                    return true;
+
+            }
+            return false;
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -289,142 +367,41 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     }
                 });
                 dialog.show();
-
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupViewPager(ViewPager viewPager){
 
-        mViewPagerAdapter = new ViewPagerAdapter(this,getSupportFragmentManager());
-        HomeFragment homeFragment = new HomeFragment();
-        homeFragment.setOnChangePlayList(onChangePlayList);
-
-        mViewPagerAdapter.addFragment(homeFragment);
-        mViewPagerAdapter.addFragment(new AllSongsFragment());
-        mViewPagerAdapter.addFragment(new AlbumGridFragment());
-        mViewPagerAdapter.addFragment(new ArtistGridFragment());
-        mViewPagerAdapter.addFragment(new PlaylistFragment());
-
-        viewPager.setAdapter(mViewPagerAdapter);
-        viewPager.setCurrentItem(0);
-        viewPager.addOnPageChangeListener(this);
-        viewPager.setOnClickListener(this);
-    }
-
-    private void initView() {
-        mLlPlayMedia = findViewById(R.id.ll_play_media);
-
-        mToolBar = findViewById(R.id.tb_HomeActivity);
-        mViewPlayMedia = findViewById(R.id.layout_play_media);
-
-        mTextTitle = mViewPlayMedia.findViewById(R.id.text_title_media);
-        mTextArtist = mViewPlayMedia.findViewById(R.id.text_artists_media);
-        mBtnPlayPause = mViewPlayMedia.findViewById(R.id.imbt_Play_media);
-        mBtnTitle = mViewPlayMedia.findViewById(R.id.btn_title_media);
-        mImgMedia = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
-
-
-        if (MediaPlayerService.mMediaPlayer != null) {
-            if (MediaPlayerService.mMediaPlayer.isPlaying()) {
-
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                mLlPlayMedia.setVisibility(View.VISIBLE);
-            } else {
-
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                mLlPlayMedia.setVisibility(View.GONE);
-            }
-        }else {
-            mLlPlayMedia.setVisibility(View.GONE);
-            mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-        }
-        mNavigationView = findViewById(R.id.nav_view);
-        mNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        mViewPager_Home = findViewById(R.id.vp_Home);
-        setupViewPager(mViewPager_Home);
-    }
-
-    private void assignView(){
-        mBtnPlayPause.setOnClickListener(this);
-        mBtnPlayPause.setAnimationDuration(1500);
-        mBtnTitle.setOnClickListener(this);
-        mViewPlayMedia.setOnClickListener(this);
-    }
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            if (mLlPlayMedia.getVisibility() == View.VISIBLE){
-                mLlPlayMedia.setVisibility(View.GONE);
-            }
-            switch (menuItem.getItemId()){
-
-                case R.id.navigation_home:
-                    mViewPager_Home.setCurrentItem(0);
-                    return true;
-                case R.id.navigation_songs:
-                    mViewPager_Home.setCurrentItem(1);
-                    return true;
-                case R.id.navigation_albums:
-                    mViewPager_Home.setCurrentItem(2);
-                    return true;
-                case R.id.navigation_artists:
-                    mViewPager_Home.setCurrentItem(3);
-                    return true;
-                case R.id.navigation_playlists:
-                    mViewPager_Home.setCurrentItem(4);
-                    return true;
-            }
-            return false;
-        }
-    };
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.imbt_Play_media:
 
-                if(MediaPlayerService.mMediaPlayer != null){
-                    if (MediaPlayerService.mMediaPlayer.isPlaying()){
-                        mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                        mBtnPlayPause.setState(MaterialPlayPauseDrawable.State.Pause);
-                        Intent iPause = new Intent(this, MediaPlayerService.class);
-                        iPause.setAction(Constants.ACTION.PAUSE);
-
-                        startService(iPause);
-                    }else {
-                        mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                        mBtnPlayPause.setState(MaterialPlayPauseDrawable.State.Play);
-                        Intent iPlay = new Intent(this, MediaPlayerService.class);
-                        iPlay.setAction(Constants.ACTION.PLAY);
-                        startService(iPlay);
-                    }
-                }
-                Toast.makeText(this, "test thôi chưa xài", Toast.LENGTH_SHORT).show();
+                Utils.isPlayMediaService(this, mSongManager.getTypeCurrent(),mSongManager.getPositionCurrent());
                 break;
             case R.id.layout_play_media:
 
                 break;
             case R.id.btn_title_media:
                 Intent intent = new Intent(HomeActivity.this, PlayActivity.class);
-                intent.putExtra(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
-                if (MediaPlayerService.mMediaPlayer.isPlaying()) {
-                    intent.putExtra(Constants.INTENT.SONG_CONTINUE, true);
+                BundleUtils.Builder builder = new BundleUtils.Builder();
+                builder.putString(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
+                builder.putInteger(Constants.INTENT.CHOOSE_POS, choosePosition);
+                if (isContinue) {
+                    Log.d("BBB", "HomeActivity --- btn_title_media: true");
+                    builder.putBoolean(Constants.INTENT.SONG_CONTINUE, true);
                 }else {
-                    intent.putExtra(Constants.INTENT.SONG_CONTINUE, false);
-                    mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
+                    Log.d("BBB", "HomeActivity --- btn_title_media: false");
+                    builder.putBoolean(Constants.INTENT.SONG_CONTINUE, false);
                 }
-                intent.putExtra(Constants.INTENT.POSITION,
-                       mSongManager.getPositionCurrent());
-
+                intent.putExtras(builder.generate().getBundle());
                 finish();
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+                builder.generate().clear();
                 break;
             case R.id.menu_search:
                 Intent iSearch = new Intent(this, SearchActivity.class);

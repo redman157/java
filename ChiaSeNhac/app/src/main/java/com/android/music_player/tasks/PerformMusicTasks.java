@@ -91,7 +91,7 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
             @Override
             public void onFinish() {
                 Bitmap bitmap =
-                        ImageUtils.getInstance(mActivity).getBitmapIntoPicasso(mSharedPrefsUtils.getString(Constants.PREFERENCES.SaveAlbumID,"0"));
+                        ImageUtils.getInstance(mActivity).getBitmapIntoPicasso(mSharedPrefsUtils.getString(Constants.PREFERENCES.SAVE_ALBUM_ID,"0"));
                 Intent intent = new Intent(mActivity, HomeActivity.class);
                 intent.putExtra("SendAlbumId", bitmap);
                 mActivity.finish();

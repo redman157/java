@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.Database;
 
 import java.util.ArrayList;
 

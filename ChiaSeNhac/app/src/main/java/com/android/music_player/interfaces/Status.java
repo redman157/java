@@ -1,4 +1,4 @@
-package com.android.music_player;
+package com.android.music_player.interfaces;
 
 public enum Status {
     PAUSED,

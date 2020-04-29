@@ -1,4 +1,4 @@
-package com.android.music_player.utils;
+package com.android.music_player.database;
 
 public class Database {
     public @interface CATEGORY{

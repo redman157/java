@@ -11,15 +11,14 @@ public class Constants {
 
     public @interface INTENT{
         String SONG_CONTINUE = "SongContinue";
-        String IS_PLAY_ACTIVITY = "isPlayActivity";
-        String POSITION = "position";
+
+        String CURR_POS = "CurrentPosition";
+        String CHOOSE_POS = "ChoosePosition";
         String POSITION_SONG = "position_song";
         String TYPE = "type";
         String IS_PLAY_MEDIA_SERVICE = "isPlayMedia";
         String IS_PLAY_MEDIA_NOTIFICATION = "isPlayingNotification";
-        String NOTI_SERVICE_TO_ACTIVITY = "ServiceToActivity";
         String NEXT_TO_SERVICE = "nextToService";
-        String PREVIOUS_TO_SERVICE = "previousToService";
         String IS_SHUFFLE = "isShuffle";
         String IS_REPEAT = "isRepeat";
         String IS_PLAY = "isPlay";
@@ -31,30 +30,26 @@ public class Constants {
         String SONG = "Song";
         String PLAY_LIST = "PlayList";
         String ID = "ID";
+        String SHUFFLE = "shuffle";
         String NAME_PLAYLIST = "NAME_PLAYLIST";
         String SYNC = "isSync";
         String TASK = "task";
         String ALL_NEW_SONGS = "all_new_songs";
         String NEW_SONGS = "new_songs";
         String ALL_SONGS = "all_songs";
-        String PLAYLIST_DB = "playlist.db";
-        String CATEGORIES_DB = "categories.db";
-        String FAVS_DB = "Favs.db";
-        String PLAYLISTSONGS_DB = "playlistsongs.db";
-        String INPUT_METHOD = "input_method";
     }
 
     public @interface PREFERENCES{
         String POSITION_SONG = "position_song";
         String POSITION_MAIN = "position_main";
-        String SaveAlbumID = "SaveAlbumID";
+        String SAVE_ALBUM_ID = "SaveAlbumId";
         String KEY = "key";
-        String TOTAL_SONGS = "total_song";
+        String TOTAL_SONGS = "TotalSongs";
         String AUDIO_SESSION_ID = "AudioSessionId";
         String TYPE = "type";
         String POSITION = "position";
         String STATE = "State";
-
+        String LAST_POS = "LastPosition";
         String ACCENT_COLOR = "AccentColor";
         String EXCLUDE_SHORT_SOUNDS = "ExcludeShortSounds";
         String EXCLUDE_WHATS_APP_SOUNDS = "ExcludeWhatsAppSounds";
@@ -94,11 +89,4 @@ public class Constants {
         String GREY = "Grey";
     }
 
-    public @interface MENU{
-        String Sync_Music = "Sync Music";
-        String Set_Sleep_Timer = "Set Sleep Timer";
-        String Change_Theme = "Change Theme";
-        String Equalizer = "Equalizer";
-        String Settings = "Settings";
-    }
 }

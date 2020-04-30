@@ -15,6 +15,7 @@ import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.fragments.ChangeSongFragment;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
@@ -47,11 +48,11 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     public void onClick(int pos) {
         SongManager.getInstance().setPositionCurrent(pos - 1);
         if (((PlayActivity)context).isShuffle){
-
+            Utils.NextMediaService(context, Constants.VALUE.SHUFFLE, mSongManager.getPositionCurrent());
         }else {
-
+            Utils.NextMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent());
         }
-        Utils.NextMediaService(context);
+
     }
 
     @Override

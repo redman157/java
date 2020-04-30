@@ -63,6 +63,7 @@ public class SplashActivity extends AppCompatActivity {
                 // No explanation needed, we can request the permission.
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setCancelable(false);
                 alertDialog.setTitle("Request for permissions");
                 alertDialog.setMessage("For music player to work we need your permission to access" +
                         " files on your device.");

@@ -20,13 +20,13 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_Home"
         android:layout_width="match_parent"
-        android:layout_below="@id/tb_HomeActivity"
+        android:layout_below="@id/nav_view"
         android:layout_above="@id/ll_play_media"
         android:layout_height="wrap_content" />
 
 
     <LinearLayout
-        android:layout_above="@id/nav_view"
+        android:layout_alignParentBottom="true"
         android:id="@+id/ll_play_media"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,10 +48,9 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/tb_HomeActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:background="@color/navigationBar"
         app:itemIconSize="20dp"
         app:itemIconTint="@drawable/navigation_select"

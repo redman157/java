@@ -170,9 +170,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     public void setSongCurrent(ArrayList<SongModel> song){
-        mTextArtist.setText(song.get(SongManager.getInstance().getPositionCurrent()).getArtist());
-        mTextTitle.setText(song.get(SongManager.getInstance().getPositionCurrent()).getSongName());
-        imageUtils.getSmallImageByPicasso(song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
+        int pos = mSongManager.getPositionCurrent();
+        if (pos == -1){
+            mTextArtist.setText(song.get(0).getArtist());
+            mTextTitle.setText(song.get(0).getSongName());
+            imageUtils.getSmallImageByPicasso(song.get(0).getAlbumID(), mImgMedia);
+        }else {
+            mTextArtist.setText(song.get(SongManager.getInstance().getPositionCurrent()).getArtist());
+            mTextTitle.setText(song.get(SongManager.getInstance().getPositionCurrent()).getSongName());
+            imageUtils.getSmallImageByPicasso(song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
+        }
+
     }
 
     private void setupViewPager(ViewPager viewPager){
@@ -182,9 +190,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         mViewPagerAdapter.addFragment(homeFragment);
         mViewPagerAdapter.addFragment(new AllSongsFragment());
-        mViewPagerAdapter.addFragment(new AlbumGridFragment());
-        mViewPagerAdapter.addFragment(new ArtistGridFragment());
-        mViewPagerAdapter.addFragment(new PlaylistFragment());
 
         viewPager.setAdapter(mViewPagerAdapter);
         viewPager.setCurrentItem(0);
@@ -389,7 +394,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 BundleUtils.Builder builder = new BundleUtils.Builder();
                 builder.putString(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
                 builder.putInteger(Constants.INTENT.CHOOSE_POS, choosePosition);
-                if (isContinue) {
+                if (mSongManager.isPlayCurrentSong(choosePosition)) {
                     Log.d("BBB", "HomeActivity --- btn_title_media: true");
                     builder.putBoolean(Constants.INTENT.SONG_CONTINUE, true);
                 }else {

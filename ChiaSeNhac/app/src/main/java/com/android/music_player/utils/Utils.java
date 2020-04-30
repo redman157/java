@@ -59,6 +59,7 @@ public class Utils {
         builder = new BundleUtils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
+        iPlay.putExtras(builder.generate().getBundle());
         context.startService(iPlay);
     }
 
@@ -68,6 +69,7 @@ public class Utils {
         builder = new BundleUtils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
+        iPause.putExtras(builder.generate().getBundle());
         context.startService(iPause);
     }
 
@@ -78,6 +80,7 @@ public class Utils {
         builder = new BundleUtils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
+        iPlay.putExtras(builder.generate().getBundle());
         context.startService(iPlay);
     }
 
@@ -87,6 +90,7 @@ public class Utils {
         builder = new BundleUtils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
+        iNext.putExtras(builder.generate().getBundle());
         context.startService(iNext);
     }
     
@@ -96,6 +100,7 @@ public class Utils {
         builder = new BundleUtils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
+        iPrevious.putExtras(builder.generate().getBundle());
         context.startService(iPrevious);
     }
 
@@ -112,6 +117,7 @@ public class Utils {
         builder = new BundleUtils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
+        iRepeat.putExtras(builder.generate().getBundle());
         context.startService(iRepeat);
     }
 
@@ -123,7 +129,7 @@ public class Utils {
         builder.putBoolean(Constants.INTENT.IS_SHUFFLE, isShuffle);
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
-
+        inShuffle.putExtras(builder.generate().getBundle());
         context.startService(inShuffle);
     }
 
@@ -134,6 +140,7 @@ public class Utils {
         builder.putInteger(Constants.INTENT.POSITION_SONG, seekPos);
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
+        iSeekChoose.putExtras(builder.generate().getBundle());
         context.startService(iSeekChoose);
     }
 

@@ -133,12 +133,24 @@ public class SongManager {
 
     public int getPositionCurrent() {
         int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, -1);
+
         return pos;
     }
+
+
 
     public void setPositionCurrent(int position) {
         processEndOfList(position);
     }
+
+    public boolean isPlayCurrentSong(int position){
+        if (position == getPositionCurrent()){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 
     public ArrayList<SongModel> getCurrentSongs(){
         this.type = getTypeCurrent();

@@ -138,10 +138,17 @@ public class PlayActivity extends BaseActivity
         mSongManager.setContext(this);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
 
+        initView();
         getBundle();
         Log.d(tag,"PlayActivity --- isPlayCurrentSong: "+(bundleUtils.getBoolean(Constants.INTENT.SONG_CONTINUE,false)));
+        if(isContinue){
+
+        }else {
+            Utils.isPlayMediaService(this, type, position);
+        }
+
         //save current song
-        initView();
+
         setupToolBar();
         assignView();
     }
@@ -151,20 +158,10 @@ public class PlayActivity extends BaseActivity
         bundleUtils = new BundleUtils(intent);
 
         type = bundleUtils.getString(Constants.INTENT.TYPE,"");
-        position = bundleUtils.getInteger(Constants.INTENT.CHOOSE_POS, 0);
+        position = bundleUtils.getInteger(Constants.INTENT.CHOOSE_POS, -1);
         isContinue = bundleUtils.getBoolean(Constants.INTENT.SONG_CONTINUE,false);
-
         mSongManager.setTypeCurrent(type);
         mSongs = mSongManager.getCurrentSongs(type);
-    }
-
-    public boolean isPlayCurrentSong(int position){
-        if (position != mSongManager.getPositionCurrent()){
-
-            return false;
-        }else {
-            return true;
-        }
     }
 
     private void setupToolBar() {
@@ -252,7 +249,7 @@ public class PlayActivity extends BaseActivity
         mBtnAbout.setOnClickListener(this);
         mBtnShuffle.setOnClickListener(this);
         mSeekBarTime.setOnSeekBarChangeListener(this);
-        mSeekBarTime.setMax(mSongs.get(SongManager.getInstance().getPositionCurrent()).getTime());
+        mSeekBarTime.setMax(mSongs.get(position).getTime());
         initData(mSongs);
         setupViewPager(position);
     }
@@ -266,7 +263,7 @@ public class PlayActivity extends BaseActivity
     private void initData(ArrayList<SongModel> mSongs){
         mAdapter = new ChangeSongPagerAdapter(this,getSupportFragmentManager());
         mAdapter.addData(mSongs);
-        mTextRightTime.setText(Utils.formatTime(mSongs.get(mSongManager.getPositionCurrent()).getTime()));
+        mTextRightTime.setText(Utils.formatTime(mSongs.get(position).getTime()));
     }
 
     @Override
@@ -328,26 +325,19 @@ public class PlayActivity extends BaseActivity
                     Log.d(tag, "PlayActivity --- brIsPlayService:" + true);
                     mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                     isPlaying = true;
+                    Utils.PauseMediaService(PlayActivity.this, type,position);
+                    if (!isContinue){
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
 
-                    Utils.PauseMediaService(PlayActivity.this, type, position);
-                    Log.d("ZZZ",
-                            "isPlayingMedia : True --- Bấm Pause thì dừng lại ngay chỗ đó: "+isContinue);
-                    isContinue = false;
-
-
+                    }
                 } else {
                     Log.d(tag, "PlayActivity --- brIsPlayService:" + false);
 
                     isPlaying = false;
-                    if (isContinue) {
-                        Log.d("ZZZ",
-                                "isPlayingMedia : False --- Đang tiếp tục thì pause");
-                        mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                        Utils.PauseMediaService(PlayActivity.this, type, position);
-                    }else {
-                        mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                        Utils.PlayMediaService(PlayActivity.this, type, position);
-                    }
+                    mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                    Utils.PlayMediaService(PlayActivity.this, type, position);
+                    Log.d(tag,
+                            "isPlayingMedia : False --- position: "+position );
                 }
         }
     };
@@ -383,7 +373,7 @@ public class PlayActivity extends BaseActivity
         switch (view.getId()){
             case R.id.icon_play:
                 // khi bấm play check play trước đã, trong broad cast check play sẽ play video
-
+                Log.d(tag, "PlayActivity --- type: "+type);
                 Utils.isPlayMediaService(PlayActivity.this, type, position);
                 break;
             case R.id.icon_next:
@@ -490,11 +480,10 @@ public class PlayActivity extends BaseActivity
         currentMedia = serviceIntent.getIntExtra("current_pos", 0);
         mediaMax = serviceIntent.getIntExtra("media_max", 0);
         String songTitle = serviceIntent.getStringExtra("song_title");
-
         mSeekBarTime.setMax(mediaMax);
         mSeekBarTime.setProgress(currentMedia);
         mTextLeftTime.setText(Utils.formatTime(currentMedia));
-        mTextRightTime.setText(Utils.formatTime(mSongs.get(SongManager.getInstance().getPositionCurrent()).getTime()));
+        mTextRightTime.setText(Utils.formatTime(mSongs.get(position).getTime()));
     }
 
     @Override

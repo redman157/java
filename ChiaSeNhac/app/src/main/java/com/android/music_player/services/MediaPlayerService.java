@@ -143,10 +143,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
-
+        if (intent.getExtras() != null) {
+            Log.d(tag, "Service --- initBundle: " + intent.getExtras().getString(Constants.INTENT.TYPE, "None"));
+        }
         bundleUtils = new BundleUtils(intent);
+
         position = bundleUtils.getInteger(Constants.INTENT.CURR_POS, -1);
         type = bundleUtils.getString(Constants.INTENT.TYPE, "None");
+
         if (!type.equals("None") && position!= -1){
             mSongs = mSongManager.getCurrentSongs(type);
         }else {
@@ -158,8 +162,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction() != null) {
-
-
             if (!requestAudioFocus()) {
                 //Could not gain focus
                 stopSelf();
@@ -224,7 +226,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                         return;
                     }
 
-                    Log.d(tag, "Service --- onPlay:" + (mSongs.get(position)));
+                    Log.d(tag, "Service --- onPlay:" + (mSongs.get(position)).getPath());
+                    mSongManager.setPositionCurrent(position);
                     playMedia(mSongs.get(position).getPath());
 
                 } finally {
@@ -305,6 +308,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 super.onSeekTo(position);
                 if (status == PLAYED) {
 //                    handler.removeCallbacks(sendUpdatesToUI);
+                    if (mMediaPlayer.isPlaying()){
+                        handler.removeCallbacks(sendUpdatesToUI);
+                        mMediaPlayer.pause();
+
+                    }
                     mMediaPlayer.seekTo((int) position);
                     mMediaPlayer.start();
                 }else {
@@ -449,12 +457,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 mAudioManager.abandonAudioFocus(this);
     }
 
-    private void LogMediaPosition(){
+    private void LogMediaPosition(int position){
 
         try{
             int mediaPosition = mMediaPlayer.getCurrentPosition();
 
-            int mediaMax = mSongs.get(SongManager.getInstance().getPositionCurrent()).getTime();
+            int mediaMax = mSongs.get(position).getTime();
            /* Log.d("MMM", "LogMediaPosition : Enter ==== MediaPosition: "+mediaPosition +" ==== " +
                     "MediaMax: "+mediaMax +" ==== Song Title: "+ mSongs.getData(SongManager.getInstance().getPositionCurrent()).getSongName());*/
             iIntentSeekBar.putExtra("current_pos", mediaPosition);
@@ -465,11 +473,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     "Service --- LogMediaPosition --- mediaPosition: "+ (mediaPosition));*/
             iIntentSeekBar.putExtra("media_max", mediaMax);
             iIntentSeekBar.putExtra("song_title",
-                    mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
+                    mSongs.get(position).getSongName());
             sendBroadcast(iIntentSeekBar);
 
         }catch (Exception e){
-            Log.e(tag, "ERROR: " + e.toString());
+            Log.e(tag, "ERROR: " + e.getMessage());
+
 
         }
     }
@@ -567,7 +576,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private Runnable sendUpdatesToUI = new Runnable() {
         public void run() {
 
-            LogMediaPosition();
+            LogMediaPosition(position);
             handler.postDelayed(this, 500);
         }
     };

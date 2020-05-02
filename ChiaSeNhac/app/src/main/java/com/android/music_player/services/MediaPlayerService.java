@@ -139,7 +139,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     }
 
-    private void initBundle(Intent intent){
+    private boolean initBundle(Intent intent){
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
@@ -150,14 +150,21 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         position = bundleUtils.getInteger(Constants.INTENT.CURR_POS, -1);
         type = bundleUtils.getString(Constants.INTENT.TYPE, "None");
-
+        Log.d(tag, "Service --- type: "+type + " --- curr_pos: "+position);
         if (!type.equals("None") && position!= -1){
-
+            // true là truyền từ activty
             mSongs = mSongManager.getCurrentSongs(type);
             Log.d("XXX","initBundle: "+type + " --- pos: "+position);
             mSongManager.setPositionCurrent(position);
+            return true;
         }else {
+            // false là từ notifcation
+
             Log.d(tag, "Service --- initBundle is null");
+            position = mSongManager.getPositionCurrent();
+            type = mSongManager.getTypeCurrent();
+
+            return false;
         }
     }
 
@@ -250,7 +257,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
                 } finally {
                     status = Status.PAUSED;
-                    initNotification(Constants.NOTIFICATION.PAUSE, position);
+                    initNotification(Constants.NOTIFICATION.PAUSE, mSongManager.getPositionCurrent());
                     // báo len UI là pause
                 }
             }
@@ -351,26 +358,20 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 case Constants.ACTION.SHUFFLE:
                     isShuffle = iAction.getBooleanExtra(Constants.INTENT.IS_SHUFFLE, false);
                     if (isShuffle) {
-                        Log.d(tag, "Service --- isShuffle: "+isShuffle);
-                        mSongShuffle =
-                                (ArrayList<SongModel>) iAction.getSerializableExtra(Constants.INTENT.CHANGE_MUSIC);
+                        Log.d(tag, "Service --- isShuffle: "+type);
+                        mSongShuffle = mSongManager.getCurrentSongs(type);
                         Log.d(tag, "Service --- isShuffle: "+mSongShuffle.size());
                     }else {
                         Log.d(tag, "Service --- isShuffle: "+isShuffle);
-                        mSongShuffle =
-                                (ArrayList<SongModel>) iAction.getSerializableExtra(Constants.INTENT.CHANGE_MUSIC);
+                        mSongShuffle = mSongManager.getCurrentSongs(type);
                     }
                     mSongs = mSongShuffle;
                     mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
                     stopMedia();
-                    mMediaPlayer.stop();
+
                     setupHandler();
                     playMedia(mSongs.get(SongManager.getInstance().getPositionCurrent()).getPath());
                     break;
-        /*        case Constants.ACTION.CHANGE_SONG:
-                    mSongManager.setPositionCurrent(position);
-                    mSongs = (ArrayList<SongModel>) iAction.getSerializableExtra(Constants.INTENT.CHANGE_MUSIC);
-                    break;*/
                 case Constants.ACTION.PLAY:
                     if (status == STOPPED) {
                         initMediaPlayer();
@@ -398,8 +399,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     if (status == PLAYED || status == PAUSED) {
                         status = NEXT;
                         mMediaTransportControls.skipToNext();
-                        Log.d(tag,
-                                "Service --- NEXT: " + iAction.getExtras().getString(Constants.INTENT.NEXT_TO_SERVICE));
+                  /*      Log.d(tag,
+                                "Service --- NEXT: " + iAction.getExtras().getString(Constants.INTENT.NEXT_TO_SERVICE));*/
                     } else {
                         Log.d(tag, "Service --- NEXT: " + status.toString());
                     }
@@ -438,6 +439,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     break;
                 case Constants.ACTION.REPEAT:
                     this.isRepeat = iAction.getExtras().getBoolean(Constants.INTENT.IS_REPEAT, false);
+                    Log.d(tag, "Service --- Repeat: "+isRepeat);
                     break;
             default:
                 status = Status.PAUSED;
@@ -484,19 +486,19 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     "MediaMax: "+mediaMax +" ==== Song Title: "+ mSongs.getData(SongManager.getInstance().getPositionCurrent()).getSongName());*/
             iIntentSeekBar.putExtra("current_pos", mediaPosition);
             mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, mediaPosition);
-       /*     Log.d(tag,
-                    "Service --- LogMediaPosition --- mSharedPrefsUtils: "+ (mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION_SONG, -1)));
-            Log.d(tag,
-                    "Service --- LogMediaPosition --- mediaPosition: "+ (mediaPosition));*/
+
             iIntentSeekBar.putExtra("media_max", mediaMax);
             iIntentSeekBar.putExtra("song_title",
                     mSongs.get(position).getSongName());
             sendBroadcast(iIntentSeekBar);
 
         }catch (Exception e){
+            if (e instanceof NullPointerException){
+                mSongs = mSongManager.getCurrentSongs();
+
+            }
+            Log.d(tag, "Tên Exception: "+e.toString());
             Log.e(tag, "ERROR: " + e.getMessage());
-
-
         }
     }
 
@@ -653,6 +655,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     private void initNotification(String type, int position) {
+        Log.d("ZZZ", "service --- initNotification:"+ type + " ---- "+position);
         ArrayList<SongModel> mSongs = SongManager.getInstance().getCurrentSongs();
         int icon_Action = 0;
 
@@ -678,6 +681,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                             .setAction(Constants.ACTION.PAUSE),
                     0);
             iPlayPauseActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION, false);
+
             sendBroadcast(iPlayPauseActivity);
 
         }
@@ -865,10 +869,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
              * Setting metaData
              */
             setGraphics();
-            Log.d(tag, "Service --- onPrepared: " + (mSongs.get(position).getSongName()));
-            int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION_SONG,0);
 
-            Log.d(tag, "Service ---  "+(mSongs.get(position).getSongName())+": "+pos);
+            int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION_SONG,0);
+            if (mSongs!= null) {
+                Log.d(tag, "Service --- onPrepared: " + (mSongs.get(position).getSongName()));
+                Log.d(tag, "Service ---  "+(mSongs.get(position).getSongName())+": "+pos);
+            }
+
             setupHandler();
             if (pos != 0){
                 mediaPlayer.seekTo(pos);
@@ -878,9 +885,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         }finally {
             status = PLAYED;
-            Log.d(tag, "Service --- setPositionCurrent "+(mSongs.get(position).getSongName()));
-
-            initNotification(Constants.NOTIFICATION.PLAY, position);
+            mSongManager.setPositionCurrent(position);
+            initNotification(Constants.NOTIFICATION.PLAY, mSongManager.getPositionCurrent());
         }
 
     }
@@ -899,13 +905,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             Log.d(tag, "onCompletion");
             if (mSongs != null) {
                 mSongs = mSongShuffle;
+                Log.d("BBB", "isRepeat: "+isRepeat);
                 if (!isRepeat) {
-                    Log.d("BBB", "isRepeat: "+isRepeat);
+
                     skipToNext();
                 }else if (isRepeat){
                     Log.d("BBB", "mSongs: "+(mSongs == null? "null":"khac null"));
+                    mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
                     setupHandler();
-                    playMedia(mSongs.get(SongManager.getInstance().getPositionCurrent()).getPath());
+                    playMedia(mSongManager.getCurrentSongs().get(SongManager.getInstance().getPositionCurrent()).getPath());
                 }
 
             }

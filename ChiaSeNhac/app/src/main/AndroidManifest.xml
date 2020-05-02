@@ -68,6 +68,7 @@
             <intent-filter>
                 <action android:name="com.android.music_player.action.IS_PLAY"/>
                 <action android:name="com.android.music_player.action.SEEK"/>
+                <action android:name="com.android.music_player.action.COMPLETE"/>
                 <action android:name="com.android.music_player.action.CLOSE" />
                 <action android:name="com.android.music_player.action.PLAY_PAUSE" />
                 <action android:name="com.android.music_player.action.PLAY" />

@@ -190,6 +190,9 @@ public class SongManager {
             } else if (type.equals(Constants.VALUE.ALL_SONGS) || type.equals("")) {
                 song = SongManager.getInstance().allSortSongs();
                 return song;
+            } else if (type.equals(Constants.VALUE.SHUFFLE)){
+                song = SongManager.getInstance().getShuffleSongs();
+                return song;
             }
         }
         return null;

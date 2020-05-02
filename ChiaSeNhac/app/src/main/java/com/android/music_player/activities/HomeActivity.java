@@ -79,12 +79,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                             false);
             if (isPlayingNoti) {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
+
             } else {
-                if(isPlaying == true) {
+                if(MediaPlayerService.mMediaPlayer!= null && MediaPlayerService.mMediaPlayer.isPlaying()) {
                     mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
                 }
             }
-
+            setSongCurrent(mSongs);
         }
     };
 

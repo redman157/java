@@ -283,6 +283,9 @@ public class PlayActivity extends BaseActivity
 
             mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID,
                     mSongs.get(this.position).getAlbumID());
+            if (!MediaPlayerService.mMediaPlayer.isPlaying()){
+                Utils.isPlayMediaService(this, type, position);
+            }
         }
     }
 
@@ -406,8 +409,6 @@ public class PlayActivity extends BaseActivity
                     unregisterReceiver(brPlayNew);
                     Utils.RepeatMediaService(PlayActivity.this, true, type, position);
                     Utils.ToastShort(this,"Turn On Repeat Music");
-
-
                 }else {
                     mBtnRepeat.setImageResource(R.drawable.ic_repeat_white);
                     isRepeat = false;
@@ -451,6 +452,7 @@ public class PlayActivity extends BaseActivity
             case R.id.icon_shuffle:
                 if (!isShuffle){
                     isShuffle = true;
+                    mBtnShuffle.setImageResource(R.drawable.app_shuffle_blue);
                     mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_MAIN,
                             position);
 
@@ -459,7 +461,7 @@ public class PlayActivity extends BaseActivity
                     mSongManager.setShuffleSongs(mSongShuffle);
                     ChangeSongFragment.newInstance(mSongShuffle);
 
-                    mBtnShuffle.setImageResource(R.drawable.app_shuffle_blue);
+
                     Toast.makeText(this, "Turn On Shuffle Music", Toast.LENGTH_SHORT).show();
                     mSongs = mSongShuffle;
                     mAdapter.addData(mSongs);

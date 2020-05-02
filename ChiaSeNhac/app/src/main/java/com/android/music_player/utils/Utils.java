@@ -117,8 +117,9 @@ public class Utils {
     public static void RepeatMediaService(Context context, boolean isRepeat, String type, int pos){
         Intent iRepeat = new Intent(context, MediaPlayerService.class);
         iRepeat.setAction(Constants.ACTION.REPEAT);
-        builder.putBoolean(Constants.INTENT.IS_REPEAT, isRepeat);
+
         builder = new BundleUtils.Builder();
+        builder.putBoolean(Constants.INTENT.IS_REPEAT, isRepeat);
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
         iRepeat.putExtras(builder.generate().getBundle());

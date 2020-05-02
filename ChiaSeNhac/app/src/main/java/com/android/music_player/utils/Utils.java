@@ -104,10 +104,14 @@ public class Utils {
         context.startService(iPrevious);
     }
 
-    public static void StopMediaService(Context context){
-        Intent iPrevious = new Intent(context, MediaPlayerService.class);
-        iPrevious.setAction(Constants.ACTION.STOP);
-        context.startService(iPrevious);
+    public static void StopMediaService(Context context, String type, int pos){
+        Intent iStop = new Intent(context, MediaPlayerService.class);
+        iStop.setAction(Constants.ACTION.STOP);
+        builder = new BundleUtils.Builder();
+        builder.putString(Constants.INTENT.TYPE, type);
+        builder.putInteger(Constants.INTENT.CURR_POS,pos);
+        iStop.putExtras(builder.generate().getBundle());
+        context.startService(iStop);
     }
 
     public static void RepeatMediaService(Context context, boolean isRepeat, String type, int pos){

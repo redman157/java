@@ -1,6 +1,7 @@
 package com.android.music_player.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -46,7 +47,9 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
 
     @Override
     public void onClick(int pos) {
+
         SongManager.getInstance().setPositionCurrent(pos - 1);
+
         if (((PlayActivity)context).isShuffle){
             Utils.NextMediaService(context, Constants.VALUE.SHUFFLE, mSongManager.getPositionCurrent());
         }else {

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.services.MediaPlayerService;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 public abstract class BaseActivity extends AppCompatActivity  {
@@ -67,12 +68,13 @@ public abstract class BaseActivity extends AppCompatActivity  {
             // We've bound to LocalService, cast the IBinder and getData LocalService instance
             MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
             mediaPlayerService = binder.getService();
-//            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
+            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
             serviceBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+
             serviceBound = false;
         }
     };

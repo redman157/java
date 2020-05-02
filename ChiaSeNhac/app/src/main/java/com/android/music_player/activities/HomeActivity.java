@@ -80,9 +80,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             if (isPlayingNoti) {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
             } else {
-                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
+                if(isPlaying == true) {
+                    mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
+                }
             }
-            setSongCurrent(mSongs);
+
         }
     };
 
@@ -110,13 +112,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("XXX", "Home Activity : onPause");
+        Log.d("XXX", "HomeActivity --- onCreate: Enter");
     }
 
     @Override
     protected void onStop() {
 
         super.onStop();
+        Log.d("XXX", "HomeActivity --- onCreate: Enter");
     }
 
     @Override
@@ -130,12 +133,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onStart() {
         super.onStart();
+
         registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
         registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
         mSongs = mSongManager.getCurrentSongs();
+
+        if (MediaPlayerService.mMediaPlayer != null){
+            if(MediaPlayerService.mMediaPlayer.isPlaying()){
+                mLlPlayMedia.setVisibility(View.VISIBLE);
+            }
+        }else {
+            mLlPlayMedia.setVisibility(View.GONE);
+        }
+
 //        setSongCurrent(mSongs);
+        choosePosition = mSongManager.getPositionCurrent();
+        Log.d("XXX", "HomeActivity --- onStart: "+choosePosition);
+
     }
 
     @Override
@@ -161,6 +177,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         setupToolbar();
         assignView();
         setSongCurrent(mSongs);
+        Log.d("XXX", "HomeActivity --- onCreate: Enter");
     }
 
     private void setupToolbar() {
@@ -170,8 +187,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     public void setSongCurrent(ArrayList<SongModel> song){
-        int pos = mSongManager.getPositionCurrent();
-        if (pos == -1){
+
+        if (mSongManager.getPositionCurrent() == -1){
             mTextArtist.setText(song.get(0).getArtist());
             mTextTitle.setText(song.get(0).getSongName());
             imageUtils.getSmallImageByPicasso(song.get(0).getAlbumID(), mImgMedia);
@@ -383,22 +400,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.imbt_Play_media:
-
                 Utils.isPlayMediaService(this, mSongManager.getTypeCurrent(),mSongManager.getPositionCurrent());
                 break;
             case R.id.layout_play_media:
 
                 break;
             case R.id.btn_title_media:
+                Log.d("XXX", "btn_title_media: "+choosePosition);
                 Intent intent = new Intent(HomeActivity.this, PlayActivity.class);
                 BundleUtils.Builder builder = new BundleUtils.Builder();
                 builder.putString(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
                 builder.putInteger(Constants.INTENT.CHOOSE_POS, choosePosition);
+
                 if (mSongManager.isPlayCurrentSong(choosePosition)) {
                     Log.d("BBB", "HomeActivity --- btn_title_media: true");
                     builder.putBoolean(Constants.INTENT.SONG_CONTINUE, true);
                 }else {
                     Log.d("BBB", "HomeActivity --- btn_title_media: false");
+                    Utils.PauseMediaService(this,  Constants.VALUE.NEW_SONGS, choosePosition);
                     builder.putBoolean(Constants.INTENT.SONG_CONTINUE, false);
                 }
                 intent.putExtras(builder.generate().getBundle());

@@ -39,6 +39,8 @@ import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 
+import okhttp3.internal.Util;
+
 public class PlayActivity extends BaseActivity
         implements ViewPager.OnPageChangeListener, View.OnClickListener,
         SeekBar.OnSeekBarChangeListener {
@@ -74,6 +76,7 @@ public class PlayActivity extends BaseActivity
     protected void onStart() {
 
         super.onStart();
+        Log.d("MMM", "PlayActivity onStart: enter");
         iSeekBar = new Intent(Constants.ACTION.BROADCAST_SEEK_BAR);
         iPlayPause = new Intent(Constants.ACTION.BROADCAST_PLAY_PAUSE);
         if (!receiverRegistered){
@@ -83,14 +86,17 @@ public class PlayActivity extends BaseActivity
             registerReceiver(brPlayNew, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
             receiverRegistered = true;
         }
-        mSongs = mSongManager.getCurrentSongs();
+    /*    mSongs = mSongManager.getCurrentSongs();
 
-        Intent intent = getIntent();
-        bundleUtils = new BundleUtils(intent);
+        if(isContinue){
 
-        isContinue = bundleUtils.getBoolean(Constants.INTENT.SONG_CONTINUE,true);
-        Log.d(tag,
-                "PlayActivity --- isPlayCurrentSong: "+(bundleUtils.getBoolean(Constants.INTENT.SONG_CONTINUE,true)));
+        }else {
+            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
+
+        }*/
+        Log.d(tag,"PlayActivity --- isContinue: "+(bundleUtils.getBoolean(Constants.INTENT.SONG_CONTINUE,false)));
+        Log.d(tag,"PlayActivity --- current pos: "+position);
+
     }
 
     @Override
@@ -134,19 +140,20 @@ public class PlayActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+        Log.d("MMM", "PlayActivity onCreate: enter");
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
 
         initView();
         getBundle();
-        Log.d(tag,"PlayActivity --- isPlayCurrentSong: "+(bundleUtils.getBoolean(Constants.INTENT.SONG_CONTINUE,false)));
+
         if(isContinue){
 
         }else {
+            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
             Utils.isPlayMediaService(this, type, position);
         }
-
         //save current song
 
         setupToolBar();
@@ -162,6 +169,7 @@ public class PlayActivity extends BaseActivity
         isContinue = bundleUtils.getBoolean(Constants.INTENT.SONG_CONTINUE,false);
         mSongManager.setTypeCurrent(type);
         mSongs = mSongManager.getCurrentSongs(type);
+
     }
 
     private void setupToolBar() {
@@ -181,8 +189,9 @@ public class PlayActivity extends BaseActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent iBackMusic = new Intent(this, HomeActivity.class);
                 finish();
+                Intent iBackMusic = new Intent(this, HomeActivity.class);
+
                 startActivity(iBackMusic);
                 overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
                 break;
@@ -322,22 +331,19 @@ public class PlayActivity extends BaseActivity
             boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
 
                 if (isPlayingMedia) {
-                    Log.d(tag, "PlayActivity --- brIsPlayService:" + true);
+                    Log.d(tag, "PlayActivity--- brIsPlayService --- brIsPlayService:" + true);
                     mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                     isPlaying = true;
                     Utils.PauseMediaService(PlayActivity.this, type,position);
-                    if (!isContinue){
-                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
+                    Log.d(tag,"PlayActivity--- brIsPlayService --- isContinue: "+isContinue);
 
-                    }
                 } else {
-                    Log.d(tag, "PlayActivity --- brIsPlayService:" + false);
+                    Log.d(tag, "PlayActivity--- brIsPlayService --- brIsPlayService:" + false);
 
                     isPlaying = false;
                     mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                     Utils.PlayMediaService(PlayActivity.this, type, position);
-                    Log.d(tag,
-                            "isPlayingMedia : False --- position: "+position );
+                    Log.d(tag,"PlayActivity--- brIsPlayService --- isContinue: "+isContinue);
                 }
         }
     };

@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
     }
 
     public static HomeFragment newInstance(ArrayList<String> strings) {
-        Log.d("XXX", "HomeFragment newInstance: "+strings.size());
+
         Bundle args = new Bundle();
         args.putStringArrayList("most", strings);
         HomeFragment fragment = new HomeFragment();
@@ -89,7 +89,7 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.d("XXX", "HomeFragment -- onCreateView");
+
         view = inflater.inflate(R.layout.fragment_home, null);
 
         mSongManager = SongManager.getInstance();
@@ -162,6 +162,7 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
     @Override
     public void onClick(String type, final int position) {
         // set switch vị trí và type music cho play activity chạy
+        Log.d("XXX", "((HomeActivity)getActivity()).choosePosition: "+position);
 
         if (position != SongManager.getInstance().getPositionCurrent()) {
             ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
@@ -177,8 +178,6 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
         ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
         ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
                 mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);
-
-
     }
 
 

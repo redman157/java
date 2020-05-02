@@ -140,6 +140,7 @@ public class SongManager {
 
 
     public void setPositionCurrent(int position) {
+        Log.d("XXX","setPositionCurrent: "+position );
         processEndOfList(position);
     }
 
@@ -195,10 +196,11 @@ public class SongManager {
     }
 
     public void processEndOfList(int position){
+
         if (getCurrentSongs()!= null) {
             int size = (getCurrentSongs().size());
             if (position >= size) {
-                SongManager.getInstance().setPositionCurrent(0);
+
                 mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, 0);
             } else if (position < 0) {
                 mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, size - 1);

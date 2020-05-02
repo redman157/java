@@ -152,7 +152,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         type = bundleUtils.getString(Constants.INTENT.TYPE, "None");
 
         if (!type.equals("None") && position!= -1){
+
             mSongs = mSongManager.getCurrentSongs(type);
+            Log.d("XXX","initBundle: "+type + " --- pos: "+position);
+            mSongManager.setPositionCurrent(position);
         }else {
             Log.d(tag, "Service --- initBundle is null");
         }
@@ -166,9 +169,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 //Could not gain focus
                 stopSelf();
             }
-            if (mMediaPlayer == null) {
+           /* if (mMediaPlayer == null) {
+                Log.d(tag, "Service --- mMediaPlayer == null: Enter");
                 initMediaPlayer();
-            }
+                initMediaSession();
+            }*/
+
 
             //Handle Intent action from MediaSession.TransportControls
             handleUIActions(intent);
@@ -182,7 +188,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     public void onDestroy() {
         super.onDestroy();
         if (mMediaPlayer != null) {
-            SongManager.getInstance().setPositionCurrent(position);
+//            SongManager.getInstance().setPositionCurrent(position);
             stopMedia();
             mMediaPlayer.reset();
             releaseMedia();
@@ -227,7 +233,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     }
 
                     Log.d(tag, "Service --- onPlay:" + (mSongs.get(position)).getPath());
-                    mSongManager.setPositionCurrent(position);
+//                    mSongManager.setPositionCurrent(position);
                     playMedia(mSongs.get(position).getPath());
 
                 } finally {
@@ -293,11 +299,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 super.onStop();
                 try {
                     status = STOPPING;
-                    removeNotification();
-                    //Stop the service
-                    stopMedia();
-                    mMediaPlayer.reset();
-                    releaseMedia();
+
+                    if(mMediaPlayer!= null) {
+//                        removeNotification();
+                        //Stop the service
+                        mSongManager.setPositionCurrent(position);
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
+                        stopMedia();
+                        mMediaPlayer.reset();
+                        Log.d(tag, "Service --- onStop Media: Enter");
+                    }
+//                    releaseMedia();
                 }finally {
                     status = STOPPED;
                 }
@@ -314,6 +326,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
                     }
                     mMediaPlayer.seekTo((int) position);
+                    setupHandler();
                     mMediaPlayer.start();
                 }else {
 
@@ -362,10 +375,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     if (status == STOPPED) {
                         initMediaPlayer();
                     }
+
                     if (status == PAUSED) {
                         status = PLAYING;
+
                         mMediaTransportControls.play();
-                    } else {
+                        Log.d(tag, "Service --- PLAY: " + status.toString());
+
+                    } else if (status == PAUSING) {
                         Log.d(tag, "Service --- PLAY: " + status.toString());
                     }
                     break;
@@ -486,6 +503,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
     private void playMedia(String path){
         if (!mMediaPlayer.isPlaying()) {
+
             setMediaPlayer(path);
             isInitAudioError = false;
         }
@@ -539,7 +557,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 if (mMediaPlayer.isPlaying()) {
                     Log.d(tag, "stopMedia: Enter");
                     mMediaPlayer.stop();
-
+                    mMediaPlayer.prepare();
                 }
                 handler.removeCallbacks(sendUpdatesToUI);
             } catch (Exception e) {
@@ -849,6 +867,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             setGraphics();
             Log.d(tag, "Service --- onPrepared: " + (mSongs.get(position).getSongName()));
             int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION_SONG,0);
+
             Log.d(tag, "Service ---  "+(mSongs.get(position).getSongName())+": "+pos);
             setupHandler();
             if (pos != 0){
@@ -859,6 +878,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
         }finally {
             status = PLAYED;
+            Log.d(tag, "Service --- setPositionCurrent "+(mSongs.get(position).getSongName()));
+
             initNotification(Constants.NOTIFICATION.PLAY, position);
         }
 
@@ -952,7 +973,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).cancelAll();
 
-            System.exit(0);
+            System.exit(1);
 
         }
     };
@@ -963,7 +984,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
                 mMediaPlayer.seekTo(0);
-                SongManager.getInstance().setPositionCurrent(0);
+//                SongManager.getInstance().setPositionCurrent(0);
             }
 
         }

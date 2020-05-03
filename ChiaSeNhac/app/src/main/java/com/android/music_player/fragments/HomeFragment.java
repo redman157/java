@@ -25,6 +25,7 @@ import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
+import com.android.music_player.services.MediaPlayerService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -168,8 +169,20 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
             ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
             ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = false;
         }else {
-            ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-            ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
+            if (MediaPlayerService.mMediaPlayer!= null) {
+                if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+                    ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+                    ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
+                } else {
+                    ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+//                    ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
+                }
+            }else {
+                ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+//                ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
+            }
+            /*((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+            ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;*/
         }
         mSongManager.setTypeCurrent(type);
         ((HomeActivity)getActivity()).mLlPlayMedia.setVisibility(View.VISIBLE);

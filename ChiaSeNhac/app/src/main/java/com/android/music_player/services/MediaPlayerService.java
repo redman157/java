@@ -136,7 +136,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         registerReceiver(brResetMusic,  new IntentFilter(Constants.ACTION.BROADCAST_RESET_AUDIO));
         registerReceiver(brStopMusic, new IntentFilter(Constants.ACTION.BROADCAST_STOP_AUDIO));
         registerReceiver(brCloseNotification, new IntentFilter(Constants.ACTION.CLOSE_NOTIFICATION));
-
     }
 
     private boolean initBundle(Intent intent){
@@ -153,17 +152,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         Log.d(tag, "Service --- type: "+type + " --- curr_pos: "+position);
         if (!type.equals("None") && position!= -1){
             // true là truyền từ activty
-            mSongs = mSongManager.getCurrentSongs(type);
             Log.d("XXX","initBundle: "+type + " --- pos: "+position);
+            mSongs = mSongManager.getCurrentSongs(type);
+
             mSongManager.setPositionCurrent(position);
             return true;
         }else {
             // false là từ notifcation
-
             Log.d(tag, "Service --- initBundle is null");
             position = mSongManager.getPositionCurrent();
             type = mSongManager.getTypeCurrent();
-
             return false;
         }
     }
@@ -176,16 +174,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 //Could not gain focus
                 stopSelf();
             }
-           /* if (mMediaPlayer == null) {
-                Log.d(tag, "Service --- mMediaPlayer == null: Enter");
-                initMediaPlayer();
-                initMediaSession();
-            }*/
-
-
             //Handle Intent action from MediaSession.TransportControls
             handleUIActions(intent);
-
         }
         return START_NOT_STICKY;
     }
@@ -195,7 +185,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     public void onDestroy() {
         super.onDestroy();
         if (mMediaPlayer != null) {
-//            SongManager.getInstance().setPositionCurrent(position);
             stopMedia();
             mMediaPlayer.reset();
             releaseMedia();
@@ -240,7 +229,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     }
 
                     Log.d(tag, "Service --- onPlay:" + (mSongs.get(position)).getPath());
-//                    mSongManager.setPositionCurrent(position);
                     playMedia(mSongs.get(position).getPath());
 
                 } finally {
@@ -308,15 +296,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     status = STOPPING;
 
                     if(mMediaPlayer!= null) {
-//                        removeNotification();
-                        //Stop the service
                         mSongManager.setPositionCurrent(position);
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
                         stopMedia();
                         mMediaPlayer.reset();
                         Log.d(tag, "Service --- onStop Media: Enter");
                     }
-//                    releaseMedia();
                 }finally {
                     status = STOPPED;
                 }
@@ -357,20 +342,36 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             switch (action) {
                 case Constants.ACTION.SHUFFLE:
                     isShuffle = iAction.getBooleanExtra(Constants.INTENT.IS_SHUFFLE, false);
-                    if (isShuffle) {
-                        Log.d(tag, "Service --- isShuffle: "+type);
-                        mSongShuffle = mSongManager.getCurrentSongs(type);
-                        Log.d(tag, "Service --- isShuffle: "+mSongShuffle.size());
-                    }else {
-                        Log.d(tag, "Service --- isShuffle: "+isShuffle);
-                        mSongShuffle = mSongManager.getCurrentSongs(type);
-                    }
-                    mSongs = mSongShuffle;
-                    mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
-                    stopMedia();
 
-                    setupHandler();
-                    playMedia(mSongs.get(SongManager.getInstance().getPositionCurrent()).getPath());
+                    if (isShuffle){
+
+                        mSongShuffle = mSongManager.getShuffleSongs();
+
+                    }else {
+                        mSongShuffle = mSongManager.getCurrentSongs();
+                    }
+
+                    mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
+
+
+                    mSongs = mSongShuffle;
+
+                    if (status == PLAYED) {
+                        status = PAUSING;
+                        mMediaTransportControls.pause();
+                    } else {
+                        Log.d(tag, "Service --- PAUSE: " + status.toString());
+                    }
+
+                    if (status == PAUSED) {
+                        status = PLAYING;
+                        mMediaTransportControls.play();
+                        Log.d(tag, "Service --- PLAY: " + status.toString());
+                    } else if (status == PAUSING) {
+
+                        Log.d(tag, "Service --- PLAY: " + status.toString());
+                    }
+
                     break;
                 case Constants.ACTION.PLAY:
                     if (status == STOPPED) {
@@ -379,10 +380,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
 
                     if (status == PAUSED) {
                         status = PLAYING;
-
                         mMediaTransportControls.play();
                         Log.d(tag, "Service --- PLAY: " + status.toString());
-
                     } else if (status == PAUSING) {
                         Log.d(tag, "Service --- PLAY: " + status.toString());
                     }
@@ -904,10 +903,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             mMediaPlayer.reset();
             Log.d(tag, "onCompletion");
             if (mSongs != null) {
-                mSongs = mSongShuffle;
+                if (isShuffle){
+                    mSongs = mSongManager.getShuffleSongs();
+                }
                 Log.d("BBB", "isRepeat: "+isRepeat);
                 if (!isRepeat) {
-
                     skipToNext();
                 }else if (isRepeat){
                     Log.d("BBB", "mSongs: "+(mSongs == null? "null":"khac null"));
@@ -915,6 +915,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     setupHandler();
                     playMedia(mSongManager.getCurrentSongs().get(SongManager.getInstance().getPositionCurrent()).getPath());
                 }
+
+
 
             }
         } finally {

@@ -126,8 +126,7 @@ public class Utils {
         context.startService(iRepeat);
     }
 
-    public static void ShuffleMediaService(Context context ,boolean isShuffle, String type,
-                                           int pos){
+    public static void ShuffleMediaService(Context context ,boolean isShuffle,String type, int pos){
         Intent inShuffle = new Intent(context, MediaPlayerService.class);
         inShuffle.setAction(Constants.ACTION.SHUFFLE);
         builder = new BundleUtils.Builder();

@@ -383,6 +383,7 @@ public class PlayActivity extends BaseActivity
             case R.id.icon_play:
                 // khi bấm play check play trước đã, trong broad cast check play sẽ play video
                 Log.d(tag, "PlayActivity --- type: "+type);
+
                 Utils.isPlayMediaService(PlayActivity.this, type, position);
                 break;
             case R.id.icon_next:
@@ -416,7 +417,6 @@ public class PlayActivity extends BaseActivity
                     registerReceiver(brPlayNew,
                             new IntentFilter(Constants.ACTION.BROADCAST_PLAY_NEW_AUDIO));
                     Utils.RepeatMediaService(PlayActivity.this, false, type, position);
-
                     Utils.ToastShort(PlayActivity.this,"Turn Off Repeat Music");
                 }
                 break;
@@ -428,7 +428,6 @@ public class PlayActivity extends BaseActivity
                     Animation fadeIn = AnimationUtils.loadAnimation(PlayActivity.this,R.anim.fadein);
                     mLinearSeeMore.setAnimation(fadeIn);
                     mLinearSeeMore.setVisibility(View.VISIBLE);
-
                 }else {
                     mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_white);
 
@@ -453,32 +452,34 @@ public class PlayActivity extends BaseActivity
                 if (!isShuffle){
                     isShuffle = true;
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_blue);
-                    mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_MAIN,
-                            position);
 
                     // set current song shuffle
-                    mSongShuffle = SongManager.getInstance().shuffleSongs();
+                    mSongShuffle = SongManager.getInstance().shuffleSongs(mSongs);
                     mSongManager.setShuffleSongs(mSongShuffle);
                     ChangeSongFragment.newInstance(mSongShuffle);
 
+                    mSeekBarTime.setProgress(0);
+                    mTextLeftTime.setText("00 : 00");
+                    type = Constants.VALUE.SHUFFLE;
+                    mAdapter.addData(mSongShuffle);
+                    mAdapter.notifyDataSetChanged();
 
                     Toast.makeText(this, "Turn On Shuffle Music", Toast.LENGTH_SHORT).show();
-                    mSongs = mSongShuffle;
-                    mAdapter.addData(mSongs);
-                    mAdapter.notifyDataSetChanged();
-                    Utils.ShuffleMediaService(PlayActivity.this,true,Constants.VALUE.SHUFFLE, position);
+                    Utils.ShuffleMediaService(PlayActivity.this,true,type, position);
                 }else {
                     isShuffle = false;
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_white);
                     ChangeSongFragment.newInstance(null);
 
+                    mSeekBarTime.setProgress(0);
+                    mTextLeftTime.setText("00 : 00");
                     mSongs = mSongManager.getCurrentSongs();
+                    type = mSongManager.getTypeCurrent();
                     mAdapter.addData(mSongs);
                     mAdapter.notifyDataSetChanged();
+
                     Utils.ToastShort(PlayActivity.this,"Turn Off Shuffle Music");
-                    Utils.ShuffleMediaService(PlayActivity.this,false,
-                            mSongManager.getTypeCurrent(),
-                            position);
+                    Utils.ShuffleMediaService(PlayActivity.this,false,mSongManager.getTypeCurrent(), position);
                 }
                 break;
         }

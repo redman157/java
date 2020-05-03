@@ -81,9 +81,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
 
             } else {
-                if(MediaPlayerService.mMediaPlayer!= null && MediaPlayerService.mMediaPlayer.isPlaying()) {
-                    mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
-                }
+                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
             }
             setSongCurrent(mSongs);
         }
@@ -96,12 +94,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
 
             if (isPlayingMedia) {
-                Log.d(tag, "PlayActivity --- brIsPlayService:" +true);
+                Log.d(tag, "HomeActivity --- brIsPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = true;
                 Utils.PauseMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent() );
             } else {
-                Log.d(tag, "PlayActivity --- brIsPlayService:" +false);
+                Log.d(tag, "HomeActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
                 Utils.PlayMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent());
@@ -113,14 +111,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("XXX", "HomeActivity --- onCreate: Enter");
+        Log.d("XXX", "HomeActivity --- onPause: Enter");
     }
 
     @Override
     protected void onStop() {
 
         super.onStop();
-        Log.d("XXX", "HomeActivity --- onCreate: Enter");
+        Log.d("XXX", "HomeActivity --- onStop: Enter");
     }
 
     @Override
@@ -141,13 +139,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mSongManager.setContext(this);
         mSongs = mSongManager.getCurrentSongs();
 
-        if (MediaPlayerService.mMediaPlayer != null){
-            if(MediaPlayerService.mMediaPlayer.isPlaying()){
-                mLlPlayMedia.setVisibility(View.VISIBLE);
-            }
-        }else {
-            mLlPlayMedia.setVisibility(View.GONE);
-        }
+
 
 //        setSongCurrent(mSongs);
         choosePosition = mSongManager.getPositionCurrent();
@@ -251,6 +243,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mBtnPlayPause.setAnimationDuration(1500);
         mBtnTitle.setOnClickListener(this);
         mViewPlayMedia.setOnClickListener(this);
+
+
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener

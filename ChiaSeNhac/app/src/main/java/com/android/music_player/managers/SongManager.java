@@ -243,9 +243,9 @@ public class SongManager {
         return newSongs;
     }
 
-    public ArrayList<SongModel> shuffleSongs(){
+    public ArrayList<SongModel> shuffleSongs(ArrayList<SongModel> songs){
         grabIfEmpty(); // If no song in list (shuffle songs)
-        ArrayList<SongModel> shuffleSongs = new ArrayList<>(mSongsMain);
+        ArrayList<SongModel> shuffleSongs = new ArrayList<>(songs);
         Collections.shuffle(shuffleSongs);
 
         return shuffleSongs;

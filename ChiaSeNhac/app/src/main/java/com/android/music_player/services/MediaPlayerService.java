@@ -81,7 +81,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     public static MediaPlayer mMediaPlayer;
     public static ArrayList<SongModel> mSongs, mSongShuffle;
     private int position;
-
+    private boolean autoPlay = false;
     private Intent iIntentSeekBar, iPlayNewMusic, iCheckPlayActivity, iPlayPauseActivity;
 //    private Intent iPrevToActivity, iNextToActivity;
     private androidx.core.app.NotificationCompat.Builder notificationBuilder = null;
@@ -248,6 +248,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     initNotification(Constants.NOTIFICATION.PAUSE, mSongManager.getPositionCurrent());
                     // báo len UI là pause
                 }
+
+                if (autoPlay) {
+                    autoPlay = false;
+                    status = PLAYING;
+                    mMediaTransportControls.play();
+                    Log.d(tag, "Service --- PLAY: " + status.toString());
+                }
             }
 
             @Override
@@ -344,17 +351,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     isShuffle = iAction.getBooleanExtra(Constants.INTENT.IS_SHUFFLE, false);
 
                     if (isShuffle){
-
                         mSongShuffle = mSongManager.getShuffleSongs();
-
                     }else {
                         mSongShuffle = mSongManager.getCurrentSongs();
                     }
-
                     mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
-
-
                     mSongs = mSongShuffle;
+                    if (status == PLAYED) {
+                        autoPlay = true;
+
+                    }
 
                     if (status == PLAYED) {
                         status = PAUSING;
@@ -363,14 +369,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                         Log.d(tag, "Service --- PAUSE: " + status.toString());
                     }
 
-                    if (status == PAUSED) {
-                        status = PLAYING;
-                        mMediaTransportControls.play();
-                        Log.d(tag, "Service --- PLAY: " + status.toString());
-                    } else if (status == PAUSING) {
-
-                        Log.d(tag, "Service --- PLAY: " + status.toString());
-                    }
 
                     break;
                 case Constants.ACTION.PLAY:

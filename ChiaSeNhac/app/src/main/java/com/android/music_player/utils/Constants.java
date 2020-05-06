@@ -60,7 +60,6 @@ public class Constants {
     }
 
     public @interface ACTION{
-        String CHANGE_SONG = "ChangeSong";
         String STOP = "com.android.music_player.action.STOP";
         String PLAY = "com.android.music_player.action.PLAY";
         String PAUSE = "com.android.music_player.action.PAUSE";

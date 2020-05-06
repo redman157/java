@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@color/white"
+    android:layout_width="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_Home"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/ll_play_media"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+        tools:ignore="NestedWeights" />
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:id="@+id/ll_play_media"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/blackGrey"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white" />
+        <include
+            layout="@layout/layout_play_media"
+            android:id="@+id/layout_play_media"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white" />
+    </LinearLayout>
+</RelativeLayout>

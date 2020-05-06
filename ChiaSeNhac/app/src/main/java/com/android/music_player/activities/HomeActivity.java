@@ -19,22 +19,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.BaseActivity;
-import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.R;
 import com.android.music_player.adapters.ViewPagerAdapter;
-import com.android.music_player.fragments.AlbumGridFragment;
 import com.android.music_player.fragments.AllSongsFragment;
-import com.android.music_player.fragments.ArtistGridFragment;
 import com.android.music_player.fragments.HomeFragment;
-import com.android.music_player.fragments.PlaylistFragment;
+import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.services.MediaPlayerService;
-import com.android.music_player.utils.BundleUtils;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -61,15 +56,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private SongManager mSongManager;
     public MaterialPlayPauseButton mBtnPlayPause;
     private boolean isPlaying;
-    private int currentMedia, mediaMax;
-    private String songTitle;
-    private ArrayList<Fragment> mFragments = new ArrayList<>();
     public LinearLayout mLlPlayMedia;
     public int choosePosition;
     public boolean isContinue;
     private OnChangePlayListListener onChangePlayListListener;
-    private BundleUtils bundleUtils;
-
+    private boolean receiverRegistered = false;
     private BroadcastReceiver brPlayPauseActivity = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent serviceIntent) {
@@ -132,19 +123,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     protected void onStart() {
         super.onStart();
+        try {
+            if (!receiverRegistered) {
+                registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
+                registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
+                receiverRegistered = true;
+            }
+        }finally {
+            mSongManager = SongManager.getInstance();
+            mSongManager.setContext(this);
+            mSongs = mSongManager.getCurrentSongs();
 
-        registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
-        registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
-        mSongManager = SongManager.getInstance();
-        mSongManager.setContext(this);
-        mSongs = mSongManager.getCurrentSongs();
-
-
-
-//        setSongCurrent(mSongs);
-        choosePosition = mSongManager.getPositionCurrent();
-        Log.d("XXX", "HomeActivity --- onStart: "+choosePosition);
-
+            choosePosition = mSongManager.getPositionCurrent();
+            Log.d("XXX", "HomeActivity --- onStart: " + choosePosition);
+        };
     }
 
     @Override
@@ -403,7 +395,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.btn_title_media:
                 Log.d("XXX", "btn_title_media: "+choosePosition);
                 Intent intent = new Intent(HomeActivity.this, PlayActivity.class);
-                BundleUtils.Builder builder = new BundleUtils.Builder();
+                Utils.Builder builder = new Utils.Builder();
                 builder.putString(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
                 builder.putInteger(Constants.INTENT.CHOOSE_POS, choosePosition);
 

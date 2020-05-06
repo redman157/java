@@ -117,12 +117,13 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
                 if (mSongModels == null){
                     mSongModels = musicMain;
                 }
-                mMusicAdapter = new MusicAdapter(getContext(), mDlOptionMusic);
+                mMusicAdapter = new MusicAdapter(getContext(), mDlOptionMusic, mSongModels);
+                mMusicAdapter.notifyDataSetChanged();
                 int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, -1);
                 for (int i = 0; i < mSongModels.size(); i++) {
                     if (mSongModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
                         mMusicAdapter.setPosition(i);
-                        mMusicAdapter.setListMusic(mSongModels);
+//                        mMusicAdapter.setListMusic(mSongModels);
                         mMusicAdapter.setOnClick(onClickItemListener);
                         DialogUtils.showSelectSong(getContext(),mMusicAdapter, i);
                     }

@@ -5,22 +5,29 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activities.SongActivity">
-
-    <androidx.appcompat.widget.Toolbar
-        android:layout_alignParentTop="true"
-        android:id="@+id/tb_SongActivity"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:gravity="center"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:animateLayoutChanges="true"
-        android:theme="@style/CustomToolBarStyle"
-        app:popupTheme="@style/CustomPopupStyle"/>
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_alignParentTop="true"
+            android:id="@+id/tb_SongActivity"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:animateLayoutChanges="true"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:theme="@style/CustomToolBarStyle"
+            app:popupTheme="@style/CustomPopupStyle"/>
+    </com.google.android.material.appbar.AppBarLayout>
     <ScrollView
-        android:layout_below="@id/tb_SongActivity"
+        android:layout_below="@id/appBarLayout"
         android:layout_above="@id/ll_play_media"
         android:overScrollMode="always"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:nestedScrollingEnabled="true"
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -39,6 +46,7 @@
                     android:id="@+id/img_AlbumId"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_scrollFlags="scroll|enterAlwaysCollapsed|exitUntilCollapsed"
                     android:adjustViewBounds="true"
                     android:scaleType="centerCrop"
                     tools:ignore="NestedWeights" />
@@ -52,16 +60,15 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rc_recently_add"
+
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:nestedScrollingEnabled="true" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-
     <LinearLayout
-        android:visibility="gone"
+
         android:layout_alignParentBottom="true"
         android:id="@+id/ll_play_media"
         android:layout_width="match_parent"

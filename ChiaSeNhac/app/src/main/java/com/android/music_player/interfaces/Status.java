@@ -7,6 +7,8 @@ public enum Status {
     PAUSING,
     COMPLETE,
     NEXT,
+    NEXTING,
+    PREVIOUSING,
     PREVIOUS,
     STOPPED,
     STOPPING

@@ -2,6 +2,7 @@ package com.android.music_player.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.Toast;
 
 import com.android.music_player.R;
@@ -12,7 +13,15 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class Utils {
-    private static BundleUtils.Builder builder;
+    private static Utils.Builder builder;
+    public Utils(Bundle bundle){
+        this.bundle = bundle;
+    }
+
+    public Utils(Intent intent){
+        bundle = intent.getExtras();
+    }
+
     public static String formatTime(int currentDuration){
         TimeZone tz = TimeZone.getTimeZone("UTC");
         SimpleDateFormat df = new SimpleDateFormat("mm : ss", Locale.getDefault());
@@ -56,7 +65,7 @@ public class Utils {
     public static void PlayMediaService(Context context,String type, int pos){
         Intent iPlay = new Intent(context, MediaPlayerService.class);
         iPlay.setAction(Constants.ACTION.PLAY);
-        builder = new BundleUtils.Builder();
+        builder = new Utils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
         iPlay.putExtras(builder.generate().getBundle());
@@ -66,7 +75,7 @@ public class Utils {
     public static void PauseMediaService(Context context, String type, int pos){
         Intent iPause = new Intent(context ,MediaPlayerService.class);
         iPause.setAction(Constants.ACTION.PAUSE);
-        builder = new BundleUtils.Builder();
+        builder = new Utils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
         iPause.putExtras(builder.generate().getBundle());
@@ -77,7 +86,7 @@ public class Utils {
                                           String type, int pos){
         Intent iPlay = new Intent(context, MediaPlayerService.class);
         iPlay.setAction(Constants.ACTION.IS_PLAY);
-        builder = new BundleUtils.Builder();
+        builder = new Utils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
         iPlay.putExtras(builder.generate().getBundle());
@@ -87,7 +96,7 @@ public class Utils {
     public static void NextMediaService(Context context, String type, int pos){
         Intent iNext = new Intent(context, MediaPlayerService.class);
         iNext.setAction(Constants.ACTION.NEXT);
-        builder = new BundleUtils.Builder();
+        builder = new Utils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
         iNext.putExtras(builder.generate().getBundle());
@@ -97,7 +106,7 @@ public class Utils {
     public static void PreviousMediaService(Context context, String type, int pos){
         Intent iPrevious = new Intent(context, MediaPlayerService.class);
         iPrevious.setAction(Constants.ACTION.PREVIOUS);
-        builder = new BundleUtils.Builder();
+        builder = new Utils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
         iPrevious.putExtras(builder.generate().getBundle());
@@ -107,7 +116,7 @@ public class Utils {
     public static void StopMediaService(Context context, String type, int pos){
         Intent iStop = new Intent(context, MediaPlayerService.class);
         iStop.setAction(Constants.ACTION.STOP);
-        builder = new BundleUtils.Builder();
+        builder = new Utils.Builder();
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
         iStop.putExtras(builder.generate().getBundle());
@@ -118,7 +127,7 @@ public class Utils {
         Intent iRepeat = new Intent(context, MediaPlayerService.class);
         iRepeat.setAction(Constants.ACTION.REPEAT);
 
-        builder = new BundleUtils.Builder();
+        builder = new Utils.Builder();
         builder.putBoolean(Constants.INTENT.IS_REPEAT, isRepeat);
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
@@ -129,7 +138,7 @@ public class Utils {
     public static void ShuffleMediaService(Context context ,boolean isShuffle,String type, int pos){
         Intent inShuffle = new Intent(context, MediaPlayerService.class);
         inShuffle.setAction(Constants.ACTION.SHUFFLE);
-        builder = new BundleUtils.Builder();
+        builder = new Utils.Builder();
         builder.putBoolean(Constants.INTENT.IS_SHUFFLE, isShuffle);
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
@@ -140,7 +149,7 @@ public class Utils {
     public static void ContinueMediaService(Context context,String type, int pos, int seekPos){
         Intent iSeekChoose = new Intent(context, MediaPlayerService.class);
         iSeekChoose.setAction(Constants.ACTION.SEEK);
-        builder = new BundleUtils.Builder();
+        builder = new Utils.Builder();
         builder.putInteger(Constants.INTENT.POSITION_SONG, seekPos);
         builder.putString(Constants.INTENT.TYPE, type);
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
@@ -148,4 +157,67 @@ public class Utils {
         context.startService(iSeekChoose);
     }
 
+    // custom bundle
+    private Bundle bundle;
+
+
+    public static class Builder{
+        private Bundle bundle;
+        public Builder (){
+            bundle = new Bundle();
+        }
+        public Utils.Builder putString(String key, String value){
+            bundle.putString(key, value);
+            return this;
+        }
+
+        public Utils.Builder putBoolean(String key, boolean value){
+            bundle.putBoolean(key, value);
+            return this;
+        }
+
+        public Utils.Builder putInteger(String key, int value){
+            bundle.putInt(key, value);
+            return this;
+        }
+
+        public Utils generate(){
+            return new Utils(bundle);
+        }
+    }
+
+    public Bundle getBundle() {
+        return bundle;
+    }
+
+    public String getString(String key, String defaultValue){
+        if (bundle!= null) {
+            return bundle.getString(key);
+        }else {
+            return defaultValue;
+        }
+    }
+
+    public void clear(){
+        if(bundle!=null) {
+            bundle.clear();
+
+        }
+    }
+
+    public int getInteger(String key, int defaultValue){
+        if (bundle!= null) {
+            return bundle.getInt(key);
+        }else {
+            return defaultValue;
+        }
+    }
+
+    public boolean getBoolean(String key, boolean defaultValue){
+        if (bundle!= null) {
+            return bundle.getBoolean(key);
+        }else {
+            return defaultValue;
+        }
+    }
 }

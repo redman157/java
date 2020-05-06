@@ -27,13 +27,14 @@ import java.util.Locale;
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> {
     private Context mContext;
     private SongModel mSongModel;
-    private ArrayList<SongModel> mListMusic;
+    private ArrayList<SongModel> songs;
     private ImageUtils mImageUtils;
     private int mPossitionMusic;
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
     private int mOptionMusic;
     private Dialog dialog;
-    public MusicAdapter(Context context, Dialog dialog) {
+    public MusicAdapter(Context context, Dialog dialog,ArrayList<SongModel> songs) {
+        this.songs = songs;
         mContext = context;
         this.dialog = dialog;
         mImageUtils = ImageUtils.getInstance(context);
@@ -47,11 +48,11 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
         return mOptionMusic;
     }
     public ArrayList<SongModel> getListMusic() {
-        return mListMusic;
+        return songs;
     }
 
-    public void setListMusic(ArrayList<SongModel> mListMusic) {
-        this.mListMusic = mListMusic;
+    public void setListMusic(ArrayList<SongModel> songs) {
+        this.songs = songs;
     }
 
     private OnClickItemListener onClickItemListener;
@@ -70,7 +71,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mListMusic.size();
+        return songs.size();
     }
 
     @Override

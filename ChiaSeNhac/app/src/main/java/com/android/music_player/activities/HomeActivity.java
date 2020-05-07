@@ -49,7 +49,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private String tag = "BBB";
     private BottomNavigationView mNavigationView;
     private ViewPagerAdapter mViewPagerAdapter;
-    private TabLayout tab_HomeActivity;
+    private TabLayout mTabHomeActivity;
     private ImageUtils imageUtils;
     private View mViewPlayMedia;
     public ImageView mImgMedia;
@@ -176,7 +176,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     public void setSongCurrent(ArrayList<SongModel> song){
-
         if (mSongManager.getPositionCurrent() == -1){
             mTextArtist.setText(song.get(0).getArtist());
             mTextTitle.setText(song.get(0).getSongName());
@@ -202,18 +201,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         viewPager.addOnPageChangeListener(this);
         viewPager.setOnClickListener(this);
 
-        tab_HomeActivity.setupWithViewPager(viewPager);
+        mTabHomeActivity.setupWithViewPager(viewPager);
 
-        for (int i = 0; i < tab_HomeActivity.getTabCount(); i++) {
-            tab_HomeActivity.getTabAt(i).setCustomView(mViewPagerAdapter.getTabView(i));
+        for (int i = 0; i < mTabHomeActivity.getTabCount(); i++) {
+            mTabHomeActivity.getTabAt(i).setCustomView(mViewPagerAdapter.getTabView(i));
         }
-        tab_HomeActivity.addOnTabSelectedListener(this);
+        mTabHomeActivity.addOnTabSelectedListener(this);
     }
 
-
-
     private void initView() {
-        tab_HomeActivity = findViewById(R.id.tab_HomeActivity);
+        mTabHomeActivity = findViewById(R.id.tab_HomeActivity);
         mLlPlayMedia = findViewById(R.id.ll_play_media);
         mToolBar = findViewById(R.id.tb_HomeActivity);
         mViewPlayMedia = findViewById(R.id.layout_play_media);
@@ -253,27 +250,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
 
     }
-
-    /*private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            if (mLlPlayMedia.getVisibility() == View.VISIBLE){
-                mLlPlayMedia.setVisibility(View.GONE);
-            }
-            switch (menuItem.getItemId()){
-
-                case R.id.navigation_home:
-                    mViewPager_Home.setCurrentItem(0);
-                    return true;
-                case R.id.navigation_library:
-                    mViewPager_Home.setCurrentItem(1);
-                    return true;
-
-            }
-            return false;
-        }
-    };*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -470,8 +446,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
 
-        for (int i = 0 ; i < tab_HomeActivity.getTabCount();i ++){
-            View view = tab_HomeActivity.getTabAt(i).getCustomView();
+        for (int i = 0; i < mTabHomeActivity.getTabCount(); i ++){
+            View view = mTabHomeActivity.getTabAt(i).getCustomView();
             TextView title = view.findViewById(R.id.item_tl_text_home);
             int color = (i == tab.getPosition()) ? getResources().getColor(R.color.orange) :
                     getResources().getColor(R.color.white);
@@ -481,7 +457,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onTabUnselected(TabLayout.Tab tab) {
-      /*  View view = tab_HomeActivity.getTabAt(i).getCustomView();
+      /*  View view = mTabHomeActivity.getTabAt(i).getCustomView();
         TextView title = view.findViewById(R.id.item_tl_text_home);
         ImageView icon = view.findViewById(R.id.item_tl_img_home);
         int color = (i == tab.getPosition()) ? getResources().getColor(R.color.orange) :

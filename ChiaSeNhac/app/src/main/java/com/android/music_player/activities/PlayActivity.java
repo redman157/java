@@ -179,9 +179,9 @@ public class PlayActivity extends BaseActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
-                Intent iBackMusic = new Intent(this, HomeActivity.class);
 
+                Intent iBackMusic = new Intent(this, HomeActivity.class);
+                finish();
                 startActivity(iBackMusic);
                 overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
                 break;

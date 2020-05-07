@@ -27,6 +27,7 @@
             app:popupTheme="@style/CustomPopupStyle"/>
 
         <com.google.android.material.tabs.TabLayout
+            android:layout_alignBottom="@id/ll_vp_home"
             android:id="@+id/tab_HomeActivity"
             android:layout_width="match_parent"
             app:tabIndicatorColor="@color/orange"
@@ -38,8 +39,7 @@
             app:tabMode="fixed"
             app:tabGravity="fill"
             android:layout_gravity="center"
-            android:layout_height="wrap_content">
-        </com.google.android.material.tabs.TabLayout>
+            android:layout_height="wrap_content"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <RelativeLayout
@@ -47,41 +47,38 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_height="match_parent">
         <LinearLayout
-            android:layout_above="@id/ll_play_media"
+            android:id="@+id/ll_vp_home"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/vp_Home"
-                android:layout_above="@id/ll_play_media"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"/>
+            <LinearLayout
+                android:id="@+id/ll_play_media"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:orientation="vertical">
 
-
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white" />
+                <include
+                    layout="@layout/layout_play_media"
+                    android:id="@+id/layout_play_media"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white" />
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_alignParentBottom="true"
-            android:id="@+id/ll_play_media"
 
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/black"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/white" />
-            <include
-                layout="@layout/layout_play_media"
-                android:id="@+id/layout_play_media"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/white" />
-        </LinearLayout>
     </RelativeLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -159,8 +159,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
 
-
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction() != null) {

@@ -1,7 +1,10 @@
 package com.android.music_player.activities;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,11 +24,9 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.IconView;
 import com.android.music_player.R;
 import com.android.music_player.adapters.SongsAdapter;
 import com.android.music_player.interfaces.OnClickItemListener;
@@ -34,6 +35,7 @@ import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
+import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -41,9 +43,9 @@ import java.util.ArrayList;
 public class SongActivity extends AppCompatActivity implements
         View.OnScrollChangeListener, View.OnClickListener, OnClickItemListener {
     private LinearLayout mLl_Play_Media;
-    private IconView mImgAlbumId;
+    private ImageView mImgAlbumId;
     private RecyclerView mRcSongs;
-    private ScrollView mScrollView;
+
     private SongsAdapter mSongsAdapter;
     private SharedPrefsUtils mSharedPrefsUtils;
     private String type;
@@ -52,16 +54,69 @@ public class SongActivity extends AppCompatActivity implements
     private Toolbar mToolBar;
     private Button mBtnTitle;
     private View mViewLayoutPlay;
-
-    private ImageButton mBtnPlay;
+    private int choosePosition;
+    private ImageButton mBtnPlayPause;
     private ImageView mImgMedia;
     private SongManager mSongManager;
-
+    private ActionBar actionBar;
+    private boolean receiverRegistered;
+    private boolean isPlaying;
     @Override
     protected void onStart() {
         super.onStart();
+        try {
+            if (!receiverRegistered) {
+                registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
+                registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
+                receiverRegistered = true;
+            }
+        }finally {
+            mSongManager = SongManager.getInstance();
+            mSongManager.setContext(this);
+            mSongs = mSongManager.getCurrentSongs();
 
+            choosePosition = mSongManager.getPositionCurrent();
+            Log.d("XXX", "HomeActivity --- onStart: " + choosePosition);
+        }
     }
+
+
+    private BroadcastReceiver brPlayPauseActivity = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent serviceIntent) {
+            // activity gửi broadcast từ service >> activity
+            boolean isPlayingNoti =
+                    serviceIntent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION,
+                            false);
+            if (isPlayingNoti) {
+                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
+
+            } else {
+                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
+            }
+            setSongCurrent(mSongs);
+        }
+    };
+
+    private BroadcastReceiver brIsPlayService = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // activity gửi broadcast xuống service
+            boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
+
+            if (isPlayingMedia) {
+                Log.d("XXX", "SongActivity --- brIsPlayService:" +true);
+                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                isPlaying = true;
+                Utils.PauseMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent() );
+            } else {
+                Log.d("XXX", "SongActivity --- brIsPlayService:" +false);
+                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+                isPlaying = false;
+                Utils.PlayMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent());
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,16 +131,34 @@ public class SongActivity extends AppCompatActivity implements
 
         mSongs = mSongManager.getCurrentSongs(type);
         setSupportActionBar(mToolBar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.app_name);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        mTextArtist.setText(mSongs.get(mSongManager.getPositionCurrent()).getArtist());
-        mTextTitle.setText(mSongs.get(mSongManager.getPositionCurrent()).getSongName());
-        ImageUtils.getInstance(this).getSmallImageByPicasso(mSongs.get(mSongManager.getPositionCurrent()).getAlbumID(), mImgMedia);
-        setTypeSong(type);
+
+//        setTypeSong(type);
+        setSongCurrent(mSongs);
         assignView();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(brPlayPauseActivity);
+        this.unregisterReceiver(brIsPlayService);
+    }
+
+    public void setSongCurrent(ArrayList<SongModel> song){
+        if (mSongManager.getPositionCurrent() == -1){
+            mTextArtist.setText(song.get(0).getArtist());
+            mTextTitle.setText(song.get(0).getSongName());
+            ImageUtils.getInstance(this).getSmallImageByPicasso(song.get(0).getAlbumID(), mImgMedia);
+        }else {
+            mTextArtist.setText(song.get(SongManager.getInstance().getPositionCurrent()).getArtist());
+            mTextTitle.setText(song.get(SongManager.getInstance().getPositionCurrent()).getSongName());
+            ImageUtils.getInstance(this).getSmallImageByPicasso(song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
+        }
+
     }
 
     @Override
@@ -247,13 +320,12 @@ public class SongActivity extends AppCompatActivity implements
         mTextArtist = mViewLayoutPlay.findViewById(R.id.text_artists_media);
         mTextTitle = mViewLayoutPlay.findViewById(R.id.text_title_media);
         mImgMedia = mViewLayoutPlay.findViewById(R.id.img_albumArt_media);
-        mBtnPlay = mViewLayoutPlay.findViewById(R.id.imbt_Play_media);
+        mBtnPlayPause = mViewLayoutPlay.findViewById(R.id.imbt_Play_media);
         mBtnTitle = mViewLayoutPlay.findViewById(R.id.btn_title_media);
 
         mLl_Play_Media = findViewById(R.id.ll_play_media);
         mRcSongs = findViewById(R.id.rc_recently_add);
         mImgAlbumId = findViewById(R.id.img_AlbumId);
-        mScrollView = findViewById(R.id.scrollView);
         ImageUtils.getInstance(this).getSmallImageByPicasso(
                 SongManager.getInstance().newSongs().get(0).getAlbumID(),
                 mImgAlbumId);
@@ -261,7 +333,7 @@ public class SongActivity extends AppCompatActivity implements
 
     private void assignView() {
         mBtnTitle.setOnClickListener(this);
-        mBtnPlay.setOnClickListener(this);
+        mBtnPlayPause.setOnClickListener(this);
         mSongsAdapter = new SongsAdapter(this, mSongs, type);
         mSongsAdapter.setLimit(false);
         mSongsAdapter.OnClickItem(this);
@@ -272,16 +344,16 @@ public class SongActivity extends AppCompatActivity implements
         mRcSongs.setAdapter(mSongsAdapter);
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+     /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mScrollView.setOnScrollChangeListener(this);
-        }
+        }*/
         mLl_Play_Media.setOnClickListener(this);
 
     }
 
     @Override
     public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-        int x = scrollY - oldScrollY;
+      /*  int x = scrollY - oldScrollY;
         if (x > 0) {
             //scroll up
             Log.d("RecentlyAllMusicLog", "Scrolls Up");
@@ -294,25 +366,35 @@ public class SongActivity extends AppCompatActivity implements
 
         } else {
 
-        }
+        }*/
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_title_media:
-                Intent playMedia = new Intent(this, PlayActivity.class);
-                playMedia.putExtra(Constants.INTENT.CHOOSE_POS,
-                        mSongManager.getPositionCurrent());
-                playMedia.putExtra(Constants.INTENT.TYPE,
-                        mSongManager.getTypeCurrent());
-                startActivity(playMedia);
+                Intent intent = new Intent(SongActivity.this, PlayActivity.class);
+                Utils.Builder builder = new Utils.Builder();
+                builder.putString(Constants.INTENT.TYPE, type);
+                builder.putInteger(Constants.INTENT.CHOOSE_POS, choosePosition);
+
+                if (mSongManager.isPlayCurrentSong(choosePosition)) {
+                    Log.d("BBB", "HomeActivity --- btn_title_media: true");
+                    builder.putBoolean(Constants.INTENT.SONG_CONTINUE, true);
+                }else {
+                    Log.d("BBB", "HomeActivity --- btn_title_media: false");
+                    Utils.PauseMediaService(this,  Constants.VALUE.NEW_SONGS, choosePosition);
+                    builder.putBoolean(Constants.INTENT.SONG_CONTINUE, false);
+                }
+                intent.putExtras(builder.generate().getBundle());
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+                builder.generate().clear();
                 break;
             case R.id.imbt_Play_media:
+                Utils.isPlayMediaService(this, mSongManager.getTypeCurrent(),mSongManager.getPositionCurrent());
                 break;
         }
-
-
     }
 
     @Override
@@ -322,6 +404,7 @@ public class SongActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(String type, int position) {
+        choosePosition = position;
         mSongManager.setPositionCurrent(position);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mSongs.get(position).getAlbumID());
         mSongManager.setTypeCurrent(type);

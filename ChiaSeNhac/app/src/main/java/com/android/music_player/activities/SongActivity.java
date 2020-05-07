@@ -21,6 +21,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,6 +52,7 @@ public class SongActivity extends AppCompatActivity implements
     private Toolbar mToolBar;
     private Button mBtnTitle;
     private View mViewLayoutPlay;
+
     private ImageButton mBtnPlay;
     private ImageView mImgMedia;
     private SongManager mSongManager;

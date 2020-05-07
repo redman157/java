@@ -1,5 +1,6 @@
 package com.android.music_player.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,17 +36,20 @@ import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton;
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener, ViewPager.OnPageChangeListener{
+public class HomeActivity extends BaseActivity implements View.OnClickListener,
+        ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener{
     private ViewPager mViewPager_Home;
 
     private String tag = "BBB";
     private BottomNavigationView mNavigationView;
     private ViewPagerAdapter mViewPagerAdapter;
+    private TabLayout tab_HomeActivity;
     private ImageUtils imageUtils;
     private View mViewPlayMedia;
     public ImageView mImgMedia;
@@ -197,9 +201,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         viewPager.setCurrentItem(0);
         viewPager.addOnPageChangeListener(this);
         viewPager.setOnClickListener(this);
+
+        tab_HomeActivity.setupWithViewPager(viewPager);
+
+        for (int i = 0; i < tab_HomeActivity.getTabCount(); i++) {
+            tab_HomeActivity.getTabAt(i).setCustomView(mViewPagerAdapter.getTabView(i));
+        }
+        tab_HomeActivity.addOnTabSelectedListener(this);
     }
 
+
+
     private void initView() {
+        tab_HomeActivity = findViewById(R.id.tab_HomeActivity);
         mLlPlayMedia = findViewById(R.id.ll_play_media);
         mToolBar = findViewById(R.id.tb_HomeActivity);
         mViewPlayMedia = findViewById(R.id.layout_play_media);
@@ -209,11 +223,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mBtnTitle = mViewPlayMedia.findViewById(R.id.btn_title_media);
         mImgMedia = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
 
-        mNavigationView = findViewById(R.id.nav_view);
-        mNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+      /*  mNavigationView = findViewById(R.id.nav_view);
+        mNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);*/
 
         mViewPager_Home = findViewById(R.id.vp_Home);
         setupViewPager(mViewPager_Home);
+
 
         if (MediaPlayerService.mMediaPlayer != null) {
             if (MediaPlayerService.mMediaPlayer.isPlaying()) {
@@ -239,7 +254,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+    /*private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -258,7 +273,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
             return false;
         }
-    };
+    };*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -437,11 +452,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }*/
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onPageSelected(int position) {
-        mNavigationView.getMenu().getItem(currentViewPagerPosition).setChecked(false);
+     /*   mNavigationView.getMenu().getItem(currentViewPagerPosition).setChecked(false);
         mNavigationView.getMenu().getItem(position).setChecked(true);
-        currentViewPagerPosition = position;
+        currentViewPagerPosition = position;*/
+
     }
 
     @Override
@@ -450,4 +467,31 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
 
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+
+        for (int i = 0 ; i < tab_HomeActivity.getTabCount();i ++){
+            View view = tab_HomeActivity.getTabAt(i).getCustomView();
+            TextView title = view.findViewById(R.id.item_tl_text_home);
+            int color = (i == tab.getPosition()) ? getResources().getColor(R.color.orange) :
+                    getResources().getColor(R.color.white);
+            title.setTextColor(color);
+        }
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+      /*  View view = tab_HomeActivity.getTabAt(i).getCustomView();
+        TextView title = view.findViewById(R.id.item_tl_text_home);
+        ImageView icon = view.findViewById(R.id.item_tl_img_home);
+        int color = (i == tab.getPosition()) ? getResources().getColor(R.color.orange) :
+                getResources().getColor(R.color.white);
+        title.setTextColor(color);
+        icon.setColorFilter(color);*/
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
 }

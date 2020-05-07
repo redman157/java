@@ -17,21 +17,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.activities.SongActivity;
+import com.android.music_player.adapters.HomeFragmentAdapter;
 import com.android.music_player.adapters.SongsAdapter;
 import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.services.MediaPlayerService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class HomeFragment extends Fragment implements OnClickItemListener,
         View.OnClickListener, OnChangePlayListListener {
@@ -44,8 +42,7 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
     private ImageUtils mImageUtils;
     private String type;
-
-
+    private RecyclerView rc_main;
     private SharedPrefsUtils mSharedPrefsUtils;
     private ArrayList<SongModel> mSongs;
     private TextView text_Player_1, text_Player_2, text_Player_Songs;
@@ -53,7 +50,7 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
     private  ArrayList<String> mMostPlayList;
     private String play_list_1, play_list_2;
     private OnChangePlayListListener onChangePlayListListener;
-
+    private HomeFragmentAdapter adapter;
     public void setOnChangePlayListListener(OnChangePlayListListener onChangePlayListListener){
         this.onChangePlayListListener = onChangePlayListListener;
     }
@@ -74,17 +71,17 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
 
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
 
-        mSongManager = SongManager.getInstance();
-        mSongManager.setContext(getContext());
-
-        mMostPlayList = mSongManager.getPlayListMost();
-        mAdderAdapter = new SongsAdapter(getContext(),
-                SongManager.getInstance().newSongs(),
-                Constants.VALUE.NEW_SONGS);
-        mAdderAdapter.setLimit(true);
-        mAdderAdapter.notifyDataSetChanged();
-        mAdderAdapter.OnClickItem(this);
-        mNewSongs = SongManager.getInstance().newSongs();
+//        mSongManager = SongManager.getInstance();
+//        mSongManager.setContext(getContext());
+//
+//        mMostPlayList = mSongManager.getPlayListMost();
+//        mAdderAdapter = new SongsAdapter(getContext(),
+//                SongManager.getInstance().newSongs(),
+//                Constants.VALUE.NEW_SONGS);
+//        mAdderAdapter.setLimit(true);
+//        mAdderAdapter.notifyDataSetChanged();
+//        mAdderAdapter.OnClickItem(this);
+//        mNewSongs = SongManager.getInstance().newSongs();
     }
 
     @Nullable
@@ -96,13 +93,17 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(getContext());
         initView();
+        adapter = new HomeFragmentAdapter(getActivity());
+        rc_main.setLayoutManager(new LinearLayoutManager(getContext()));
+        rc_main.setAdapter(adapter);
 
-        assignView();
 
-        mRc_Recently_Add.setAdapter(mAdderAdapter);
-        mRc_Recently_Add.setNestedScrollingEnabled(false);
-        mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(getContext(),
-                LinearLayoutManager.VERTICAL, false));
+//        assignView();
+
+//        mRc_Recently_Add.setAdapter(mAdderAdapter);
+//        mRc_Recently_Add.setNestedScrollingEnabled(false);
+//        mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(getContext(),
+//                LinearLayoutManager.VERTICAL, false));
 
         return view;
     }
@@ -114,7 +115,8 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
     }
 
     private void initView(){
-        text_Player_Songs = view.findViewById(R.id.text_Player_Songs);
+        rc_main = view.findViewById(R.id.rc_home_fragment);
+       /* text_Player_Songs = view.findViewById(R.id.text_Player_Songs);
         mRc_Recently_Add = view.findViewById(R.id.rc_recently_add);
         mImg_Player_Songs = view.findViewById(R.id.img_Player_Songs);
         mImg_Player_1 = view.findViewById(R.id.img_Player_1);
@@ -124,7 +126,7 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
         mImg_Shuffle_All = view.findViewById(R.id.img_Shuffle_All);
         mBtnViewAll = view.findViewById(R.id.btn_ViewAll);
         text_Player_1 = view.findViewById(R.id.text_Player_1);
-        text_Player_2 = view.findViewById(R.id.text_Player_2);
+        text_Player_2 = view.findViewById(R.id.text_Player_2);*/
     }
 
     private void assignView(){
@@ -165,32 +167,32 @@ public class HomeFragment extends Fragment implements OnClickItemListener,
         // set switch vị trí và type music cho play activity chạy
         Log.d("XXX", "((HomeActivity)getActivity()).choosePosition: "+position);
 
-        if (position != SongManager.getInstance().getPositionCurrent()) {
-            ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-            ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = false;
-        }else {
-            if (MediaPlayerService.mMediaPlayer!= null) {
-                if (MediaPlayerService.mMediaPlayer.isPlaying()) {
-                    ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                    ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
-                } else {
-                    ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+//        if (position != SongManager.getInstance().getPositionCurrent()) {
+//            ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+//            ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = false;
+//        }else {
+//            if (MediaPlayerService.mMediaPlayer!= null) {
+//                if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+//                    ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
 //                    ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
-                }
-            }else {
-                ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-//                ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
-            }
-            /*((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-            ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;*/
-        }
-        mSongManager.setTypeCurrent(type);
-        ((HomeActivity)getActivity()).mLlPlayMedia.setVisibility(View.VISIBLE);
-        ((HomeActivity)getActivity()).choosePosition = position;
-        ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getSongName());
-        ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
-        ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
-                mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);
+//                } else {
+//                    ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+////                    ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
+//                }
+//            }else {
+//                ((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+////                ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
+//            }
+//            /*((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+//            ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;*/
+//        }
+//        mSongManager.setTypeCurrent(type);
+//        ((HomeActivity)getActivity()).mLlPlayMedia.setVisibility(View.VISIBLE);
+//        ((HomeActivity)getActivity()).choosePosition = position;
+//        ((HomeActivity)getActivity()).mTextTitle.setText(mNewSongs.get(position).getSongName());
+//        ((HomeActivity)getActivity()).mTextArtist.setText(mNewSongs.get(position).getArtist());
+//        ImageUtils.getInstance(getContext()).getBitmapImageByPicasso(
+//                mNewSongs.get(position).getAlbumID(),((HomeActivity)getActivity()).mImgMedia);
     }
 
 

@@ -85,7 +85,7 @@ public class PlayActivity extends BaseActivity
                 receiverRegistered = true;
             }
         }finally {
-            Utils.isPlayMediaService(this, type, position);
+
         }
 
     }
@@ -138,13 +138,13 @@ public class PlayActivity extends BaseActivity
 
         initView();
         getBundle();
-
         if(isContinue){
 
         }else {
             mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG, 0);
             Utils.isPlayMediaService(this, type, position);
         }
+
         //save current song
 
         setupToolBar();
@@ -180,9 +180,9 @@ public class PlayActivity extends BaseActivity
         switch (item.getItemId()) {
             case android.R.id.home:
 
-                Intent iBackMusic = new Intent(this, HomeActivity.class);
+//                Intent iBackMusic = new Intent(this, HomeActivity.class);
                 finish();
-                startActivity(iBackMusic);
+//                startActivity(iBackMusic);
                 overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
                 break;
             case R.id.action_drive_mode:
@@ -235,6 +235,8 @@ public class PlayActivity extends BaseActivity
             } else {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
             }
+        }else {
+            mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
         }
     }
 
@@ -494,6 +496,7 @@ public class PlayActivity extends BaseActivity
     }
 
     public void updateButtonPlay(boolean isPlaying){
+        Log.d("BBB", "PlayActivity --- updateButtonPlay: "+isPlaying);
         if (isPlaying){
             mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
         }else {

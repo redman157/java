@@ -135,6 +135,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         // cần tao 1 broad cast để play
         initMediaPlayer();
         initMediaSession();
+
+        registerReceiver(brNoisyReceiver, new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
         registerReceiver(brResetMusic,  new IntentFilter(Constants.ACTION.BROADCAST_RESET_AUDIO));
         registerReceiver(brStopMusic, new IntentFilter(Constants.ACTION.BROADCAST_STOP_AUDIO));
         registerReceiver(brCloseNotification, new IntentFilter(Constants.ACTION.CLOSE_NOTIFICATION));
@@ -152,7 +154,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             removeAudioFocus();
         }
 
-
+        unregisterReceiver(brNoisyReceiver);
         unregisterReceiver(brResetMusic);
         unregisterReceiver(brStopMusic);
         unregisterReceiver(brCloseNotification);
@@ -397,12 +399,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 case Constants.ACTION.IS_PLAY:
                     if (mSongs != null && mSongs.size() > 0) {
                         if(status == PLAYED) {
-                            if (mMediaPlayer.isPlaying()) {
+                            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
                                 iCheckPlayActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, true);
                                 sendBroadcast(iCheckPlayActivity);
                             }
                         }else if (status == PAUSED){
-                            if (!mMediaPlayer.isPlaying()) {
+                            if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
                                 iCheckPlayActivity.putExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
                                 sendBroadcast(iCheckPlayActivity);
                             }
@@ -1021,6 +1023,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
         return PendingIntent.getBroadcast(this, 0, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     }
+
+    private BroadcastReceiver brNoisyReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if( mMediaPlayer != null && mMediaPlayer.isPlaying() ) {
+                mMediaPlayer.pause();
+            }
+        }
+    };
 
     private BroadcastReceiver brCloseNotification = new BroadcastReceiver() {
         @Override

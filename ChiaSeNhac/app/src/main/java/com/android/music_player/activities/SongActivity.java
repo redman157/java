@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +26,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.music_player.IconView;
 import com.android.music_player.R;
 import com.android.music_player.adapters.SongsAdapter;
 import com.android.music_player.interfaces.OnClickItemListener;
@@ -40,10 +40,9 @@ import com.android.music_player.utils.Utils;
 import java.util.ArrayList;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
-public class SongActivity extends AppCompatActivity implements
-        View.OnScrollChangeListener, View.OnClickListener, OnClickItemListener {
+public class SongActivity extends AppCompatActivity implements View.OnClickListener, OnClickItemListener {
     private LinearLayout mLl_Play_Media;
-    private ImageView mImgAlbumId;
+    private IconView mImgAlbumId;
     private RecyclerView mRcSongs;
 
     private SongsAdapter mSongsAdapter;
@@ -53,14 +52,18 @@ public class SongActivity extends AppCompatActivity implements
     private TextView mTextArtist, mTextTitle;
     private Toolbar mToolBar;
     private Button mBtnTitle;
-    private View mViewLayoutPlay;
+
     private int choosePosition;
     private ImageButton mBtnPlayPause;
     private ImageView mImgMedia;
     private SongManager mSongManager;
     private ActionBar actionBar;
     private boolean receiverRegistered;
+    private View collapsingProfileHeaderView;
     private boolean isPlaying;
+    private ImageView profileImage;
+    private TextView profileName, profileArtist, profileAlbum;
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -130,13 +133,11 @@ public class SongActivity extends AppCompatActivity implements
         type = getIntent().getStringExtra(Constants.INTENT.TYPE_MUSIC);
 
         mSongs = mSongManager.getCurrentSongs(type);
-        setSupportActionBar(mToolBar);
 
+        setSupportActionBar(mToolBar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-
-//        setTypeSong(type);
         setSongCurrent(mSongs);
         assignView();
     }
@@ -153,10 +154,23 @@ public class SongActivity extends AppCompatActivity implements
             mTextArtist.setText(song.get(0).getArtist());
             mTextTitle.setText(song.get(0).getSongName());
             ImageUtils.getInstance(this).getSmallImageByPicasso(song.get(0).getAlbumID(), mImgMedia);
+            ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
+                    mSongs.get(0).getAlbumID(),
+                    profileImage);
+            profileName.setText(mSongs.get(0).getSongName());
+            profileArtist.setText(mSongs.get(0).getArtist());
+            profileAlbum.setText(mSongs.get(0).getAlbum());
         }else {
             mTextArtist.setText(song.get(SongManager.getInstance().getPositionCurrent()).getArtist());
             mTextTitle.setText(song.get(SongManager.getInstance().getPositionCurrent()).getSongName());
             ImageUtils.getInstance(this).getSmallImageByPicasso(song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
+
+            ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
+                    mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(),
+                    profileImage);
+            profileName.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
+            profileArtist.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getArtist());
+            profileAlbum.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbum());
         }
 
     }
@@ -289,39 +303,23 @@ public class SongActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    private void setTypeSong(String type) {
 
-        int position = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, 0);
-        if (mSongManager.getAllPlaylistDB().searchPlayList(type)) {
-
-            mSongs = mSongManager.getAllSongToPlayList(type);
-            mTextArtist.setText(mSongs.get(0).getArtist());
-            mTextTitle.setText(mSongs.get(0).getSongName());
-            ImageUtils.getInstance(this).getSmallImageByPicasso(mSongs.get(0).getAlbumID(), mImgMedia);
-        } else {
-
-            if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
-                mSongs = SongManager.getInstance().newSongs();
-            } else if (type.equals(Constants.VALUE.ALL_SONGS)) {
-                mSongs = SongManager.getInstance().allSortSongs();
-            } else if (type.equals("")) {
-                mSongs = SongManager.getInstance().newSongs();
-            }
-            mTextArtist.setText(mSongs.get(position).getArtist());
-            mTextTitle.setText(mSongs.get(position).getSongName());
-            ImageUtils.getInstance(this).getSmallImageByPicasso(mSongs.get(position).getAlbumID(), mImgMedia);
-        }
-
-    }
 
     private void initView() {
+        collapsingProfileHeaderView = findViewById(R.id.collapseActionView);
+        profileAlbum = collapsingProfileHeaderView.findViewById(R.id.profileMisc);
+        profileImage = collapsingProfileHeaderView.findViewById(R.id.profileImage);
+        profileName = collapsingProfileHeaderView.findViewById(R.id.profileName);
+        profileArtist = collapsingProfileHeaderView.findViewById(R.id.profileSubtitle);
+
         mToolBar = findViewById(R.id.tb_SongActivity);
-        mViewLayoutPlay = findViewById(R.id.layout_play_media);
-        mTextArtist = mViewLayoutPlay.findViewById(R.id.text_artists_media);
-        mTextTitle = mViewLayoutPlay.findViewById(R.id.text_title_media);
-        mImgMedia = mViewLayoutPlay.findViewById(R.id.img_albumArt_media);
-        mBtnPlayPause = mViewLayoutPlay.findViewById(R.id.imbt_Play_media);
-        mBtnTitle = mViewLayoutPlay.findViewById(R.id.btn_title_media);
+
+//        mViewLayoutPlay = findViewById(R.id.layout_play_media);
+        mTextArtist = findViewById(R.id.text_artists_media);
+        mTextTitle = findViewById(R.id.text_title_media);
+        mImgMedia = findViewById(R.id.img_albumArt_media);
+        mBtnPlayPause = findViewById(R.id.imbt_Play_media);
+        mBtnTitle = findViewById(R.id.btn_title_media);
 
         mLl_Play_Media = findViewById(R.id.ll_play_media);
         mRcSongs = findViewById(R.id.rc_recently_add);
@@ -351,23 +349,7 @@ public class SongActivity extends AppCompatActivity implements
 
     }
 
-    @Override
-    public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-      /*  int x = scrollY - oldScrollY;
-        if (x > 0) {
-            //scroll up
-            Log.d("RecentlyAllMusicLog", "Scrolls Up");
 
-            mImgAlbumId.setAnimationUp(x);
-        } else if (x < 0) {
-            //scroll down
-            Log.d("RecentlyAllMusicLog", "Scrolls Down");
-            mImgAlbumId.setAnimationDown(x);
-
-        } else {
-
-        }*/
-    }
 
     @Override
     public void onClick(View v) {
@@ -379,10 +361,10 @@ public class SongActivity extends AppCompatActivity implements
                 builder.putInteger(Constants.INTENT.CHOOSE_POS, choosePosition);
 
                 if (mSongManager.isPlayCurrentSong(choosePosition)) {
-                    Log.d("BBB", "HomeActivity --- btn_title_media: true");
+                    Log.d("BBB", "SongActivity --- btn_title_media: true");
                     builder.putBoolean(Constants.INTENT.SONG_CONTINUE, true);
                 }else {
-                    Log.d("BBB", "HomeActivity --- btn_title_media: false");
+                    Log.d("BBB", "SongActivity --- btn_title_media: false");
                     Utils.PauseMediaService(this,  Constants.VALUE.NEW_SONGS, choosePosition);
                     builder.putBoolean(Constants.INTENT.SONG_CONTINUE, false);
                 }
@@ -404,6 +386,7 @@ public class SongActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(String type, int position) {
+
         choosePosition = position;
         mSongManager.setPositionCurrent(position);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mSongs.get(position).getAlbumID());
@@ -420,6 +403,13 @@ public class SongActivity extends AppCompatActivity implements
         mTextTitle.setText(mSongs.get(position).getSongName());
         mTextArtist.setText(mSongs.get(position).getArtist());
 
+
+        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
+                mSongs.get(position).getAlbumID(),
+                profileImage);
+        profileName.setText(mSongs.get(position).getSongName());
+        profileArtist.setText(mSongs.get(position).getArtist());
+        profileAlbum.setText(mSongs.get(position).getAlbum());
     }
 
 }

@@ -220,9 +220,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mBtnTitle = mViewPlayMedia.findViewById(R.id.btn_title_media);
         mImgMedia = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
 
-      /*  mNavigationView = findViewById(R.id.nav_view);
-        mNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);*/
-
         mViewPager_Home = findViewById(R.id.vp_Home);
         setupViewPager(mViewPager_Home);
 
@@ -230,13 +227,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (MediaPlayerService.mMediaPlayer != null) {
             if (MediaPlayerService.mMediaPlayer.isPlaying()) {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                mLlPlayMedia.setVisibility(View.VISIBLE);
+//                mLlPlayMedia.setVisibility(View.VISIBLE);
             } else {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                mLlPlayMedia.setVisibility(View.GONE);
+//                mLlPlayMedia.setVisibility(View.GONE);
             }
         }else {
-            mLlPlayMedia.setVisibility(View.GONE);
+//            mLlPlayMedia.setVisibility(View.GONE);
             mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
         }
 
@@ -247,8 +244,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mBtnPlayPause.setAnimationDuration(1500);
         mBtnTitle.setOnClickListener(this);
         mViewPlayMedia.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -399,7 +394,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     builder.putBoolean(Constants.INTENT.SONG_CONTINUE, false);
                 }
                 intent.putExtras(builder.generate().getBundle());
-                finish();
 
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);

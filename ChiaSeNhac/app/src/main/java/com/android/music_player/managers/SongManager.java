@@ -668,67 +668,70 @@ public class SongManager {
 
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-        Cursor musicCursor = mContext.getContentResolver().query(uri, STAR, selection, null, null);
-        Log.d(TAG, "Uri: "+uri.getPath() + " ==== Selection: "+ selection+ " ====== Cursor: "+musicCursor.getCount());
+        Cursor cursor = mContext.getContentResolver()
+                .query(uri, STAR, selection, null, null);
+        Log.d(TAG, "Uri: "+uri.getPath() + " ==== Selection: "+ selection+ " ====== Cursor: "+cursor.getCount());
 
-        if (musicCursor != null) {
-            if (musicCursor.moveToFirst()) {
-                do {
-                    String duration = musicCursor
-                            .getString(musicCursor
-                                    .getColumnIndex(MediaStore.Audio.Media.DURATION));
-                    int currentDuration = Math.round(Integer.parseInt(duration));
 
-                    if (currentDuration > ((excludeShortSounds) ? 60000 : 0)) {
-                        if (!excludeWhatsApp || !musicCursor.getString(musicCursor
-                                .getColumnIndex(MediaStore.Audio.Media.ALBUM)).equals("WhatsApp Audio")) {
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                SongModel.Builder builder = null;
+                String duration = cursor
+                        .getString(cursor
+                                .getColumnIndex(MediaStore.Audio.Media.DURATION));
+                int currentDuration = Math.round(Integer.parseInt(duration));
 
-                            String songName = musicCursor
-                                    .getString(
-                                            musicCursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                                    .replace("_", " ").trim().replaceAll(" +", " ");
-                            String path = musicCursor.getString(musicCursor
-                                    .getColumnIndex(MediaStore.Audio.Media.DATA));
-                            String title = musicCursor.getString(musicCursor
-                                    .getColumnIndex(MediaStore.Audio.Media.TITLE)).replace("_", " ").trim().replaceAll(" +", " ");
-                            String artistName = musicCursor.getString(musicCursor
-                                    .getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                            String albumName = musicCursor.getString(musicCursor
-                                    .getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                if (currentDuration > ((excludeShortSounds) ? 60000 : 0)) {
+                    if (!excludeWhatsApp || !cursor.getString(cursor
+                            .getColumnIndex(MediaStore.Audio.Media.ALBUM)).equals("WhatsApp Audio")) {
 
-                            long id = musicCursor.getColumnIndex
-                                    (MediaStore.Audio.Media._ID);
+                        String songName = cursor
+                                .getString(
+                                        cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
+                                .replace("_", " ").trim().replaceAll(" +", " ");
+                        String path = cursor.getString(cursor
+                                .getColumnIndex(MediaStore.Audio.Media.DATA));
+                        String title = cursor.getString(cursor
+                                .getColumnIndex(MediaStore.Audio.Media.TITLE)).replace("_", " ").trim().replaceAll(" +", " ");
+                        String artistName = cursor.getString(cursor
+                                .getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                        String albumName = cursor.getString(cursor
+                                .getColumnIndex(MediaStore.Audio.Media.ALBUM));
 
-                            String albumID = musicCursor
-                                    .getString(
-                                            musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
-                                    );
+                        long id = cursor.getColumnIndex
+                                (MediaStore.Audio.Media._ID);
 
-                            // Adding song to list
-                            SongModel.Builder builder = new SongModel.Builder();
-                            builder.setFileName(songName);
-                            builder.setSongName(title);
-                            builder.setArtist(artistName);
-                            builder.setAlbum(albumName);
-                            builder.setAlbumID(albumID);
-                            builder.setPath(path);
-                            builder.setTime(currentDuration);
-                            builder.setID(String.valueOf(id));
+                        String albumID = cursor
+                                .getString(
+                                        cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
+                                );
 
-                            mSongsMain.add(builder.generate());
-                        }
+                        // Adding song to list
+                        builder = new SongModel.Builder();
+                        builder.setFileName(songName);
+                        builder.setSongName(title);
+                        builder.setArtist(artistName);
+                        builder.setAlbum(albumName);
+                        builder.setAlbumID(albumID);
+                        builder.setPath(path);
+                        builder.setTime(currentDuration);
+                        builder.setID(String.valueOf(id));
+
+                        mSongsMain.add(builder.generate());
+
                     }
                 }
-                while (musicCursor.moveToNext());
+
             }
+            while (cursor.moveToNext());
 
             setMainMusic(mSongsMain);
             mSharedPrefsUtils.setInteger(Constants.PREFERENCES.TOTAL_SONGS, mSongsMain.size());
-            musicCursor.close();
+            cursor.close();
         }
 
         filterData(mSongsMain);
-        Log.d(TAG, "crawlData() performed");
+        Log.d(TAG, "CrawlData() performed");
     }
 
     /*

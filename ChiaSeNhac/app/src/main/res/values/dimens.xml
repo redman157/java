@@ -9,6 +9,11 @@
     <dimen name="appbar_padding">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
-
+    <dimen name="app_bar_height">@dimen/_200sdp</dimen>
     <dimen name="design_bottom_navigation_active_text_size" tools:override="true">14sp</dimen>
+
+    <dimen name="profile_image_margin_max">12dp</dimen>
+    <dimen name="profile_small_size">32dp</dimen>
+    <dimen name="profile_big_size">64dp</dimen>
+    <dimen name="profile_misc_padding">12dp</dimen>
 </resources>

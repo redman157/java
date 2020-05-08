@@ -48,8 +48,6 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
-
         holder.initData();
         holder.initView();
         holder.assignView();
@@ -193,17 +191,15 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
                         ((HomeActivity) Objects.requireNonNull(activity)).isContinue = true;
                     } else {
                         ((HomeActivity) Objects.requireNonNull(activity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-//                    ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
+//
                     }
                 }else {
                     ((HomeActivity) Objects.requireNonNull(activity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-//                ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;
+//
                 }
-            /*((HomeActivity) Objects.requireNonNull(getActivity())).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-            ((HomeActivity) Objects.requireNonNull(getActivity())).isContinue = true;*/
             }
             mSongManager.setTypeCurrent(type);
-            ((HomeActivity)activity).mLlPlayMedia.setVisibility(View.VISIBLE);
+//            ((HomeActivity)activity).mLlPlayMedia.setVisibility(View.VISIBLE);
             ((HomeActivity)activity).choosePosition = position;
             ((HomeActivity)activity).mTextTitle.setText(mNewSongs.get(position).getSongName());
             ((HomeActivity)activity).mTextArtist.setText(mNewSongs.get(position).getArtist());

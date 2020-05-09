@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-
+import android.provider.MediaStore;
 import android.widget.ImageView;
 
 import androidx.core.content.ContextCompat;
@@ -19,6 +19,8 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -180,6 +182,34 @@ public class ImageUtils {
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_white_24dp)))
                     .into(imageView);}
         catch (Exception ignored) {}
+    }
+
+    public void setImageBitmap(String albumId, ImageView imageView){
+
+        Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+        Uri albumArtUri = ContentUris.withAppendedId(sArtworkUri,  Long.valueOf(albumId));
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(
+                    mContext.getContentResolver(), albumArtUri);
+            bitmap = Bitmap.createScaledBitmap(bitmap, 40, 40, true);
+
+        } catch (FileNotFoundException exception) {
+            exception.printStackTrace();
+            bitmap = BitmapFactory.decodeResource(mContext.getResources(),
+                    R.drawable.ic_music_note_white_24dp);
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }finally {
+            if (bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+            }else {
+                imageView.setImageResource(R.drawable.ic_music_note_white_24dp);
+
+            }
+        }
     }
 
     public void getFullImageByPicasso(final List albumIds, final ImageView imageView) {

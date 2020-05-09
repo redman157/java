@@ -18,7 +18,7 @@ import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.activities.SongActivity;
 import com.android.music_player.interfaces.OnChangePlayListListener;
-import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.services.MediaPlayerService;
@@ -29,10 +29,22 @@ import com.android.music_player.utils.SharedPrefsUtils;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapter.ViewHolder>  {
+public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapter.ViewHolder> {
     private Activity activity;
     private SongManager mSongManager;
     private SharedPrefsUtils mSharedPrefsUtils;
+    private TextView text_Player_1, text_Player_2, text_Player_Songs;
+    private RecyclerView mRc_Recently_Add;
+    private SongAdapter mSongAdapter;
+
+
+    private ArrayList<SongModel> mNewSongs;
+    private Button mBtnViewAll;
+
+    private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
+            mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
+    private ArrayList<String> mMostPlayList;
+
     public HomeFragmentAdapter(Activity activity){
         this.activity = activity;
         mSharedPrefsUtils = new SharedPrefsUtils(activity);
@@ -48,9 +60,10 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.initData();
+
         holder.initView();
         holder.assignView();
+
     }
 
     @Override
@@ -58,20 +71,24 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
         return 1;
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-            OnClickItemListener , OnChangePlayListListener {
+            OnChangePlayListListener, SongAdapter.OnClickListener, OnClickItem {
         private TextView text_Player_1, text_Player_2, text_Player_Songs;
         private RecyclerView mRc_Recently_Add;
-        private SongsAdapter mAdderAdapter;
+        private SongAdapter mSongsAdapter;
+//        private OptionAdapter mOptionAdapter;
+
         private ArrayList<SongModel> mNewSongs;
         private Button mBtnViewAll;
+        private RecyclerView rc_setting;
         private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
                 mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
         private  ArrayList<String> mMostPlayList;
 
-
         public ViewHolder(@NonNull View view) {
             super(view);
+//            initData();
             text_Player_Songs = view.findViewById(R.id.text_Player_Songs);
             mRc_Recently_Add = view.findViewById(R.id.rc_recently_add);
             mImg_Player_Songs = view.findViewById(R.id.img_Player_Songs);
@@ -83,18 +100,23 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             mBtnViewAll = view.findViewById(R.id.btn_ViewAll);
             text_Player_1 = view.findViewById(R.id.text_Player_1);
             text_Player_2 = view.findViewById(R.id.text_Player_2);
+//            rc_setting = view.findViewById(R.id.rc_settings);
         }
 
-        public void initData(){
+      /*  public void assignView(){
             mMostPlayList = mSongManager.getPlayListMost();
-            mAdderAdapter = new SongsAdapter(activity,
+            mSongsAdapter = new SongAdapter(activity,
                     SongManager.getInstance().newSongs(),
                     Constants.VALUE.NEW_SONGS);
-            mAdderAdapter.setLimit(true);
-            mAdderAdapter.notifyDataSetChanged();
-            mAdderAdapter.OnClickItem(this);
+
+//            mOptionAdapter = new OptionAdapter(activity, mOptionItems);
+//            mOptionAdapter.setOnClickItem(this);
+            mSongsAdapter.setLimit(true);
+            mSongsAdapter.notifyDataSetChanged();
+            mSongsAdapter.setOnClickItem(this);
+//            mSongsAdapter.setOnClickItem(this);
             mNewSongs = SongManager.getInstance().newSongs();
-        }
+        }*/
 
         public void initView(){
             String musicHot = null;
@@ -124,10 +146,17 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             mImg_Shuffle_All.setOnClickListener(this);
             mBtnViewAll.setOnClickListener(this);
 
-            mRc_Recently_Add.setAdapter(mAdderAdapter);
+            mSongsAdapter = new SongAdapter(activity, SongManager.getInstance().newSongs(),
+                    Constants.VALUE.NEW_SONGS);
+            mSongsAdapter.setLimit(true);
+            mSongsAdapter.notifyDataSetChanged();
+            mSongsAdapter.setOnClickItem(this);
+            mNewSongs = SongManager.getInstance().newSongs();
+            mRc_Recently_Add.setAdapter(mSongsAdapter);
             mRc_Recently_Add.setNestedScrollingEnabled(false);
             mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(activity,
                 LinearLayoutManager.VERTICAL, false));
+
         }
 
         @Override
@@ -136,7 +165,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
                 case R.id.btn_ViewAll:
                     mRc_Recently_Add.setVisibility(View.GONE);
                     Intent iViewAll = new Intent(activity, SongActivity.class);
-                    iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
+                    iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.ALL_SONGS);
                     activity.finish();
                     activity.startActivity(iViewAll);
                     break;
@@ -206,6 +235,20 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             ImageUtils.getInstance(activity).getBitmapImageByPicasso(
                     mNewSongs.get(position).getAlbumID(),((HomeActivity)activity).mImgMedia);
         }
+
+
+       /* @Override
+        public void onClick(int position) {
+            switch (position){
+                case 0:
+                    mRc_Recently_Add.setVisibility(View.GONE);
+                    Intent iViewAll = new Intent(activity, SongActivity.class);
+                    iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.ALL_SONGS);
+                    activity.finish();
+                    activity.startActivity(iViewAll);
+                    break;
+            }
+        }*/
     }
 
 }

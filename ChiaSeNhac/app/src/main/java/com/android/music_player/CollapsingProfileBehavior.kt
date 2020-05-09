@@ -134,25 +134,28 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
         val lp = profileImage.layoutParams as LinearLayout.LayoutParams
         lp.height = updatedValue
         lp.width = updatedValue
-        if (updatedValue < 100){
+        /*if (updatedValue < 100){
             profileImage.visibility = View.GONE
             profileName.visibility = View.GONE
         }else {
             profileName.visibility = View.VISIBLE
             profileImage.visibility = View.VISIBLE
-            profileImage.layoutParams = lp
-        }
+
+        }*/
+        profileName.visibility = View.VISIBLE
+        profileImage.visibility = View.VISIBLE
+        profileImage.layoutParams = lp
     }
 
     private fun updateProfileImageMargins() {
         val targetOpenAppbarValue = calculateProfileImageSmallMargin().toFloat()
         val updatedValue = getUpdatedInterpolatedValue(profileImageMaxMargin.toFloat(), targetOpenAppbarValue).toInt()
 
-        val lp = profileImage.layoutParams as LinearLayout.LayoutParams
-        lp.bottomMargin = updatedValue
-        lp.leftMargin = updatedValue
-        lp.rightMargin = updatedValue
-        profileImage.layoutParams = lp
+        val layoutParams = profileImage.layoutParams as LinearLayout.LayoutParams
+        layoutParams.bottomMargin = updatedValue
+        layoutParams.leftMargin = updatedValue
+        layoutParams.rightMargin = updatedValue
+        profileImage.layoutParams = layoutParams
     }
 
     private fun calculateProfileImageSmallMargin(): Int {
@@ -164,9 +167,9 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
     private fun updateProfileTextContainerHeight() {
         val updatedValue = getUpdatedInterpolatedValue(profileTextContainerMaxHeight.toFloat(), toolBarHeight.toFloat()).toInt()
 
-        val lp = profileTextContainer.layoutParams as LinearLayout.LayoutParams
-        lp.height = updatedValue
-        profileTextContainer.layoutParams = lp
+        val layoutParams = profileTextContainer.layoutParams as LinearLayout.LayoutParams
+        layoutParams.height = updatedValue
+        profileTextContainer.layoutParams = layoutParams
     }
 
     private fun updateProfileTextMargin() {
@@ -187,12 +190,13 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
     private fun updateSubtitleAndMiscAlpha() {
         val updatedValue = getUpdatedInterpolatedValue(1f, 0f)
         val poweredValue = Math.pow(updatedValue.toDouble(), 6.0).toFloat()
-
+        Log.d("ZZZ", "updateSubtitleAndMiscAlpha: $poweredValue")
         profileSubtitle.alpha = poweredValue
         profileMisc.alpha = poweredValue
     }
 
     private fun getIntercept(m: Float, x: Float, b: Float): Float {
+
         return m * x + b
     }
 

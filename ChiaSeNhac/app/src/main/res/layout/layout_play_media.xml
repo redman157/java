@@ -44,7 +44,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackground"
                 android:layout_marginEnd="?android:attr/actionBarSize"
                 android:theme="@android:style/ThemeOverlay.Material.Dark" />
 
@@ -63,13 +63,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-
+                    android:background="?android:attr/selectableItemBackground"
                     android:layout_alignParentTop="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="10dp"
-
-                    android:src="@drawable/app_play"
-                    />
+                    android:src="@drawable/app_play" />
 
             </RelativeLayout>
 

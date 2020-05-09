@@ -12,22 +12,37 @@
         android:layout_width="match_parent"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:layout_height="wrap_content">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:contentScrim="@color/transparent"
+            app:titleEnabled="false"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="snap|enterAlwaysCollapsed"
+            app:title="@string/app_name">
         <androidx.appcompat.widget.Toolbar
 
-            android:layout_alignParentTop="true"
             android:id="@+id/tb_HomeActivity"
             android:layout_width="match_parent"
             android:gravity="center"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
             android:elevation="4dp"
+            android:background="@color/whiteOpaqueX2"
+            app:title="@string/app_name"
             android:animateLayoutChanges="true"
-            app:layout_scrollFlags="scroll|snap|enterAlwaysCollapsed"
+            app:layout_collapseMode="pin"
             android:theme="@style/CustomToolBarStyle"
             app:popupTheme="@style/CustomPopupStyle"/>
 
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_height="match_parent">
         <com.google.android.material.tabs.TabLayout
-            android:layout_alignBottom="@id/ll_vp_home"
+            android:layout_alignParentTop="true"
             android:id="@+id/tab_HomeActivity"
             android:layout_width="match_parent"
             app:tabIndicatorColor="@color/orange"
@@ -40,26 +55,16 @@
             app:tabGravity="fill"
             android:layout_gravity="center"
             android:layout_height="wrap_content"/>
-    </com.google.android.material.appbar.AppBarLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_height="match_parent">
-        <LinearLayout
+
+        <androidx.viewpager.widget.ViewPager
             android:layout_above="@id/ll_play_media"
-            android:id="@+id/ll_vp_home"
+            android:id="@+id/vp_Home"
+            android:layout_below="@id/tab_HomeActivity"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/vp_Home"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_alignParentBottom="true"

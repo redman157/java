@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ItemViewHolder> {
+public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ItemViewHolder> {
     private final Context mContext;
     private ArrayList<SongModel> items;
     private String type;
@@ -33,7 +33,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ItemViewHold
     public void setLimit(boolean isLimit){
         this.isLimit = isLimit;
     }
-    public SongsAdapter(Context context, ArrayList<SongModel> items, String type) {
+    public SongAdapter(Context context, ArrayList<SongModel> items, String type) {
         this.items = items;
         this.type = type;
         mContext = context;
@@ -41,21 +41,21 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.ItemViewHold
 
     }
 
-    private OnClickItemListener onClickItem;
-    public void OnClickItem(OnClickItemListener onClickItem) {
+    private OnClickItem onClickItem;
+    public void setOnClickItem(OnClickItem onClickItem) {
         this.onClickItem = onClickItem;
     }
-    public interface OnClickItem {
-        void onClick(String type, int index);
+    public interface OnClickListener {
+        void onClick(String type, int position);
     }
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent,
                                              int viewType) {
 
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_recently_add, parent, false);
-            return new ItemViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_recently_add, parent, false);
+        return new ItemViewHolder(view);
 
     }
 

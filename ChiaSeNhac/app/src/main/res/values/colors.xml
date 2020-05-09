@@ -28,7 +28,7 @@
     <color name="grey">#607d8b</color>
 
     <!-- App Theme -->
-
+    <color name="line">#ABAFAF</color>
     <color name="primaryColor">#000000</color>
     <color name="primaryDark">#000000</color>
     <color name="accentColor">#FFFFFF</color>

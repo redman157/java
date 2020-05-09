@@ -39,8 +39,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class SongManager {
@@ -50,7 +52,8 @@ public class SongManager {
     private Map<String, ArrayList<SongModel>> mAlbumLists = new HashMap<>();
     private Map<String, ArrayList<SongModel>> mArtistLists = new HashMap<>();
     private Map<String, ArrayList<SongModel>> mFolderLists = new HashMap<>();
-    private ArrayList<SongModel> mSongsMain = new ArrayList<>();
+    private Set<SongModel> mSongsMain = new HashSet<SongModel>();
+
     private ArrayList<SongModel> queue = new ArrayList<>();
     private ArrayList<SongModel> shuffleSongs = new ArrayList<>();
     private String TAG = "SongsManagerConsole";
@@ -289,9 +292,9 @@ public class SongManager {
      */
 
     public SongModel getSong(String title){
-        for (int i = 0; i < mSongsMain.size();i++){
-            if (mSongsMain.get(i).getSongName().equals(title)){
-                return mSongsMain.get(i);
+        for (SongModel model: mSongsMain) {
+            if (model.getSongName().equals(title)){
+                return model;
             }
         }
         return null;
@@ -719,6 +722,7 @@ public class SongManager {
 
                         mSongsMain.add(builder.generate());
 
+
                     }
                 }
 
@@ -737,7 +741,7 @@ public class SongManager {
     /*
      * Albums Data && Artist Data && folder Data
      */
-    private void filterData(ArrayList<SongModel> mainList){
+    private void filterData(Set<SongModel> mainList){
 
         ArrayList<SongModel> allSongList = new ArrayList<>(mainList);
 
@@ -802,11 +806,8 @@ public class SongManager {
         this.mFolderLists = folderLists;
     }
 
-    public ArrayList<SongModel> getMainMusic() {
-        return mSongsMain;
-    }
 
-    public void setMainMusic(ArrayList<SongModel> mainList) {
+    public void setMainMusic(Set<SongModel> mainList) {
         this.mSongsMain = mainList;
     }
 

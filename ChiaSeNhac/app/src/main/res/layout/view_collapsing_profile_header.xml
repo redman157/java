@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/app_bar_height"
     android:gravity="bottom"
+    android:elevation="@dimen/_8sdp"
     android:orientation="horizontal">
 
     <ImageView

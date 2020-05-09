@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.adapters.HomeFragmentAdapter;
-import com.android.music_player.adapters.SongsAdapter;
+import com.android.music_player.adapters.SongAdapter;
 import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 public class HomeFragment extends Fragment implements OnChangePlayListListener {
     private RecyclerView mRc_Recently_Add;
-    private SongsAdapter mAdderAdapter;
+    private SongAdapter mAdderAdapter;
     private ArrayList<SongModel> mNewSongs;
     private View view;
     private Button mBtnViewAll;

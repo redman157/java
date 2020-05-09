@@ -1,7 +1,6 @@
 package com.android.music_player.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -11,7 +10,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.fragments.ChangeSongFragment;
 import com.android.music_player.managers.SongManager;
@@ -21,7 +20,7 @@ import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 
-public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements OnClickItemListener {
+public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements OnClickItem {
     private Context context;
     private ArrayList<Fragment> fragments=  new ArrayList<>();
     private ArrayList<SongModel> mSongModels;

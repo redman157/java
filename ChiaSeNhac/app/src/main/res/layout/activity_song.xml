@@ -14,11 +14,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentScrim="@color/transparent"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed|exitUntilCollapsed|snap">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <com.android.music_player.IconView
                 android:id="@+id/img_AlbumId"
                 android:layout_width="match_parent"
+                android:alpha="0.5"
+                android:background="@color/transparent"
                 android:minHeight="@dimen/app_bar_height"
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|enterAlwaysCollapsed|exitUntilCollapsed"
@@ -38,6 +40,7 @@
                 app:titleTextColor="@color/black"
                 android:animateLayoutChanges="true"
                 app:layout_collapseMode="pin"
+
                 android:theme="@style/CustomToolBarStyle"
                 app:popupTheme="@style/CustomPopupStyle"/>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -49,7 +52,6 @@
         layout="@layout/view_collapsing_profile_header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/app_bar_height"
-        android:elevation="8dp"
         app:layout_behavior="@string/collapsing_profile_behavior" />
     <LinearLayout
 
@@ -59,10 +61,24 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_height="wrap_content">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rc_recently_add"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_SongActivity"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            app:tabIndicatorColor="@color/red"
+            app:tabIndicatorGravity="bottom"
+            app:tabIndicatorHeight="@dimen/_3sdp"
+            app:tabPaddingStart="@dimen/_1sdp"
+            app:tabPaddingEnd="@dimen/_1sdp"
+            app:tabBackground="@drawable/custom_background_tab_layout"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"/>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/vp_AllSong"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
     </LinearLayout>
     <LinearLayout
         android:layout_gravity="bottom"

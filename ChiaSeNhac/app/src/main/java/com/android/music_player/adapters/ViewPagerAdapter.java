@@ -53,18 +53,35 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public View getTabView(int position) {
+    public View getTabHome(int position) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_tablayout_home, null);
         title =  view.findViewById(R.id.item_tl_text_home);
-//        icon = view.findViewById(R.id.item_tl_img_home);
-
-//        icon.setImageDrawable(iconList().get(position));
         if (position == 0){
             title.setTextColor(context.getColor(R.color.orange));
         }
-        title.setText(titleList().get(position));
+        title.setText(titleHomeList().get(position));
 
         return view;
+    }
+
+    public View getTabSong(int position) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_tablayout_home, null);
+        title =  view.findViewById(R.id.item_tl_text_home);
+        if (position == 0){
+            title.setTextColor(context.getColor(R.color.red));
+        }
+        title.setText(titleSongList().get(position));
+
+        return view;
+    }
+
+    private ArrayList<String> titleSongList(){
+        ArrayList<String> titles = new ArrayList<>();
+        titles.add("AllSong");
+        titles.add("Artist");
+        titles.add("Album");
+        titles.add("Folder");
+        return titles;
     }
 
     private ArrayList<Drawable> iconList(){
@@ -75,7 +92,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         return icons;
     }
 
-    private ArrayList<String> titleList(){
+    private ArrayList<String> titleHomeList(){
         ArrayList<String> titles = new ArrayList<>();
         titles.add("Home");
         titles.add("Library");

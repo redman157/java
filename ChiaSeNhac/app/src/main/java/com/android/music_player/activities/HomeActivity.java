@@ -18,14 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.BaseActivity;
 import com.android.music_player.R;
 import com.android.music_player.adapters.ViewPagerAdapter;
-import com.android.music_player.fragments.AllSongsFragment;
+import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.managers.SongManager;
@@ -35,7 +34,6 @@ import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -47,9 +45,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private ViewPager mViewPager_Home;
 
     private String tag = "BBB";
-    private BottomNavigationView mNavigationView;
     private ViewPagerAdapter mViewPagerAdapter;
-    private TabLayout mTabHomeActivity;
+    private TabLayout mTabLayoutHome;
     private ImageUtils imageUtils;
     private View mViewPlayMedia;
     public ImageView mImgMedia;
@@ -171,8 +168,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     private void setupToolbar() {
         setSupportActionBar(mToolBar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.app_name);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+
     }
 
     public void setSongCurrent(ArrayList<SongModel> song){
@@ -194,23 +191,23 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         homeFragment.setOnChangePlayListListener(onChangePlayListListener);
 
         mViewPagerAdapter.addFragment(homeFragment);
-        mViewPagerAdapter.addFragment(new AllSongsFragment());
+        mViewPagerAdapter.addFragment(new LibraryFragment());
 
         viewPager.setAdapter(mViewPagerAdapter);
         viewPager.setCurrentItem(0);
         viewPager.addOnPageChangeListener(this);
         viewPager.setOnClickListener(this);
 
-        mTabHomeActivity.setupWithViewPager(viewPager);
+        mTabLayoutHome.setupWithViewPager(viewPager);
 
-        for (int i = 0; i < mTabHomeActivity.getTabCount(); i++) {
-            mTabHomeActivity.getTabAt(i).setCustomView(mViewPagerAdapter.getTabView(i));
+        for (int i = 0; i < mTabLayoutHome.getTabCount(); i++) {
+            mTabLayoutHome.getTabAt(i).setCustomView(mViewPagerAdapter.getTabHome(i));
         }
-        mTabHomeActivity.addOnTabSelectedListener(this);
+        mTabLayoutHome.addOnTabSelectedListener(this);
     }
 
     private void initView() {
-        mTabHomeActivity = findViewById(R.id.tab_HomeActivity);
+        mTabLayoutHome = findViewById(R.id.tab_HomeActivity);
         mLlPlayMedia = findViewById(R.id.ll_play_media);
         mToolBar = findViewById(R.id.tb_HomeActivity);
         mViewPlayMedia = findViewById(R.id.layout_play_media);
@@ -440,8 +437,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
 
-        for (int i = 0; i < mTabHomeActivity.getTabCount(); i ++){
-            View view = mTabHomeActivity.getTabAt(i).getCustomView();
+        for (int i = 0; i < mTabLayoutHome.getTabCount(); i ++){
+            View view = mTabLayoutHome.getTabAt(i).getCustomView();
             TextView title = view.findViewById(R.id.item_tl_text_home);
             int color = (i == tab.getPosition()) ? getResources().getColor(R.color.orange) :
                     getResources().getColor(R.color.white);
@@ -451,13 +448,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onTabUnselected(TabLayout.Tab tab) {
-      /*  View view = mTabHomeActivity.getTabAt(i).getCustomView();
-        TextView title = view.findViewById(R.id.item_tl_text_home);
-        ImageView icon = view.findViewById(R.id.item_tl_img_home);
-        int color = (i == tab.getPosition()) ? getResources().getColor(R.color.orange) :
-                getResources().getColor(R.color.white);
-        title.setTextColor(color);
-        icon.setColorFilter(color);*/
+
     }
 
     @Override

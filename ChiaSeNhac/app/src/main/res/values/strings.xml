@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="collapsing_profile_behavior" translatable="false">com.android.music_player.CollapsingProfileBehavior</string>
+    <string name="behavior" translatable="false">com.android.music_player.Behavior</string>
     <string name="test_profile_image_desc">Profile Image</string>
     <string name="app_name">Music Application</string>
     <string name="app_version">v0.9.6 (August 12, 2019)</string>

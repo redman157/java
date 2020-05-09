@@ -23,47 +23,48 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.IconView;
 import com.android.music_player.R;
-import com.android.music_player.adapters.SongsAdapter;
-import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.adapters.ViewPagerAdapter;
+import com.android.music_player.fragments.AllSongsFragment;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
-public class SongActivity extends AppCompatActivity implements View.OnClickListener, OnClickItemListener {
-    private LinearLayout mLl_Play_Media;
-    private IconView mImgAlbumId;
-    private RecyclerView mRcSongs;
+public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener,ViewPager.OnPageChangeListener,
+        View.OnClickListener{
+    public LinearLayout mLl_Play_Media;
+    public IconView mImgAlbumId;
 
-    private SongsAdapter mSongsAdapter;
     private SharedPrefsUtils mSharedPrefsUtils;
     private String type;
     private ArrayList<SongModel> mSongs;
-    private TextView mTextArtist, mTextTitle;
+    public TextView mTextArtist, mTextTitle;
     private Toolbar mToolBar;
     private Button mBtnTitle;
 
     private int choosePosition;
     private ImageButton mBtnPlayPause;
-    private ImageView mImgMedia;
+    public ImageView mImgMedia;
     private SongManager mSongManager;
     private ActionBar actionBar;
     private boolean receiverRegistered;
     private View collapsingProfileHeaderView;
     private boolean isPlaying;
-    private ImageView profileImage;
-    private TextView profileName, profileArtist, profileAlbum;
-
+    public ImageView profileImage;
+    public TextView profileName, profileArtist, profileAlbum;
+    private TabLayout mTabLayoutSong;
+    private ViewPagerAdapter mViewPagerAdapter;
+    private ViewPager mViewPagerSong;
     @Override
     protected void onStart() {
         super.onStart();
@@ -137,7 +138,6 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         setSongCurrent(mSongs);
         assignView();
     }
@@ -153,21 +153,37 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
         if (mSongManager.getPositionCurrent() == -1){
             mTextArtist.setText(song.get(0).getArtist());
             mTextTitle.setText(song.get(0).getSongName());
-            ImageUtils.getInstance(this).getSmallImageByPicasso(song.get(0).getAlbumID(), mImgMedia);
+
             ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                    mSongs.get(0).getAlbumID(),
+                    song.get(0).getAlbumID(),
                     profileImage);
+
+            ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
+                    song.get(0).getAlbumID(),
+                    mImgMedia);
+
+            ImageUtils.getInstance(this).getSmallImageByPicasso(
+                    song.get(0).getAlbumID(),
+                    mImgAlbumId);
+
             profileName.setText(mSongs.get(0).getSongName());
             profileArtist.setText(mSongs.get(0).getArtist());
             profileAlbum.setText(mSongs.get(0).getAlbum());
         }else {
             mTextArtist.setText(song.get(SongManager.getInstance().getPositionCurrent()).getArtist());
             mTextTitle.setText(song.get(SongManager.getInstance().getPositionCurrent()).getSongName());
-            ImageUtils.getInstance(this).getSmallImageByPicasso(song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
 
             ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                    mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(),
+                    song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(),
                     profileImage);
+
+            ImageUtils.getInstance(this).getSmallImageByPicasso(
+                    song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(),
+                    mImgAlbumId);
+
+            ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
+                    song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(),
+                    mImgMedia);
             profileName.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
             profileArtist.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getArtist());
             profileAlbum.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbum());
@@ -307,6 +323,8 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initView() {
         collapsingProfileHeaderView = findViewById(R.id.collapseActionView);
+        mViewPagerSong = findViewById(R.id.vp_AllSong);
+        mTabLayoutSong = findViewById(R.id.tab_SongActivity);
         profileAlbum = collapsingProfileHeaderView.findViewById(R.id.profileMisc);
         profileImage = collapsingProfileHeaderView.findViewById(R.id.profileImage);
         profileName = collapsingProfileHeaderView.findViewById(R.id.profileName);
@@ -322,34 +340,37 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
         mBtnTitle = findViewById(R.id.btn_title_media);
 
         mLl_Play_Media = findViewById(R.id.ll_play_media);
-        mRcSongs = findViewById(R.id.rc_recently_add);
         mImgAlbumId = findViewById(R.id.img_AlbumId);
-        ImageUtils.getInstance(this).getSmallImageByPicasso(
-                SongManager.getInstance().newSongs().get(0).getAlbumID(),
-                mImgAlbumId);
+
     }
 
     private void assignView() {
         mBtnTitle.setOnClickListener(this);
         mBtnPlayPause.setOnClickListener(this);
-        mSongsAdapter = new SongsAdapter(this, mSongs, type);
-        mSongsAdapter.setLimit(false);
-        mSongsAdapter.OnClickItem(this);
-        mRcSongs.setHasFixedSize(true);
-        mSongsAdapter.OnClickItem(this);
-        mRcSongs.setLayoutManager(new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false));
-        mRcSongs.setAdapter(mSongsAdapter);
-
-
-     /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mScrollView.setOnScrollChangeListener(this);
-        }*/
         mLl_Play_Media.setOnClickListener(this);
-
+        setupViewPager(mViewPagerSong);
     }
 
+    private void setupViewPager(ViewPager viewPager){
+        mViewPagerAdapter = new ViewPagerAdapter(this,getSupportFragmentManager());
 
+        mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
+        mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
+        mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
+        mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
+
+        viewPager.setAdapter(mViewPagerAdapter);
+        viewPager.setCurrentItem(0);
+        viewPager.addOnPageChangeListener(this);
+        viewPager.setOnClickListener(this);
+
+        mTabLayoutSong.setupWithViewPager(viewPager);
+
+        for (int i = 0; i < mTabLayoutSong.getTabCount(); i++) {
+            mTabLayoutSong.getTabAt(i).setCustomView(mViewPagerAdapter.getTabSong(i));
+        }
+        mTabLayoutSong.addOnTabSelectedListener(this);
+    }
 
     @Override
     public void onClick(View v) {
@@ -380,38 +401,40 @@ public class SongActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(int pos) {
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
 
     @Override
-    public void onClick(String type, int position) {
+    public void onPageSelected(int position) {
 
-        choosePosition = position;
-        mSongManager.setPositionCurrent(position);
-        mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mSongs.get(position).getAlbumID());
-        mSongManager.setTypeCurrent(type);
-        if (mLl_Play_Media.getVisibility() == View.GONE){
-            mLl_Play_Media.setVisibility(View.VISIBLE);
-        }
-        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                mSongs.get(position).getAlbumID(),
-                mImgAlbumId);
-        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                mSongs.get(position).getAlbumID(),
-                mImgMedia);
-        mTextTitle.setText(mSongs.get(position).getSongName());
-        mTextArtist.setText(mSongs.get(position).getArtist());
-
-
-        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                mSongs.get(position).getAlbumID(),
-                profileImage);
-        profileName.setText(mSongs.get(position).getSongName());
-        profileArtist.setText(mSongs.get(position).getArtist());
-        profileAlbum.setText(mSongs.get(position).getAlbum());
     }
 
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        for (int i = 0; i < mTabLayoutSong.getTabCount(); i ++){
+            View view = mTabLayoutSong.getTabAt(i).getCustomView();
+            TextView title = view.findViewById(R.id.item_tl_text_home);
+            int color = (i == tab.getPosition()) ? getResources().getColor(R.color.red) :
+                    getResources().getColor(R.color.white);
+            title.setTextColor(color);
+        }
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
 }
 
 

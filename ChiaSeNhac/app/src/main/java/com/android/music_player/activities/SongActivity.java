@@ -197,7 +197,6 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {

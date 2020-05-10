@@ -35,7 +35,7 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener {
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
     private ImageUtils mImageUtils;
     private String type;
-    private RecyclerView rc_main;
+    private RecyclerView mRcHome;
     private SharedPrefsUtils mSharedPrefsUtils;
     private ArrayList<SongModel> mSongs;
     private TextView text_Player_1, text_Player_2, text_Player_Songs;
@@ -43,7 +43,7 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener {
     private  ArrayList<String> mMostPlayList;
     private String play_list_1, play_list_2;
     private OnChangePlayListListener onChangePlayListListener;
-    private HomeFragmentAdapter adapter;
+    private HomeFragmentAdapter mHomeAdapter;
     public void setOnChangePlayListListener(OnChangePlayListListener onChangePlayListListener){
         this.onChangePlayListListener = onChangePlayListListener;
     }
@@ -74,10 +74,10 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener {
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(getContext());
         initView();
-        adapter = new HomeFragmentAdapter(getActivity());
-        adapter.notifyDataSetChanged();
-        rc_main.setLayoutManager(new LinearLayoutManager(getContext()));
-        rc_main.setAdapter(adapter);
+        mHomeAdapter = new HomeFragmentAdapter(getActivity());
+        mHomeAdapter.notifyDataSetChanged();
+        mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRcHome.setAdapter(mHomeAdapter);
 
         return view;
     }
@@ -89,14 +89,13 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener {
     }
 
     private void initView(){
-        rc_main = view.findViewById(R.id.rc_home_fragment);
+        mRcHome = view.findViewById(R.id.rc_home_fragment);
     }
 
 
 
     @Override
     public void onClickItem(ArrayList<String> mostPlayList) {
-//        mMostPlayList = mostPlayList;
         newInstance(mostPlayList);
     }
 }

@@ -158,7 +158,7 @@ public class SongManager {
 
     public ArrayList<SongModel> getCurrentSongs(){
         this.type = getTypeCurrent();
-//        Log.d("BBB", "SongManager --- getCurrentSongs: "+type);
+        Log.d("BBB", "SongManager --- getCurrentSongs: "+type);
         ArrayList<SongModel> song = new ArrayList<>();
         if (mAllPlaylist.searchPlayList(type)) {
             song = getAllSongToPlayList(type);

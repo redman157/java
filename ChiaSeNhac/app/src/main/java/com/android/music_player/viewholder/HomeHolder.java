@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
         OnChangePlayListListener, SongAdapter.OnClickListener, OnClickItem {
-    private TextView text_Player_1, text_Player_2, text_Player_Songs;
+    private TextView mTextPlayer_1, mTextPlayer_2, mTextPlayerSongs;
     private RecyclerView mRc_Recently_Add;
     private SongAdapter mSongsAdapter;
     private ArrayList<SongModel> mNewSongs;
@@ -38,14 +38,15 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
     private  ArrayList<String> mMostPlayList;
     private SongManager mSongManager;
-    private Activity activity;
+    private Activity mActivity;
+    private String mMostMusic;
 
-    public HomeHolder(@NonNull View view, Activity activity) {
+    public HomeHolder(@NonNull View view, Activity mActivity) {
         super(view);
-        this.activity = activity;
+        this.mActivity = mActivity;
         mSongManager = SongManager.getInstance();
-        mSongManager.setContext(activity);
-        text_Player_Songs = view.findViewById(R.id.text_Player_Songs);
+        mSongManager.setContext(mActivity);
+        mTextPlayerSongs = view.findViewById(R.id.text_Player_Songs);
         mRc_Recently_Add = view.findViewById(R.id.rc_recently_add);
         mImg_Player_Songs = view.findViewById(R.id.img_Player_Songs);
         mImg_Player_1 = view.findViewById(R.id.img_Player_1);
@@ -54,28 +55,28 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mImg_Recently_Add = view.findViewById(R.id.img_Recently_Add);
         mImg_Shuffle_All = view.findViewById(R.id.img_Shuffle_All);
         mBtnViewAll = view.findViewById(R.id.btn_ViewAll);
-        text_Player_1 = view.findViewById(R.id.text_Player_1);
-        text_Player_2 = view.findViewById(R.id.text_Player_2);
+        mTextPlayer_1 = view.findViewById(R.id.text_Player_1);
+        mTextPlayer_2 = view.findViewById(R.id.text_Player_2);
     }
     public void initView(){
-        String musicHot = null;
-        if (!mSongManager.getStatistic().getMost(Constants.VALUE.SONG).equals("")) {
-            musicHot = mSongManager.getStatistic().getMost(Constants.VALUE.SONG);
 
-            text_Player_Songs.setText(musicHot);
-            ImageUtils.getInstance(activity).getSmallImageByPicasso(mSongManager.getSong(musicHot).getAlbumID(),
+        if (!mSongManager.getStatistic().getMost(Constants.VALUE.SONG).equals("")) {
+            mMostMusic = mSongManager.getStatistic().getMost(Constants.VALUE.SONG);
+
+            mTextPlayerSongs.setText(mMostMusic);
+            ImageUtils.getInstance(mActivity).getSmallImageByPicasso(mSongManager.getSong(mMostMusic).getAlbumID(),
                     mImg_Player_Songs);
         }else {
-            text_Player_Songs.setText("");
+            mTextPlayerSongs.setText("");
             mImg_Player_Songs.setImageResource(R.drawable.ic_music_notes_padded);
         }
         if (mMostPlayList != null) {
-            text_Player_1.setText(mMostPlayList.get(0));
-            text_Player_2.setText(mMostPlayList.size() < 2 ? mMostPlayList.get(0) :
+            mTextPlayer_1.setText(mMostPlayList.get(0));
+            mTextPlayer_2.setText(mMostPlayList.size() < 2 ? mMostPlayList.get(0) :
                     mMostPlayList.get(1));
         }else {
-            text_Player_1.setText("Play List 1");
-            text_Player_2.setText("Play List 2");
+            mTextPlayer_1.setText("Play List 1");
+            mTextPlayer_2.setText("Play List 2");
         }
     }
     public void assignView(){
@@ -85,7 +86,7 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mImg_Shuffle_All.setOnClickListener(this);
         mBtnViewAll.setOnClickListener(this);
 
-        mSongsAdapter = new SongAdapter(activity, SongManager.getInstance().newSongs(),
+        mSongsAdapter = new SongAdapter(mActivity, SongManager.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS);
         mSongsAdapter.setLimit(true);
         mSongsAdapter.notifyDataSetChanged();
@@ -93,7 +94,7 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mNewSongs = SongManager.getInstance().newSongs();
         mRc_Recently_Add.setAdapter(mSongsAdapter);
         mRc_Recently_Add.setNestedScrollingEnabled(false);
-        mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(activity,
+        mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(mActivity,
                 LinearLayoutManager.VERTICAL, false));
     }
 
@@ -102,36 +103,37 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         switch (v.getId()){
             case R.id.btn_ViewAll:
                 mRc_Recently_Add.setVisibility(View.GONE);
-                Intent iViewAll = new Intent(activity, SongActivity.class);
-                iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.ALL_SONGS);
-                activity.finish();
-                activity.startActivity(iViewAll);
+                Intent iViewAll = new Intent(mActivity, SongActivity.class);
+
+                iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
+                mActivity.finish();
+                mActivity.startActivity(iViewAll);
                 break;
             case R.id.img_Shuffle_All:
                 break;
             case R.id.img_Player_2:
                 mRc_Recently_Add.setVisibility(View.GONE);
-                Intent intent = new Intent(activity, SongActivity.class);
-                intent.putExtra(Constants.INTENT.TYPE_MUSIC, text_Player_2.getText().toString());
+                Intent intent = new Intent(mActivity, SongActivity.class);
+                intent.putExtra(Constants.INTENT.TYPE_MUSIC, mTextPlayer_2.getText().toString());
 
-                activity.finish();
-                activity.startActivity(intent);
+                mActivity.finish();
+                mActivity.startActivity(intent);
                 break;
 
             case R.id.img_Player_1:
                 mRc_Recently_Add.setVisibility(View.GONE);
-                Intent iPlayList_2 = new Intent(activity, SongActivity.class);
+                Intent iPlayList_2 = new Intent(mActivity, SongActivity.class);
                 iPlayList_2.putExtra(Constants.INTENT.TYPE_MUSIC,
-                        text_Player_1.getText().toString());
-                activity.finish();
-                activity.startActivity(iPlayList_2);
+                        mTextPlayer_1.getText().toString());
+                mActivity.finish();
+                mActivity.startActivity(iPlayList_2);
                 break;
             case R.id.img_Most_Player:
                 mRc_Recently_Add.setVisibility(View.GONE);
-                Intent iMostPlay = new Intent(activity, PlayActivity.class);
+                Intent iMostPlay = new Intent(mActivity, PlayActivity.class);
                 iMostPlay.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
 
-                activity.startActivity(iMostPlay);
+                mActivity.startActivity(iMostPlay);
                 break;
         }
     }
@@ -149,25 +151,25 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
     @Override
     public void onClick(String type, int position) {
         if (position != SongManager.getInstance().getPositionCurrent()) {
-            ((HomeActivity) Objects.requireNonNull(activity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-            ((HomeActivity) Objects.requireNonNull(activity)).isContinue = false;
+            ((HomeActivity) Objects.requireNonNull(mActivity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+            ((HomeActivity) Objects.requireNonNull(mActivity)).isContinue = false;
         }else {
             if (MediaPlayerService.mMediaPlayer!= null) {
                 if (MediaPlayerService.mMediaPlayer.isPlaying()) {
-                    ((HomeActivity) Objects.requireNonNull(activity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                    ((HomeActivity) Objects.requireNonNull(activity)).isContinue = true;
+                    ((HomeActivity) Objects.requireNonNull(mActivity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+                    ((HomeActivity) Objects.requireNonNull(mActivity)).isContinue = true;
                 } else {
-                    ((HomeActivity) Objects.requireNonNull(activity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                    ((HomeActivity) Objects.requireNonNull(mActivity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 }
             }else {
-                ((HomeActivity) Objects.requireNonNull(activity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                ((HomeActivity) Objects.requireNonNull(mActivity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
             }
         }
         mSongManager.setTypeCurrent(type);
-        ((HomeActivity)activity).choosePosition = position;
-        ((HomeActivity)activity).mTextTitle.setText(mNewSongs.get(position).getSongName());
-        ((HomeActivity)activity).mTextArtist.setText(mNewSongs.get(position).getArtist());
-        ImageUtils.getInstance(activity).getSmallImageByPicasso(
-                mNewSongs.get(position).getAlbumID(),((HomeActivity)activity).mImgMedia);
+        ((HomeActivity) mActivity).choosePosition = position;
+        ((HomeActivity) mActivity).mTextTitle.setText(mNewSongs.get(position).getSongName());
+        ((HomeActivity) mActivity).mTextArtist.setText(mNewSongs.get(position).getArtist());
+        ImageUtils.getInstance(mActivity).getSmallImageByPicasso(
+                mNewSongs.get(position).getAlbumID(),((HomeActivity) mActivity).mImgMedia);
     }
 }

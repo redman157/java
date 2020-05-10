@@ -319,8 +319,6 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
         return super.onOptionsItemSelected(item);
     }
 
-
-
     private void initView() {
         collapsingProfileHeaderView = findViewById(R.id.collapseActionView);
         mViewPagerSong = findViewById(R.id.vp_AllSong);
@@ -329,19 +327,14 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
         profileImage = collapsingProfileHeaderView.findViewById(R.id.profileImage);
         profileName = collapsingProfileHeaderView.findViewById(R.id.profileName);
         profileArtist = collapsingProfileHeaderView.findViewById(R.id.profileSubtitle);
-
         mToolBar = findViewById(R.id.tb_SongActivity);
-
-//        mViewLayoutPlay = findViewById(R.id.layout_play_media);
         mTextArtist = findViewById(R.id.text_artists_media);
         mTextTitle = findViewById(R.id.text_title_media);
         mImgMedia = findViewById(R.id.img_albumArt_media);
         mBtnPlayPause = findViewById(R.id.imbt_Play_media);
         mBtnTitle = findViewById(R.id.btn_title_media);
-
         mLl_Play_Media = findViewById(R.id.ll_play_media);
         mImgAlbumId = findViewById(R.id.img_AlbumId);
-
     }
 
     private void assignView() {

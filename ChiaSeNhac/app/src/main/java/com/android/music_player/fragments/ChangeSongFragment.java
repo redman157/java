@@ -123,7 +123,6 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
                 for (int i = 0; i < mSongModels.size(); i++) {
                     if (mSongModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
                         mMusicAdapter.setPosition(i);
-//                        mMusicAdapter.setListMusic(mSongModels);
                         mMusicAdapter.setOnClick(onClickItem);
                         DialogUtils.showSelectSong(getContext(),mMusicAdapter, i);
                     }

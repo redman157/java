@@ -12,33 +12,33 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
+import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.activities.SongActivity;
 import com.android.music_player.adapters.SongAdapter;
+import com.android.music_player.interfaces.OnChangePlayListListener;
+import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
+import com.android.music_player.services.MediaPlayerService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
+public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+        OnChangePlayListListener, SongAdapter.OnClickListener, OnClickItem {
     private TextView text_Player_1, text_Player_2, text_Player_Songs;
     private RecyclerView mRc_Recently_Add;
-    private SongAdapter mSongAdapter;
-
-
+    private SongAdapter mSongsAdapter;
     private ArrayList<SongModel> mNewSongs;
     private Button mBtnViewAll;
-
     private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
-    private ArrayList<String> mMostPlayList;
-    private Activity activity;
+    private  ArrayList<String> mMostPlayList;
     private SongManager mSongManager;
-
-
+    private Activity activity;
 
     public HomeHolder(@NonNull View view, Activity activity) {
         super(view);
@@ -57,9 +57,6 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         text_Player_1 = view.findViewById(R.id.text_Player_1);
         text_Player_2 = view.findViewById(R.id.text_Player_2);
     }
-
-
-
     public void initView(){
         String musicHot = null;
         if (!mSongManager.getStatistic().getMost(Constants.VALUE.SONG).equals("")) {
@@ -88,12 +85,16 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mImg_Shuffle_All.setOnClickListener(this);
         mBtnViewAll.setOnClickListener(this);
 
-        mRc_Recently_Add.setAdapter(mSongAdapter);
+        mSongsAdapter = new SongAdapter(activity, SongManager.getInstance().newSongs(),
+                Constants.VALUE.NEW_SONGS);
+        mSongsAdapter.setLimit(true);
+        mSongsAdapter.notifyDataSetChanged();
+        mSongsAdapter.setOnClickItem(this);
+        mNewSongs = SongManager.getInstance().newSongs();
+        mRc_Recently_Add.setAdapter(mSongsAdapter);
         mRc_Recently_Add.setNestedScrollingEnabled(false);
         mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(activity,
                 LinearLayoutManager.VERTICAL, false));
-
-
     }
 
     @Override
@@ -133,5 +134,40 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
                 activity.startActivity(iMostPlay);
                 break;
         }
+    }
+
+    @Override
+    public void onClickItem(ArrayList<String> mostPlayList) {
+
+    }
+
+    @Override
+    public void onClick(int pos) {
+
+    }
+
+    @Override
+    public void onClick(String type, int position) {
+        if (position != SongManager.getInstance().getPositionCurrent()) {
+            ((HomeActivity) Objects.requireNonNull(activity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+            ((HomeActivity) Objects.requireNonNull(activity)).isContinue = false;
+        }else {
+            if (MediaPlayerService.mMediaPlayer!= null) {
+                if (MediaPlayerService.mMediaPlayer.isPlaying()) {
+                    ((HomeActivity) Objects.requireNonNull(activity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+                    ((HomeActivity) Objects.requireNonNull(activity)).isContinue = true;
+                } else {
+                    ((HomeActivity) Objects.requireNonNull(activity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                }
+            }else {
+                ((HomeActivity) Objects.requireNonNull(activity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+            }
+        }
+        mSongManager.setTypeCurrent(type);
+        ((HomeActivity)activity).choosePosition = position;
+        ((HomeActivity)activity).mTextTitle.setText(mNewSongs.get(position).getSongName());
+        ((HomeActivity)activity).mTextArtist.setText(mNewSongs.get(position).getArtist());
+        ImageUtils.getInstance(activity).getSmallImageByPicasso(
+                mNewSongs.get(position).getAlbumID(),((HomeActivity)activity).mImgMedia);
     }
 }

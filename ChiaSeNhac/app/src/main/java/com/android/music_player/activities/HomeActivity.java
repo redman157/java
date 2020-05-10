@@ -224,16 +224,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (MediaPlayerService.mMediaPlayer != null) {
             if (MediaPlayerService.mMediaPlayer.isPlaying()) {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-//                mLlPlayMedia.setVisibility(View.VISIBLE);
             } else {
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-//                mLlPlayMedia.setVisibility(View.GONE);
             }
         }else {
-//            mLlPlayMedia.setVisibility(View.GONE);
             mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
         }
-
     }
 
     private void assignView(){
@@ -440,7 +436,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         for (int i = 0; i < mTabLayoutHome.getTabCount(); i ++){
             View view = mTabLayoutHome.getTabAt(i).getCustomView();
             TextView title = view.findViewById(R.id.item_tl_text_home);
-            int color = (i == tab.getPosition()) ? getResources().getColor(R.color.orange) :
+            int color = (i == tab.getPosition()) ? getResources().getColor(R.color.red) :
                     getResources().getColor(R.color.white);
             title.setTextColor(color);
         }

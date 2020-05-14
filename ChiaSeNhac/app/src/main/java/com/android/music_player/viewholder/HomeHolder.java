@@ -20,12 +20,11 @@ import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.services.MediaPlayerService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
         OnChangePlayListListener, SongAdapter.OnClickListener, OnClickItem {
@@ -39,6 +38,7 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
     private  ArrayList<String> mMostPlayList;
     private SongManager mSongManager;
     private Activity mActivity;
+    private HomeActivity mHomeActivity;
     private String mMostMusic;
 
     public HomeHolder(@NonNull View view, Activity mActivity) {
@@ -62,7 +62,6 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
         if (!mSongManager.getStatistic().getMost(Constants.VALUE.SONG).equals("")) {
             mMostMusic = mSongManager.getStatistic().getMost(Constants.VALUE.SONG);
-
             mTextPlayerSongs.setText(mMostMusic);
             ImageUtils.getInstance(mActivity).getSmallImageByPicasso(mSongManager.getSong(mMostMusic).getAlbumID(),
                     mImg_Player_Songs);
@@ -104,7 +103,6 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
             case R.id.btn_ViewAll:
                 mRc_Recently_Add.setVisibility(View.GONE);
                 Intent iViewAll = new Intent(mActivity, SongActivity.class);
-
                 iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
                 mActivity.finish();
                 mActivity.startActivity(iViewAll);
@@ -150,26 +148,19 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     @Override
     public void onClick(String type, int position) {
-        if (position != SongManager.getInstance().getPositionCurrent()) {
-            ((HomeActivity) Objects.requireNonNull(mActivity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-            ((HomeActivity) Objects.requireNonNull(mActivity)).isContinue = false;
-        }else {
-            if (MediaPlayerService.mMediaPlayer!= null) {
-                if (MediaPlayerService.mMediaPlayer.isPlaying()) {
-                    ((HomeActivity) Objects.requireNonNull(mActivity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                    ((HomeActivity) Objects.requireNonNull(mActivity)).isContinue = true;
-                } else {
-                    ((HomeActivity) Objects.requireNonNull(mActivity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                }
-            }else {
-                ((HomeActivity) Objects.requireNonNull(mActivity)).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+        if (mActivity instanceof HomeActivity) {
+            mHomeActivity = (HomeActivity) mActivity;
+            mSongManager.setType(type);
+            mHomeActivity.setSongCurrent(mNewSongs, position);
+
+            if (position != SongManager.getInstance().getPosition()) {
+                (mHomeActivity).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+                (mHomeActivity).isContinue = false;
+            } else {
+                Utils.UpdateButtonPlay(mHomeActivity, mHomeActivity.mBtnPlayPause);
             }
+
+
         }
-        mSongManager.setTypeCurrent(type);
-        ((HomeActivity) mActivity).choosePosition = position;
-        ((HomeActivity) mActivity).mTextTitle.setText(mNewSongs.get(position).getSongName());
-        ((HomeActivity) mActivity).mTextArtist.setText(mNewSongs.get(position).getArtist());
-        ImageUtils.getInstance(mActivity).getSmallImageByPicasso(
-                mNewSongs.get(position).getAlbumID(),((HomeActivity) mActivity).mImgMedia);
     }
 }

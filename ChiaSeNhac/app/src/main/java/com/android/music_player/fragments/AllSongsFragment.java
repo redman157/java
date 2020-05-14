@@ -17,8 +17,6 @@ import com.android.music_player.adapters.SongAdapter;
 import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
@@ -30,8 +28,7 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
     private String type;
     private RecyclerView mRcSongs;
     private SongManager mSongManager;
-    public int choosePosition;
-    private SongActivity songActivity;
+    private SongActivity mSongActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
     public AllSongsFragment(ArrayList<SongModel> songs, String type){
         mSongs = songs;
@@ -44,10 +41,10 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(getContext());
 
-        songActivity = (SongActivity) getContext();
+        mSongActivity = (SongActivity) getContext();
 
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
-        mSongAdapter = new SongAdapter(getContext(), mSongs, type);
+        mSongAdapter = new SongAdapter(getActivity(), mSongs, type);
         mSongAdapter.notifyDataSetChanged();
         mSongAdapter.setLimit(false);
         mSongAdapter.setOnClickItem(this);
@@ -86,28 +83,12 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
 
     @Override
     public void onClick(String type, int position) {
-        choosePosition = position;
-        mSongManager.setPositionCurrent(position);
-        mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mSongs.get(position).getAlbumID());
-        mSongManager.setTypeCurrent(type);
-        if (songActivity.mLl_Play_Media.getVisibility() == View.GONE){
-            songActivity.mLl_Play_Media.setVisibility(View.VISIBLE);
+        // khi click vào 1 item nào đó, phải lưu type, vị trí chọn lại
+        if (getActivity() instanceof SongActivity) {
+            mSongActivity.chooseSong = position;
+
+            mSongActivity.setSongCurrent(mSongs, position);
+            mSongManager.setType(type);
         }
-        ImageUtils.getInstance(getContext()).getSmallImageByPicasso(
-                mSongs.get(position).getAlbumID(),
-                songActivity.mImgAlbumId);
-        ImageUtils.getInstance(getContext()).getSmallImageByPicasso(
-                mSongs.get(position).getAlbumID(),
-                songActivity.mImgMedia);
-        songActivity.mTextTitle.setText(mSongs.get(position).getSongName());
-        songActivity.mTextArtist.setText(mSongs.get(position).getArtist());
-
-
-        ImageUtils.getInstance(getContext()).getSmallImageByPicasso(
-                mSongs.get(position).getAlbumID(),
-                songActivity.profileImage);
-        songActivity.profileName.setText(mSongs.get(position).getSongName());
-        songActivity.profileArtist.setText(mSongs.get(position).getArtist());
-        songActivity.profileAlbum.setText(mSongs.get(position).getAlbum());
     }
 }

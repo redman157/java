@@ -4,44 +4,32 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.music_player.R;
 import com.android.music_player.adapters.HomeFragmentAdapter;
-import com.android.music_player.adapters.SongAdapter;
 import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.managers.SongManager;
-import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment implements OnChangePlayListListener {
-    private RecyclerView mRc_Recently_Add;
-    private SongAdapter mAdderAdapter;
-    private ArrayList<SongModel> mNewSongs;
+public class HomeFragment extends Fragment implements OnChangePlayListListener, SwipeRefreshLayout.OnRefreshListener {
+
     private View view;
-    private Button mBtnViewAll;
-    private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
-            mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
-    private ImageUtils mImageUtils;
+
     private String type;
     private RecyclerView mRcHome;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private ArrayList<SongModel> mSongs;
-    private TextView text_Player_1, text_Player_2, text_Player_Songs;
+
     private SongManager mSongManager;
-    private  ArrayList<String> mMostPlayList;
-    private String play_list_1, play_list_2;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private OnChangePlayListListener onChangePlayListListener;
     private HomeFragmentAdapter mHomeAdapter;
     public void setOnChangePlayListListener(OnChangePlayListListener onChangePlayListListener){
@@ -79,6 +67,23 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener {
         mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
         mRcHome.setAdapter(mHomeAdapter);
 
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorSchemeResources(
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+
+        mSwipeRefreshLayout.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                mSwipeRefreshLayout.setRefreshing(true);
+
+                // Fetching data from server
+                loadRecyclerViewData();
+            }
+        });
         return view;
     }
 
@@ -89,13 +94,23 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener {
     }
 
     private void initView(){
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_container);
         mRcHome = view.findViewById(R.id.rc_home_fragment);
     }
 
-
+    private void loadRecyclerViewData(){
+        mSwipeRefreshLayout.setRefreshing(true);
+        getActivity().getIntent();
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
 
     @Override
     public void onClickItem(ArrayList<String> mostPlayList) {
         newInstance(mostPlayList);
+    }
+
+    @Override
+    public void onRefresh() {
+        loadRecyclerViewData();
     }
 }

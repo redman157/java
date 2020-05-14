@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,12 +25,11 @@ import androidx.viewpager.widget.ViewPager;
 import com.android.music_player.BaseActivity;
 import com.android.music_player.R;
 import com.android.music_player.adapters.ViewPagerAdapter;
-import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.fragments.HomeFragment;
+import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.services.MediaPlayerService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
-        ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener{
+        ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener, ViewTreeObserver.OnGlobalLayoutListener{
     private ViewPager mViewPager_Home;
 
     private String tag = "BBB";
@@ -58,10 +58,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public MaterialPlayPauseButton mBtnPlayPause;
     private boolean isPlaying;
     public LinearLayout mLlPlayMedia;
-    public int choosePosition;
+    public int chooseSong;
     public boolean isContinue;
     private OnChangePlayListListener onChangePlayListListener;
-    private boolean receiverRegistered = false;
+    private boolean isRegistered = false;
     private BroadcastReceiver brPlayPauseActivity = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent serviceIntent) {
@@ -75,7 +75,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             } else {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
             }
-            setSongCurrent(mSongs);
+            setSongCurrent();
         }
     };
 
@@ -89,12 +89,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 Log.d(tag, "HomeActivity --- brIsPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = true;
-                Utils.PauseMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent() );
+                Utils.PauseMediaService(context, mSongManager.getType(), mSongManager.getPosition() );
             } else {
                 Log.d(tag, "HomeActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
-                Utils.PlayMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent());
+                Utils.PlayMediaService(context, mSongManager.getType(), mSongManager.getPosition());
             }
         }
     };
@@ -125,18 +125,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onStart() {
         super.onStart();
         try {
-            if (!receiverRegistered) {
+            if (!isRegistered) {
                 registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
                 registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
-                receiverRegistered = true;
+                isRegistered = true;
             }
         }finally {
             mSongManager = SongManager.getInstance();
             mSongManager.setContext(this);
-            mSongs = mSongManager.getCurrentSongs();
+            mSongs = mSongManager.getListSong();
 
-            choosePosition = mSongManager.getPositionCurrent();
-            Log.d("XXX", "HomeActivity --- onStart: " + choosePosition);
+            chooseSong = mSongManager.getPosition();
+            Log.d("XXX", "HomeActivity --- onStart: " + chooseSong);
         };
     }
 
@@ -157,32 +157,32 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mSharedPrefsUtils = new SharedPrefsUtils(this);
         mSongManager = SongManager.getInstance();
         mSongManager.setContext(this);
-        mSongs = mSongManager.getCurrentSongs();
+        mSongs = mSongManager.getListSong();
         imageUtils = ImageUtils.getInstance(this);
 
         setupToolbar();
         assignView();
-        setSongCurrent(mSongs);
+        setSongCurrent();
         Log.d("XXX", "HomeActivity --- onCreate: Enter");
     }
 
     private void setupToolbar() {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-
     }
 
-    public void setSongCurrent(ArrayList<SongModel> song){
-        if (mSongManager.getPositionCurrent() == -1){
-            mTextArtist.setText(song.get(0).getArtist());
-            mTextTitle.setText(song.get(0).getSongName());
-            imageUtils.getSmallImageByPicasso(song.get(0).getAlbumID(), mImgMedia);
-        }else {
-            mTextArtist.setText(song.get(SongManager.getInstance().getPositionCurrent()).getArtist());
-            mTextTitle.setText(song.get(SongManager.getInstance().getPositionCurrent()).getSongName());
-            imageUtils.getSmallImageByPicasso(song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(), mImgMedia);
-        }
+    public void setSongCurrent(){
+        mTextArtist.setText(mSongManager.getCurrentSong().getArtist());
+        mTextTitle.setText(mSongManager.getCurrentSong().getSongName());
+        imageUtils.getSmallImageByPicasso(mSongManager.getCurrentSong().getAlbumID(),mImgMedia);
+    }
 
+    public void setSongCurrent(ArrayList<SongModel> song, int position){
+        SongModel songModel = song.get(position);
+        mSongManager.setPosition(position);
+        mTextArtist.setText(songModel.getArtist());
+        mTextTitle.setText(songModel.getSongName());
+        imageUtils.getSmallImageByPicasso(songModel.getAlbumID(),mImgMedia);
     }
 
     private void setupViewPager(ViewPager viewPager){
@@ -211,6 +211,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mLlPlayMedia = findViewById(R.id.ll_play_media);
         mToolBar = findViewById(R.id.tb_HomeActivity);
         mViewPlayMedia = findViewById(R.id.layout_play_media);
+
         mTextTitle = mViewPlayMedia.findViewById(R.id.text_title_media);
         mTextArtist = mViewPlayMedia.findViewById(R.id.text_artists_media);
         mBtnPlayPause = mViewPlayMedia.findViewById(R.id.imbt_Play_media);
@@ -219,17 +220,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         mViewPager_Home = findViewById(R.id.vp_Home);
         setupViewPager(mViewPager_Home);
-
-
-        if (MediaPlayerService.mMediaPlayer != null) {
-            if (MediaPlayerService.mMediaPlayer.isPlaying()) {
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-            } else {
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-            }
-        }else {
-            mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-        }
+        mImgMedia.getViewTreeObserver().addOnGlobalLayoutListener(this);
+        Utils.UpdateButtonPlay(this, mBtnPlayPause);
     }
 
     private void assignView(){
@@ -360,37 +352,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         return super.onOptionsItemSelected(item);
     }
 
-
-
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.imbt_Play_media:
-                Utils.isPlayMediaService(this, mSongManager.getTypeCurrent(),mSongManager.getPositionCurrent());
+                Utils.isPlayMediaService(this, mSongManager.getType(),mSongManager.getPosition());
                 break;
             case R.id.layout_play_media:
 
                 break;
             case R.id.btn_title_media:
-                Log.d("XXX", "btn_title_media: "+choosePosition);
-                Intent intent = new Intent(HomeActivity.this, PlayActivity.class);
-                Utils.Builder builder = new Utils.Builder();
-                builder.putString(Constants.INTENT.TYPE, Constants.VALUE.NEW_SONGS);
-                builder.putInteger(Constants.INTENT.CHOOSE_POS, choosePosition);
-
-                if (mSongManager.isPlayCurrentSong(choosePosition)) {
-                    Log.d("BBB", "HomeActivity --- btn_title_media: true");
-                    builder.putBoolean(Constants.INTENT.SONG_CONTINUE, true);
-                }else {
-                    Log.d("BBB", "HomeActivity --- btn_title_media: false");
-                    Utils.PauseMediaService(this,  Constants.VALUE.NEW_SONGS, choosePosition);
-                    builder.putBoolean(Constants.INTENT.SONG_CONTINUE, false);
-                }
-                intent.putExtras(builder.generate().getBundle());
-
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-                builder.generate().clear();
+                Utils.IntentToPlayActivity(this, chooseSong, mSongManager.getType() );
                 break;
             case R.id.menu_search:
                 Intent iSearch = new Intent(this, SearchActivity.class);
@@ -407,7 +379,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 //        super.onBackPressed();
     }
 
-    private int currentViewPagerPosition = 0;
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
       /*  if (mLlPlayMedia.getVisibility() == View.VISIBLE){
@@ -429,10 +400,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     }
 
-
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
-
         for (int i = 0; i < mTabLayoutHome.getTabCount(); i ++){
             View view = mTabLayoutHome.getTabAt(i).getCustomView();
             TextView title = view.findViewById(R.id.item_tl_text_home);
@@ -450,5 +419,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    @Override
+    public void onGlobalLayout() {
+        mImgMedia.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        final int[] locat_0 = new int[2];
+        mImgMedia.getLocationOnScreen(locat_0);
+        int x_0 = locat_0[0];
+        int y_0 = locat_0[1];
+
+        mTabLayoutHome.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        final int[] locat_1 = new int[2];
+        mTabLayoutHome.getLocationOnScreen(locat_1);
+        int x_1 = locat_1[0];
+        int y_1 = locat_1[1];
+        Log.d("HHH", "initView --- ImgMedia: x --- "+x_0 +" y --- "+y_0);
+        Log.d("HHH", "initView --- TabLayoutHome: x --- "+x_1 +" y --- "+y_1);
     }
 }

@@ -6,9 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <LinearLayout
+        android:background="?attr/selectableItemBackground"
         android:id="@+id/item_ll_Recently_Add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:orientation="horizontal"
         android:weightSum="10">
         <androidx.cardview.widget.CardView

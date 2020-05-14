@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -126,29 +127,54 @@ public class SongManager {
         }
     }
 
-    public void setTypeCurrent(String type){
+    public void setType(String type){
         mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
     }
 
-    public String getTypeCurrent(){
+    public String getType(){
         return mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
     }
 
-    public int getPositionCurrent() {
-        int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, -1);
+    public void setCurrentSong(String path){
+        Log.d("CCC","setCurrentSong: "+path);
+        mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_SONG, path);
+    }
 
+    public SongModel getCurrentSong(){
+        String current_path = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_SONG, "");
+        Log.d("CCC","getCurrentSong: "+current_path);
+        Random rd = new Random();
+        if (current_path.equals("")){
+            return allSortSongs().get(rd.nextInt(mSongsMain.size()));
+        }else {
+            for (SongModel songModel : mSongsMain) {
+                if (songModel.getPath().equals(current_path)){
+                    return songModel;
+                }
+            }
+        }
+        return allSortSongs().get(rd.nextInt(mSongsMain.size()));
+    }
+
+    public int getPosition() {
+        int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, -1);
         return pos;
     }
 
+    public void setAlbumID(String albumID){
+        mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, albumID);
+    }
 
-
-    public void setPositionCurrent(int position) {
-        Log.d("XXX","setPositionCurrent: "+position );
+    public String getAlbumID(){
+        return mSharedPrefsUtils.getString(Constants.PREFERENCES.SAVE_ALBUM_ID, "");
+    }
+    public void setPosition(int position) {
+        Log.d("XXX","setPosition: "+position );
         processEndOfList(position);
     }
 
-    public boolean isPlayCurrentSong(int position){
-        if (position == getPositionCurrent()){
+    public boolean isPlayCurrentSong(String path){
+        if (path.equals(getCurrentSong().getPath())){
             return true;
         }else {
             return false;
@@ -156,9 +182,9 @@ public class SongManager {
     }
 
 
-    public ArrayList<SongModel> getCurrentSongs(){
-        this.type = getTypeCurrent();
-        Log.d("BBB", "SongManager --- getCurrentSongs: "+type);
+    public ArrayList<SongModel> getListSong(){
+        this.type = getType();
+        Log.d("BBB", "SongManager --- getListSong: "+type);
         ArrayList<SongModel> song = new ArrayList<>();
         if (mAllPlaylist.searchPlayList(type)) {
             song = getAllSongToPlayList(type);
@@ -179,8 +205,8 @@ public class SongManager {
         return null;
     }
 
-    public ArrayList<SongModel> getCurrentSongs(String type){
-//        Log.d("BBB", "SongManager --- getCurrentSongs: "+type);
+    public ArrayList<SongModel> getListSong(String type){
+//        Log.d("BBB", "SongManager --- getListSong: "+type);
         ArrayList<SongModel> song = new ArrayList<>();
         if (mAllPlaylist.searchPlayList(type)) {
             song = getAllSongToPlayList(type);
@@ -203,8 +229,8 @@ public class SongManager {
 
     public void processEndOfList(int position){
 
-        if (getCurrentSongs()!= null) {
-            int size = (getCurrentSongs().size());
+        if (getListSong()!= null) {
+            int size = (getListSong().size());
             if (position >= size) {
 
                 mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, 0);
@@ -336,7 +362,7 @@ public class SongManager {
     }
 
     public void playNext(SongModel song) {
-        queue().add(getPositionCurrent() + 1, song);
+        queue().add(getPosition() + 1, song);
         Utils.ToastLong(mContext, "PLAYING next: " + song.getSongName());
     }
 
@@ -400,7 +426,7 @@ public class SongManager {
             File file = new File(array.get(id).getPath());
             if (file.exists()) {
                 replaceQueue(array);
-                setPositionCurrent(id);
+                setPosition(id);
                 Intent intent = new Intent(Constants.ACTION.PLAY);
                 ContextCompat.startForegroundService(mContext, createExplicitFromImplicitIntent(intent));
 

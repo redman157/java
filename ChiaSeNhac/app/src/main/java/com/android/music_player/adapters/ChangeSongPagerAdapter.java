@@ -47,12 +47,12 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     @Override
     public void onClick(int pos) {
 
-        SongManager.getInstance().setPositionCurrent(pos - 1);
+        SongManager.getInstance().setPosition(pos - 1);
 
         if (((PlayActivity)context).isShuffle){
-            Utils.NextMediaService(context, Constants.VALUE.SHUFFLE, mSongManager.getPositionCurrent());
+            Utils.NextMediaService(context, Constants.VALUE.SHUFFLE, mSongManager.getPosition());
         }else {
-            Utils.NextMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent());
+            Utils.NextMediaService(context, mSongManager.getType(), mSongManager.getPosition());
         }
 
     }

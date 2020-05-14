@@ -1,6 +1,6 @@
 package com.android.music_player.adapters;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,18 +12,20 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
+import com.android.music_player.activities.SongActivity;
 import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
+import com.android.music_player.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ItemViewHolder> {
-    private final Context mContext;
+    private final Activity mActivity;
     private ArrayList<SongModel> items;
     private String type;
     private SharedPrefsUtils mSharedPrefsUtils;
@@ -33,11 +35,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ItemViewHolder
     public void setLimit(boolean isLimit){
         this.isLimit = isLimit;
     }
-    public SongAdapter(Context context, ArrayList<SongModel> items, String type) {
+    public SongAdapter(Activity activity, ArrayList<SongModel> items, String type) {
         this.items = items;
         this.type = type;
-        mContext = context;
-        mSharedPrefsUtils = new SharedPrefsUtils(context);
+        mActivity = activity;
+        mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
 
     }
 
@@ -65,13 +67,18 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ItemViewHolder
 
         item = items.get(position);
         holder.set(item);
+
         holder.mL_Recently_Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 onClickItem.onClick(type, position);
 
+
                 mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, items.get(position).getAlbumID());
+                if (!(mActivity instanceof SongActivity)){
+                    Utils.IntentToPlayActivity(mActivity, position, type);
+                }
             }
         });
 
@@ -85,7 +92,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ItemViewHolder
             return items.size();
         }
     }
-
 
     public class ItemViewHolder extends RecyclerView.ViewHolder  {
         private ImageView mImgMusic;
@@ -110,8 +116,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ItemViewHolder
             mTextTime.setText(mFormat.format(song.getTime()));
             mImgMusic.setClipToOutline(true);
 
-            ImageUtils.getInstance(mContext).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);
-
+            ImageUtils.getInstance(mActivity).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);
         }
     }
 

@@ -1,11 +1,16 @@
 package com.android.music_player.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.music_player.R;
+import com.android.music_player.activities.PlayActivity;
+import com.android.music_player.managers.SongManager;
 import com.android.music_player.services.MediaPlayerService;
 
 import java.text.SimpleDateFormat;
@@ -58,7 +63,14 @@ public class Utils {
                 return R.color.grey;
             default:
                 return R.color.pink;
+        }
+    }
 
+    public static void UpdateButtonPlay(Activity activity, ImageButton button){
+        if (MediaPlayerService.mMediaPlayer != null && MediaPlayerService.mMediaPlayer.isPlaying()){
+            button.setImageResource(R.drawable.ic_media_pause_light);
+        }else {
+            button.setImageResource(R.drawable.ic_media_play_light);
         }
     }
 
@@ -80,6 +92,30 @@ public class Utils {
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
         iPause.putExtras(builder.generate().getBundle());
         context.startService(iPause);
+    }
+
+    public static void IntentToPlayActivity(Activity activity, int position, String type){
+        SongManager manager = SongManager.getInstance();
+        manager.setContext(activity);
+        Intent intent = new Intent(activity, PlayActivity.class);
+        Utils.Builder builder = new Utils.Builder();
+        builder.putString(Constants.INTENT.TYPE,type);
+        builder.putInteger(Constants.INTENT.CHOOSE_POS, position);
+
+        if (manager.isPlayCurrentSong(manager.getListSong(type).get(position).getPath())) {
+            Log.d("BBB", "Utils --- IntentToPlayActivity: true");
+            builder.putBoolean(Constants.INTENT.SONG_CONTINUE, true);
+        }else {
+            Log.d("BBB", "Utils --- IntentToPlayActivity: false");
+            Utils.PauseMediaService(activity, type, position);
+            builder.putBoolean(Constants.INTENT.SONG_CONTINUE, false);
+        }
+        intent.putExtras(builder.generate().getBundle());
+
+        activity.finish();
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
+        builder.generate().clear();
     }
 
     public static void isPlayMediaService(Context context ,

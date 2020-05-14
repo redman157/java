@@ -52,7 +52,7 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
     private Toolbar mToolBar;
     private Button mBtnTitle;
 
-    private int choosePosition;
+    public int chooseSong;
     private ImageButton mBtnPlayPause;
     public ImageView mImgMedia;
     private SongManager mSongManager;
@@ -77,10 +77,10 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
         }finally {
             mSongManager = SongManager.getInstance();
             mSongManager.setContext(this);
-            mSongs = mSongManager.getCurrentSongs();
+            mSongs = mSongManager.getListSong();
 
-            choosePosition = mSongManager.getPositionCurrent();
-            Log.d("XXX", "HomeActivity --- onStart: " + choosePosition);
+//            chooseSong = mSongManager.getPosition();
+
         }
     }
 
@@ -98,7 +98,7 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
             } else {
                 mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
             }
-            setSongCurrent(mSongs);
+            setSongCurrent();
         }
     };
 
@@ -112,12 +112,12 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
                 Log.d("XXX", "SongActivity --- brIsPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = true;
-                Utils.PauseMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent() );
+                Utils.PauseMediaService(context, mSongManager.getType(), mSongManager.getPosition() );
             } else {
                 Log.d("XXX", "SongActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
-                Utils.PlayMediaService(context, mSongManager.getTypeCurrent(), mSongManager.getPositionCurrent());
+                Utils.PlayMediaService(context, mSongManager.getType(), mSongManager.getPosition());
             }
         }
     };
@@ -133,12 +133,12 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
         type = getIntent().getStringExtra(Constants.INTENT.TYPE_MUSIC);
 
-        mSongs = mSongManager.getCurrentSongs(type);
+        mSongs = mSongManager.getListSong(type);
 
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setSongCurrent(mSongs);
+        setSongCurrent();
         assignView();
     }
 
@@ -149,46 +149,50 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
         this.unregisterReceiver(brIsPlayService);
     }
 
-    public void setSongCurrent(ArrayList<SongModel> song){
-        if (mSongManager.getPositionCurrent() == -1){
-            mTextArtist.setText(song.get(0).getArtist());
-            mTextTitle.setText(song.get(0).getSongName());
+    public void setSongCurrent(){
+        mTextArtist.setText(mSongManager.getCurrentSong().getArtist());
+        mTextTitle.setText(mSongManager.getCurrentSong().getSongName());
 
-            ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                    song.get(0).getAlbumID(),
-                    profileImage);
+        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
+                mSongManager.getCurrentSong().getAlbumID(),
+                profileImage);
 
-            ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                    song.get(0).getAlbumID(),
-                    mImgMedia);
+        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
+                mSongManager.getCurrentSong().getAlbumID(),
+                mImgMedia);
 
-            ImageUtils.getInstance(this).getSmallImageByPicasso(
-                    song.get(0).getAlbumID(),
-                    mImgAlbumId);
+        ImageUtils.getInstance(this).getSmallImageByPicasso(
+                mSongManager.getCurrentSong().getAlbumID(),
+                mImgAlbumId);
 
-            profileName.setText(mSongs.get(0).getSongName());
-            profileArtist.setText(mSongs.get(0).getArtist());
-            profileAlbum.setText(mSongs.get(0).getAlbum());
-        }else {
-            mTextArtist.setText(song.get(SongManager.getInstance().getPositionCurrent()).getArtist());
-            mTextTitle.setText(song.get(SongManager.getInstance().getPositionCurrent()).getSongName());
+        profileName.setText(mSongManager.getCurrentSong().getSongName());
+        profileArtist.setText(mSongManager.getCurrentSong().getArtist());
+        profileAlbum.setText(mSongManager.getCurrentSong().getAlbum());
+    }
 
-            ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                    song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(),
-                    profileImage);
+    public void setSongCurrent(ArrayList<SongModel> mSongs, int position){
+        SongModel songModel = mSongs.get(position);
+        mSongManager.setPosition(position);
+        mSongManager.setAlbumID(mSongs.get(position).getAlbumID());
 
-            ImageUtils.getInstance(this).getSmallImageByPicasso(
-                    song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(),
-                    mImgAlbumId);
+        mTextArtist.setText(songModel.getArtist());
+        mTextTitle.setText(songModel.getSongName());
 
-            ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                    song.get(SongManager.getInstance().getPositionCurrent()).getAlbumID(),
-                    mImgMedia);
-            profileName.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getSongName());
-            profileArtist.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getArtist());
-            profileAlbum.setText(mSongs.get(SongManager.getInstance().getPositionCurrent()).getAlbum());
-        }
+        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
+                songModel.getAlbumID(),
+                profileImage);
 
+        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
+                songModel.getAlbumID(),
+                mImgMedia);
+
+        ImageUtils.getInstance(this).getSmallImageByPicasso(
+                songModel.getAlbumID(),
+                mImgAlbumId);
+
+        profileName.setText(songModel.getSongName());
+        profileArtist.setText(songModel.getArtist());
+        profileAlbum.setText(songModel.getAlbum());
     }
 
     @Override
@@ -341,11 +345,12 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
         mBtnPlayPause.setOnClickListener(this);
         mLl_Play_Media.setOnClickListener(this);
         setupViewPager(mViewPagerSong);
+
+        Utils.UpdateButtonPlay(this, mBtnPlayPause);
     }
 
     private void setupViewPager(ViewPager viewPager){
         mViewPagerAdapter = new ViewPagerAdapter(this,getSupportFragmentManager());
-
         mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
         mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
         mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
@@ -368,26 +373,19 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_title_media:
-                Intent intent = new Intent(SongActivity.this, PlayActivity.class);
-                Utils.Builder builder = new Utils.Builder();
-                builder.putString(Constants.INTENT.TYPE, type);
-                builder.putInteger(Constants.INTENT.CHOOSE_POS, choosePosition);
-
-                if (mSongManager.isPlayCurrentSong(choosePosition)) {
-                    Log.d("BBB", "SongActivity --- btn_title_media: true");
-                    builder.putBoolean(Constants.INTENT.SONG_CONTINUE, true);
+                // khi ấn vào songactivity rồi bấm playactivity, rồi back ngược lại trở lại
+                // songactivity update lại nút này để có thể hiểu music chọn bằng cách check type
+                // khác thì mới bấm dc
+                Log.d("XXX", "SongActivity --- current type: "+mSongManager.getType() + " ---- " +
+                        "type: "+type);
+                if (mSongManager.getType().equals(type)) {
+                    Utils.IntentToPlayActivity(this, mSongManager.getPosition(), mSongManager.getType());
                 }else {
-                    Log.d("BBB", "SongActivity --- btn_title_media: false");
-                    Utils.PauseMediaService(this,  Constants.VALUE.NEW_SONGS, choosePosition);
-                    builder.putBoolean(Constants.INTENT.SONG_CONTINUE, false);
+                    Utils.ToastShort(this, "Please choose music!!");
                 }
-                intent.putExtras(builder.generate().getBundle());
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-                builder.generate().clear();
                 break;
             case R.id.imbt_Play_media:
-                Utils.isPlayMediaService(this, mSongManager.getTypeCurrent(),mSongManager.getPositionCurrent());
+                Utils.isPlayMediaService(this, mSongManager.getType(),mSongManager.getPosition());
                 break;
         }
     }

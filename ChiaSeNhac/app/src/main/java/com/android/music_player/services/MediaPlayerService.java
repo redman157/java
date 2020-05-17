@@ -17,6 +17,7 @@ import android.media.audiofx.BassBoost;
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.Virtualizer;
 import android.media.session.MediaSessionManager;
+import android.media.session.PlaybackState;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
@@ -66,9 +67,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private final IBinder iBinder = new LocalBinder();
     private String tag = "BBB";
     private Status status = PAUSED;
+    private PlaybackState state;
     //MediaSession
     private MediaSessionManager mMediaSessionManager;
     private MediaSessionCompat mMediaSessionCompat;
+    private MediaControllerCompat.Callback callback;
     private MediaControllerCompat.TransportControls mMediaTransportControls;
     private SongManager mSongManager;
     private SharedPrefsUtils mSharedPrefsUtils;
@@ -83,7 +86,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     public static MediaPlayer mMediaPlayer;
     public static ArrayList<SongModel> mSongs, mSongShuffle;
     private int position;
-    private boolean isAutoPlay = false;
+    private boolean isAutoPlay = false, isSeek = false;
     private Intent iIntentSeekBar, iNewMusic, iCheckPlayActivity, iPlayPauseActivity;
 //    private Intent iPrevToActivity, iNextToActivity;
     private androidx.core.app.NotificationCompat.Builder notificationBuilder = null;
@@ -100,6 +103,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             return MediaPlayerService.this;
         }
     }
+
+
 
     @Nullable
     @Override
@@ -226,6 +231,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     if (!successfullyRetrievedAudioFocus()) {
                         return;
                     }
+                    Log.d("MMM","Service --- onPlay: "+mMediaPlayer.getCurrentPosition());
                     Log.d(tag, "Service --- onPlay:" + (mSongs.get(position)).getPath());
                     playMedia(mSongs.get(position).getPath());
 
@@ -239,10 +245,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 try {
                     super.onPause();
                     pauseMedia();
-                    Log.d("MMM", "Service --- onPause position:  "+ position);
+                    Log.d("MMM", "Service --- onPause position:  "+ mMediaPlayer.getCurrentPosition());
 
                 } finally {
                     status = Status.PAUSED;
+                    Log.d("MMM", "Service --- status:  "+ status.toString());
                     initNotification(Constants.NOTIFICATION.PAUSE, mSongManager.getPosition());
                     // báo len UI là pause
                 }
@@ -332,7 +339,22 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             @Override
             public void onSeekTo(long position) {
                 super.onSeekTo(position);
-                if (status == PLAYED) {
+                try {
+                    if (status == PLAYED){
+
+                        mMediaPlayer.seekTo((int) position);
+                        setupHandler();
+                        mMediaPlayer.pause();
+                    }
+                    Log.d("MMM", status.toString());
+                }finally {
+                    if (status == PLAYED){
+                        mMediaPlayer.start();
+                    }
+                }
+
+
+              /*  if (status == PLAYED) {
                     Log.d("CCC", "onSeekTo: if enter");
                     mMediaPlayer.seekTo((int) position);
                     setupHandler();
@@ -341,7 +363,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                     Log.d("CCC", "onSeekTo: else enter");
                     mMediaPlayer.seekTo((int) position);
                     setupHandler();
-                }
+                }*/
             }
         });
     }

@@ -14,6 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentScrim="@color/transparent"
+            app:expandedTitleGravity="center_horizontal"
+            app:layout_collapseMode="pin"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <com.android.music_player.IconView

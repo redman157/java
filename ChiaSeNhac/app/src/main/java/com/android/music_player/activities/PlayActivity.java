@@ -30,6 +30,7 @@ import com.android.music_player.adapters.ChangeSongPagerAdapter;
 import com.android.music_player.fragments.ChangeSongFragment;
 import com.android.music_player.managers.SongManager;
 import com.android.music_player.models.SongModel;
+import com.android.music_player.services.MediaPlayerService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -479,7 +480,9 @@ public class PlayActivity extends BaseActivity
 
 
     private void updateUI(Intent serviceIntent) {
+
         currentMedia = serviceIntent.getIntExtra("current_pos", 0);
+//        Log.d("MMM", "PlayActivity --- updateUI: "+currentMedia);
         mediaMax = serviceIntent.getIntExtra("media_max", 0);
         String songTitle = serviceIntent.getStringExtra("song_title");
         mSeekBarTime.setMax(mediaMax);
@@ -504,18 +507,16 @@ public class PlayActivity extends BaseActivity
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        Log.d("MMM", "PlayActivity --- onStartTrackingTouch: "+seekPos);
-        if (seekPos != 0) {
+        Log.d("MMM", "PlayActivity --- onStartTrackingTouch: " + seekPos);
+       /* if (seekPos != 0) {
             seekBar.setProgress(seekPos);
-        }
+        }*/
     }
-
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         Log.d("MMM", "PlayActivity --- onStopTrackingTouch: "+seekPos);
-        if (seekPos != 0) {
-            seekBar.setProgress(seekPos);
 
-        }
+            MediaPlayerService.mMediaPlayer.start();
+
     }
 }

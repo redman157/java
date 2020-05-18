@@ -110,6 +110,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onStop() {
 
         super.onStop();
+
+
         Log.d("XXX", "HomeActivity --- onStop: Enter");
     }
 

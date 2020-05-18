@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activities.HomeActivity"
+    tools:mContext=".activities.HomeActivity"
     android:fitsSystemWindows="false"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 

@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.BassBoost;
@@ -73,15 +75,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     private MediaSessionCompat mMediaSessionCompat;
     private MediaControllerCompat.Callback callback;
     private MediaControllerCompat.TransportControls mMediaTransportControls;
+    private AudioFocusRequest mAudioFocusRequest;
+    private AudioManager.OnAudioFocusChangeListener afChangeListener;
     private SongManager mSongManager;
     private SharedPrefsUtils mSharedPrefsUtils;
     private AudioManager mAudioManager;
+
     //AudioPlayer notification ID
 
     private final Handler handler = new Handler();
     private boolean isInitAudioError;
-    /**
-     * Static*/
+
     public static final int NOTIFICATION_ID = 101;
     public static MediaPlayer mMediaPlayer;
     public static ArrayList<SongModel> mSongs, mSongShuffle;
@@ -228,7 +232,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
             public void onPlay() {
                 try {
                     super.onPlay();
-                    if (!successfullyRetrievedAudioFocus()) {
+                    if (!successAudioFocus()) {
                         return;
                     }
                     Log.d("MMM","Service --- onPlay: "+mMediaPlayer.getCurrentPosition());
@@ -323,6 +327,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 super.onStop();
                 try {
                     status = STOPPING;
+                    AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                    // Abandon audio focus
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        am.abandonAudioFocusRequest(mAudioFocusRequest);
+                        unregisterReceiver(brNoisyReceiver);
+                        stopSelf();
+                        mMediaSessionCompat.setActive(false);
+                        stopForeground(false);
+                    }
 
                     if(mMediaPlayer!= null) {
                         mSongManager.setPosition(position);
@@ -723,6 +736,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     }
 
     private void initNotification(String type, int position) {
+
         Log.d("ZZZ", "service --- initNotification:"+ type + " ---- "+position);
         ArrayList<SongModel> mSongs = SongManager.getInstance().getListSong();
         int icon_Action = 0;
@@ -862,9 +876,39 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
     /*
     Audio Manager Focus Change
     * */
+    private boolean successAudioFocus() {
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        AudioAttributes attrs = new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mAudioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                    .setOnAudioFocusChangeListener(this)
+                    .setAudioAttributes(attrs)
+                    .build();
+        }
+
+
+        int result = audioManager.requestAudioFocus(this,
+                AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
+        return result == AudioManager.AUDIOFOCUS_GAIN;
+    }
+
     @Override
     public void onAudioFocusChange(int state) {
         switch (state) {
+/*            case AudioManager.AUDIOFOCUS_REQUEST_GRANTED:
+                // Start the service
+                startService(new Intent(this, MediaPlayerService.class));
+                // Set the session active  (and update metadata and state)
+                mMediaSessionCompat.setActive(true);
+                // start the player (custom call)
+                mMediaPlayer.start();
+                // Register BECOME_NOISY BroadcastReceiver
+                // Put the service in the foreground, post notification
+                startForeground(NOTIFICATION_ID, notificationBuilder.build());
+                break;*/
             case AudioManager.AUDIOFOCUS_GAIN:
                 // resume playback
                 if (mMediaPlayer == null) {
@@ -900,14 +944,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnComplet
                 break;
         }
     }
-    private boolean successfullyRetrievedAudioFocus() {
-        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
-        int result = audioManager.requestAudioFocus(this,
-                AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-
-        return result == AudioManager.AUDIOFOCUS_GAIN;
-    }
 
 
 

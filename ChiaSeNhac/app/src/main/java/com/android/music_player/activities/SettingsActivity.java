@@ -1,12 +1,11 @@
 package com.android.music_player.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 
+import com.android.music_player.BaseActivityExam;
 import com.android.music_player.R;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivityExam {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

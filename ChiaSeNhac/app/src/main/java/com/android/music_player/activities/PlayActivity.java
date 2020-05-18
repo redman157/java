@@ -360,6 +360,13 @@ public class PlayActivity extends BaseActivity
                 // khi bấm play check play trước đã, trong broad cast check play sẽ play video
                 Log.d(tag, "PlayActivity --- type: "+type);
 
+             /*   int pbState =
+                        MediaControllerCompat.getMediaController(PlayActivity.this).getPlaybackState().getState();
+                if (pbState == PlaybackStateCompat.STATE_PLAYING) {
+                    MediaControllerCompat.getMediaController(PlayActivity.this).getTransportControls().pause();
+                } else {
+                    MediaControllerCompat.getMediaController(PlayActivity.this).getTransportControls().play();
+                }*/
                 Utils.isPlayMediaService(PlayActivity.this, type, position);
                 break;
             case R.id.icon_next:

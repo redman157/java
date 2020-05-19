@@ -265,6 +265,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 startActivity(new Intent(this, EqualizerActivity.class));
                 break;
             case R.id.changeTheme:
+                
                 final Dialog dialog = new Dialog(this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_choose_accent_color);

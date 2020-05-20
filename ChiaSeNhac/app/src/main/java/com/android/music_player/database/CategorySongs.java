@@ -54,7 +54,7 @@ public class CategorySongs {
     public void addCategory(SongModel song) {
         String SQL_INSERT = "INSERT INTO "+ Database.CATEGORY.TABLE_NAME+
                 " Value(null, " +
-                "'"+ song.get_ID() +"'"      +","+
+
                 "'"+ "0" +"'" +","+
                 "'"+ song.getSongName() +"'" +","+
                 "'"+ song.getPath() +"'"     +","+
@@ -86,7 +86,6 @@ public class CategorySongs {
                 builder.setAlbum(data.getString(6));
                 builder.setAlbumID(data.getString(7));
                 builder.setFileName(data.getString(9));
-                builder.setID(data.getString(1));
                 builder.setTime(data.getInt(8));
 
                 SongModel songModel = builder.generate();
@@ -188,7 +187,6 @@ public class CategorySongs {
                 Database.CATEGORY.ALBUM         + "='"+ song.getAlbum()+"'"    + "," +
                 Database.CATEGORY.ALBUM_ID      + "='"+ song.getAlbumID()+"'"  + "," +
                 Database.CATEGORY.FILE_NAME     + "='"+ song.getFileName()+"'" + "," +
-                Database.CATEGORY.CATEGORY      + "='"+ song.get_ID()+"'"      + "," +
                 Database.CATEGORY.TIME          + "='"+ song.getTime()+"'" +
                 " WHERE " + "fake_path= '"+ fake_path +"'";
         mDatabase.queryData(SQL_UPDATE);

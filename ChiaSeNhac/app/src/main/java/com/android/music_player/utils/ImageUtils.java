@@ -4,13 +4,17 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.android.music_player.R;
 import com.android.music_player.models.SongModel;
@@ -108,44 +112,10 @@ public class ImageUtils {
         try {
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_black_24dp)))
-                    .resize(400,400)
+
                     .onlyScaleDown()
-                    .into(image);}
-        catch (Exception ignored) {}
-    }
-
-    public void getSmallImage(String albumID, ImageView image) {
-        try {
-            Picasso.get().load(getSongUri(Long.parseLong(albumID)))
-                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_white_24dp)))
-                    .resize(400,400)
-                    .onlyScaleDown()
-                    .into(image);}
-        catch (Exception ignored) {}
-    }
-
-    public void getBitmapImageByPicasso(String albumID, final ImageView imageView){
-        try {
-            Picasso.get().load(getSongUri(Long.parseLong(albumID)))
-                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_black_24dp)))
-                    .resize(400,400)
-                    .onlyScaleDown()
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            imageView.setImageBitmap(bitmap);
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                        }
-                    });}
+                    .into(image);
+        }
         catch (Exception ignored) {}
     }
 
@@ -321,7 +291,44 @@ public class ImageUtils {
     }
 
     public static Uri getSongUri(Long albumID) {
-        return ContentUris.withAppendedId(Uri
+        Uri uri = ContentUris.withAppendedId(Uri
                 .parse("content://media/external/audio/albumart"), albumID);
+
+        return uri;
+    }
+
+    public static Bitmap getAlbumArt(Context context, Long albumId) {
+        Bitmap bitmap = null;
+        try {
+            Uri uri = ContentUris.withAppendedId(Uri
+                    .parse("content://media/external/audio/albumart"), albumId);
+            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver() , uri);
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            //handle exception
+            if (e instanceof FileNotFoundException){
+                Log.d("GGG","FileNotFoundException Enter: "+albumId);
+                bitmap = getBitmapFromVectorDrawable(context,
+                        R.drawable.ic_music_notes_padded);
+
+            }
+        }
+        return bitmap;
+    }
+    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 }

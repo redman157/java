@@ -94,14 +94,14 @@
         app:layout_constraintEnd_toEndOf="@+id/media_controls"
         app:layout_constraintTop_toTopOf="@+id/media_controls" />
 
-    <android.support.constraint.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".5" />
 
-    <com.example.android.mediasession.ui.MediaSeekBar
+    <com.android.music_player.MediaSeekBar
         android:id="@+id/seekbar_audio"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
+import com.android.music_player.MusicLibrary;
 import com.android.music_player.R;
 import com.android.music_player.database.AllPlaylist;
 import com.android.music_player.database.CategorySongs;
@@ -690,29 +691,39 @@ public class SongManager {
     }
 
     private void crawlData() {
-        String[] STAR = {"*"};
-
+        String[] mediaProjection = {"*"};
+        String[] genresProjection = {
+                MediaStore.Audio.Genres.NAME,
+                MediaStore.Audio.Genres._ID
+        };
         boolean excludeShortSounds = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_SHORT_SOUNDS, false);
         boolean excludeWhatsApp = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_WHATS_APP_SOUNDS, false);
 
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Uri uriMedia = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
         Cursor cursor = mContext.getContentResolver()
-                .query(uri, STAR, selection, null, null);
-        Log.d(TAG, "Uri: "+uri.getPath() + " ==== Selection: "+ selection+ " ====== Cursor: "+cursor.getCount());
+                .query(uriMedia, mediaProjection, selection, null, null);
+        Log.d(TAG, "Uri: "+uriMedia.getPath() + " ==== Selection: "+ selection+ " ====== Cursor: "+cursor.getCount());
 
 
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 SongModel.Builder builder = null;
                 String duration = cursor
                         .getString(cursor
                                 .getColumnIndex(MediaStore.Audio.Media.DURATION));
                 int currentDuration = Math.round(Integer.parseInt(duration));
-
                 if (currentDuration > ((excludeShortSounds) ? 60000 : 0)) {
-                    if (!excludeWhatsApp || !cursor.getString(cursor
-                            .getColumnIndex(MediaStore.Audio.Media.ALBUM)).equals("WhatsApp Audio")) {
+                    if (!excludeWhatsApp ||
+                            !cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)).equals("WhatsApp Audio")) {
+
+
+
+                        int id_column_index = cursor
+                                .getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
+
+                        int musicId = Integer.parseInt(cursor.getString(id_column_index));
+
 
                         String songName = cursor
                                 .getString(
@@ -727,13 +738,23 @@ public class SongManager {
                         String albumName = cursor.getString(cursor
                                 .getColumnIndex(MediaStore.Audio.Media.ALBUM));
 
-                        long id = cursor.getColumnIndex
-                                (MediaStore.Audio.Media._ID);
-
                         String albumID = cursor
                                 .getString(
                                         cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
                                 );
+
+
+                        Uri uriGenres = MediaStore.Audio.Genres.getContentUriForAudioId("external", musicId);
+                        Cursor genresCursor = mContext.getContentResolver().query(uriGenres,
+                                genresProjection, null, null, null);
+                        String genres = "";
+                        int genre_column_index = genresCursor.getColumnIndexOrThrow(MediaStore.Audio.Genres.NAME);
+                        if (genresCursor.moveToFirst()) {
+                            do {
+                                genres = genresCursor.getString(genre_column_index);
+                            } while (genresCursor.moveToNext());
+                        }
+
 
                         // Adding song to list
                         builder = new SongModel.Builder();
@@ -742,13 +763,13 @@ public class SongManager {
                         builder.setArtist(artistName);
                         builder.setAlbum(albumName);
                         builder.setAlbumID(albumID);
+                        builder.setGenres(genres);
                         builder.setPath(path);
                         builder.setTime(currentDuration);
-                        builder.setID(String.valueOf(id));
 
                         mSongsMain.add(builder.generate());
 
-
+                        MusicLibrary.createMediaMetadataCompat(builder.generate());
                     }
                 }
 

@@ -7,21 +7,23 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.media.MediaBrowserServiceCompat;
 
-import com.android.music_player.BaseActivityExam;
 import com.android.music_player.MediaBrowserHelper;
 import com.android.music_player.MediaSeekBar;
+import com.android.music_player.MusicLibrary;
 import com.android.music_player.R;
 import com.android.music_player.services.MediaService;
 
 import java.util.List;
 
-public class SettingsActivity extends BaseActivityExam {
+public class SettingsActivity extends AppCompatActivity {
     private ImageView mAlbumArt;
     private TextView mTitleTextView;
     private TextView mArtistTextView;
@@ -42,6 +44,11 @@ public class SettingsActivity extends BaseActivityExam {
         mMediaControlsImage = findViewById(R.id.media_controls);
         mSeekBarAudio = findViewById(R.id.seekbar_audio);
 
+        final ClickListener clickListener = new ClickListener();
+        findViewById(R.id.button_previous).setOnClickListener(clickListener);
+        findViewById(R.id.button_play).setOnClickListener(clickListener);
+        findViewById(R.id.button_next).setOnClickListener(clickListener);
+        
         mMediaBrowserHelper = new MediaBrowserConnection(this);
         mMediaBrowserHelper.registerCallback(new MediaBrowserListener());
     }
@@ -114,13 +121,13 @@ public class SettingsActivity extends BaseActivityExam {
             if (mediaMetadata == null) {
                 return;
             }
-           /* mTitleTextView.setText(
+            mTitleTextView.setText(
                     mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
             mArtistTextView.setText(
                     mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
             mAlbumArt.setImageBitmap(MusicLibrary.getAlbumBitmap(
-                    MainActivity.this,
-                    mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));*/
+                    SettingsActivity.this,
+                    mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
         }
 
         @Override
@@ -131,6 +138,33 @@ public class SettingsActivity extends BaseActivityExam {
         @Override
         public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
             super.onQueueChanged(queue);
+        }
+    }
+
+    /**
+     * Convenience class to collect the click listeners together.
+     * <p>
+     * In a larger app it's better to split the listeners out or to use your favorite
+     * library.
+     */
+    private class ClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.button_previous:
+                    mMediaBrowserHelper.getTransportControls().skipToPrevious();
+                    break;
+                case R.id.button_play:
+                    if (mIsPlaying) {
+                        mMediaBrowserHelper.getTransportControls().pause();
+                    } else {
+                        mMediaBrowserHelper.getTransportControls().play();
+                    }
+                    break;
+                case R.id.button_next:
+                    mMediaBrowserHelper.getTransportControls().skipToNext();
+                    break;
+            }
         }
     }
 }

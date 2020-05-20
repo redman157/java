@@ -12,7 +12,7 @@ public class SongModel implements Serializable {
     private String mPath;
     private String mSongName;
     private Bitmap mBitmap;
-    private String _ID;
+    private String mGenres;
     private int time;
 
     public static class Builder {
@@ -21,19 +21,24 @@ public class SongModel implements Serializable {
         private String mArtist;
         private String mFileName;
         private String mPath;
+        private String mGenres;
         private String mSongName;
         private int time;
-        private String _ID;
 
         public Builder() {
         }
 
-        public Builder setID(String id){
-            _ID = id;
-            return this;
-        }
         public Builder setSongName(String songName) {
             mSongName = songName;
+            return this;
+        }
+
+        public Builder setGenres(String genres) {
+            if (genres.equals("")){
+                mGenres = "None";
+            }else {
+                mGenres = genres;
+            }
             return this;
         }
 
@@ -67,7 +72,7 @@ public class SongModel implements Serializable {
             return this;
         }
         public SongModel generate(){
-            return new SongModel(mSongName,mPath,mArtist,mAlbum,mAlbumID,mFileName,_ID ,
+            return new SongModel(mSongName,mPath,mArtist,mAlbum,mAlbumID, mGenres,mFileName ,
                     time);
         }
 
@@ -86,29 +91,28 @@ public class SongModel implements Serializable {
     }
 
     public SongModel(String songName, String path, String artist,
-                     String album, String albumID,
-                     String fileName,  String id, int time) {
+                     String album, String albumID, String genres,
+                     String fileName, int time) {
         mAlbum = album;
         mAlbumID = albumID;
         mArtist = artist;
-
+        mGenres = genres;
         mFileName = fileName;
         mPath = path;
         mSongName = songName;
         this.time = time;
-        _ID = id;
-    }
-
-    public String get_ID() {
-        return _ID;
-    }
-
-    public void set_ID(String _ID) {
-        this._ID = _ID;
     }
 
     public int getTime() {
         return time;
+    }
+
+    public String getGenres() {
+        return mGenres;
+    }
+
+    public void setGenres(String genres) {
+        this.mGenres = genres;
     }
 
     public void setTime(int time) {

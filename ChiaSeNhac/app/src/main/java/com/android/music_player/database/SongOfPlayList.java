@@ -55,7 +55,6 @@ public class SongOfPlayList {
                 "'" + song.getAlbum() + "'"    + "," +
                 "'" + song.getAlbumID() + "'"  + "," +
                 "'" + song.getFileName() + "'" + "," +
-                "'" + song.get_ID() + "'"      + "," +
                 "" + 0 + ""                    + "," +
                 "" + song.getTime() + ""       + ")";
 
@@ -123,7 +122,6 @@ public class SongOfPlayList {
                 Database.SONGS_OF_PLAY_LIST.ALBUM     + " = " + "'"+ song.getAlbum()+"'"    + "," +
                 Database.SONGS_OF_PLAY_LIST.ALBUM_ID  + " = " + "'"+ song.getAlbumID()+"'"  + "," +
                 Database.SONGS_OF_PLAY_LIST.FILE_NAME + " = " + "'"+ song.getFileName()+"'" + "," +
-                Database.SONGS_OF_PLAY_LIST.ID_SONG   + " = " + "'"+ song.get_ID()+"'"      + "," +
                 Database.SONGS_OF_PLAY_LIST.TIME      + " = " + "'"+ song.getTime()+"'" +
                 " WHERE " + "name_song = '"+ name +"'";
         mDatabase.queryData(SQL_UPDATE);
@@ -151,8 +149,7 @@ public class SongOfPlayList {
                     builder.setAlbum(data.getString(4));
                     builder.setAlbumID(data.getString(5));
                     builder.setFileName(data.getString(6));
-                    builder.setID(data.getString(7));
-                    builder.setTime(data.getInt(8));
+                    builder.setTime(data.getInt(7));
 
                     SongModel songModel = builder.generate();
                     mSongs.add(songModel);

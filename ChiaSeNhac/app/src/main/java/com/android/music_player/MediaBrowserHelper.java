@@ -31,12 +31,14 @@ public class MediaBrowserHelper {
     private final List<MediaControllerCompat.Callback> mCallbackList = new ArrayList<>();
 
     private MediaControllerCompat mMediaController;
+
     private final MediaBrowserConnectionCallback mMediaBrowserConnectionCallback;
     private final MediaControllerCallback mMediaControllerCallback;
     private final MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
 
     private MediaBrowserCompat mMediaBrowser;
     public MediaBrowserHelper(Context mContext, Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass) {
+        // thực hiện công việc kết nối từ activity tới service
         this.mContext = mContext;
         this.mMediaBrowserServiceClass = mMediaBrowserServiceClass;
 

@@ -20,8 +20,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.media.session.MediaButtonReceiver;
 
 import com.android.music_player.activities.HomeActivity;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.services.MediaService;
 import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.ImageUtils;
 
 public class MediaNotificationManager {
     public static final int NOTIFICATION_ID = 412;
@@ -87,13 +89,52 @@ public class MediaNotificationManager {
                                                          MediaSessionCompat.Token token,
                                                          boolean isPlaying,
                                                          MediaDescriptionCompat description){
+        androidx.core.app.NotificationCompat.Builder builder;
         // Create the (mandatory) notification channel when running on Android Oreo.
         if (isAndroidOOrHigher()) {
             createChannel();
         }
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(mService, CHANNEL_ID);
-        builder.setStyle( new androidx.media.app.NotificationCompat.MediaStyle()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            builder = new androidx.core.app.NotificationCompat.Builder(mService,
+                    mService.getString(R.string.default_notification_channel_id))
+                    .setChannelId(mService.getString(R.string.default_notification_channel_id))
+                    .setAutoCancel(false)
+
+                    // For backwards compatibility with Android L and earlier.
+                    .setShowWhen(false)
+
+                    /*.setCancelButtonIntent(
+                            MediaButtonReceiver.buildMediaButtonPendingIntent(
+                                    mService,
+                                    PlaybackStateCompat.ACTION_STOP)))*/
+                    .setColorized(true).setColor(mService.getResources().getColor(R.color.white))
+
+                    .setSmallIcon(R.drawable.ic_music_note_white_24dp)
+                    .setLargeIcon(ImageUtils.getAlbumArt(mService,
+                            Long.valueOf(MusicLibrary.getAlbumRes(description.getMediaId()))))
+                    // Pending intent that is fired when user clicks on notification.
+                    .setContentIntent(createContentIntent())
+                    // Title - Usually Song name.
+                    .setContentTitle(description.getTitle())
+                    // Subtitle - Usually Artist name.
+                    .setContentText(description.getSubtitle())
+
+                    // When notification is deleted (when playback is paused and notification can be
+                    // deleted) fire MediaButtonPendingIntent with ACTION_STOP.
+                    .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
+                            mService, PlaybackStateCompat.ACTION_STOP))
+                    // Show controls on lock screen even when user hides sensitive content.
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+
+                    .setStyle( new androidx.media.app.NotificationCompat.MediaStyle()
+                            .setShowActionsInCompactView(0, 1, 2)
+                            .setMediaSession(token));
+        }else {
+            builder = new NotificationCompat.Builder(mService, CHANNEL_ID);
+            builder.setStyle( new androidx.media.app.NotificationCompat.MediaStyle()
                     .setMediaSession(token)
+
                     .setShowActionsInCompactView(0, 1, 2)
                     // For backwards compatibility with Android L and earlier.
                     .setShowCancelButton(true)
@@ -101,21 +142,24 @@ public class MediaNotificationManager {
                             MediaButtonReceiver.buildMediaButtonPendingIntent(
                                     mService,
                                     PlaybackStateCompat.ACTION_STOP)))
-                .setColorized(true).setColor(mService.getResources().getColor(R.color.white))
-                .setSmallIcon(R.drawable.ic_music_note_white_24dp)
-                // Pending intent that is fired when user clicks on notification.
-                .setContentIntent(createContentIntent())
-                // Title - Usually Song name.
-                .setContentTitle(description.getTitle())
-                // Subtitle - Usually Artist name.
-                .setContentText(description.getSubtitle())
-                .setLargeIcon(MusicLibrary.getAlbumBitmap(mService, description.getMediaId()))
-                // When notification is deleted (when playback is paused and notification can be
-                // deleted) fire MediaButtonPendingIntent with ACTION_STOP.
-                .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
-                        mService, PlaybackStateCompat.ACTION_STOP))
-                // Show controls on lock screen even when user hides sensitive content.
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+                    .setColorized(true).setColor(mService.getResources().getColor(R.color.white))
+                    .setSmallIcon(R.drawable.ic_music_note_white_24dp)
+                    // Pending intent that is fired when user clicks on notification.
+                    .setContentIntent(createContentIntent())
+                    // Title - Usually Song name.
+                    .setContentTitle(description.getTitle())
+                    // Subtitle - Usually Artist name.
+                    .setContentText(description.getSubtitle())
+                    .setLargeIcon(ImageUtils.getAlbumArt(mService,
+                            Long.valueOf(MusicLibrary.getAlbumRes(description.getMediaId()))))  .setSubText(MusicLibrary.getMusicFilename(description.getMediaId()))
+                    // When notification is deleted (when playback is paused and notification can be
+                    // deleted) fire MediaButtonPendingIntent with ACTION_STOP.
+                    .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
+                            mService, PlaybackStateCompat.ACTION_STOP))
+                    // Show controls on lock screen even when user hides sensitive content.
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        }
+
 
         // If skip to next action is enabled.
         if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) != 0) {
@@ -127,6 +171,12 @@ public class MediaNotificationManager {
         // If skip to prev action is enabled.
         if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_NEXT) != 0) {
             builder.addAction(mNextAction);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            builder.addAction(R.drawable.ic_close_black_24dp, "Stop",MediaButtonReceiver.buildMediaButtonPendingIntent(
+                    mService,
+                    PlaybackStateCompat.ACTION_STOP));
         }
 
         return builder;

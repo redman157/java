@@ -2,6 +2,8 @@ package com.android.music_player.fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.media.MediaMetadataCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +16,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.R;
 import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogUtils;
@@ -32,11 +35,11 @@ import java.util.Locale;
 public class ChangeSongFragment extends Fragment implements View.OnClickListener, PlayListAdapter.OnClickItem {
     private SongModel mSongModel;
     private ImageView mImgAlbumArt, mImgShowList, mImgAddPlayList;
-    private TextView mTextTittle, mTextArtists, text_leftTime, text_rightTime;
+    private TextView text_leftTime, text_rightTime;
     private SeekBar sb_leftTime;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
     private View view;
-    public TextView mTextPlaying;
+    public TextView mTextArtist, mTextAlbum,mTextTittle;
     public Dialog mDlOptionMusic;
 
     private MusicAdapter mMusicAdapter;
@@ -52,6 +55,8 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
         return musicMain;
     }
     private OnClickItem onClickItem;
+
+    private MediaMetadataCompat mMediaMetadataCompat;
     public ChangeSongFragment(OnClickItem onClickItem) {
         this.onClickItem = onClickItem;
 
@@ -60,7 +65,11 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     public void setMusicMain(ArrayList<SongModel> musicMain) {
         this.musicMain = musicMain;
     }
-    private SongManager mSongManager;
+
+    public void setMusicMain(MediaMetadataCompat mediaMetadataCompat) {
+        mMediaMetadataCompat = mediaMetadataCompat;
+    }
+    private MusicManager mMusicManager;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,8 +80,8 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     @Override
     public void onStart() {
         super.onStart();
-        mSongManager = SongManager.getInstance();
-        mSongManager.setContext(getContext());
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(getContext());
     }
 
     @Nullable
@@ -82,20 +91,22 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
         view = inflater.inflate(R.layout.item_change_music, null);
         initView();
         assignView();
-
-        mTextPlaying.setText(mSongModel.getAlbum());
-        mTextArtists.setText(mSongModel.getArtist());
-        mTextTittle.setText(mSongModel.getSongName());
-        ImageUtils.getInstance(getContext()).getSmallImageByPicasso(mSongModel.getAlbumID(), mImgAlbumArt);
+        Log.d("XXX", mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
+        mTextArtist.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+        mTextAlbum.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
+        mTextTittle.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
+        ImageUtils.getInstance(getContext()).getSmallImageByPicasso(
+                String.valueOf(MusicLibrary.getAlbumRes(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID))),
+                mImgAlbumArt);
 
         return view;
     }
 
     private void initView(){
         mDlOptionMusic = new Dialog(getContext());
-        mTextPlaying = view.findViewById(R.id.item_text_playing);
+        mTextArtist = view.findViewById(R.id.item_text_artist);
         mTextTittle = view.findViewById(R.id.item_text_title);
-        mTextArtists = view.findViewById(R.id.item_text_album);
+        mTextAlbum = view.findViewById(R.id.item_text_album);
         mImgAlbumArt = view.findViewById(R.id.item_img_ChangeMusic);
         mImgShowList = view.findViewById(R.id.item_img_viewQueue);
         mImgAddPlayList = view.findViewById(R.id.item_img_addToPlayListImageView);

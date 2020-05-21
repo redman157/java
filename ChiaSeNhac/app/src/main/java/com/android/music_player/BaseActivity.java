@@ -10,7 +10,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.services.MediaPlayerService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -19,15 +19,15 @@ public abstract class BaseActivity extends AppCompatActivity  {
     private boolean serviceBound = false;
     private MediaPlayerService mediaPlayerService;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private SongManager mSongManager;
+    private MusicManager mMusicManager;
 
     @Override
     protected void onStart() {
         super.onStart();
         mSharedPrefsUtils = new SharedPrefsUtils(this);
-        mSongManager = SongManager.getInstance();
+        mMusicManager = MusicManager.getInstance();
 
-        mSongManager.setContext(this);
+        mMusicManager.setContext(this);
     }
 
 

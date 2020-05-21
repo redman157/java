@@ -15,7 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.music_player.R;
 import com.android.music_player.adapters.HomeFragmentAdapter;
 import com.android.music_player.interfaces.OnChangePlayListListener;
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener, 
     private RecyclerView mRcHome;
     private SharedPrefsUtils mSharedPrefsUtils;
 
-    private SongManager mSongManager;
+    private MusicManager mMusicManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private OnChangePlayListListener onChangePlayListListener;
     private HomeFragmentAdapter mHomeAdapter;
@@ -59,8 +59,8 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener, 
 
         view = inflater.inflate(R.layout.fragment_home, null);
 
-        mSongManager = SongManager.getInstance();
-        mSongManager.setContext(getContext());
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(getContext());
         initView();
         mHomeAdapter = new HomeFragmentAdapter(getActivity());
         mHomeAdapter.notifyDataSetChanged();

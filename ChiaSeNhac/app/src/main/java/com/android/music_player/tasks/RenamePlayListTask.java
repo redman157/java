@@ -3,11 +3,11 @@ package com.android.music_player.tasks;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.managers.MusicManager;
 
 public class RenamePlayListTask extends AsyncTask<Void, Void, String> {
     private Context mContext;
-    private SongManager mSongManager;
+    private MusicManager mMusicManager;
     private String main, change;
     public RenamePlayListTask(Context context, String main, String change){
         mContext = context;
@@ -18,13 +18,13 @@ public class RenamePlayListTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mSongManager = SongManager.getInstance();
-        mSongManager.setContext(mContext);
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(mContext);
     }
 
     @Override
     protected String doInBackground(Void... voids) {
-        mSongManager.getAllPlaylistDB().updatePlayList(main, change);
+        mMusicManager.getAllPlaylistDB().updatePlayList(main, change);
         return change;
     }
 

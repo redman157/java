@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.PlayActivity;
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.services.MediaPlayerService;
 
 import java.text.SimpleDateFormat;
@@ -95,13 +95,13 @@ public class Utils {
     }
 
     public static void IntentToPlayActivity(Activity activity, int position, String type){
-        SongManager manager = SongManager.getInstance();
+        MusicManager manager = MusicManager.getInstance();
         manager.setContext(activity);
         Intent intent = new Intent(activity, PlayActivity.class);
         Utils.Builder builder = new Utils.Builder();
         builder.putString(Constants.INTENT.TYPE,type);
         builder.putInteger(Constants.INTENT.CHOOSE_POS, position);
-
+        builder.putString(Constants.INTENT.SONG_NAME, manager.getListSong().get(position).getSongName());
         if (manager.isPlayCurrentSong(manager.getListSong(type).get(position).getPath())) {
             Log.d("BBB", "Utils --- IntentToPlayActivity: true");
             builder.putBoolean(Constants.INTENT.SONG_CONTINUE, true);

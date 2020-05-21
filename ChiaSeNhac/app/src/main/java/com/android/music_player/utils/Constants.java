@@ -11,7 +11,7 @@ public class Constants {
 
     public @interface INTENT{
         String SONG_CONTINUE = "SongContinue";
-
+        String SONG_NAME = "SongName";
         String CURR_POS = "CurrentPosition";
         String CHOOSE_POS = "ChoosePosition";
         String POSITION_SONG = "position_song";

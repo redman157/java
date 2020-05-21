@@ -15,7 +15,7 @@ import com.android.music_player.R;
 import com.android.music_player.activities.SongActivity;
 import com.android.music_player.adapters.SongAdapter;
 import com.android.music_player.interfaces.OnClickItem;
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.SharedPrefsUtils;
 
@@ -27,7 +27,7 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
     private ArrayList<SongModel> mSongs;
     private String type;
     private RecyclerView mRcSongs;
-    private SongManager mSongManager;
+    private MusicManager mMusicManager;
     private SongActivity mSongActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
     public AllSongsFragment(ArrayList<SongModel> songs, String type){
@@ -38,8 +38,8 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSongManager = SongManager.getInstance();
-        mSongManager.setContext(getContext());
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(getContext());
 
         mSongActivity = (SongActivity) getContext();
 
@@ -88,7 +88,7 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
             mSongActivity.chooseSong = position;
 
             mSongActivity.setSongCurrent(mSongs, position);
-            mSongManager.setType(type);
+            mMusicManager.setType(type);
         }
     }
 }

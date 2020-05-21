@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.SpannableString;
@@ -19,7 +20,6 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
-import com.android.music_player.MusicLibrary;
 import com.android.music_player.R;
 import com.android.music_player.database.AllPlaylist;
 import com.android.music_player.database.CategorySongs;
@@ -47,7 +47,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-public class SongManager {
+public class MusicManager {
     /*private ArrayList<HashMap<String, String>> getAlbumsList = new ArrayList<>();
     private ArrayList<HashMap<String, String>> artists = new ArrayList<>();*/
 
@@ -70,16 +70,16 @@ public class SongManager {
     private Statistic mStatistic;
     private RelationSongs mRelationSongs;
     @SuppressLint("StaticFieldLeak")
-    private static SongManager instance;
+    private static MusicManager instance;
     private String type;
-    public static SongManager getInstance() {
+    public static MusicManager getInstance() {
         if (instance == null){
-            instance = new SongManager();
+            instance = new MusicManager();
         }
         return instance;
     }
 
-    private SongManager() {
+    private MusicManager() {
 
     }
 
@@ -113,7 +113,7 @@ public class SongManager {
                     }.getType();
                     ArrayList<SongModel> restoreData = new Gson().fromJson(mSharedPrefsUtils.getString(Constants.PREFERENCES.KEY, null), type);
                     replaceQueue(restoreData);
-                    Log.d(TAG, "Retrieved queue from storage in SongManager. " + restoreData.size() + " mSongsMain!");
+                    Log.d(TAG, "Retrieved queue from storage in MusicManager. " + restoreData.size() + " mSongsMain!");
                 } catch (Exception e) {
                     Log.d(TAG, "Unable to retrieve data while queue is empty.");
                     Log.d(TAG, e.getMessage());
@@ -183,9 +183,10 @@ public class SongManager {
     }
 
 
+
     public ArrayList<SongModel> getListSong(){
         this.type = getType();
-        Log.d("BBB", "SongManager --- getListSong: "+type);
+        Log.d("BBB", "MusicManager --- getListSong: "+type);
         ArrayList<SongModel> song = new ArrayList<>();
         if (mAllPlaylist.searchPlayList(type)) {
             song = getAllSongToPlayList(type);
@@ -193,13 +194,13 @@ public class SongManager {
             return song;
         }else {
             if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
-                song = SongManager.getInstance().newSongs();
+                song = MusicManager.getInstance().newSongs();
                 return song;
             } else if (type.equals(Constants.VALUE.ALL_SONGS) || type.equals("")) {
-                song = SongManager.getInstance().allSortSongs();
+                song = MusicManager.getInstance().allSortSongs();
                 return song;
             } else if (type.equals(Constants.VALUE.SHUFFLE)){
-                song = SongManager.getInstance().getShuffleSongs();
+                song = MusicManager.getInstance().getShuffleSongs();
                 return song;
             }
         }
@@ -207,7 +208,7 @@ public class SongManager {
     }
 
     public ArrayList<SongModel> getListSong(String type){
-//        Log.d("BBB", "SongManager --- getListSong: "+type);
+//        Log.d("BBB", "MusicManager --- getListSong: "+type);
         ArrayList<SongModel> song = new ArrayList<>();
         if (mAllPlaylist.searchPlayList(type)) {
             song = getAllSongToPlayList(type);
@@ -215,13 +216,13 @@ public class SongManager {
             return song;
         }else {
             if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
-                song = SongManager.getInstance().newSongs();
+                song = MusicManager.getInstance().newSongs();
                 return song;
             } else if (type.equals(Constants.VALUE.ALL_SONGS) || type.equals("")) {
-                song = SongManager.getInstance().allSortSongs();
+                song = MusicManager.getInstance().allSortSongs();
                 return song;
             } else if (type.equals(Constants.VALUE.SHUFFLE)){
-                song = SongManager.getInstance().getShuffleSongs();
+                song = MusicManager.getInstance().getShuffleSongs();
                 return song;
             }
         }
@@ -563,7 +564,7 @@ public class SongManager {
                 return songs;
             }else {
 
-                Log.d(TAG, "SongManager --- getAllSongToPlayList: error getAllSongToPlayList");
+                Log.d(TAG, "MusicManager --- getAllSongToPlayList: error getAllSongToPlayList");
                 return null;
 
             }
@@ -578,7 +579,7 @@ public class SongManager {
             mAllPlaylist.addPlayList("Play List 2");
 
         }else {
-            Log.d(TAG, "SongManager --- addPlayListFirst size > 0");
+            Log.d(TAG, "MusicManager --- addPlayListFirst size > 0");
         }
     }
 
@@ -691,98 +692,103 @@ public class SongManager {
     }
 
     private void crawlData() {
-        String[] mediaProjection = {"*"};
-        String[] genresProjection = {
-                MediaStore.Audio.Genres.NAME,
-                MediaStore.Audio.Genres._ID
-        };
-        boolean excludeShortSounds = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_SHORT_SOUNDS, false);
-        boolean excludeWhatsApp = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_WHATS_APP_SOUNDS, false);
+        try {
+            String[] mediaProjection = {"*"};
+            String[] genresProjection = {
+                    MediaStore.Audio.Genres.NAME,
+                    MediaStore.Audio.Genres._ID
+            };
+            boolean excludeShortSounds = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_SHORT_SOUNDS, false);
+            boolean excludeWhatsApp = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_WHATS_APP_SOUNDS, false);
 
-        Uri uriMedia = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-        Cursor cursor = mContext.getContentResolver()
-                .query(uriMedia, mediaProjection, selection, null, null);
-        Log.d(TAG, "Uri: "+uriMedia.getPath() + " ==== Selection: "+ selection+ " ====== Cursor: "+cursor.getCount());
+            Uri uriMedia = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+            String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
 
-
-        if (cursor.moveToFirst()) {
-            do {
-                SongModel.Builder builder = null;
-                String duration = cursor
-                        .getString(cursor
-                                .getColumnIndex(MediaStore.Audio.Media.DURATION));
-                int currentDuration = Math.round(Integer.parseInt(duration));
-                if (currentDuration > ((excludeShortSounds) ? 60000 : 0)) {
-                    if (!excludeWhatsApp ||
-                            !cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)).equals("WhatsApp Audio")) {
+            Cursor cursor =
+                    mContext.getContentResolver()
+                    .query(uriMedia, mediaProjection, selection, null, null);
+            Log.d(TAG, "Uri: " + uriMedia.getPath() + " ==== Selection: " + selection + " ====== Cursor: " + cursor.getCount());
 
 
-
-                        int id_column_index = cursor
-                                .getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
-
-                        int musicId = Integer.parseInt(cursor.getString(id_column_index));
-
-
-                        String songName = cursor
-                                .getString(
-                                        cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                                .replace("_", " ").trim().replaceAll(" +", " ");
-                        String path = cursor.getString(cursor
-                                .getColumnIndex(MediaStore.Audio.Media.DATA));
-                        String title = cursor.getString(cursor
-                                .getColumnIndex(MediaStore.Audio.Media.TITLE)).replace("_", " ").trim().replaceAll(" +", " ");
-                        String artistName = cursor.getString(cursor
-                                .getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                        String albumName = cursor.getString(cursor
-                                .getColumnIndex(MediaStore.Audio.Media.ALBUM));
-
-                        String albumID = cursor
-                                .getString(
-                                        cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
-                                );
+            if (cursor.moveToFirst()) {
+                do {
+                    SongModel.Builder builder = null;
+                    String duration = cursor
+                            .getString(cursor
+                                    .getColumnIndex(MediaStore.Audio.Media.DURATION));
+                    int currentDuration = Math.round(Integer.parseInt(duration));
+                    if (currentDuration > ((excludeShortSounds) ? 60000 : 0)) {
+                        if (!excludeWhatsApp ||
+                                !cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)).equals("WhatsApp Audio")) {
 
 
-                        Uri uriGenres = MediaStore.Audio.Genres.getContentUriForAudioId("external", musicId);
-                        Cursor genresCursor = mContext.getContentResolver().query(uriGenres,
-                                genresProjection, null, null, null);
-                        String genres = "";
-                        int genre_column_index = genresCursor.getColumnIndexOrThrow(MediaStore.Audio.Genres.NAME);
-                        if (genresCursor.moveToFirst()) {
-                            do {
-                                genres = genresCursor.getString(genre_column_index);
-                            } while (genresCursor.moveToNext());
+                            int id_column_index = cursor
+                                    .getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
+
+                            int musicId = Integer.parseInt(cursor.getString(id_column_index));
+
+
+                            String songName = cursor
+                                    .getString(
+                                            cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
+                                    .replace("_", " ").trim().replaceAll(" +", " ");
+                            String path = cursor.getString(cursor
+                                    .getColumnIndex(MediaStore.Audio.Media.DATA));
+                            String title = cursor.getString(cursor
+                                    .getColumnIndex(MediaStore.Audio.Media.TITLE)).replace("_", " ").trim().replaceAll(" +", " ");
+                            String artistName = cursor.getString(cursor
+                                    .getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                            String albumName = cursor.getString(cursor
+                                    .getColumnIndex(MediaStore.Audio.Media.ALBUM));
+
+                            String albumID = cursor
+                                    .getString(
+                                            cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
+                                    );
+
+
+                            Uri uriGenres = MediaStore.Audio.Genres.getContentUriForAudioId("external", musicId);
+                            Cursor genresCursor = mContext.getContentResolver().query(uriGenres,
+                                    genresProjection, null, null, null);
+                            String genres = "";
+                            int genre_column_index = genresCursor.getColumnIndexOrThrow(MediaStore.Audio.Genres.NAME);
+                            if (genresCursor.moveToFirst()) {
+                                do {
+                                    genres = genresCursor.getString(genre_column_index);
+                                } while (genresCursor.moveToNext());
+                            }
+
+
+                            // Adding song to list
+                            builder = new SongModel.Builder();
+                            builder.setFileName(songName);
+                            builder.setSongName(title);
+                            builder.setArtist(artistName);
+                            builder.setAlbum(albumName);
+                            builder.setAlbumID(albumID);
+                            builder.setGenres(genres);
+                            builder.setPath(path);
+                            builder.setTime(currentDuration);
+
+                            mSongsMain.add(builder.generate());
+
+                            MusicLibrary.createMediaMetadataCompat(builder.generate());
                         }
-
-
-                        // Adding song to list
-                        builder = new SongModel.Builder();
-                        builder.setFileName(songName);
-                        builder.setSongName(title);
-                        builder.setArtist(artistName);
-                        builder.setAlbum(albumName);
-                        builder.setAlbumID(albumID);
-                        builder.setGenres(genres);
-                        builder.setPath(path);
-                        builder.setTime(currentDuration);
-
-                        mSongsMain.add(builder.generate());
-
-                        MusicLibrary.createMediaMetadataCompat(builder.generate());
                     }
+
                 }
+                while (cursor.moveToNext());
 
+                setMainMusic(mSongsMain);
+                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.TOTAL_SONGS, mSongsMain.size());
+                cursor.close();
             }
-            while (cursor.moveToNext());
 
-            setMainMusic(mSongsMain);
-            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.TOTAL_SONGS, mSongsMain.size());
-            cursor.close();
+            filterData(mSongsMain);
+            Log.d(TAG, "CrawlData() performed");
+        }catch (SQLiteException e){
+            Log.d("XXX", e.getMessage());
         }
-
-        filterData(mSongsMain);
-        Log.d(TAG, "CrawlData() performed");
     }
 
     /*

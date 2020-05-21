@@ -19,11 +19,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.tasks.PerformMusicTasks;
 import com.android.music_player.R;
 import com.android.music_player.utils.SharedPrefsUtils;
-import com.android.music_player.managers.SongManager;
 import com.android.music_player.utils.Utils;
 
 public class SplashActivity extends AppCompatActivity {
@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
     private boolean sync = false;
     private ProgressBar mProgressBar;
     public TextView mTextSync;
-    private SongManager mSongManager;
+    private MusicManager mMusicManager;
     private SharedPrefsUtils mSharedPrefsUtils;
 
     /* access modifiers changed from: protected */
@@ -96,11 +96,11 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void setTextStatus() {
-        mSongManager = SongManager.getInstance();
+        mMusicManager = MusicManager.getInstance();
         sync = getIntent().getBooleanExtra(Constants.VALUE.SYNC, false);
         if (sync) {
-            mSongManager.setContext(this);
-            mSongManager.isSync(sync);
+            mMusicManager.setContext(this);
+            mMusicManager.isSync(sync);
             mTextSync.setText("Syncing...");
         } else {
             mTextSync.setText("Initiating...");

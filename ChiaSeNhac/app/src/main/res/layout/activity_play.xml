@@ -173,9 +173,9 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_10sdp" />
 
-            <SeekBar
+            <com.android.music_player.MediaSeekBar
                 android:layout_weight="7"
-                android:id="@+id/sb_leftTime"
+                android:id="@+id/sb_Time"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"

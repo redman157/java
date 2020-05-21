@@ -1,15 +1,18 @@
 package com.android.music_player;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.os.SystemClock;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.android.music_player.activities.PlayActivity;
+import com.android.music_player.managers.MusicLibrary;
+
+import java.io.File;
 
 public class MediaPlayerAdapter extends PlayerAdapter {
     private final Context mContext;
@@ -56,10 +59,13 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     }
     // This is the main reducer for the player state machine.
     private void setNewState(@PlaybackStateCompat.State int newPlayerState){
+
         mState = newPlayerState;
 
+        Log.d("JJJ","setNewState: "+newPlayerState );
         // Whether playback goes to completion, or whether it is stopped, the
         // mCurrentMediaPlayedToCompletion is set to true.
+
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mCurrentMediaPlayedToCompletion = true;
         }
@@ -73,12 +79,14 @@ public class MediaPlayerAdapter extends PlayerAdapter {
                 mSeekWhileNotPlaying = -1;
             }
         }else {
-            reportPosition = mMediaPlayer == null ? 0 : mMediaPlayer.getCurrentPosition();
+            reportPosition = (mMediaPlayer == null)?
+                    0 : mMediaPlayer.getCurrentPosition();
         }
 
         PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder();
         stateBuilder.setActions(getAvailableActions());
         stateBuilder.setState(mState, reportPosition, 1.0f, SystemClock.elapsedRealtime());
+
         mPlaybackInfoListener.onPlaybackStateChange(stateBuilder.build());
     }
 
@@ -121,6 +129,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     public void playFromMedia(MediaMetadataCompat metadata) {
         mCurrentMedia = metadata;
         final String mediaId = metadata.getDescription().getMediaId();
+
         playFile(MusicLibrary.getMusicFilename(mediaId));
     }
 
@@ -150,12 +159,19 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         initializeMediaPlayer();
 
         try {
-            AssetFileDescriptor assetFileDescriptor = mContext.getAssets().openFd(mFilename);
-            mMediaPlayer.setDataSource(
-                    assetFileDescriptor.getFileDescriptor(),
-                    assetFileDescriptor.getStartOffset(),
-                    assetFileDescriptor.getLength());
+            Log.d("CCC", mFilename +"\n ---- "+new File(mFilename).exists());
+            File file = new File(mFilename);
+            if (file.exists()) {
+//                AssetFileDescriptor assetFileDescriptor = mContext.getAssets().openFd(file.getPath());
+
+            /*    mMediaPlayer.setDataSource(
+                        assetFileDescriptor.getFileDescriptor(),
+                        assetFileDescriptor.getStartOffset(),
+                        assetFileDescriptor.getLength());*/
+                mMediaPlayer.setDataSource(file.getPath());
+            }
         }catch (Exception e){
+            Log.d("CCC", String.valueOf(e.getClass()));
             throw new RuntimeException("Failed to open file: " + mFilename, e);
         }
 

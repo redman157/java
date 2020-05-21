@@ -9,20 +9,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.viewholder.HomeHolder;
 
 public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder> {
     private Activity activity;
-    private SongManager mSongManager;
+    private MusicManager mMusicManager;
     private SharedPrefsUtils mSharedPrefsUtils;
 
     public HomeFragmentAdapter(Activity activity){
         this.activity = activity;
         mSharedPrefsUtils = new SharedPrefsUtils(activity);
-        mSongManager = SongManager.getInstance();
-        mSongManager.setContext(activity);
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(activity);
     }
     @NonNull
     @Override

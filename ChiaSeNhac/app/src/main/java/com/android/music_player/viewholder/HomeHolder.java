@@ -18,7 +18,7 @@ import com.android.music_player.activities.SongActivity;
 import com.android.music_player.adapters.SongAdapter;
 import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.interfaces.OnClickItem;
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
@@ -36,7 +36,7 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
     private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
             mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
     private  ArrayList<String> mMostPlayList;
-    private SongManager mSongManager;
+    private MusicManager mMusicManager;
     private Activity mActivity;
     private HomeActivity mHomeActivity;
     private String mMostMusic;
@@ -44,8 +44,8 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
     public HomeHolder(@NonNull View view, Activity mActivity) {
         super(view);
         this.mActivity = mActivity;
-        mSongManager = SongManager.getInstance();
-        mSongManager.setContext(mActivity);
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(mActivity);
         mTextPlayerSongs = view.findViewById(R.id.text_Player_Songs);
         mRc_Recently_Add = view.findViewById(R.id.rc_recently_add);
         mImg_Player_Songs = view.findViewById(R.id.img_Player_Songs);
@@ -60,10 +60,10 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
     }
     public void initView(){
 
-        if (!mSongManager.getStatistic().getMost(Constants.VALUE.SONG).equals("")) {
-            mMostMusic = mSongManager.getStatistic().getMost(Constants.VALUE.SONG);
+        if (!mMusicManager.getStatistic().getMost(Constants.VALUE.SONG).equals("")) {
+            mMostMusic = mMusicManager.getStatistic().getMost(Constants.VALUE.SONG);
             mTextPlayerSongs.setText(mMostMusic);
-            ImageUtils.getInstance(mActivity).getSmallImageByPicasso(mSongManager.getSong(mMostMusic).getAlbumID(),
+            ImageUtils.getInstance(mActivity).getSmallImageByPicasso(mMusicManager.getSong(mMostMusic).getAlbumID(),
                     mImg_Player_Songs);
         }else {
             mTextPlayerSongs.setText("");
@@ -85,12 +85,12 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mImg_Shuffle_All.setOnClickListener(this);
         mBtnViewAll.setOnClickListener(this);
 
-        mSongsAdapter = new SongAdapter(mActivity, SongManager.getInstance().newSongs(),
+        mSongsAdapter = new SongAdapter(mActivity, MusicManager.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS);
         mSongsAdapter.setLimit(true);
         mSongsAdapter.notifyDataSetChanged();
         mSongsAdapter.setOnClickItem(this);
-        mNewSongs = SongManager.getInstance().newSongs();
+        mNewSongs = MusicManager.getInstance().newSongs();
         mRc_Recently_Add.setAdapter(mSongsAdapter);
         mRc_Recently_Add.setNestedScrollingEnabled(false);
         mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(mActivity,
@@ -150,10 +150,10 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
     public void onClick(String type, int position) {
         if (mActivity instanceof HomeActivity) {
             mHomeActivity = (HomeActivity) mActivity;
-            mSongManager.setType(type);
+            mMusicManager.setType(type);
             mHomeActivity.setSongCurrent(mNewSongs, position);
 
-            if (position != SongManager.getInstance().getPosition()) {
+            if (position != MusicManager.getInstance().getPosition()) {
                 (mHomeActivity).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 (mHomeActivity).isContinue = false;
             } else {

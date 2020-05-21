@@ -17,9 +17,10 @@ import androidx.media.MediaBrowserServiceCompat;
 
 import com.android.music_player.MediaBrowserHelper;
 import com.android.music_player.MediaSeekBar;
-import com.android.music_player.MusicLibrary;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.R;
 import com.android.music_player.services.MediaService;
+import com.android.music_player.utils.ImageUtils;
 
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.button_previous).setOnClickListener(clickListener);
         findViewById(R.id.button_play).setOnClickListener(clickListener);
         findViewById(R.id.button_next).setOnClickListener(clickListener);
-        
+
         mMediaBrowserHelper = new MediaBrowserConnection(this);
         mMediaBrowserHelper.registerCallback(new MediaBrowserListener());
     }
@@ -80,6 +81,7 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         protected void onConnected(@NonNull MediaControllerCompat mediaController) {
             super.onConnected(mediaController);
+
             mSeekBarAudio.setMediaController(mediaController);
         }
 
@@ -109,6 +111,7 @@ public class SettingsActivity extends AppCompatActivity {
      */
 
     private class MediaBrowserListener extends MediaControllerCompat.Callback{
+
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             mIsPlaying = state != null &&
@@ -125,9 +128,9 @@ public class SettingsActivity extends AppCompatActivity {
                     mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
             mArtistTextView.setText(
                     mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
-            mAlbumArt.setImageBitmap(MusicLibrary.getAlbumBitmap(
+            mAlbumArt.setImageBitmap(ImageUtils.getAlbumArt(
                     SettingsActivity.this,
-                    mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
+                    Long.valueOf(MusicLibrary.getAlbumRes(mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)))));
         }
 
         @Override

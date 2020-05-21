@@ -1,4 +1,4 @@
-package com.android.music_player;
+package com.android.music_player.managers;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,38 +15,18 @@ import java.util.List;
 import java.util.TreeMap;
 
 public class MusicLibrary {
-    private static final TreeMap<String, MediaMetadataCompat> music = new TreeMap<>();
+    public static final TreeMap<String, MediaMetadataCompat> music = new TreeMap<>();
     private static final HashMap<String, Integer> albumRes = new HashMap<>();
     private static final HashMap<String, String> musicFileName = new HashMap<>();
-
-   /* static {
-        createMediaMetadataCompat(
-                "Jazz_In_Paris",
-                "Jazz in Paris",
-                "Media Right Productions",
-                "Jazz & Blues",
-                "Jazz",
-                103,
-                TimeUnit.SECONDS,
-                "jazz_in_paris.mp3",
-                R.drawable.album_jazz_blues,
-                "album_jazz_blues");
-        createMediaMetadataCompat(
-                "The_Coldest_Shoulder",
-                "The Coldest Shoulder",
-                "The 126ers",
-                "Youtube Audio Library Rock 2",
-                "Rock",
-                160,
-                TimeUnit.SECONDS,
-                "the_coldest_shoulder.mp3",
-                R.drawable.album_youtube_audio_library_rock_2,
-                "album_youtube_audio_library_rock_2");
-    }*/
 
     public static String getRoot() {
         return "root";
     }
+
+    public static int getSize(){
+        return music.size();
+    }
+
 
     public static String getAlbumArtUri(String albumArtResName) {
         return ImageUtils.getSongUri(Long.valueOf(albumArtResName)).getPath();
@@ -58,6 +38,21 @@ public class MusicLibrary {
 
     public static int getAlbumRes(String mediaId) {
         return albumRes.containsKey(mediaId) ? albumRes.get(mediaId) : 0;
+    }
+
+    public static MediaMetadataCompat getCurrentMusic(String mediaId){
+        return music.containsKey(mediaId) ? music.get(mediaId):  null;
+    }
+
+    public static int getPosition(String songName){
+        if (music.containsKey(songName)){
+            for (int i = 0 ; i < music.size();i++){
+                if (songName.equals(music.keySet().toArray()[i])){
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     public static Bitmap getAlbumBitmap(Context context, String mediaId) {
@@ -119,5 +114,6 @@ public class MusicLibrary {
             albumRes.put(song.getSongName(), Integer.valueOf(song.getAlbumID()));
             musicFileName.put(song.getSongName(), song.getPath());
     }
+
 
 }

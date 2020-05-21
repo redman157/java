@@ -1,6 +1,7 @@
 package com.android.music_player.adapters;
 
 import android.content.Context;
+import android.support.v4.media.MediaMetadataCompat;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -10,31 +11,34 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.music_player.interfaces.OnClickItem;
-import com.android.music_player.activities.PlayActivity;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.fragments.ChangeSongFragment;
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements OnClickItem {
     private Context context;
     private ArrayList<Fragment> fragments=  new ArrayList<>();
     private ArrayList<SongModel> mSongModels;
-    private SongManager mSongManager;
-
+    private MusicManager mMusicManager;
+    private String songName;
+    private TreeMap<String, MediaMetadataCompat> music;
     public ChangeSongPagerAdapter(Context context, @NonNull FragmentManager fm) {
         super(fm);
         this.context = context;
-        mSongManager = SongManager.getInstance();
-        mSongManager.setContext(context);
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(context);
     }
 
     public void addData(ArrayList<SongModel> songModels) {
         mSongModels = songModels;
+    }
+    public void addData(String music) {
+        this.songName = music;
     }
 
     @Override
@@ -42,18 +46,15 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
         return POSITION_NONE;
     }
 
-
-
     @Override
     public void onClick(int pos) {
-
-        SongManager.getInstance().setPosition(pos - 1);
+       /* MusicManager.getInstance().setPosition(pos - 1);
 
         if (((PlayActivity)context).isShuffle){
-            Utils.NextMediaService(context, Constants.VALUE.SHUFFLE, mSongManager.getPosition());
+            Utils.NextMediaService(context, Constants.VALUE.SHUFFLE, mMusicManager.getPosition());
         }else {
-            Utils.NextMediaService(context, mSongManager.getType(), mSongManager.getPosition());
-        }
+            Utils.NextMediaService(context, mMusicManager.getType(), mMusicManager.getPosition());
+        }*/
 
     }
 
@@ -66,14 +67,14 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     @Override
     public Fragment getItem(int position) {
         ChangeSongFragment fChangeSongFragment = new ChangeSongFragment(this);
-        fChangeSongFragment.setMusicMain(mSongModels);
-        fChangeSongFragment.setSongModel(mSongModels.get(position));
+        fChangeSongFragment.setMusicMain(MusicLibrary.getCurrentMusic(songName));
+//        fChangeSongFragment.setSongModel(mSongModels.get(position));
         return fChangeSongFragment;
     }
 
     @Override
     public int getCount() {
-        return mSongModels.size();
+        return MusicLibrary.getSize();
     }
 
     @Override

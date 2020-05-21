@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.R;
 import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 
 import java.util.ArrayList;
@@ -43,11 +43,11 @@ public class DialogUtils {
 
 
     public static void showAllPlayList(final Context context, PlayListAdapter.OnClickItem onClickItem){
-        SongManager.getInstance().setContext(context);
+        MusicManager.getInstance().setContext(context);
         dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_show_all_play_list);
 
-        ArrayList<String> allPlayList = SongManager.getInstance().getAllPlayList();
+        ArrayList<String> allPlayList = MusicManager.getInstance().getAllPlayList();
         if (allPlayList != null && allPlayList.size() > 0) {
             RecyclerView recyclerView = dialog.findViewById(R.id.rc_All_Play_List);
             PlayListAdapter playListAdapter = new PlayListAdapter(context, allPlayList);
@@ -60,7 +60,7 @@ public class DialogUtils {
     }
 
     private static void showCreatePlayList(final Context context){
-        SongManager.getInstance().setContext(context);
+        MusicManager.getInstance().setContext(context);
         dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_add_playlist);
         dialog.setCanceledOnTouchOutside(false);
@@ -85,7 +85,7 @@ public class DialogUtils {
 
                 String namePlayList = editTitle.getText().toString();
                 if (!namePlayList.isEmpty()){
-                    if (SongManager.getInstance().addPlayList(namePlayList)) {
+                    if (MusicManager.getInstance().addPlayList(namePlayList)) {
                         Utils.ToastShort(context, "Create TITLE Name: "+namePlayList);
                     }
                     else {
@@ -102,7 +102,7 @@ public class DialogUtils {
 
     public static void showAddSongs(final Context context, final SongModel songModel,
                                     final String title){
-        SongManager.getInstance().setContext(context);
+        MusicManager.getInstance().setContext(context);
         dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_add_music);
 
@@ -130,7 +130,7 @@ public class DialogUtils {
                 // Add music cần search playlist rồi mới add music
 
                 // add bài hát
-                if (SongManager.getInstance().addSongToPlayList(title, songModel)){
+                if (MusicManager.getInstance().addSongToPlayList(title, songModel)){
 
                     Utils.ToastShort(context,"Đã Add Bài: "+songModel.getSongName());
                 }else {
@@ -194,8 +194,8 @@ public class DialogUtils {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                SongManager.getInstance().setContext(context);
-                if (SongManager.getInstance().getAllPlaylistDB().deletePlayList(title)){
+                MusicManager.getInstance().setContext(context);
+                if (MusicManager.getInstance().getAllPlaylistDB().deletePlayList(title)){
                     cancelDialog();
                     Toast.makeText(context, "Đã xóa Play List: "+ title, Toast.LENGTH_SHORT).show();
                 }else {

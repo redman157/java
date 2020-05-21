@@ -72,6 +72,8 @@ public class MediaBrowserHelper {
         Log.d(TAG, "onStop: Releasing MediaController, Disconnecting from MediaBrowser");
     }
 
+
+
     private void performOnAllCallbacks(@NonNull CallbackCommand command) {
         for (MediaControllerCompat.Callback callback : mCallbackList) {
             if (callback != null) {
@@ -156,7 +158,9 @@ public class MediaBrowserHelper {
                 }
 
                 final PlaybackStateCompat playbackState = mMediaController.getPlaybackState();
+
                 if (playbackState != null) {
+                    Log.d("ZZZ","registerCallback: "+playbackState.getState());
                     callback.onPlaybackStateChanged(playbackState);
                 }
             }

@@ -8,18 +8,27 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.AttributeSet;
 import android.view.animation.LinearInterpolator;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatSeekBar;
+
+import com.android.music_player.utils.Utils;
 
 public class MediaSeekBar extends AppCompatSeekBar {
     private MediaControllerCompat mMediaController;
     private ControllerCallback mControllerCallback;
     private ValueAnimator mProgressAnimator;
     private boolean mIsTracking = false;
+    private TextView textLeft, textRight;
 
-    public MediaSeekBar(Context context) {
+    public void setText(TextView textLeft, TextView textRight){
+        this.textLeft = textLeft;
+        this.textRight = textRight;
+    }
+    public MediaSeekBar(Context context ) {
         super(context);
         super.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
+
     }
 
     public MediaSeekBar(Context context, AttributeSet attrs) {
@@ -30,6 +39,7 @@ public class MediaSeekBar extends AppCompatSeekBar {
     public MediaSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         super.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
+
     }
 
     public void setMediaController(final MediaControllerCompat mediaController) {
@@ -113,9 +123,11 @@ public class MediaSeekBar extends AppCompatSeekBar {
             int max;
             if (metadata != null){
                  max = (int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
+                 textRight.setText(Utils.formatTime(max));
             }else {
                 max = 0;
             }
+
             setProgress(0);
             setMax(max);
         }
@@ -128,6 +140,7 @@ public class MediaSeekBar extends AppCompatSeekBar {
             }
 
             final int animatedIntValue = (int) animation.getAnimatedValue();
+            textLeft.setText(Utils.formatTime(animatedIntValue));
             setProgress(animatedIntValue);
         }
     }

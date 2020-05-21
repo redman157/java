@@ -112,7 +112,7 @@ public class ImageUtils {
         try {
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_black_24dp)))
-
+                    .resize(400,400)
                     .onlyScaleDown()
                     .into(image);
         }

@@ -17,9 +17,9 @@ import androidx.media.MediaBrowserServiceCompat;
 
 import com.android.music_player.MediaNotificationManager;
 import com.android.music_player.MediaPlayerAdapter;
-import com.android.music_player.MusicLibrary;
 import com.android.music_player.PlaybackInfoListener;
 import com.android.music_player.PlayerAdapter;
+import com.android.music_player.managers.MusicLibrary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,13 @@ public class MediaService extends MediaBrowserServiceCompat {
     private MediaNotificationManager mMediaNotificationManager;
     private MediaSessionCallback mCallback;
     private boolean mServiceInStartedState;
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
+
+    }
+
     /**
      * Khởi tạo service và truyền intent xuống
      **/
@@ -91,31 +98,45 @@ public class MediaService extends MediaBrowserServiceCompat {
     // MediaSession Callback: Transport Controls -> MediaPlayerAdapter
     public class MediaSessionCallback extends MediaSessionCompat.Callback{
         private final List<MediaSessionCompat.QueueItem> mPlaylist = new ArrayList<>();
-        private int mQueueIndex = -1;
+        private int position = -1;
         private MediaMetadataCompat mPreparedMedia;
+
+
+
+        public int getPosition() {
+            return position;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
+            Log.d("MMM", "onAddQueueItem --- "+description.getMediaId());
             mPlaylist.add(new MediaSessionCompat.QueueItem(description, description.hashCode()));
-            mQueueIndex = (mQueueIndex == - 1) ?  0: mQueueIndex;
+            position = (position == - 1) ?  0: position;
             mSession.setQueue(mPlaylist);
         }
 
         @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
+            Log.d("MMM", "onRemoveQueueItem --- " +description.getMediaId());
             mPlaylist.remove(new MediaSessionCompat.QueueItem(description, description.hashCode()));
-            mQueueIndex = (mPlaylist.isEmpty()) ? -1:mQueueIndex;
+            position = (mPlaylist.isEmpty()) ? -1: position;
             mSession.setQueue(mPlaylist);
         }
 
         @Override
         public void onPrepare() {
-            if (mQueueIndex < 0 && mPlaylist.isEmpty()) {
+            if (position < 0 && mPlaylist.isEmpty()) {
                 // Nothing to play.
                 return;
             }
 
-            final String mediaId = mPlaylist.get(mQueueIndex).getDescription().getMediaId();
+            final String mediaId = mPlaylist.get(position).getDescription().getMediaId();
+            Log.d("NNN", mediaId);
             mPreparedMedia = MusicLibrary.getMetadata(MediaService.this, mediaId);
             mSession.setMetadata(mPreparedMedia);
 
@@ -152,14 +173,15 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         @Override
         public void onSkipToNext() {
-            mQueueIndex = (++mQueueIndex % mPlaylist.size());
+            position = (++position % mPlaylist.size());
             mPreparedMedia = null;
             onPlay();
         }
 
+
         @Override
         public void onSkipToPrevious() {
-            mQueueIndex = mQueueIndex > 0 ? mQueueIndex - 1 : mPlaylist.size() - 1;
+            position = position > 0 ? position - 1 : mPlaylist.size() - 1;
             mPreparedMedia = null;
             onPlay();
         }

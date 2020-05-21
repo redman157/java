@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.SplashActivity;
-import com.android.music_player.managers.SongManager;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
     private boolean sync;
     private String tag = "PerformMusicTasksLog";
-    private SongManager mSongManager;
+    private MusicManager mMusicManager;
     private SharedPrefsUtils mSharedPrefsUtils;
 
     @SuppressLint("StaticFieldLeak")
@@ -32,7 +32,7 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
         mActivity = activity;
         
         this.sync = sync;
-        mSongManager = SongManager.getInstance();
+        mMusicManager = MusicManager.getInstance();
 
 
     }
@@ -41,25 +41,25 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
     protected void onPreExecute() {
         super.onPreExecute();
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
-        mSongManager.setContext(mActivity);
-        mSongManager.installData();
+        mMusicManager.setContext(mActivity);
+        mMusicManager.installData();
 
     }
 
     @Override
     protected Long doInBackground(String... strings) {
 
-        Map<String, ArrayList<SongModel>> artists = mSongManager.getArtist();
-        Map<String, ArrayList<SongModel>> albums = mSongManager.getAlbum();
-        Map<String, ArrayList<SongModel>> folders = mSongManager.getFolder();
+        Map<String, ArrayList<SongModel>> artists = mMusicManager.getArtist();
+        Map<String, ArrayList<SongModel>> albums = mMusicManager.getAlbum();
+        Map<String, ArrayList<SongModel>> folders = mMusicManager.getFolder();
         if (artists.size() > 0 && albums.size() > 0 && folders.size() > 0) {
             Log.d(tag, "Done filter into data");
         }
 
         try {
             // lần đầu tiên cài app
-            if(mSongManager.isPlayListMost()){
-                mSongManager.addPlayListFirst();
+            if(mMusicManager.isPlayListMost()){
+                mMusicManager.addPlayListFirst();
             }
             Log.d(tag, "Sync: "+sync);
             if (sync) {

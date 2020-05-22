@@ -136,6 +136,15 @@ public class MusicManager {
         return mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
     }
 
+    public String getCurrentMusic(){
+        return mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"");
+    }
+    public void setCurrentMusic(String nameSong){
+        Log.d("CCC","setCurrentSong: "+nameSong);
+        mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, nameSong);
+    }
+
+
     public void setCurrentSong(String path){
         Log.d("CCC","setCurrentSong: "+path);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_SONG, path);

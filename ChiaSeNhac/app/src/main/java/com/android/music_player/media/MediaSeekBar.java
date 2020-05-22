@@ -1,4 +1,4 @@
-package com.android.music_player;
+package com.android.music_player.media;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -107,8 +107,11 @@ public class MediaSeekBar extends AppCompatSeekBar {
             // the end of the media the same time as playback gets there (or close enough).
 
             if (state != null && state.getState() == PlaybackStateCompat.STATE_PLAYING){
-                final int timeToEnd = (int) ((getMax() - progress) / state.getPlaybackSpeed());
+                int timeToEnd = (int) ((getMax() - progress) / state.getPlaybackSpeed());
 
+                if (timeToEnd < 0){
+                    timeToEnd = 0;
+                }
                 mProgressAnimator = ValueAnimator.ofInt(progress, getMax())
                         .setDuration(timeToEnd);
                 mProgressAnimator.setInterpolator(new LinearInterpolator());

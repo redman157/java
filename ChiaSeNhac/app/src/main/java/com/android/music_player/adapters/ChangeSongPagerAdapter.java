@@ -1,6 +1,7 @@
 package com.android.music_player.adapters;
 
 import android.content.Context;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,19 +12,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.fragments.ChangeSongFragment;
 import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements OnClickItem {
     private Context context;
     private ArrayList<Fragment> fragments=  new ArrayList<>();
     private ArrayList<SongModel> mSongModels;
+    private List<MediaBrowserCompat.MediaItem> items;
     private MusicManager mMusicManager;
     private String songName;
     private TreeMap<String, MediaMetadataCompat> music;
@@ -37,9 +39,12 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     public void addData(ArrayList<SongModel> songModels) {
         mSongModels = songModels;
     }
-    public void addData(String music) {
-        this.songName = music;
+    public void addData(List<MediaBrowserCompat.MediaItem> items) {
+        this.items = items;
+
     }
+
+
 
     @Override
     public int getItemPosition(@NonNull Object object) {
@@ -67,14 +72,14 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     @Override
     public Fragment getItem(int position) {
         ChangeSongFragment fChangeSongFragment = new ChangeSongFragment(this);
-        fChangeSongFragment.setMusicMain(MusicLibrary.getCurrentMusic(songName));
+        fChangeSongFragment.setMedia(items.get(position));
 //        fChangeSongFragment.setSongModel(mSongModels.get(position));
         return fChangeSongFragment;
     }
 
     @Override
     public int getCount() {
-        return MusicLibrary.getSize();
+        return items.size();
     }
 
     @Override

@@ -173,7 +173,7 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_10sdp" />
 
-            <com.android.music_player.MediaSeekBar
+            <com.android.music_player.media.MediaSeekBar
                 android:layout_weight="7"
                 android:id="@+id/sb_Time"
                 android:layout_width="0dp"
@@ -262,6 +262,7 @@
                     android:adjustViewBounds="true"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:scaleType="centerCrop"
+                    android:src="@drawable/ic_media_play_light"
                     android:tint="@color/white" />
             </RelativeLayout>
 

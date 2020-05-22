@@ -1,4 +1,4 @@
-package com.android.music_player;
+package com.android.music_player.media;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -19,6 +19,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.media.session.MediaButtonReceiver;
 
+import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.services.MediaService;
@@ -28,7 +29,7 @@ import com.android.music_player.utils.ImageUtils;
 public class MediaNotificationManager {
     public static final int NOTIFICATION_ID = 412;
     private static final String TAG = MediaNotificationManager.class.getSimpleName();
-    private static final String CHANNEL_ID = "channel_music_playback";
+    private static final String CHANNEL_ID = "com.android.music_player.channel";
     private static final int REQUEST_CODE = 501;
     private final MediaService mService;
 
@@ -36,6 +37,7 @@ public class MediaNotificationManager {
     private final NotificationCompat.Action mPauseAction;
     private final NotificationCompat.Action mNextAction;
     private final NotificationCompat.Action mPrevAction;
+    private final NotificationCompat.Action mStopAction;
     private final NotificationManager mNotificationManager;
 
     public MediaNotificationManager(MediaService service) {
@@ -45,7 +47,7 @@ public class MediaNotificationManager {
 
         mPlayAction = new NotificationCompat.Action(
                 R.drawable.app_play,
-                "Play",
+                Constants.ACTION.PLAY,
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_PLAY));
 
@@ -61,6 +63,12 @@ public class MediaNotificationManager {
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
 
+        mStopAction = new NotificationCompat.Action(
+                R.drawable.ic_close_black_24dp,
+                "Stop",
+                MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
+                        PlaybackStateCompat.ACTION_STOP));
+
         mPrevAction = new NotificationCompat.Action(
                 R.drawable.app_previous,
                 Constants.ACTION.PREVIOUS,
@@ -70,6 +78,11 @@ public class MediaNotificationManager {
         // Cancel all notifications to handle the case where the Service was killed and
         // restarted by the system.
         mNotificationManager.cancelAll();
+    }
+    private PendingIntent closeNotification() {
+        Intent dismissIntent = new Intent(Constants.ACTION.CLOSE_NOTIFICATION);
+        return PendingIntent.getBroadcast(mService, 0, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
     }
 
     public NotificationManager getNotificationManager() {
@@ -95,7 +108,7 @@ public class MediaNotificationManager {
             createChannel();
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (isAndroidOOrHigher()){
             builder = new androidx.core.app.NotificationCompat.Builder(mService,
                     mService.getString(R.string.default_notification_channel_id))
                     .setChannelId(mService.getString(R.string.default_notification_channel_id))
@@ -103,11 +116,6 @@ public class MediaNotificationManager {
 
                     // For backwards compatibility with Android L and earlier.
                     .setShowWhen(false)
-
-                    /*.setCancelButtonIntent(
-                            MediaButtonReceiver.buildMediaButtonPendingIntent(
-                                    mService,
-                                    PlaybackStateCompat.ACTION_STOP)))*/
                     .setColorized(true).setColor(mService.getResources().getColor(R.color.white))
 
                     .setSmallIcon(R.drawable.ic_music_note_white_24dp)
@@ -129,16 +137,20 @@ public class MediaNotificationManager {
 
                     .setStyle( new androidx.media.app.NotificationCompat.MediaStyle()
                             .setShowActionsInCompactView(0, 1, 2)
+                            .setShowCancelButton(true)
+                            .setCancelButtonIntent(
+                                    MediaButtonReceiver.buildMediaButtonPendingIntent(
+                                            mService,
+                                            PlaybackStateCompat.ACTION_STOP))
                             .setMediaSession(token));
         }else {
             builder = new NotificationCompat.Builder(mService, CHANNEL_ID);
             builder.setStyle( new androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(token)
-
-                    .setShowActionsInCompactView(0, 1, 2)
-                    // For backwards compatibility with Android L and earlier.
-                    .setShowCancelButton(true)
-                    .setCancelButtonIntent(
+                        .setMediaSession(token)
+                        .setShowActionsInCompactView(0, 1, 2)
+                        // For backwards compatibility with Android L and earlier.
+                        .setShowCancelButton(true)
+                        .setCancelButtonIntent(
                             MediaButtonReceiver.buildMediaButtonPendingIntent(
                                     mService,
                                     PlaybackStateCompat.ACTION_STOP)))
@@ -160,7 +172,6 @@ public class MediaNotificationManager {
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         }
 
-
         // If skip to next action is enabled.
         if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) != 0) {
             builder.addAction(mPrevAction);
@@ -173,11 +184,9 @@ public class MediaNotificationManager {
             builder.addAction(mNextAction);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            builder.addAction(R.drawable.ic_close_black_24dp, "Stop",MediaButtonReceiver.buildMediaButtonPendingIntent(
-                    mService,
-                    PlaybackStateCompat.ACTION_STOP));
-        }
+
+        builder.addAction(mStopAction);
+
 
         return builder;
     }

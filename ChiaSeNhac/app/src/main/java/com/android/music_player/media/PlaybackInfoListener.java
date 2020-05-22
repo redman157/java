@@ -1,7 +1,8 @@
-package com.android.music_player;
+package com.android.music_player.media;
 
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+
 import com.android.music_player.services.MediaService;
 /**
  * Listener to provide state updates from {@link MediaPlayerAdapter} (the media player)

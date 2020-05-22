@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -65,8 +64,15 @@ public class Utils {
                 return R.color.pink;
         }
     }
+    public static void UpdateButtonPlay(ImageButton button, boolean isPlay){
+        if (isPlay){
+            button.setImageResource(R.drawable.ic_media_pause_light);
+        }else {
+            button.setImageResource(R.drawable.ic_media_play_light);
+        }
+    }
 
-    public static void UpdateButtonPlay(Activity activity, ImageButton button){
+    public static void UpdateButtonPlay( ImageButton button){
         if (MediaPlayerService.mMediaPlayer != null && MediaPlayerService.mMediaPlayer.isPlaying()){
             button.setImageResource(R.drawable.ic_media_pause_light);
         }else {
@@ -102,14 +108,6 @@ public class Utils {
         builder.putString(Constants.INTENT.TYPE,type);
         builder.putInteger(Constants.INTENT.CHOOSE_POS, position);
         builder.putString(Constants.INTENT.SONG_NAME, manager.getListSong().get(position).getSongName());
-        if (manager.isPlayCurrentSong(manager.getListSong(type).get(position).getPath())) {
-            Log.d("BBB", "Utils --- IntentToPlayActivity: true");
-            builder.putBoolean(Constants.INTENT.SONG_CONTINUE, true);
-        }else {
-            Log.d("BBB", "Utils --- IntentToPlayActivity: false");
-            Utils.PauseMediaService(activity, type, position);
-            builder.putBoolean(Constants.INTENT.SONG_CONTINUE, false);
-        }
         intent.putExtras(builder.generate().getBundle());
 
         activity.finish();

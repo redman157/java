@@ -346,7 +346,7 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
         mLl_Play_Media.setOnClickListener(this);
         setupViewPager(mViewPagerSong);
 
-        Utils.UpdateButtonPlay(this, mBtnPlayPause);
+        Utils.UpdateButtonPlay(mBtnPlayPause);
     }
 
     private void setupViewPager(ViewPager viewPager){

@@ -1,7 +1,9 @@
-package com.android.music_player;
+package com.android.music_player.media;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -11,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.managers.MusicManager;
 
 import java.io.File;
 
@@ -20,6 +23,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     private String mFilename;
     private PlaybackInfoListener mPlaybackInfoListener;
     private MediaMetadataCompat mCurrentMedia;
+    private MusicManager mMusicManager;
     private int mState;
     private boolean mCurrentMediaPlayedToCompletion;
 
@@ -31,6 +35,8 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         super(context);
         this.mContext = context.getApplicationContext();
         mPlaybackInfoListener = listener;
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(context);
     }
     /**
      * Once the {@link MediaPlayer} is released, it can't be used again, and another one has to be
@@ -42,6 +48,8 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     private void initializeMediaPlayer() {
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mMediaPlayer.setWakeMode(mContext.getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
@@ -62,7 +70,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
 
         mState = newPlayerState;
 
-        Log.d("JJJ","setNewState: "+newPlayerState );
+        Log.d("SSS","setNewState: "+newPlayerState );
         // Whether playback goes to completion, or whether it is stopped, the
         // mCurrentMediaPlayedToCompletion is set to true.
 
@@ -83,6 +91,13 @@ public class MediaPlayerAdapter extends PlayerAdapter {
                     0 : mMediaPlayer.getCurrentPosition();
         }
 
+        updatePlaybackState(reportPosition);
+    }
+
+    private void updatePlaybackState(long reportPosition) {
+        if (mPlaybackInfoListener == null){
+            return;
+        }
         PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder();
         stateBuilder.setActions(getAvailableActions());
         stateBuilder.setState(mState, reportPosition, 1.0f, SystemClock.elapsedRealtime());
@@ -98,19 +113,21 @@ public class MediaPlayerAdapter extends PlayerAdapter {
      */
     @PlaybackStateCompat.Actions
     private long getAvailableActions() {
-        long actions = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID
-                | PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
-                | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-                | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
+        long actions = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
+                PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
+                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
         switch (mState){
+            // rơi vào state bất kỳ thì sẽ chuyển sang trạng thái tương ứng
             case PlaybackStateCompat.STATE_STOPPED:
                 actions |= PlaybackStateCompat.ACTION_PLAY
                         | PlaybackStateCompat.ACTION_PAUSE;
                 break;
             case PlaybackStateCompat.STATE_PLAYING:
-                actions |= PlaybackStateCompat.ACTION_STOP
-                        | PlaybackStateCompat.ACTION_PAUSE
-                        | PlaybackStateCompat.ACTION_SEEK_TO;
+
+                actions |= PlaybackStateCompat.ACTION_PAUSE |
+                        PlaybackStateCompat.ACTION_STOP|
+                        PlaybackStateCompat.ACTION_SEEK_TO;
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
                 actions |= PlaybackStateCompat.ACTION_PLAY
@@ -124,6 +141,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         }
         return actions;
     }
+
     // Implements PlaybackControl.
     @Override
     public void playFromMedia(MediaMetadataCompat metadata) {
@@ -162,12 +180,6 @@ public class MediaPlayerAdapter extends PlayerAdapter {
             Log.d("CCC", mFilename +"\n ---- "+new File(mFilename).exists());
             File file = new File(mFilename);
             if (file.exists()) {
-//                AssetFileDescriptor assetFileDescriptor = mContext.getAssets().openFd(file.getPath());
-
-            /*    mMediaPlayer.setDataSource(
-                        assetFileDescriptor.getFileDescriptor(),
-                        assetFileDescriptor.getStartOffset(),
-                        assetFileDescriptor.getLength());*/
                 mMediaPlayer.setDataSource(file.getPath());
             }
         }catch (Exception e){
@@ -191,9 +203,13 @@ public class MediaPlayerAdapter extends PlayerAdapter {
 
     @Override
     protected void onPlay() {
-        if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
-            mMediaPlayer.start();
-            setNewState(PlaybackStateCompat.STATE_PLAYING);
+        try {
+            if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
+                mMediaPlayer.start();
+                setNewState(PlaybackStateCompat.STATE_PLAYING);
+            }
+        }finally {
+            mMusicManager.setCurrentSong(mFilename);
         }
     }
 

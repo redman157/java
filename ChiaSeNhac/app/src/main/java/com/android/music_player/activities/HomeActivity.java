@@ -2,10 +2,7 @@ package com.android.music_player.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,16 +16,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.music_player.BaseActivity;
 import com.android.music_player.R;
 import com.android.music_player.adapters.ViewPagerAdapter;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.managers.MusicManager;
+import com.android.music_player.media.MediaBrowserConnection;
+import com.android.music_player.media.MediaBrowserHelper;
+import com.android.music_player.media.MediaBrowserListener;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
@@ -40,8 +40,9 @@ import java.util.ArrayList;
 
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton;
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener,
-        ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener, ViewTreeObserver.OnGlobalLayoutListener{
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
+        ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener,
+        ViewTreeObserver.OnGlobalLayoutListener, MediaBrowserListener.OnPlayPause {
     private ViewPager mViewPager_Home;
 
     private String tag = "BBB";
@@ -59,46 +60,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private boolean isPlaying;
     public LinearLayout mLlPlayMedia;
     public int chooseSong;
+    public String type;
     public boolean isContinue;
     private OnChangePlayListListener onChangePlayListListener;
-    private boolean isRegistered = false;
-    private BroadcastReceiver brPlayPauseActivity = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent serviceIntent) {
-            // activity gửi broadcast từ service >> activity
-            boolean isPlayingNoti =
-                    serviceIntent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION,
-                            false);
-            if (isPlayingNoti) {
-                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
-
-            } else {
-                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
-            }
-            setSongCurrent();
-        }
-    };
-
-    private BroadcastReceiver brIsPlayService = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // activity gửi broadcast xuống service
-            boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
-
-            if (isPlayingMedia) {
-                Log.d(tag, "HomeActivity --- brIsPlayService:" +true);
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                isPlaying = true;
-                Utils.PauseMediaService(context, mMusicManager.getType(), mMusicManager.getPosition() );
-            } else {
-                Log.d(tag, "HomeActivity --- brIsPlayService:" +false);
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                isPlaying = false;
-                Utils.PlayMediaService(context, mMusicManager.getType(), mMusicManager.getPosition());
-            }
-        }
-    };
-
+    private MediaBrowserHelper mMediaBrowserHelper;
+    private MediaBrowserListener mBrowserListener;
 
     @Override
     protected void onPause() {
@@ -108,38 +74,23 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     protected void onStop() {
-
         super.onStop();
-
-
-        Log.d("XXX", "HomeActivity --- onStop: Enter");
+        mMediaBrowserHelper.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.unregisterReceiver(brPlayPauseActivity);
-        this.unregisterReceiver(brIsPlayService);
+
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        try {
-            if (!isRegistered) {
-                registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
-                registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
-                isRegistered = true;
-            }
-        }finally {
-            mMusicManager = MusicManager.getInstance();
-            mMusicManager.setContext(this);
-            mSongs = mMusicManager.getListSong();
 
-            chooseSong = mMusicManager.getPosition();
-            Log.d("XXX", "HomeActivity --- onStart: " + chooseSong);
-        };
+        mMediaBrowserHelper.onStart();
+        chooseSong = mMusicManager.getPosition();
     }
 
     @Override
@@ -165,8 +116,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         setupToolbar();
         assignView();
         setSongCurrent();
-        Log.d("XXX", "HomeActivity --- onCreate: Enter");
+
+        mMediaBrowserHelper = new MediaBrowserConnection(this);
+        mBrowserListener = new MediaBrowserListener();
+        mMediaBrowserHelper.registerCallback(mBrowserListener);
     }
+
 
     private void setupToolbar() {
         setSupportActionBar(mToolBar);
@@ -223,7 +178,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mViewPager_Home = findViewById(R.id.vp_Home);
         setupViewPager(mViewPager_Home);
         mImgMedia.getViewTreeObserver().addOnGlobalLayoutListener(this);
-        Utils.UpdateButtonPlay(this, mBtnPlayPause);
+        Utils.UpdateButtonPlay( mBtnPlayPause);
     }
 
     private void assignView(){
@@ -365,7 +320,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
                 break;
             case R.id.btn_title_media:
-                Utils.IntentToPlayActivity(this, chooseSong, mMusicManager.getType() );
+//                Utils.IntentToPlayActivity(this, chooseSong, mMusicManager.getType() );
+                /*Intent intent = new Intent(this, PlayActivity.class);
+                Utils.Builder builder = new Utils.Builder();
+                builder.putString(Constants.INTENT.TYPE,type);
+                builder.putInteger(Constants.INTENT.CHOOSE_POS, chooseSong);
+                intent.putExtras(builder.generate().getBundle());
+                finish();
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);*/
+
+                Log.d("FFF","tên : "+mTextTitle.getText());
                 break;
             case R.id.menu_search:
                 Intent iSearch = new Intent(this, SearchActivity.class);
@@ -439,5 +404,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         int y_1 = locat_1[1];
         Log.d("HHH", "initView --- ImgMedia: x --- "+x_0 +" y --- "+y_0);
         Log.d("HHH", "initView --- TabLayoutHome: x --- "+x_1 +" y --- "+y_1);
+    }
+
+    @Override
+    public void onCheck(boolean isPlay) {
+        Utils.UpdateButtonPlay(mBtnPlayPause, isPlay);
     }
 }

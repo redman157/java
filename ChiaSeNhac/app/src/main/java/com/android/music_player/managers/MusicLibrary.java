@@ -63,9 +63,8 @@ public class MusicLibrary {
     public static List<MediaBrowserCompat.MediaItem> getMediaItems() {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
         for (MediaMetadataCompat metadata : music.values()) {
-            result.add(
-                    new MediaBrowserCompat.MediaItem(
-                            metadata.getDescription(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+            result.add(new MediaBrowserCompat.MediaItem(
+                metadata.getDescription(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
         }
         return result;
     }

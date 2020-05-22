@@ -15,11 +15,12 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.media.MediaBrowserServiceCompat;
 
-import com.android.music_player.MediaNotificationManager;
-import com.android.music_player.MediaPlayerAdapter;
-import com.android.music_player.PlaybackInfoListener;
-import com.android.music_player.PlayerAdapter;
 import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.managers.MusicManager;
+import com.android.music_player.media.MediaNotificationManager;
+import com.android.music_player.media.MediaPlayerAdapter;
+import com.android.music_player.media.PlaybackInfoListener;
+import com.android.music_player.media.PlayerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,22 +34,24 @@ public class MediaService extends MediaBrowserServiceCompat {
     private MediaNotificationManager mMediaNotificationManager;
     private MediaSessionCallback mCallback;
     private boolean mServiceInStartedState;
+    private MusicManager mMusicManager;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
 
+        return START_STICKY;
     }
 
     /**
      * Khởi tạo service và truyền intent xuống
      **/
-
     @Override
     public void onCreate() {
         super.onCreate();
         // Create a new MediaSession.
         initMediaSession();
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(this);
         mMediaNotificationManager = new MediaNotificationManager(this);
         mPlayback = new MediaPlayerAdapter(this, new MediaPlayerListener());
         Log.d(TAG, "onCreate: MusicService creating MediaSession, and MediaNotificationManager");
@@ -65,11 +68,12 @@ public class MediaService extends MediaBrowserServiceCompat {
     private void initMediaSession() {
         mSession = new MediaSessionCompat(this,getClass().getSimpleName());
         mCallback = new MediaSessionCallback();
+
         mSession.setCallback(mCallback);
         mSession.setFlags(
                 MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                        MediaSessionCompat.FLAG_HANDLES_QUEUE_COMMANDS |
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+                MediaSessionCompat.FLAG_HANDLES_QUEUE_COMMANDS |
+                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         setSessionToken(mSession.getSessionToken());
     }
 
@@ -101,8 +105,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         private int position = -1;
         private MediaMetadataCompat mPreparedMedia;
 
-
-
         public int getPosition() {
             return position;
         }
@@ -114,7 +116,7 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
-            Log.d("MMM", "onAddQueueItem --- "+description.getMediaId());
+            Log.d("MMM", "MediaService --- onAddQueueItem --- "+description.getMediaId());
             mPlaylist.add(new MediaSessionCompat.QueueItem(description, description.hashCode()));
             position = (position == - 1) ?  0: position;
             mSession.setQueue(mPlaylist);
@@ -122,7 +124,7 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
-            Log.d("MMM", "onRemoveQueueItem --- " +description.getMediaId());
+            Log.d("MMM", "MediaService --- onRemoveQueueItem --- " +description.getMediaId());
             mPlaylist.remove(new MediaSessionCompat.QueueItem(description, description.hashCode()));
             position = (mPlaylist.isEmpty()) ? -1: position;
             mSession.setQueue(mPlaylist);
@@ -208,6 +210,7 @@ public class MediaService extends MediaBrowserServiceCompat {
             // Report the state to the MediaSession.
             mSession.setPlaybackState(state);
 
+            Log.d("SSS", "MediaService --- onPlaybackStateChange: " + state.getState());
             // Manage the started state of this service.
             switch (state.getState()){
                 case PlaybackStateCompat.STATE_PLAYING:
@@ -224,6 +227,7 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         class ServiceManager{
             private void moveServiceToStartedState(PlaybackStateCompat state) {
+
                 Notification notification =
                         mMediaNotificationManager.getNotification(
                                 mPlayback.getCurrentMedia(), state, getSessionToken());

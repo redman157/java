@@ -1,4 +1,4 @@
-package com.android.music_player;
+package com.android.music_player.media;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

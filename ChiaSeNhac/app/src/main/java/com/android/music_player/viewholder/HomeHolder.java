@@ -150,17 +150,16 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
     public void onClick(String type, int position) {
         if (mActivity instanceof HomeActivity) {
             mHomeActivity = (HomeActivity) mActivity;
-            mMusicManager.setType(type);
-            mHomeActivity.setSongCurrent(mNewSongs, position);
+            mHomeActivity.type = type;
+            mHomeActivity.chooseSong = position;
 
+            mHomeActivity.setSongCurrent(mMusicManager.getListSong(type), position);
             if (position != MusicManager.getInstance().getPosition()) {
                 (mHomeActivity).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 (mHomeActivity).isContinue = false;
             } else {
-                Utils.UpdateButtonPlay(mHomeActivity, mHomeActivity.mBtnPlayPause);
+                Utils.UpdateButtonPlay(mHomeActivity.mBtnPlayPause);
             }
-
-
         }
     }
 }

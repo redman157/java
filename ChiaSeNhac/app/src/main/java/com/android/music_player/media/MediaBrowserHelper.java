@@ -1,4 +1,4 @@
-package com.android.music_player;
+package com.android.music_player.media;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -233,7 +233,6 @@ public class MediaBrowserHelper {
         public void onSessionDestroyed() {
             resetState();
             onPlaybackStateChanged(null);
-
             MediaBrowserHelper.this.onDisconnected();
         }
     }

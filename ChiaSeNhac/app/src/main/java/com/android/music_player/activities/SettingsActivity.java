@@ -15,8 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.media.MediaBrowserServiceCompat;
 
-import com.android.music_player.MediaBrowserHelper;
-import com.android.music_player.MediaSeekBar;
+import com.android.music_player.media.MediaBrowserHelper;
+import com.android.music_player.media.MediaSeekBar;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.R;
 import com.android.music_player.services.MediaService;

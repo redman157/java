@@ -2,6 +2,7 @@ package com.android.music_player.fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,11 +17,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.R;
 import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
@@ -45,6 +46,7 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     private MusicAdapter mMusicAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SongModel> musicMain;
+    private MediaBrowserCompat.MediaItem mediaItem;
     private SharedPrefsUtils mSharedPrefsUtils;
     private static ArrayList<SongModel> mSongModels;
     public static void newInstance(ArrayList<SongModel> songModels) {
@@ -69,6 +71,11 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     public void setMusicMain(MediaMetadataCompat mediaMetadataCompat) {
         mMediaMetadataCompat = mediaMetadataCompat;
     }
+
+    public void setMedia(MediaBrowserCompat.MediaItem mediaItem){
+        this.mediaItem = mediaItem;
+        mMediaMetadataCompat = MusicLibrary.getMetadata(getContext(), mediaItem.getMediaId());
+    }
     private MusicManager mMusicManager;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,7 +99,7 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
         initView();
         assignView();
         Log.d("XXX", mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
-        mTextArtist.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+        mTextArtist.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
         mTextAlbum.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
         mTextTittle.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
         ImageUtils.getInstance(getContext()).getSmallImageByPicasso(

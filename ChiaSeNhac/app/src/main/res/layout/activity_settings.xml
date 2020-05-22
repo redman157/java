@@ -101,7 +101,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".5" />
 
-    <com.android.music_player.MediaSeekBar
+    <com.android.music_player.media.MediaSeekBar
         android:id="@+id/seekbar_audio"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

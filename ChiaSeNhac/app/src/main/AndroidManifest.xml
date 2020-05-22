@@ -67,7 +67,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widgetprovider4x1" />
         </receiver>
-        <service android:name="com.android.music_player.services.MediaPlayerService"
+       <!-- <service android:name="com.android.music_player.services.MediaPlayerService"
             android:exported="false"
             tools:ignore="ExtraText">
             <intent-filter>
@@ -86,7 +86,7 @@
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
-        </service>
+        </service>-->
 
         <service
             android:name="com.android.music_player.services.MediaService"

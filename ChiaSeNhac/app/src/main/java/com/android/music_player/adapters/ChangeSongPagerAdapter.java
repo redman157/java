@@ -14,6 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.fragments.ChangeSongFragment;
 import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 
@@ -25,7 +26,7 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     private Context context;
     private ArrayList<Fragment> fragments=  new ArrayList<>();
     private ArrayList<SongModel> mSongModels;
-    private List<MediaBrowserCompat.MediaItem> items;
+    private List<MediaBrowserCompat.MediaItem> mediaItems;
     private MusicManager mMusicManager;
     private String songName;
     private TreeMap<String, MediaMetadataCompat> music;
@@ -39,12 +40,11 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     public void addData(ArrayList<SongModel> songModels) {
         mSongModels = songModels;
     }
-    public void addData(List<MediaBrowserCompat.MediaItem> items) {
-        this.items = items;
-
+    public void addData(String songName) {
+        this.songName = songName;
+//        this.mediaItems = mediaItems;
+        notifyDataSetChanged();
     }
-
-
 
     @Override
     public int getItemPosition(@NonNull Object object) {
@@ -72,14 +72,14 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     @Override
     public Fragment getItem(int position) {
         ChangeSongFragment fChangeSongFragment = new ChangeSongFragment(this);
-        fChangeSongFragment.setMedia(items.get(position));
+        fChangeSongFragment.setMedia(songName, context);
 //        fChangeSongFragment.setSongModel(mSongModels.get(position));
         return fChangeSongFragment;
     }
 
     @Override
     public int getCount() {
-        return items.size();
+        return MusicLibrary.getSize();
     }
 
     @Override

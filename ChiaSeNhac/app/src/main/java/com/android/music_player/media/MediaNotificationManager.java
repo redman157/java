@@ -110,8 +110,8 @@ public class MediaNotificationManager {
 
         if (isAndroidOOrHigher()){
             builder = new androidx.core.app.NotificationCompat.Builder(mService,
-                    mService.getString(R.string.default_notification_channel_id))
-                    .setChannelId(mService.getString(R.string.default_notification_channel_id))
+                    CHANNEL_ID)
+                    .setChannelId(CHANNEL_ID)
                     .setAutoCancel(false)
 
                     // For backwards compatibility with Android L and earlier.

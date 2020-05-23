@@ -21,9 +21,10 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         void onMedia(List<MediaBrowserCompat.MediaItem> children);
     }
     private OnMediaItem onMediaItem;
-    public void setOnMedia(OnMediaItem item){
-        item = onMediaItem;
+    public void setOnMedia(OnMediaItem onMediaItem){
+        this.onMediaItem = onMediaItem;
     }
+
     public MediaSeekBar getSeekBarAudio() {
         return mSeekBarAudio;
     }

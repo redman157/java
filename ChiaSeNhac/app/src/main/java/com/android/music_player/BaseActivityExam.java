@@ -24,8 +24,6 @@ public class BaseActivityExam extends AppCompatActivity {
         mMediaBrowserHelper.registerCallback(mBrowserListener);
     }
 
-
-
     @Override
     protected void onStart() {
         super.onStart();

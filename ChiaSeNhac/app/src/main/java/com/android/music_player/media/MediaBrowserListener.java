@@ -17,13 +17,14 @@ import java.util.List;
  * simple.
  */
 public class MediaBrowserListener extends MediaControllerCompat.Callback {
-    private OnPlayPause onPlayPause;
-    public interface OnPlayPause {
+    private OnMedia onMedia;
+    public interface OnMedia {
         void onCheck(boolean isPlay);
+        void onChange(String songName);
     }
 
-    public void setOnPlayPause(OnPlayPause onPlayPause){
-        this.onPlayPause = onPlayPause;
+    public void setOnMedia(OnMedia onMedia){
+        this.onMedia = onMedia;
     }
 
     @Override
@@ -40,17 +41,17 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
 
     @Override
     public void onPlaybackStateChanged(PlaybackStateCompat playbackState) {
-        if (playbackState!= null && onPlayPause != null) {
+        if (playbackState!= null && onMedia != null) {
             switch (playbackState.getState()) {
                 case PlaybackStateCompat.STATE_PLAYING:
-                    onPlayPause.onCheck(true);
+                    onMedia.onCheck(true);
                     break;
                 case PlaybackStateCompat.STATE_PAUSED:
                 case PlaybackStateCompat.STATE_STOPPED:
-                    onPlayPause.onCheck(false);
+                    onMedia.onCheck(false);
                 case PlaybackStateCompat.STATE_SKIPPING_TO_NEXT:
                 case PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS:
-                    onPlayPause.onCheck(false);
+                    onMedia.onCheck(false);
                     break;
             }
         }
@@ -62,7 +63,9 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
             return;
         }
         String mediaId = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
-
+        if (onMedia != null) {
+            onMedia.onChange(mediaId);
+        }
         // set up việc chuyển page
         Log.d("SSS","onMetadataChanged: "+mediaId);
 

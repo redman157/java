@@ -42,7 +42,7 @@ import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener,
-        ViewTreeObserver.OnGlobalLayoutListener, MediaBrowserListener.OnPlayPause {
+        ViewTreeObserver.OnGlobalLayoutListener, MediaBrowserListener.OnMedia {
     private ViewPager mViewPager_Home;
 
     private String tag = "BBB";
@@ -65,6 +65,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private OnChangePlayListListener onChangePlayListListener;
     private MediaBrowserHelper mMediaBrowserHelper;
     private MediaBrowserListener mBrowserListener;
+    private String songName;
 
     @Override
     protected void onPause() {
@@ -409,5 +410,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onCheck(boolean isPlay) {
         Utils.UpdateButtonPlay(mBtnPlayPause, isPlay);
+    }
+
+    @Override
+    public void onChange(String songName) {
+        this.songName = songName;
     }
 }

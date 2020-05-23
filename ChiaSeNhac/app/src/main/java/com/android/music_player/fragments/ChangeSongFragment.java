@@ -1,6 +1,7 @@
 package com.android.music_player.fragments;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -47,6 +48,7 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SongModel> musicMain;
     private MediaBrowserCompat.MediaItem mediaItem;
+    private String songName;
     private SharedPrefsUtils mSharedPrefsUtils;
     private static ArrayList<SongModel> mSongModels;
     public static void newInstance(ArrayList<SongModel> songModels) {
@@ -72,9 +74,10 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
         mMediaMetadataCompat = mediaMetadataCompat;
     }
 
-    public void setMedia(MediaBrowserCompat.MediaItem mediaItem){
-        this.mediaItem = mediaItem;
-        mMediaMetadataCompat = MusicLibrary.getMetadata(getContext(), mediaItem.getMediaId());
+    public void setMedia(String songName, Context context){
+        this.songName = songName;
+//        this.mediaItem = mediaItem;
+        mMediaMetadataCompat = MusicLibrary.getMetadata(context, songName);
     }
     private MusicManager mMusicManager;
     @Override

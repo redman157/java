@@ -41,7 +41,8 @@ import java.util.List;
 
 public class PlayActivity extends AppCompatActivity
         implements ViewPager.OnPageChangeListener,
-        View.OnClickListener, MediaBrowserListener.OnPlayPause, MediaBrowserConnection.OnMediaItem {
+        View.OnClickListener,
+        MediaBrowserListener.OnMedia {
     public CustomViewPager mVpMusic;
     private ChangeSongPagerAdapter mAdapter;
     private MusicManager mMusicManager;
@@ -66,13 +67,14 @@ public class PlayActivity extends AppCompatActivity
     private boolean isRepeat = false;
     private boolean isMore = false;
     public boolean isShuffle = false;
-    private List<MediaBrowserCompat.MediaItem> mediaItemList;
+    private List<MediaBrowserCompat.MediaItem> mediaItems;
     private Utils mUtils;
     private Toolbar mToolBar;
     private String tag = "BBB";
     private MediaMetadataCompat currentMetadata;
     private MediaBrowserHelper mMediaBrowserHelper;
     private MediaBrowserListener mBrowserListener;
+    private MediaBrowserConnection browserConnection;
     @Override
     protected void onStart() {
 
@@ -92,27 +94,29 @@ public class PlayActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+        initView();
 
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(this);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
 
-        initView();
         getBundle();
         //save current song
         setupToolBar();
+        initService();
         assignView();
 
 
-        MediaBrowserConnection browserConnection = new MediaBrowserConnection(this);
+    }
+
+    private void initService(){
+        browserConnection = new MediaBrowserConnection(this);
         browserConnection.setSeekBarAudio(mSeekBarAudio);
-        browserConnection.setOnMedia(this);
         mMediaBrowserHelper = browserConnection;
 
         mBrowserListener = new MediaBrowserListener();
-        mBrowserListener.setOnPlayPause(this);
+        mBrowserListener.setOnMedia(this);
         mMediaBrowserHelper.registerCallback(mBrowserListener);
-
     }
 
     private void getBundle() {
@@ -399,7 +403,8 @@ public class PlayActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMedia(List<MediaBrowserCompat.MediaItem> children) {
-        mediaItemList = children;
+    public void onChange(String songName) {
+        this.songName = songName;
     }
+
 }

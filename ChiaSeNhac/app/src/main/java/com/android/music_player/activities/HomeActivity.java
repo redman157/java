@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +28,6 @@ import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.managers.MusicManager;
-import com.android.music_player.media.MediaBrowserConnection;
 import com.android.music_player.media.MediaBrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
 import com.android.music_player.models.SongModel;
@@ -42,7 +43,7 @@ import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener,
-        ViewTreeObserver.OnGlobalLayoutListener, MediaBrowserListener.OnMedia {
+        ViewTreeObserver.OnGlobalLayoutListener, MediaBrowserListener.OnPlayPause {
     private ViewPager mViewPager_Home;
 
     private String tag = "BBB";
@@ -65,18 +66,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private OnChangePlayListListener onChangePlayListListener;
     private MediaBrowserHelper mMediaBrowserHelper;
     private MediaBrowserListener mBrowserListener;
-    private String songName;
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("XXX", "HomeActivity --- onPause: Enter");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mMediaBrowserHelper.onStop();
+//        mMediaBrowserHelper.onStop();
     }
 
     @Override
@@ -90,7 +89,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
 
-        mMediaBrowserHelper.onStart();
+//        mMediaBrowserHelper.onStart();
         chooseSong = mMusicManager.getPosition();
     }
 
@@ -118,9 +117,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         assignView();
         setSongCurrent();
 
-        mMediaBrowserHelper = new MediaBrowserConnection(this);
+        mMusicManager.setMediaId(mMusicManager.getCurrentMusic().getSongName());
+      /*  mMediaBrowserHelper = new MediaBrowserConnection(this);
         mBrowserListener = new MediaBrowserListener();
-        mMediaBrowserHelper.registerCallback(mBrowserListener);
+        mMediaBrowserHelper.registerCallback(mBrowserListener);*/
     }
 
 
@@ -179,7 +179,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mViewPager_Home = findViewById(R.id.vp_Home);
         setupViewPager(mViewPager_Home);
         mImgMedia.getViewTreeObserver().addOnGlobalLayoutListener(this);
-        Utils.UpdateButtonPlay( mBtnPlayPause);
+
     }
 
     private void assignView(){
@@ -221,7 +221,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(this, EqualizerActivity.class));
                 break;
             case R.id.changeTheme:
-                
+
                 final Dialog dialog = new Dialog(this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_choose_accent_color);
@@ -315,7 +315,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.imbt_Play_media:
-                Utils.isPlayMediaService(this, mMusicManager.getType(), mMusicManager.getPosition());
+//                Utils.isPlayMediaService(this, mMusicManager.getType(), mMusicManager.getPosition());
                 break;
             case R.id.layout_play_media:
 
@@ -408,12 +408,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onCheck(boolean isPlay) {
+    public void onCheck(boolean isPlay, PlaybackStateCompat state) {
         Utils.UpdateButtonPlay(mBtnPlayPause, isPlay);
     }
 
     @Override
-    public void onChange(String songName) {
-        this.songName = songName;
+    public void onMediaMetadata(MediaMetadataCompat mediaMetadata) {
+
     }
+
+
 }

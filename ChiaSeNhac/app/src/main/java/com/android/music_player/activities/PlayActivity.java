@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,12 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.viewpager.widget.ViewPager;
 
-import com.android.music_player.CustomViewPager;
 import com.android.music_player.R;
-import com.android.music_player.adapters.ChangeSongPagerAdapter;
-import com.android.music_player.fragments.ChangeSongFragment;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.media.MediaBrowserConnection;
@@ -32,60 +30,73 @@ import com.android.music_player.media.MediaBrowserListener;
 import com.android.music_player.media.MediaSeekBar;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.DialogUtils;
+import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayActivity extends AppCompatActivity
-        implements ViewPager.OnPageChangeListener,
-        View.OnClickListener,
-        MediaBrowserListener.OnMedia {
-    public CustomViewPager mVpMusic;
-    private ChangeSongPagerAdapter mAdapter;
+public class PlayActivity extends AppCompatActivity implements
+        View.OnClickListener, MediaBrowserListener.OnPlayPause {
     private MusicManager mMusicManager;
-    private MediaSeekBar mSeekBarAudio;
-
+    public MediaSeekBar mSeekBarAudio;
     public ImageButton mBtnPlayPause;
     private ImageButton mBtnPrev, mBtnRepeat, mBtnNext,
     mBtnSeeMore, mBtnAbout, mBtnShuffle, mBtnEqualizer;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private TextView mTextLeftTime, mTextRightTime;
-    private String type, songName;
-    private int position;
+    private TextView mTextLeftTime, mTextRightTime, item_text_title, item_text_artist,item_text_album ;
+    private ImageView item_img_viewQueue, item_img_addToPlayListImageView, item_img_ChangeMusic;
     private ArrayList<SongModel> mSongs = new ArrayList<>();
     private ArrayList<SongModel> mSongShuffle = new ArrayList<>();
-    private boolean receiverRegistered;
-    public Intent iSeekBar;
-    private Intent iPlayPause;
-    public int seekPos, currentMedia , mediaMax;
     private LinearLayout ll_vp_change_music;
     private LinearLayout mLinearSeeMore;
     private boolean isChange, isPlaying, mIsPlaying;
     private boolean isRepeat = false;
     private boolean isMore = false;
     public boolean isShuffle = false;
-    private List<MediaBrowserCompat.MediaItem> mediaItems;
+    private List<MediaBrowserCompat.MediaItem> mediaItemList;
     private Utils mUtils;
     private Toolbar mToolBar;
     private String tag = "BBB";
     private MediaMetadataCompat currentMetadata;
     private MediaBrowserHelper mMediaBrowserHelper;
     private MediaBrowserListener mBrowserListener;
-    private MediaBrowserConnection browserConnection;
+
+    public interface OnMediaID {
+        void onMedia(String mediaId);
+    }
+    private OnMediaID onMediaID;
+
+    public void setOnMedia(OnMediaID onMediaID){
+        this.onMediaID = onMediaID;
+    }
     @Override
     protected void onStart() {
-
         super.onStart();
-        Log.d("MMM", "PlayActivity onStart: enter");
+        assignData(mMusicManager.getMediaId());
+        Log.d("OOO", "onStart: enter");
+        MusicManager.getInstance().setContext(this);
+        MediaBrowserConnection browserConnection =
+                MusicManager.getInstance().getMediaBrowserConnection();
+        browserConnection.setSeekBarAudio(mSeekBarAudio, mTextLeftTime, mTextRightTime);
+        browserConnection.setMediaId(mMusicManager.getMediaId());
+        mMediaBrowserHelper = browserConnection;
+
+        mBrowserListener = new MediaBrowserListener();
+        mBrowserListener.setOnPlayPause(this);
+        mMediaBrowserHelper.registerCallback("PlayActivity", mBrowserListener);
+
+        Log.d("JJJ", "PlayActivity onStart: "+ mMusicManager.getMediaId());
+
         mMediaBrowserHelper.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d("OOO", "onStop: enter");
+        Log.d("JJJ", "PlayActivity onStop: "+ mMusicManager.getMediaId());
         mSeekBarAudio.disconnectController();
         mMediaBrowserHelper.onStop();
     }
@@ -94,43 +105,23 @@ public class PlayActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
-        initView();
 
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(this);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
 
-        getBundle();
-        //save current song
+        initView();
+
         setupToolBar();
-        initService();
         assignView();
-
-
     }
 
-    private void initService(){
-        browserConnection = new MediaBrowserConnection(this);
-        browserConnection.setSeekBarAudio(mSeekBarAudio);
-        mMediaBrowserHelper = browserConnection;
-
-        mBrowserListener = new MediaBrowserListener();
-        mBrowserListener.setOnMedia(this);
-        mMediaBrowserHelper.registerCallback(mBrowserListener);
-    }
-
-    private void getBundle() {
+    private String getBundle() {
         Intent intent = getIntent();
-        mUtils = new Utils(intent);
-
-        type = mUtils.getString(Constants.INTENT.TYPE,"");
-        songName = mUtils.getString(Constants.INTENT.SONG_NAME, "");
-        position = mUtils.getInteger(Constants.INTENT.CHOOSE_POS, -1);
 
 
-        currentMetadata = MusicLibrary.getCurrentMusic(songName);
-        mMusicManager.setType(type);
-        mSongs = mMusicManager.getListSong(type);
+
+        return intent.getStringExtra(Constants.INTENT.SONG_NAME);
     }
 
     private void setupToolBar() {
@@ -150,10 +141,9 @@ public class PlayActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent iBackMusic = new Intent(this, SongActivity.class);
-                iBackMusic.putExtra(Constants.INTENT.TYPE_MUSIC, type);
-                finish();
+                Intent iBackMusic = new Intent(this, HomeActivity.class);
                 startActivity(iBackMusic);
+//                finish();
                 overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
                 break;
             case R.id.action_drive_mode:
@@ -176,7 +166,7 @@ public class PlayActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        
+
     }
 
     private void initView() {
@@ -192,10 +182,18 @@ public class PlayActivity extends AppCompatActivity
         mBtnSeeMore = findViewById(R.id.icon_image_More);
         ll_vp_change_music = findViewById(R.id.ll_vp_change_music);
         mSeekBarAudio = findViewById(R.id.sb_Time);
-        mSeekBarAudio.setText(mTextLeftTime, mTextRightTime);
+
+        item_img_ChangeMusic = findViewById(R.id.item_img_ChangeMusic);
+        item_text_title = findViewById(R.id.item_text_title);
+        item_text_artist = findViewById(R.id.item_text_artist);
+        item_text_album = findViewById(R.id.item_text_album);
+        item_img_viewQueue = findViewById(R.id.item_img_viewQueue);
+        item_img_addToPlayListImageView = findViewById(R.id.item_img_addToPlayListImageView);
+        item_img_ChangeMusic = findViewById(R.id.item_img_ChangeMusic);
+
         mBtnShuffle = findViewById(R.id.icon_shuffle);
         mBtnAbout = findViewById(R.id.icon_about);
-        mVpMusic = findViewById(R.id.vp_change_music);
+//        mVpMusic = findViewById(R.id.vp_change_music);
     }
 
     private void assignView(){
@@ -207,53 +205,18 @@ public class PlayActivity extends AppCompatActivity
         mBtnSeeMore.setOnClickListener(this);
         mBtnAbout.setOnClickListener(this);
         mBtnShuffle.setOnClickListener(this);
-
-        setupViewPager(songName);
+        item_img_viewQueue.setOnClickListener(this);
+        item_img_addToPlayListImageView.setOnClickListener(this);
     }
 
-
-    private void setupViewPager(String songName){
-        mVpMusic.setPageTransformer(true, new ChangeSongPagerAdapter.ZoomOutPageTransformer());
-        mVpMusic.setPageTransformer(false, new ChangeSongPagerAdapter.DepthPageTransformer());
-        mVpMusic.setTranslationX(-1 * mVpMusic.getWidth());
-
-        mAdapter = new ChangeSongPagerAdapter(this,getSupportFragmentManager());
-        mAdapter.addData(songName);
-
-        mVpMusic.setAdapter(mAdapter);
-        mVpMusic.setCurrentItem(0);
-        mVpMusic.addOnPageChangeListener(this);
+    private void assignData(String mediaId){
+        MediaMetadataCompat metadataCompat = MusicLibrary.music.get(mediaId);
+        item_text_title.setText(metadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
+        item_text_artist.setText(metadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
+        item_text_album.setText(metadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
+        item_img_ChangeMusic.setImageBitmap(ImageUtils.getAlbumArt(this,
+                Long.valueOf(MusicLibrary.getAlbumRes(mediaId))));
     }
-
- /*   private void initData(String songName){
-        mAdapter = new ChangeSongPagerAdapter(this,getSupportFragmentManager());
-        mAdapter.addData(songName);
-    }*/
-
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (positionOffset == 0.0 && positionOffsetPixels == 0) {
-            mMusicManager.increase(mSongs.get(position));
-            Log.d(tag, "PlayActivity --- onPageScrolled: "+position);
-
-            mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID,
-                    mSongs.get(this.position).getAlbumID());
-        }
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-        this.position = position;
-        Log.d(tag, "Play Activity --- onPageSelected: "+position);
-        mTextLeftTime.setText("00 : 00");
-        mTextRightTime.setText(Utils.formatTime(mSongs.get(position).getTime()));
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
-
 
     /**
      * Convenience class to collect the click listeners together.
@@ -266,7 +229,7 @@ public class PlayActivity extends AppCompatActivity
         switch (view.getId()){
             case R.id.icon_play:
                 // khi bấm play check play trước đã, trong broad cast check play sẽ play video
-                Log.d(tag, "PlayActivity --- type: "+type);
+//                Log.d(tag, "PlayActivity --- type: "+type);
 
                 if (mIsPlaying) {
                     mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
@@ -274,25 +237,13 @@ public class PlayActivity extends AppCompatActivity
                 } else {
                     mBtnPlayPause.setPressed(true);
                     mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                    mMediaBrowserHelper.getTransportControls().play();
+                    mMediaBrowserHelper.getTransportControls().playFromMediaId(mMusicManager.getMediaId(), null);
                 }
                 break;
             case R.id.icon_next:
-                // khi nhấn next truyền intent xuống service -> do bundle là getString về null
-               /* mBtnNext.setClickable(true);
-                mBtnNext.setImageDrawable(getResources().getDrawable(R.drawable.ic_next_white));
-
-                Log.d(tag, "PlayActivity --- icon_next: " + (position));
-                Utils.NextMediaService(PlayActivity.this, type, position);*/
                 mMediaBrowserHelper.getTransportControls().skipToNext();
                 break;
             case R.id.icon_prev:
-               /* mBtnPrev.setClickable(true);
-                mBtnPrev.setImageResource(R.drawable.ic_previous_white);
-
-                Log.d(tag, "PlayActivity --- icon_prev: " + (MusicManager.getInstance().getPosition() - 1));
-                Utils.PreviousMediaService(PlayActivity.this, type, position);*/
-
                 mMediaBrowserHelper.getTransportControls().skipToPrevious();
                 break;
             case R.id.icon_repeat:
@@ -310,7 +261,7 @@ public class PlayActivity extends AppCompatActivity
                         Utils.ToastShort(PlayActivity.this, "Turn Off Repeat Music");
                     }
                 }finally {
-                    Utils.RepeatMediaService(PlayActivity.this, isRepeat, type, position);
+//                    Utils.RepeatMediaService(PlayActivity.this, isRepeat, type, position);
                 }
                 break;
             case R.id.icon_image_More:
@@ -339,7 +290,7 @@ public class PlayActivity extends AppCompatActivity
                 break;
 
             case R.id.icon_about:
-                DialogUtils.showSongsInfo(PlayActivity.this, mSongs.get(position));
+//                DialogUtils.showSongsInfo(PlayActivity.this, mSongs.get(position));
                 break;
             case R.id.icon_shuffle:
 
@@ -371,11 +322,11 @@ public class PlayActivity extends AppCompatActivity
         }
     }
 
-    private void setShuffle(boolean isShuffle) {
+/*    private void setShuffle(boolean isShuffle) {
         if (isShuffle) {
             mBtnShuffle.setImageResource(R.drawable.app_shuffle_blue);
             // set type hiện tại là trộn bài
-            type = Constants.VALUE.SHUFFLE;
+//            type = Constants.VALUE.SHUFFLE;
             // set mảng trộn
             mSongShuffle = MusicManager.getInstance().shuffleSongs(mSongs);
             mMusicManager.setShuffleSongs(mSongShuffle);
@@ -386,7 +337,7 @@ public class PlayActivity extends AppCompatActivity
         }else {
             mBtnShuffle.setImageResource(R.drawable.app_shuffle_white);
             // set type hiện tại là trở về ban đầu
-            type = mMusicManager.getType();
+//            type = mMusicManager.getType();
             mSongs = mMusicManager.getListSong();
             ChangeSongFragment.newInstance(null);
             mAdapter.addData(mSongs);
@@ -394,17 +345,18 @@ public class PlayActivity extends AppCompatActivity
         }
         mSeekBarAudio.setProgress(0);
         mTextLeftTime.setText("00 : 00");
-    }
+    }*/
 
     @Override
-    public void onCheck(boolean isPlay) {
+    public void onCheck(boolean isPlay, PlaybackStateCompat state) {
         this.mIsPlaying = isPlay;
+        Log.d("HHH", "PlayActivity --- position: "+state.getPosition());
+
         Utils.UpdateButtonPlay(mBtnPlayPause, isPlay);
     }
 
     @Override
-    public void onChange(String songName) {
-        this.songName = songName;
+    public void onMediaMetadata(MediaMetadataCompat mediaMetadata) {
+        assignData(mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
     }
-
 }

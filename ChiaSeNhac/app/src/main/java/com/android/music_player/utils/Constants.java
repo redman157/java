@@ -10,6 +10,7 @@ public class Constants {
     }
 
     public @interface INTENT{
+        String AUTO_PLAY = "AutoPlay";
         String SONG_CONTINUE = "SongContinue";
         String SONG_NAME = "SongName";
         String CURR_POS = "CurrentPosition";

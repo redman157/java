@@ -50,21 +50,21 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.button_play).setOnClickListener(clickListener);
         findViewById(R.id.button_next).setOnClickListener(clickListener);
 
-        mMediaBrowserHelper = new MediaBrowserConnection(this);
-        mMediaBrowserHelper.registerCallback(new MediaBrowserListener());
+//        mMediaBrowserHelper = new MediaBrowserConnection(this);
+//        mMediaBrowserHelper.registerCallback(new MediaBrowserListener());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mMediaBrowserHelper.onStart();
+//        mMediaBrowserHelper.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mSeekBarAudio.disconnectController();
-        mMediaBrowserHelper.onStop();
+//        mSeekBarAudio.disconnectController();
+//        mMediaBrowserHelper.onStop();
     }
 
     /**
@@ -82,7 +82,7 @@ public class SettingsActivity extends AppCompatActivity {
         protected void onConnected(@NonNull MediaControllerCompat mediaController) {
             super.onConnected(mediaController);
 
-            mSeekBarAudio.setMediaController(mediaController);
+//            mSeekBarAudio.setMediaController(mediaController);
         }
 
         @Override

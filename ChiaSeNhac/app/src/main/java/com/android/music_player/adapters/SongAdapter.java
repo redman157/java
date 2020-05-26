@@ -1,6 +1,7 @@
 package com.android.music_player.adapters;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +13,13 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.activities.SongActivity;
+import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
-import com.android.music_player.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,18 +68,15 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ItemViewHolder
 
         item = items.get(position);
         holder.set(item);
-
+        MusicManager.getInstance().setContext(mActivity);
         holder.mL_Recently_Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 onClickItem.onClick(type, position);
-
-
                 mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, items.get(position).getAlbumID());
-                if (!(mActivity instanceof SongActivity)){
-                    Utils.IntentToPlayActivity(mActivity, position, type);
-                }
+                Intent intent = new Intent(mActivity, PlayActivity.class);
+                MusicManager.getInstance().setMediaId(items.get(position).getSongName());
+                mActivity.startActivity(intent);
             }
         });
 

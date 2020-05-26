@@ -1,11 +1,9 @@
 package com.android.music_player.fragments;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +46,6 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SongModel> musicMain;
     private MediaBrowserCompat.MediaItem mediaItem;
-    private String songName;
     private SharedPrefsUtils mSharedPrefsUtils;
     private static ArrayList<SongModel> mSongModels;
     public static void newInstance(ArrayList<SongModel> songModels) {
@@ -74,10 +71,8 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
         mMediaMetadataCompat = mediaMetadataCompat;
     }
 
-    public void setMedia(String songName, Context context){
-        this.songName = songName;
-//        this.mediaItem = mediaItem;
-        mMediaMetadataCompat = MusicLibrary.getMetadata(context, songName);
+    public void setMedia(MediaMetadataCompat mediaItem){
+        this.mMediaMetadataCompat = mediaItem;
     }
     private MusicManager mMusicManager;
     @Override
@@ -101,7 +96,6 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
         view = inflater.inflate(R.layout.item_change_music, null);
         initView();
         assignView();
-        Log.d("XXX", mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
         mTextArtist.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
         mTextAlbum.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
         mTextTittle.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));

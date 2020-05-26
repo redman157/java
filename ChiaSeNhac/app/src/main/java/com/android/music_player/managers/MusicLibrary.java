@@ -17,7 +17,7 @@ import java.util.TreeMap;
 public class MusicLibrary {
     public static final TreeMap<String, MediaMetadataCompat> music = new TreeMap<>();
     private static final HashMap<String, Integer> albumRes = new HashMap<>();
-    private static final HashMap<String, String> musicFileName = new HashMap<>();
+    public static final HashMap<String, String> musicFileName = new HashMap<>();
 
     public static String getRoot() {
         return "root";
@@ -113,6 +113,4 @@ public class MusicLibrary {
             albumRes.put(song.getSongName(), Integer.valueOf(song.getAlbumID()));
             musicFileName.put(song.getSongName(), song.getPath());
     }
-
-
 }

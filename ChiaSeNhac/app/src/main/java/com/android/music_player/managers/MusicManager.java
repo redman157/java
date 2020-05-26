@@ -26,6 +26,7 @@ import com.android.music_player.database.CategorySongs;
 import com.android.music_player.database.RelationSongs;
 import com.android.music_player.database.SongOfPlayList;
 import com.android.music_player.database.Statistic;
+import com.android.music_player.media.MediaBrowserConnection;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.tasks.RenamePlayListTask;
 import com.android.music_player.utils.Constants;
@@ -51,6 +52,8 @@ public class MusicManager {
     /*private ArrayList<HashMap<String, String>> getAlbumsList = new ArrayList<>();
     private ArrayList<HashMap<String, String>> artists = new ArrayList<>();*/
 
+    private MediaBrowserConnection mMediaBrowserConnection;
+
     private Map<String, ArrayList<SongModel>> mAlbumLists = new HashMap<>();
     private Map<String, ArrayList<SongModel>> mArtistLists = new HashMap<>();
     private Map<String, ArrayList<SongModel>> mFolderLists = new HashMap<>();
@@ -72,6 +75,19 @@ public class MusicManager {
     @SuppressLint("StaticFieldLeak")
     private static MusicManager instance;
     private String type;
+    private String mediaId;
+
+    public String getMediaId() {
+        return mediaId;
+    }
+
+    public void setMediaId(String mediaId) {
+        Log.d("VVV", "setMediaId " + mediaId);
+        Log.d("VVV", Log.getStackTraceString(new Exception()));
+
+        this.mediaId = mediaId;
+    }
+
     public static MusicManager getInstance() {
         if (instance == null){
             instance = new MusicManager();
@@ -127,6 +143,13 @@ public class MusicManager {
             }
         }
     }
+    public MediaBrowserConnection getMediaBrowserConnection() {
+        if (mMediaBrowserConnection == null && mContext != null) {
+            mMediaBrowserConnection = new MediaBrowserConnection(mContext);
+        }
+
+        return mMediaBrowserConnection;
+    }
 
     public void setType(String type){
         mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
@@ -136,19 +159,28 @@ public class MusicManager {
         return mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
     }
 
-    public String getCurrentMusic(){
-        return mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"");
+    public SongModel getCurrentMusic(){
+        String path = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"");
+        for (SongModel songModel : mSongsMain){
+            if (songModel.getPath().equals(path)){
+                return songModel;
+            }
+        }
+        return null;
     }
+
     public void setCurrentMusic(String nameSong){
-        Log.d("CCC","setCurrentSong: "+nameSong);
+
+        Log.d("CCC","setCurrentSong: " + nameSong);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, nameSong);
     }
 
 
     public void setCurrentSong(String path){
-        Log.d("CCC","setCurrentSong: "+path);
+        Log.d("CCC","setCurrentSong: " + path);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_SONG, path);
     }
+
 
     public SongModel getCurrentSong(){
         String current_path = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_SONG, "");
@@ -159,6 +191,7 @@ public class MusicManager {
         }else {
             for (SongModel songModel : mSongsMain) {
                 if (songModel.getPath().equals(current_path)){
+
                     return songModel;
                 }
             }
@@ -179,7 +212,6 @@ public class MusicManager {
         return mSharedPrefsUtils.getString(Constants.PREFERENCES.SAVE_ALBUM_ID, "");
     }
     public void setPosition(int position) {
-        Log.d("XXX","setPosition: "+position );
         processEndOfList(position);
     }
 
@@ -796,7 +828,6 @@ public class MusicManager {
             filterData(mSongsMain);
             Log.d(TAG, "CrawlData() performed");
         }catch (SQLiteException e){
-            Log.d("XXX", e.getMessage());
         }
     }
 

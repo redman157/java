@@ -70,7 +70,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
 
         mState = newPlayerState;
 
-        Log.d("SSS","setNewState: "+newPlayerState );
+        Log.d("BBB","setNewState: "+newPlayerState );
         // Whether playback goes to completion, or whether it is stopped, the
         // mCurrentMediaPlayedToCompletion is set to true.
 
@@ -85,6 +85,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
 
             if (mState == PlaybackStateCompat.STATE_PLAYING) {
                 mSeekWhileNotPlaying = -1;
+
             }
         }else {
             reportPosition = (mMediaPlayer == null)?
@@ -98,6 +99,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         if (mPlaybackInfoListener == null){
             return;
         }
+
         PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder();
         stateBuilder.setActions(getAvailableActions());
         stateBuilder.setState(mState, reportPosition, 1.0f, SystemClock.elapsedRealtime());
@@ -169,7 +171,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
                 play();
             }
             return;
-        }else {
+        } else {
             release();
         }
 
@@ -208,8 +210,9 @@ public class MediaPlayerAdapter extends PlayerAdapter {
                 mMediaPlayer.start();
                 setNewState(PlaybackStateCompat.STATE_PLAYING);
             }
-        }finally {
-            mMusicManager.setCurrentSong(mFilename);
+        } finally {
+            mMusicManager.setCurrentMusic(mFilename);
+            mMusicManager.setMediaId(mMusicManager.getCurrentMusic().getSongName());
         }
     }
 

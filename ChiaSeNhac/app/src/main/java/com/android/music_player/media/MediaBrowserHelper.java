@@ -2,12 +2,12 @@ package com.android.music_player.media;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.os.RemoteException;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.AndroidException;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -16,19 +16,21 @@ import androidx.media.MediaBrowserServiceCompat;
 
 import com.android.music_player.services.MediaService;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Helper class for a MediaBrowser that handles connecting, disconnecting,
  * and basic browsing with simplified callbacks.
  */
 public class MediaBrowserHelper {
-    private static final String TAG = MediaBrowserHelper.class.getSimpleName();
+//    private static final String TAG = MediaBrowserHelper.class.getSimpleName();
+    private static final String TAG = "JJJ";
     private Context mContext;
     private final Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass;
 
-    private final List<MediaControllerCompat.Callback> mCallbackList = new ArrayList<>();
+    private final Map<String, MediaControllerCompat.Callback> mCallbackList = new HashMap<>();
 
     private MediaControllerCompat mMediaController;
 
@@ -37,8 +39,10 @@ public class MediaBrowserHelper {
     private final MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
 
     private MediaBrowserCompat mMediaBrowser;
-    public MediaBrowserHelper(Context mContext, Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass) {
+    public MediaBrowserHelper(Context mContext,
+                              Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass) {
         // thực hiện công việc kết nối từ activity tới service
+
         this.mContext = mContext;
         this.mMediaBrowserServiceClass = mMediaBrowserServiceClass;
 
@@ -54,28 +58,32 @@ public class MediaBrowserHelper {
                     new ComponentName(mContext, mMediaBrowserServiceClass),
                     mMediaBrowserConnectionCallback,
                             null);
+
             mMediaBrowser.connect();
+            Log.d(TAG, "MediaBrowserHelper --- onStart: Creating MediaBrowser, and connecting");
+        } else {
+            Log.d(TAG, "MediaBrowserHelper --- mMediaBrowser: khác null");
         }
-        Log.d(TAG, "onStart: Creating MediaBrowser, and connecting");
     }
 
     public void onStop(){
         if (mMediaController != null){
             mMediaController.unregisterCallback(mMediaControllerCallback);
             mMediaController = null;
+            Log.d(TAG, "MediaBrowserHelper --- mMediaController enter");
         }
         if (mMediaBrowser != null && mMediaBrowser.isConnected()) {
             mMediaBrowser.disconnect();
             mMediaBrowser = null;
+            Log.d(TAG, "MediaBrowserHelper --- mMediaBrowser enter");
         }
         resetState();
-        Log.d(TAG, "onStop: Releasing MediaController, Disconnecting from MediaBrowser");
+        Log.d(TAG, "MediaBrowserHelper --- onStop: Releasing MediaController, Disconnecting from " +
+                "MediaBrowser");
     }
 
-
-
     private void performOnAllCallbacks(@NonNull CallbackCommand command) {
-        for (MediaControllerCompat.Callback callback : mCallbackList) {
+        for (MediaControllerCompat.Callback callback : mCallbackList.values()) {
             if (callback != null) {
                 command.perform(callback);
             }
@@ -119,7 +127,7 @@ public class MediaBrowserHelper {
     @NonNull
     protected final MediaControllerCompat getMediaController() {
         if (mMediaController == null) {
-            throw new IllegalStateException("MediaController is null!");
+            throw new IllegalStateException("MediaBrowserHelper --- MediaController is null!");
         }
         return mMediaController;
     }
@@ -135,34 +143,49 @@ public class MediaBrowserHelper {
                 callback.onPlaybackStateChanged(null);
             }
         });
-        Log.d(TAG, "resetState: ");
+        Log.d(TAG, "MediaBrowserHelper --- resetState: Enter");
     }
 
     public MediaControllerCompat.TransportControls getTransportControls() {
         if (mMediaController == null) {
-            Log.d(TAG, "getTransportControls: MediaController is null!");
+            Log.d(TAG, "MediaBrowserHelper --- getTransportControls: MediaController is null!");
             throw new IllegalStateException("MediaController is null!");
         }
         return mMediaController.getTransportControls();
     }
 
-    public void registerCallback(MediaControllerCompat.Callback callback){
+    public MediaMetadataCompat getMetadata(){
+        if (mMediaController == null) {
+            Log.d(TAG, "MediaBrowserHelper --- getTransportControls: MediaController is null!");
+            throw new IllegalStateException("MediaController is null!");
+        }
+        return mMediaController.getMetadata();
+    }
+
+    public void registerCallback(String tag, MediaControllerCompat.Callback callback){
         if (callback != null){
-            mCallbackList.add(callback);
+            mCallbackList.put(tag, callback);
 
             // Update with the latest metadata/playback state.
             if (mMediaController != null) {
                 final MediaMetadataCompat metadata = mMediaController.getMetadata();
+
                 if (metadata != null) {
+                    Log.d("JJJ",
+                            "MediaBrowserHelper --- registerCallback --- musicID: " + metadata.getDescription().getMediaId());
                     callback.onMetadataChanged(metadata);
                 }
 
                 final PlaybackStateCompat playbackState = mMediaController.getPlaybackState();
 
                 if (playbackState != null) {
-                    Log.d("ZZZ","registerCallback: "+playbackState.getState());
+                    Log.d("JJJ",
+                            "MediaBrowserHelper --- registerCallback --- state:" + playbackState.getState());
                     callback.onPlaybackStateChanged(playbackState);
                 }
+            }else {
+                Log.d("JJJ",
+                        "MediaBrowserHelper --- registerCallback --- mMediaController: null");
             }
         }
     }
@@ -181,12 +204,12 @@ public class MediaBrowserHelper {
 
                 // Sync existing MediaSession state to the UI.
                 mMediaControllerCallback.onMetadataChanged(mMediaController.getMetadata());
-                mMediaControllerCallback.onPlaybackStateChanged(
-                        mMediaController.getPlaybackState());
-
+                mMediaControllerCallback.onPlaybackStateChanged(mMediaController.getPlaybackState());
+                Log.d(TAG, "MediaBrowserConnectionCallback --- onConnected: enter");
                 MediaBrowserHelper.this.onConnected(mMediaController);
-            }catch (RemoteException e) {
+            }catch (AndroidException e) {
                 Log.d(TAG, String.format("onConnected: Problem: %s", e.toString()));
+                Log.d("BBB", "MediaBrowserConnectionCallback --- exception: "+e.getMessage());
                 throw new RuntimeException(e);
             }
             mMediaBrowser.subscribe(mMediaBrowser.getRoot(), mMediaBrowserSubscriptionCallback);
@@ -235,5 +258,6 @@ public class MediaBrowserHelper {
             onPlaybackStateChanged(null);
             MediaBrowserHelper.this.onDisconnected();
         }
+
     }
 }

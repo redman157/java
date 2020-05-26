@@ -22,7 +22,6 @@ import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
-import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -148,18 +147,18 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     @Override
     public void onClick(String type, int position) {
-        if (mActivity instanceof HomeActivity) {
-            mHomeActivity = (HomeActivity) mActivity;
-            mHomeActivity.type = type;
-            mHomeActivity.chooseSong = position;
-
-            mHomeActivity.setSongCurrent(mMusicManager.getListSong(type), position);
-            if (position != MusicManager.getInstance().getPosition()) {
-                (mHomeActivity).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                (mHomeActivity).isContinue = false;
-            } else {
-                Utils.UpdateButtonPlay(mHomeActivity.mBtnPlayPause);
-            }
-        }
+//        if (mActivity instanceof HomeActivity) {
+//            mHomeActivity = (HomeActivity) mActivity;
+//            mHomeActivity.type = type;
+//            mHomeActivity.chooseSong = position;
+//
+//            mHomeActivity.setSongCurrent(mMusicManager.getListSong(type), position);
+//            if (position != MusicManager.getInstance().getPosition()) {
+//                (mHomeActivity).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+//                (mHomeActivity).isContinue = false;
+//            } else {
+//                Utils.UpdateButtonPlay(mHomeActivity.mBtnPlayPause);
+//            }
+//        }
     }
 }

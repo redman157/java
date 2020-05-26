@@ -6,6 +6,7 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -20,11 +21,6 @@ public class MediaSeekBar extends AppCompatSeekBar {
     private ValueAnimator mProgressAnimator;
     private boolean mIsTracking = false;
     private TextView textLeft, textRight;
-
-    public void setText(TextView textLeft, TextView textRight){
-        this.textLeft = textLeft;
-        this.textRight = textRight;
-    }
     public MediaSeekBar(Context context ) {
         super(context);
         super.setOnSeekBarChangeListener(mOnSeekBarChangeListener);
@@ -42,19 +38,26 @@ public class MediaSeekBar extends AppCompatSeekBar {
 
     }
 
-    public void setMediaController(final MediaControllerCompat mediaController) {
+    public void setMediaController(final MediaControllerCompat mediaController,
+                                   TextView textLeft, TextView textRight) {
+        this.textLeft = textLeft;
+        this.textRight = textRight;
         if (mediaController != null) {
             mControllerCallback = new ControllerCallback();
             mediaController.registerCallback(mControllerCallback);
         } else if (mMediaController != null) {
+
             mMediaController.unregisterCallback(mControllerCallback);
             mControllerCallback = null;
         }
         mMediaController = mediaController;
+        Log.d("XXX", "setMediaController --- mMediaController: "+(mMediaController == null ?
+                "null" :"khác null" ));
     }
 
     public void disconnectController(){
         if (mMediaController != null){
+            Log.d("XXX", "disconnectController: enter");
             mMediaController.unregisterCallback(mControllerCallback);
             mControllerCallback = null;
             mMediaController = null;
@@ -64,6 +67,7 @@ public class MediaSeekBar extends AppCompatSeekBar {
     private OnSeekBarChangeListener mOnSeekBarChangeListener = new OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
         }
 
         @Override
@@ -102,6 +106,7 @@ public class MediaSeekBar extends AppCompatSeekBar {
             int progress = state != null ? (int) state.getPosition() : 0;
             setProgress(progress);
 
+
             // If the media is playing then the seekbar should follow it, and the easiest
             // way to do that is to create a ValueAnimator to update it so the bar reaches
             // the end of the media the same time as playback gets there (or close enough).
@@ -123,10 +128,12 @@ public class MediaSeekBar extends AppCompatSeekBar {
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             super.onMetadataChanged(metadata);
+            Log.d("XXX", "setMediaController --- onMetadataChanged: "+(int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
             int max;
             if (metadata != null){
                  max = (int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
                  textRight.setText(Utils.formatTime(max));
+
             }else {
                 max = 0;
             }
@@ -138,11 +145,13 @@ public class MediaSeekBar extends AppCompatSeekBar {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             if (mIsTracking) {
+
                 animation.cancel();
                 return;
             }
 
             final int animatedIntValue = (int) animation.getAnimatedValue();
+
             textLeft.setText(Utils.formatTime(animatedIntValue));
             setProgress(animatedIntValue);
         }

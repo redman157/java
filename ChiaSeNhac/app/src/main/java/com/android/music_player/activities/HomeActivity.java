@@ -414,6 +414,4 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onMediaMetadata(MediaMetadataCompat mediaMetadata) {
 
     }
-
-
 }

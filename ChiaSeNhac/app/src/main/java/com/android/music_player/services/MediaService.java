@@ -151,7 +151,8 @@ public class MediaService extends MediaBrowserServiceCompat {
             }
             Log.d("VVV", "MediaService --- onPrepareFromMediaId: position " + position);
             position = MusicLibrary.getPosition(mediaId);
-            mPreparedMedia = MusicLibrary.getMetadata(MediaService.this, mediaId);
+            mPreparedMedia = MusicLibrary.getMetadata(MediaService.this,
+                    mPlaylist.get(position).getDescription().getMediaId());
             Log.d("VVV", "MediaService --- onPrepareFromMediaId: "+ mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
             mSessionCompat.setMetadata(mPreparedMedia);
             Log.d("JJJ", "MediaService --- onPrepareFromMediaId: "+mediaId);

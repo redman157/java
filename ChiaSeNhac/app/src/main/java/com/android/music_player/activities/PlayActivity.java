@@ -43,8 +43,8 @@ public class PlayActivity extends AppCompatActivity implements
     public ImageButton mBtnPlayPause;
     private ImageButton mBtnPrev, mBtnRepeat, mBtnNext,
     mBtnSeeMore, mBtnAbout, mBtnShuffle, mBtnEqualizer;
-    private TextView mTextLeftTime, mTextRightTime, item_text_title, item_text_artist,item_text_album ;
-    private ImageView item_img_viewQueue, item_img_addToPlayListImageView, item_img_ChangeMusic;
+    private TextView mTextLeftTime, mTextRightTime, mTextTitle, mTextArtist, mTextAlbum;
+    private ImageView mImgViewQueue, mImgAddToPlayList, mImgChangeMusic;
     private ArrayList<SongModel> mSongs = new ArrayList<>();
     private ArrayList<SongModel> mSongShuffle = new ArrayList<>();
     private LinearLayout ll_vp_change_music;
@@ -170,12 +170,12 @@ public class PlayActivity extends AppCompatActivity implements
         mSeekBarAudio = findViewById(R.id.sb_Time);
 
 
-        item_text_title = findViewById(R.id.item_text_title);
-        item_text_artist = findViewById(R.id.item_text_artist);
-        item_text_album = findViewById(R.id.item_text_album);
-        item_img_viewQueue = findViewById(R.id.item_img_viewQueue);
-        item_img_addToPlayListImageView = findViewById(R.id.item_img_addToPlayListImageView);
-        item_img_ChangeMusic = findViewById(R.id.item_img_ChangeMusic);
+        mTextTitle = findViewById(R.id.item_text_title);
+        mTextArtist = findViewById(R.id.item_text_artist);
+        mTextAlbum = findViewById(R.id.item_text_album);
+        mImgViewQueue = findViewById(R.id.item_img_viewQueue);
+        mImgAddToPlayList = findViewById(R.id.item_img_addToPlayListImageView);
+        mImgChangeMusic = findViewById(R.id.item_img_ChangeMusic);
 
         mBtnShuffle = findViewById(R.id.icon_shuffle);
         mBtnAbout = findViewById(R.id.icon_about);
@@ -190,21 +190,18 @@ public class PlayActivity extends AppCompatActivity implements
         mBtnSeeMore.setOnClickListener(this);
         mBtnAbout.setOnClickListener(this);
         mBtnShuffle.setOnClickListener(this);
-        item_img_viewQueue.setOnClickListener(this);
-        item_img_addToPlayListImageView.setOnClickListener(this);
+        mImgViewQueue.setOnClickListener(this);
+        mImgAddToPlayList.setOnClickListener(this);
     }
 
     private void assignData(String mediaId){
         Log.d("XXX", "PlayAcitivy --- assignData: "+mediaId);
         MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(PlayActivity.this, mediaId);
-        item_text_title.setText(metadataCompat.getString(Constants.METADATA.Title));
-        item_text_artist.setText(metadataCompat.getString(Constants.METADATA.Artist));
-        item_text_album.setText(metadataCompat.getString(Constants.METADATA.Album));
-
+        mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
+        mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
+        mTextAlbum.setText(metadataCompat.getString(Constants.METADATA.Album));
         ImageUtils.getInstance(this).getImageByPicassoAnimation(String.valueOf(MusicLibrary.getAlbumRes(mediaId)),
-                item_img_ChangeMusic);
-
-
+                mImgChangeMusic);
     }
 
     /**
@@ -218,13 +215,10 @@ public class PlayActivity extends AppCompatActivity implements
         switch (view.getId()){
             case R.id.icon_play:
                 // khi bấm play check play trước đã, trong broad cast check play sẽ play video
-//                Log.d(tag, "PlayActivity --- type: "+type);
-
                 if (mIsPlaying) {
                     mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                     mMediaBrowserHelper.getTransportControls().pause();
                 } else {
-                    mBtnPlayPause.setPressed(true);
                     mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                     mMediaBrowserHelper.getTransportControls().playFromMediaId(mMusicManager.getMediaId(), null);
                 }

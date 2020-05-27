@@ -77,7 +77,8 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         if (mediaId!= null) {
             MusicManager.getInstance().setContext(context);
             // check replace music when click
-            if (!mediaId.equals(MusicManager.getInstance().getCurrentMusic().getSongName())){
+
+            if (MusicManager.getInstance().getCurrentMusic() != null && !mediaId.equals(MusicManager.getInstance().getCurrentMusic().getSongName())){
                 mediaController.getTransportControls().stop();
             }
             mediaController.getTransportControls().prepareFromMediaId(mediaId, builder.generate().getBundle());

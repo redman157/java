@@ -119,7 +119,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         assignView();
 
 
-        mMusicManager.setMediaId(mMusicManager.getCurrentMusic().getSongName());
+        mMusicManager.setMediaId(mMusicManager.getCurrentMusic()== null? "":mMusicManager.getCurrentMusic().getSongName() );
       /*  mMediaBrowserHelper = new MediaBrowserConnection(this);
         mBrowserListener = new MediaBrowserListener();
         mMediaBrowserHelper.registerCallback(mBrowserListener);*/
@@ -132,12 +132,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void setViewMusic(){
-        MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
-                mMusicManager.getCurrentMusic().getSongName());
+        if (mMusicManager.getCurrentMusic() != null) {
+            MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
+                    mMusicManager.getCurrentMusic().getSongName());
 
-        mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
-        mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
-        mImgMedia.setImageBitmap(metadataCompat.getBitmap(Constants.METADATA.AlbumID));
+            mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
+            mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
+            mImgMedia.setImageBitmap(metadataCompat.getBitmap(Constants.METADATA.AlbumID));
+        }
     }
 
 

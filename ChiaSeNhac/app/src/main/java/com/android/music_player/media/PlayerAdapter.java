@@ -93,6 +93,10 @@ public abstract class PlayerAdapter {
      */
     protected abstract void onStop();
 
+    public abstract void onNext(MediaMetadataCompat metadataCompat);
+
+    public abstract void onPrevious(MediaMetadataCompat metadataCompat);
+
     public abstract void seekTo(long position);
 
     public abstract void setVolume(float volume);

@@ -79,9 +79,6 @@ public class MediaPlayerAdapter extends PlayerAdapter {
             mCurrentMediaPlayedToCompletion = true;
         }
 
-        if (mState == PlaybackStateCompat.STATE_SKIPPING_TO_NEXT){
-
-        }
         // Work around for MediaPlayer.getCurrentPosition() when it changes while not playing.
         final long reportPosition;
         if (mSeekWhileNotPlaying >= 0){
@@ -155,7 +152,6 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     public void playFromMedia(MediaMetadataCompat metadata) {
         mCurrentMedia = metadata;
         final String mediaId = metadata.getDescription().getMediaId();
-
         playFile(MusicLibrary.getMusicFilename(mediaId));
     }
 
@@ -237,6 +233,17 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         setNewState(PlaybackStateCompat.STATE_STOPPED);
         release();
     }
+
+    @Override
+    public void onNext(MediaMetadataCompat metadataCompat) {
+        playFromMedia(metadataCompat);
+    }
+
+    @Override
+    public void onPrevious(MediaMetadataCompat metadataCompat) {
+
+    }
+
     private void release() {
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
@@ -268,10 +275,12 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     @Override
     public void setRepeat(int repeatMode) {
         if (repeatMode == PlaybackStateCompat.REPEAT_MODE_NONE){
+            Log.d("ZZZ", "MediaPlayerAdapter --- REPEAT_MODE_NONE: Enter");
             mMediaPlayer.setLooping(false);
-        }else if (repeatMode == PlaybackStateCompat.SHUFFLE_MODE_ALL){
-
-        } else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) {
+        }else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL){
+            Log.d("ZZZ", "MediaPlayerAdapter --- REPEAT_MODE_ALL: Enter");
+        }else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) {
+            Log.d("ZZZ", "MediaPlayerAdapter --- REPEAT_MODE_ONE: Enter");
             mMediaPlayer.setLooping(true);
         }
     }

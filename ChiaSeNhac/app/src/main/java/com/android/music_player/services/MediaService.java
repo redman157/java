@@ -111,23 +111,11 @@ public class MediaService extends MediaBrowserServiceCompat {
         private int position = -1;
         private MediaMetadataCompat mPreparedMedia;
 
-        private void setSessionActive() {
-            if (!mServiceStarted) {
-                startService(new Intent(getApplicationContext(), MediaService.class));
-                mServiceStarted = true;
-            }
-
-            if (!mSessionCompat.isActive()) {
-                mSessionCompat.setActive(true);
-            }
-        }
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
             queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
             mPlaylist.add(queueItem);
-
-//            position = (position == - 1) ?  0: position;
             mSessionCompat.setQueue(mPlaylist);
         }
 
@@ -135,7 +123,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
             queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
             mPlaylist.remove(queueItem);
-//            position = (mPlaylist.isEmpty()) ? -1: position;
             mSessionCompat.setQueue(mPlaylist);
         }
 
@@ -148,7 +135,6 @@ public class MediaService extends MediaBrowserServiceCompat {
                 // Nothing to play.
                 return;
             }
-
             if (mPreparedMedia == null) {
                 onPrepareFromMediaId(mediaId, extras);
             }
@@ -164,7 +150,6 @@ public class MediaService extends MediaBrowserServiceCompat {
                 return;
             }
             Log.d("VVV", "MediaService --- onPrepareFromMediaId: position " + position);
-
             position = MusicLibrary.getPosition(mediaId);
             mPreparedMedia = MusicLibrary.getMetadata(MediaService.this, mediaId);
             Log.d("VVV", "MediaService --- onPrepareFromMediaId: "+ mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
@@ -176,24 +161,24 @@ public class MediaService extends MediaBrowserServiceCompat {
                     onPlayFromMediaId(mediaId, null);
                 }
             }
+            isActive();
+        }
 
+        private void isActive() {
             if (!mSessionCompat.isActive()) {
                 mSessionCompat.setActive(true);
             }
         }
 
-
         @Override
         public void onSetRepeatMode(int repeatMode) {
             mPlayback.setRepeat(repeatMode);
-
         }
 
         @Override
         public void onSetShuffleMode(int shuffleMode) {
             mPlayback.setShuffle(shuffleMode);
         }
-
 
 
         @Override
@@ -210,23 +195,29 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onSkipToNext() {
             position = (position + 1) % mPlaylist.size();
-            String name = mPlaylist.get(position).getDescription().getMediaId();
-            mPreparedMedia = MusicLibrary.getMetadata(MediaService.this, name);
+            String mediaId = mPlaylist.get(position).getDescription().getMediaId();
+            mPreparedMedia = MusicLibrary.getMetadata(MediaService.this, mediaId);
+            mPlayback.onNext(mPreparedMedia);
+            mSessionCompat.setMetadata(mPreparedMedia);
+            isActive();
             Log.d("JJJ", "MediaService --- onSkipToNext: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
             // bundle update trạng thái auto play và position của nó
-            Bundle bundle = new Bundle();
+           /* Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
-            onPrepareFromMediaId(name, bundle);
+            onPrepareFromMediaId(mediaId, bundle);*/
         }
         @Override
         public void onSkipToPrevious() {
             position = position > 0 ? position - 1 : mPlaylist.size() - 1;
-            String name = mPlaylist.get(position).getDescription().getMediaId();
-            mPreparedMedia = MusicLibrary.getMetadata(MediaService.this, name);
+            String mediaId = mPlaylist.get(position).getDescription().getMediaId();
+            mPreparedMedia = MusicLibrary.getMetadata(MediaService.this, mediaId);
+            mPlayback.onNext(mPreparedMedia);
+            mSessionCompat.setMetadata(mPreparedMedia);
+            isActive();
             Log.d("JJJ", "MediaService --- onSkipToPrevious: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
-            Bundle bundle = new Bundle();
+            /*Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
-            onPrepareFromMediaId(name, bundle);
+            onPrepareFromMediaId(mediaId, bundle);*/
         }
 
         @Override
@@ -266,6 +257,11 @@ public class MediaService extends MediaBrowserServiceCompat {
                     mServiceManager.moveServiceOutOfStartedState(state);
                     break;
             }
+        }
+
+        @Override
+        public void onPlaybackCompleted() {
+            super.onPlaybackCompleted();
         }
 
         class ServiceManager{

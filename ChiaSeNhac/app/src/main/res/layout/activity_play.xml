@@ -19,16 +19,17 @@
         android:theme="@style/CustomToolBarPlay"
         app:popupTheme="@style/CustomPopupPlay"/>
 
+
     <ImageView
-        android:layout_alignParentTop="true"
         android:id="@+id/item_img_ChangeMusic"
         android:layout_width="match_parent"
-        android:background="@color/white"
-        android:alpha="0.7"
-        android:src="@drawable/ic_music_notes_padded"
         android:layout_height="match_parent"
-        android:scaleType="fitXY" />
-
+        android:layout_marginTop="0dp"
+        android:alpha="0.7"
+        android:background="@color/white"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_music_notes_padded" />
+    
     <LinearLayout
         android:layout_below="@id/tb_PlayActivity"
         android:id="@+id/ll_vp_change_music"
@@ -159,6 +160,8 @@
                 </LinearLayout>
 
 
+
+
             </RelativeLayout>
         </LinearLayout>
 
@@ -277,7 +280,7 @@
         android:layout_marginBottom="@dimen/_10sdp"
         android:layout_width="match_parent"
         android:orientation="vertical"
-
+        android:alpha="1"
         android:background="@color/transparent"
         android:layout_height="@dimen/_70sdp">
 

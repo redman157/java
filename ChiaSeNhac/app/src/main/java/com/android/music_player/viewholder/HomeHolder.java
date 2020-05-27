@@ -102,7 +102,7 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
             case R.id.btn_ViewAll:
                 mRc_Recently_Add.setVisibility(View.GONE);
                 Intent iViewAll = new Intent(mActivity, SongActivity.class);
-                iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
+                iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.ALL_SONGS);
                 mActivity.finish();
                 mActivity.startActivity(iViewAll);
                 break;

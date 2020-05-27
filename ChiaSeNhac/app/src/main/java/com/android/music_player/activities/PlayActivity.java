@@ -31,7 +31,6 @@ import com.android.music_player.media.MediaSeekBar;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
-import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
@@ -44,17 +43,15 @@ public class PlayActivity extends AppCompatActivity implements
     public ImageButton mBtnPlayPause;
     private ImageButton mBtnPrev, mBtnRepeat, mBtnNext,
     mBtnSeeMore, mBtnAbout, mBtnShuffle, mBtnEqualizer;
-    private SharedPrefsUtils mSharedPrefsUtils;
     private TextView mTextLeftTime, mTextRightTime, item_text_title, item_text_artist,item_text_album ;
     private ImageView item_img_viewQueue, item_img_addToPlayListImageView, item_img_ChangeMusic;
     private ArrayList<SongModel> mSongs = new ArrayList<>();
     private ArrayList<SongModel> mSongShuffle = new ArrayList<>();
     private LinearLayout ll_vp_change_music;
     private LinearLayout mLinearSeeMore;
-    private boolean isChange, isPlaying, mIsPlaying;
-    private boolean isRepeat = false;
+    private boolean mIsPlaying;
     private boolean isMore = false;
-    public boolean isShuffle = false;
+    private boolean isShuffle = false;
     private List<MediaBrowserCompat.MediaItem> mediaItemList;
     private Utils mUtils;
     private Toolbar mToolBar;
@@ -107,7 +104,6 @@ public class PlayActivity extends AppCompatActivity implements
 
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(this);
-        mSharedPrefsUtils = new SharedPrefsUtils(this);
 
         initView();
         setupToolBar();
@@ -209,8 +205,6 @@ public class PlayActivity extends AppCompatActivity implements
                 item_img_ChangeMusic);
 
 
-        Log.d("ZZZ","assignData: "+(metadataCompat.getBitmap(Constants.METADATA.AlbumID) == null ? "null":
-                "khac null"));
     }
 
     /**
@@ -285,17 +279,6 @@ public class PlayActivity extends AppCompatActivity implements
                     isShuffle = false;
                 }
                 setShuffle(isShuffle);
-              /*  if (!isShuffle){
-                    isShuffle = true;
-                    setShuffle(true);
-                    Toast.makeText(this, "Turn On Shuffle Music", Toast.LENGTH_SHORT).show();
-                    Utils.ShuffleMediaService(PlayActivity.this,true,type, position);
-                }else {
-                    isShuffle = false;
-                    setShuffle(false);
-                    Utils.ToastShort(PlayActivity.this,"Turn Off Shuffle Music");
-                    Utils.ShuffleMediaService(PlayActivity.this,false, mMusicManager.getType(), position);
-                }*/
                 break;
         }
     }
@@ -304,12 +287,15 @@ public class PlayActivity extends AppCompatActivity implements
         switch (repeat){
             case 0:
                 mBtnRepeat.setImageResource(R.drawable.ic_repeat_white);
+                mMediaBrowserHelper.getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE);
                 break;
             case 1:
                 mBtnRepeat.setImageResource(R.drawable.ic_repeat_black);
+                mMediaBrowserHelper.getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL);
                 break;
             case 2:
                 mBtnRepeat.setImageResource(R.drawable.ic_repeat_one);
+                mMediaBrowserHelper.getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE);
                 break;
         }
     }

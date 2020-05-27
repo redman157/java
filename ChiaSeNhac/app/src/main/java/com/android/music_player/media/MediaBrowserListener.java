@@ -46,6 +46,7 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
                     onPlayPause.onCheck(false,state);
                     break;
                 case PlaybackStateCompat.STATE_SKIPPING_TO_NEXT:
+
                     break;
                 case PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS:
                     onPlayPause.onCheck(false,state);

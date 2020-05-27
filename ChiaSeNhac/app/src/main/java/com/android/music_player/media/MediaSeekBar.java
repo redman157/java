@@ -145,7 +145,6 @@ public class MediaSeekBar extends AppCompatSeekBar {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
             if (mIsTracking) {
-
                 animation.cancel();
                 return;
             }

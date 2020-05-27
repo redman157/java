@@ -60,6 +60,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
                     // to "stop".
                     // Paused allows: seekTo(), start(), pause(), stop()
                     // Stop allows: stop()
+
                     setNewState(PlaybackStateCompat.STATE_PAUSED);
                 }
             });
@@ -78,6 +79,9 @@ public class MediaPlayerAdapter extends PlayerAdapter {
             mCurrentMediaPlayedToCompletion = true;
         }
 
+        if (mState == PlaybackStateCompat.STATE_SKIPPING_TO_NEXT){
+
+        }
         // Work around for MediaPlayer.getCurrentPosition() when it changes while not playing.
         final long reportPosition;
         if (mSeekWhileNotPlaying >= 0){
@@ -92,17 +96,17 @@ public class MediaPlayerAdapter extends PlayerAdapter {
                     0 : mMediaPlayer.getCurrentPosition();
         }
 
-        updatePlaybackState(reportPosition);
+        updatePlaybackState(mState ,reportPosition);
     }
 
-    private void updatePlaybackState(long reportPosition) {
+    private void updatePlaybackState(int state,long reportPosition) {
         if (mPlaybackInfoListener == null){
             return;
         }
 
         PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder();
         stateBuilder.setActions(getAvailableActions());
-        stateBuilder.setState(mState, reportPosition, 1.0f, SystemClock.elapsedRealtime());
+        stateBuilder.setState(state, reportPosition, 1.0f, SystemClock.elapsedRealtime());
 
         mPlaybackInfoListener.onPlaybackStateChange(stateBuilder.build());
     }
@@ -118,6 +122,8 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         long actions = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
                 PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
                 PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+                PlaybackStateCompat.ACTION_SET_REPEAT_MODE|
+                PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE|
                 PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
         switch (mState){
             // rơi vào state bất kỳ thì sẽ chuyển sang trạng thái tương ứng
@@ -256,6 +262,26 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     public void setVolume(float volume) {
         if (mMediaPlayer != null) {
             mMediaPlayer.setVolume(volume, volume);
+        }
+    }
+
+    @Override
+    public void setRepeat(int repeatMode) {
+        if (repeatMode == PlaybackStateCompat.REPEAT_MODE_NONE){
+            mMediaPlayer.setLooping(false);
+        }else if (repeatMode == PlaybackStateCompat.SHUFFLE_MODE_ALL){
+
+        } else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) {
+            mMediaPlayer.setLooping(true);
+        }
+    }
+
+    @Override
+    public void setShuffle(int shuffleMode) {
+        if (shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_NONE){
+            Log.d("CCC", "MediaPlayerAdapter --- SHUFFLE_MODE_NONE: Enter");
+        }else if (shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL){
+            Log.d("CCC", "MediaPlayerAdapter --- SHUFFLE_MODE_ALL: Enter");
         }
     }
 }

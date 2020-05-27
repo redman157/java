@@ -27,6 +27,7 @@ import com.android.music_player.adapters.ViewPagerAdapter;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.interfaces.OnChangePlayListListener;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.media.MediaBrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
@@ -91,6 +92,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 //        mMediaBrowserHelper.onStart();
         chooseSong = mMusicManager.getPosition();
+        setViewMusic();
     }
 
     @Override
@@ -115,7 +117,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         setupToolbar();
         assignView();
-        setSongCurrent();
+
 
         mMusicManager.setMediaId(mMusicManager.getCurrentMusic().getSongName());
       /*  mMediaBrowserHelper = new MediaBrowserConnection(this);
@@ -129,19 +131,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         getSupportActionBar().setDisplayShowTitleEnabled(true);
     }
 
-    public void setSongCurrent(){
-        mTextArtist.setText(mMusicManager.getCurrentSong().getArtist());
-        mTextTitle.setText(mMusicManager.getCurrentSong().getSongName());
-        imageUtils.getSmallImageByPicasso(mMusicManager.getCurrentSong().getAlbumID(),mImgMedia);
+    public void setViewMusic(){
+        MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
+                mMusicManager.getCurrentMusic().getSongName());
+
+        mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
+        mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
+        mImgMedia.setImageBitmap(metadataCompat.getBitmap(Constants.METADATA.AlbumID));
     }
 
-    public void setSongCurrent(ArrayList<SongModel> song, int position){
-        SongModel songModel = song.get(position);
-        mMusicManager.setPosition(position);
-        mTextArtist.setText(songModel.getArtist());
-        mTextTitle.setText(songModel.getSongName());
-        imageUtils.getSmallImageByPicasso(songModel.getAlbumID(),mImgMedia);
-    }
 
     private void setupViewPager(ViewPager viewPager){
         mViewPagerAdapter = new ViewPagerAdapter(this,getSupportFragmentManager());

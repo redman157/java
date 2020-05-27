@@ -152,7 +152,7 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
 //            mHomeActivity.type = type;
 //            mHomeActivity.chooseSong = position;
 //
-//            mHomeActivity.setSongCurrent(mMusicManager.getListSong(type), position);
+//            mHomeActivity.setViewMusic(mMusicManager.getListSong(type), position);
 //            if (position != MusicManager.getInstance().getPosition()) {
 //                (mHomeActivity).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
 //                (mHomeActivity).isContinue = false;

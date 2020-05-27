@@ -34,7 +34,6 @@ import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
-import com.android.music_player.utils.Utils;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -112,12 +111,12 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
                 Log.d("XXX", "SongActivity --- brIsPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = true;
-                Utils.PauseMediaService(context, mMusicManager.getType(), mMusicManager.getPosition() );
+//                Utils.PauseMediaService(context, mMusicManager.getType(), mMusicManager.getPosition() );
             } else {
                 Log.d("XXX", "SongActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
-                Utils.PlayMediaService(context, mMusicManager.getType(), mMusicManager.getPosition());
+//                Utils.PlayMediaService(context, mMusicManager.getType(), mMusicManager.getPosition());
             }
         }
     };
@@ -346,7 +345,7 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
         mLl_Play_Media.setOnClickListener(this);
         setupViewPager(mViewPagerSong);
 
-        Utils.UpdateButtonPlay(mBtnPlayPause);
+//        Utils.UpdateButtonPlay(mBtnPlayPause);
     }
 
     private void setupViewPager(ViewPager viewPager){
@@ -379,13 +378,13 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
                 Log.d("XXX", "SongActivity --- current type: "+ mMusicManager.getType() + " ---- " +
                         "type: "+type);
                 if (mMusicManager.getType().equals(type)) {
-                    Utils.IntentToPlayActivity(this, mMusicManager.getPosition(), mMusicManager.getType());
+//                    Utils.IntentToPlayActivity(this, mMusicManager.getPosition(), mMusicManager.getType());
                 }else {
-                    Utils.ToastShort(this, "Please choose music!!");
+//                    Utils.ToastShort(this, "Please choose music!!");
                 }
                 break;
             case R.id.imbt_Play_media:
-                Utils.isPlayMediaService(this, mMusicManager.getType(), mMusicManager.getPosition());
+//                Utils.isPlayMediaService(this, mMusicManager.getType(), mMusicManager.getPosition());
                 break;
         }
     }

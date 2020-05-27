@@ -1,23 +1,16 @@
 package com.android.music_player;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.music_player.managers.MusicManager;
-import com.android.music_player.services.MediaPlayerService;
-import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 public abstract class BaseActivity extends AppCompatActivity  {
     private boolean serviceBound = false;
-    private MediaPlayerService mediaPlayerService;
+//    private MediaPlayerService mediaPlayerService;
     private SharedPrefsUtils mSharedPrefsUtils;
     private MusicManager mMusicManager;
 
@@ -41,19 +34,19 @@ public abstract class BaseActivity extends AppCompatActivity  {
     protected void onDestroy() {
 
         super.onDestroy();
-        if (serviceBound) {
-            unbindService(serviceConnection);
-        }
+//        if (serviceBound) {
+//            unbindService(serviceConnection);
+//        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Intent playerIntent = new Intent(getApplicationContext(), MediaPlayerService.class);
+//        Intent playerIntent = new Intent(getApplicationContext(), MediaPlayerService.class);
 //        startService(playerIntent);
-        if (!serviceBound) {
+        /*if (!serviceBound) {
             bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-        }
+        }*/
     }
 
     @Override
@@ -61,7 +54,7 @@ public abstract class BaseActivity extends AppCompatActivity  {
         super.onStop();
     }
 
-    //Binding this Client to the AudioPlayer Service
+    /*//Binding this Client to the AudioPlayer Service
     public ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -77,5 +70,5 @@ public abstract class BaseActivity extends AppCompatActivity  {
 
             serviceBound = false;
         }
-    };
+    };*/
 }

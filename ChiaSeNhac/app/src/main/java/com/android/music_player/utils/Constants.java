@@ -1,5 +1,7 @@
 package com.android.music_player.utils;
 
+import android.support.v4.media.MediaMetadataCompat;
+
 public class Constants {
     public @interface NOTIFICATION {
         String PREVIOUS = "previous";
@@ -91,4 +93,13 @@ public class Constants {
         String GREY = "Grey";
     }
 
+    public @interface METADATA{
+        String Title = MediaMetadataCompat.METADATA_KEY_TITLE;
+        String Artist = MediaMetadataCompat.METADATA_KEY_ARTIST;
+        String Album = MediaMetadataCompat.METADATA_KEY_ALBUM;
+        String AlbumID = MediaMetadataCompat.METADATA_KEY_ALBUM_ART;
+        String Genre = MediaMetadataCompat.METADATA_KEY_GENRE;
+        String MediaID = MediaMetadataCompat.METADATA_KEY_MEDIA_ID;
+        String Duration = MediaMetadataCompat.METADATA_KEY_DURATION;
+    }
 }

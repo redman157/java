@@ -119,6 +119,32 @@ public class ImageUtils {
         catch (Exception ignored) {}
     }
 
+    public void getImageByPicassoAnimation(final String albumID, final ImageView imageView) {
+        try {
+            imageView.setAlpha(0f);
+            Picasso.get().load(getSongUri(Long.parseLong(albumID)))
+                    .fetch(new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                            Picasso.get().load(getSongUri(Long.parseLong(albumID)))
+                                    .into(imageView);
+                            imageView.animate().setDuration(700).alpha(0.7f).start();
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            Log.d("EEE", e.getMessage());
+                            imageView.setImageResource(R.drawable.ic_music_note_black_24dp);
+                            imageView.animate().setDuration(700).alpha(0.7f).start();
+                        }
+                    });
+        }
+        catch (Exception ignored) {
+
+        }
+    }
+
     public Bitmap getBitmapIntoPicasso(String albumID){
         final Bitmap[] mBitmap = new Bitmap[1];
         try {

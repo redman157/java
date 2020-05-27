@@ -83,7 +83,7 @@ public class MusicManager {
 
     public void setMediaId(String mediaId) {
         Log.d("VVV", "setMediaId " + mediaId);
-        Log.d("VVV", Log.getStackTraceString(new Exception()));
+//        Log.d("VVV", Log.getStackTraceString(new Exception()));
 
         this.mediaId = mediaId;
     }
@@ -184,7 +184,7 @@ public class MusicManager {
 
     public SongModel getCurrentSong(){
         String current_path = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_SONG, "");
-        Log.d("CCC","getCurrentSong: "+current_path);
+//        Log.d("CCC","getCurrentSong: "+current_path);
         Random rd = new Random();
         if (current_path.equals("")){
             return allSortSongs().get(rd.nextInt(mSongsMain.size()));

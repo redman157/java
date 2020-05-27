@@ -60,6 +60,7 @@ public class PlayActivity extends AppCompatActivity implements
     private Toolbar mToolBar;
     private String tag = "BBB";
     private MediaMetadataCompat currentMetadata;
+    private int stepRepeat = 0;
     private MediaBrowserHelper mMediaBrowserHelper;
     private MediaBrowserListener mBrowserListener;
 
@@ -74,8 +75,7 @@ public class PlayActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        assignData(mMusicManager.getMediaId());
-        Log.d("OOO", "onStart: enter");
+
         MusicManager.getInstance().setContext(this);
         MediaBrowserConnection browserConnection =
                 MusicManager.getInstance().getMediaBrowserConnection();
@@ -95,7 +95,6 @@ public class PlayActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("OOO", "onStop: enter");
         Log.d("JJJ", "PlayActivity onStop: "+ mMusicManager.getMediaId());
         mSeekBarAudio.disconnectController();
         mMediaBrowserHelper.onStop();
@@ -111,17 +110,8 @@ public class PlayActivity extends AppCompatActivity implements
         mSharedPrefsUtils = new SharedPrefsUtils(this);
 
         initView();
-
         setupToolBar();
         assignView();
-    }
-
-    private String getBundle() {
-        Intent intent = getIntent();
-
-
-
-        return intent.getStringExtra(Constants.INTENT.SONG_NAME);
     }
 
     private void setupToolBar() {
@@ -183,7 +173,7 @@ public class PlayActivity extends AppCompatActivity implements
         ll_vp_change_music = findViewById(R.id.ll_vp_change_music);
         mSeekBarAudio = findViewById(R.id.sb_Time);
 
-        item_img_ChangeMusic = findViewById(R.id.item_img_ChangeMusic);
+
         item_text_title = findViewById(R.id.item_text_title);
         item_text_artist = findViewById(R.id.item_text_artist);
         item_text_album = findViewById(R.id.item_text_album);
@@ -193,7 +183,6 @@ public class PlayActivity extends AppCompatActivity implements
 
         mBtnShuffle = findViewById(R.id.icon_shuffle);
         mBtnAbout = findViewById(R.id.icon_about);
-//        mVpMusic = findViewById(R.id.vp_change_music);
     }
 
     private void assignView(){
@@ -210,12 +199,18 @@ public class PlayActivity extends AppCompatActivity implements
     }
 
     private void assignData(String mediaId){
-        MediaMetadataCompat metadataCompat = MusicLibrary.music.get(mediaId);
-        item_text_title.setText(metadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
-        item_text_artist.setText(metadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ARTIST));
-        item_text_album.setText(metadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
-        item_img_ChangeMusic.setImageBitmap(ImageUtils.getAlbumArt(this,
-                Long.valueOf(MusicLibrary.getAlbumRes(mediaId))));
+        Log.d("XXX", "PlayAcitivy --- assignData: "+mediaId);
+        MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(PlayActivity.this, mediaId);
+        item_text_title.setText(metadataCompat.getString(Constants.METADATA.Title));
+        item_text_artist.setText(metadataCompat.getString(Constants.METADATA.Artist));
+        item_text_album.setText(metadataCompat.getString(Constants.METADATA.Album));
+
+        ImageUtils.getInstance(this).getImageByPicassoAnimation(String.valueOf(MusicLibrary.getAlbumRes(mediaId)),
+                item_img_ChangeMusic);
+
+
+        Log.d("ZZZ","assignData: "+(metadataCompat.getBitmap(Constants.METADATA.AlbumID) == null ? "null":
+                "khac null"));
     }
 
     /**
@@ -247,22 +242,11 @@ public class PlayActivity extends AppCompatActivity implements
                 mMediaBrowserHelper.getTransportControls().skipToPrevious();
                 break;
             case R.id.icon_repeat:
-                try {
-                    if (!isRepeat) {
-                        isRepeat = true;
-                        setRepeat(true);
-//                        Utils.RepeatMediaService(PlayActivity.this, true, type, position);
-                        Utils.ToastShort(this, "Turn On Repeat Music");
-                    } else {
-                        isRepeat = false;
-                        setRepeat(false);
-                        mBtnRepeat.setImageResource(R.drawable.ic_repeat_white);
-
-                        Utils.ToastShort(PlayActivity.this, "Turn Off Repeat Music");
-                    }
-                }finally {
-//                    Utils.RepeatMediaService(PlayActivity.this, isRepeat, type, position);
+                stepRepeat = stepRepeat + 1;
+                if (stepRepeat == 3){
+                    stepRepeat = 0;
                 }
+                setRepeat(stepRepeat);
                 break;
             case R.id.icon_image_More:
                 if (!isMore){
@@ -293,8 +277,14 @@ public class PlayActivity extends AppCompatActivity implements
 //                DialogUtils.showSongsInfo(PlayActivity.this, mSongs.get(position));
                 break;
             case R.id.icon_shuffle:
-
-
+                if (!isShuffle) {
+                    mMediaBrowserHelper.getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                    isShuffle = true;
+                }else {
+                    mMediaBrowserHelper.getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
+                    isShuffle = false;
+                }
+                setShuffle(isShuffle);
               /*  if (!isShuffle){
                     isShuffle = true;
                     setShuffle(true);
@@ -310,15 +300,25 @@ public class PlayActivity extends AppCompatActivity implements
         }
     }
 
-    private void setRepeat(boolean isRepeat) {
-        if (isRepeat) {
-//            MusicManager.getInstance().setPosition(position);
-            mBtnRepeat.setImageResource(R.drawable.ic_repeat_blue);
-            mBtnShuffle.setEnabled(false);
+    private void setRepeat(int repeat) {
+        switch (repeat){
+            case 0:
+                mBtnRepeat.setImageResource(R.drawable.ic_repeat_white);
+                break;
+            case 1:
+                mBtnRepeat.setImageResource(R.drawable.ic_repeat_black);
+                break;
+            case 2:
+                mBtnRepeat.setImageResource(R.drawable.ic_repeat_one);
+                break;
+        }
+    }
 
+    private void setShuffle(boolean isShuffle) {
+        if (isShuffle) {
+            mBtnShuffle.setImageResource(R.drawable.app_shuffle_blue);
         }else {
-            mBtnRepeat.setImageResource(R.drawable.ic_repeat_white);
-            mBtnShuffle.setEnabled(true);
+            mBtnShuffle.setImageResource(R.drawable.app_shuffle_white);
         }
     }
 

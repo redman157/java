@@ -127,6 +127,7 @@ public class MediaBrowserHelper {
     @NonNull
     protected final MediaControllerCompat getMediaController() {
         if (mMediaController == null) {
+            Log.d(TAG,"MediaBrowserHelper --- MediaController is null!" );
             throw new IllegalStateException("MediaBrowserHelper --- MediaController is null!");
         }
         return mMediaController;

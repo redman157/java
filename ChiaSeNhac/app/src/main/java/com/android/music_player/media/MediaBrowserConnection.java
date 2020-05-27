@@ -70,17 +70,17 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         for (final MediaBrowserCompat.MediaItem mediaItem : children) {
             mediaController.addQueueItem(mediaItem.getDescription());
         }
+
         Utils.Builder builder = new Utils.Builder();
         builder.putBoolean(Constants.INTENT.AUTO_PLAY, true);
-
         // Call prepare now so pressing play just works.
         if (mediaId!= null) {
             MusicManager.getInstance().setContext(context);
-            Log.d("VVV", "MediaBrowserConnection --- mediaId: "+mediaId);
-//            Log.d("VVV", "MediaBrowserConnection --- CurrentSong: "+MusicManager.getInstance()
-//                    .getCurrentMusic().getSongName());
-
-            mediaController.getTransportControls().prepareFromMediaId(mediaId, null);
+            // check replace music when click
+            if (!mediaId.equals(MusicManager.getInstance().getCurrentMusic().getSongName())){
+                mediaController.getTransportControls().stop();
+            }
+            mediaController.getTransportControls().prepareFromMediaId(mediaId, builder.generate().getBundle());
         }
     }
 }

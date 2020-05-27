@@ -1,16 +1,16 @@
 package com.android.music_player.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.music_player.R;
-import com.android.music_player.activities.PlayActivity;
-import com.android.music_player.managers.MusicManager;
-import com.android.music_player.services.MediaPlayerService;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -72,15 +72,35 @@ public class Utils {
         }
     }
 
-    public static void UpdateButtonPlay( ImageButton button){
+    public static void ImageViewAnimatedChange(Context c, final ImageView v, final Bitmap new_image) {
+        final Animation anim_out = AnimationUtils.loadAnimation(c, android.R.anim.fade_out);
+        final Animation anim_in  = AnimationUtils.loadAnimation(c, android.R.anim.fade_in);
+        anim_out.setAnimationListener(new Animation.AnimationListener()
+        {
+            @Override public void onAnimationStart(Animation animation) {}
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation)
+            {
+                v.setImageBitmap(new_image);
+                anim_in.setAnimationListener(new Animation.AnimationListener() {
+                    @Override public void onAnimationStart(Animation animation) {}
+                    @Override public void onAnimationRepeat(Animation animation) {}
+                    @Override public void onAnimationEnd(Animation animation) {}
+                });
+                v.startAnimation(anim_in);
+            }
+        });
+        v.startAnimation(anim_out);
+    }
+/*    public static void UpdateButtonPlay(ImageButton button){
         if (MediaPlayerService.mMediaPlayer != null && MediaPlayerService.mMediaPlayer.isPlaying()){
             button.setImageResource(R.drawable.ic_media_pause_light);
         }else {
             button.setImageResource(R.drawable.ic_media_play_light);
         }
-    }
+    }*/
 
-    public static void PlayMediaService(Context context,String type, int pos){
+    /*public static void PlayMediaService(Context context,String type, int pos){
         Intent iPlay = new Intent(context, MediaPlayerService.class);
         iPlay.setAction(Constants.ACTION.PLAY);
         builder = new Utils.Builder();
@@ -189,7 +209,7 @@ public class Utils {
         builder.putInteger(Constants.INTENT.CURR_POS,pos);
         iSeekChoose.putExtras(builder.generate().getBundle());
         context.startService(iSeekChoose);
-    }
+    }*/
 
     // custom bundle
     private Bundle bundle;

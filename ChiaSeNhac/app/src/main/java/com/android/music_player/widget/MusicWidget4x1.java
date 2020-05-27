@@ -8,10 +8,9 @@ import android.content.Intent;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.widget.RemoteViews;
 
-import com.android.music_player.utils.Constants;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
-import com.android.music_player.services.MediaPlayerService;
+import com.android.music_player.utils.Constants;
 
 public class MusicWidget4x1 extends AppWidgetProvider {
     private int playbackState = 0;
@@ -32,14 +31,16 @@ public class MusicWidget4x1 extends AppWidgetProvider {
                         context,0 , new Intent[]{new Intent(context, HomeActivity.class)},0
                 );
 
+/*
 
                 Intent previousIntent = new Intent(context, MediaPlayerService.class);
                 Intent playIntent = new Intent(context, MediaPlayerService.class);
                 Intent nextIntent = new Intent(context, MediaPlayerService.class);
                 Intent repeatIntent = new Intent(context, MediaPlayerService.class);
 
+*/
 
-                previousIntent.setAction(Constants.ACTION.PREVIOUS);
+               /* previousIntent.setAction(Constants.ACTION.PREVIOUS);
                 playIntent.setAction(Constants.ACTION.PLAY);
                 nextIntent.setAction(Constants.ACTION.NEXT);
                 repeatIntent.setAction(Constants.ACTION.REPEAT);
@@ -51,13 +52,13 @@ public class MusicWidget4x1 extends AppWidgetProvider {
                 PendingIntent pNextIntent = PendingIntent.getService(context, 0,
                         nextIntent,0);
                 PendingIntent pRepeatIntent = PendingIntent.getService(context, 0,
-                        repeatIntent,0);
+                        repeatIntent,0);*/
 
                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget4x1);
 
-                views.setOnClickPendingIntent(R.id.playImageView, pPlayIntent);
+             /*   views.setOnClickPendingIntent(R.id.playImageView, pPlayIntent);
                 views.setOnClickPendingIntent(R.id.prevImageView, pPreviousIntent);
-                views.setOnClickPendingIntent(R.id.nextImageView, pNextIntent);
+                views.setOnClickPendingIntent(R.id.nextImageView, pNextIntent);*/
                 views.setOnClickPendingIntent(R.id.albumArtImageView, pendingIntent);
                 views.setOnClickPendingIntent(R.id.titleTextView, pendingIntent);
                 views.setOnClickPendingIntent(R.id.albumTextView, pendingIntent);

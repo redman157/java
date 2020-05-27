@@ -19,6 +19,15 @@
         android:theme="@style/CustomToolBarPlay"
         app:popupTheme="@style/CustomPopupPlay"/>
 
+    <ImageView
+        android:layout_alignParentTop="true"
+        android:id="@+id/item_img_ChangeMusic"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:alpha="0.7"
+        android:src="@drawable/ic_music_notes_padded"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY" />
 
     <LinearLayout
         android:layout_below="@id/tb_PlayActivity"
@@ -32,10 +41,12 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <FrameLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <LinearLayout
+                    android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:layout_gravity="bottom"
@@ -46,7 +57,7 @@
                         android:orientation="horizontal"
                         android:weightSum="10"
 
-                        android:background="@color/black"
+                        android:background="@color/transparent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -68,10 +79,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentTop="true"
                                 android:fontFamily="sans-serif-condensed"
-                                android:text="@string/PLAYING"
                                 android:textColor="#ddffffff"
                                 android:textScaleX="1.1"
-                                android:textSize="23sp" />
+                                android:textSize="18sp" />
 
                             <TextView
                                 android:id="@+id/item_text_artist"
@@ -84,10 +94,9 @@
                                 android:singleLine="true"
                                 android:marqueeRepeatLimit="marquee_forever"
                                 android:fontFamily="sans-serif-condensed"
-                                android:text="@string/app_name"
                                 android:textColor="#ffffff"
                                 android:textScaleX="1.1"
-                                android:textSize="17sp" />
+                                android:textSize="14sp" />
 
                             <TextView
                                 android:id="@+id/item_text_album"
@@ -98,10 +107,9 @@
                                 android:layout_below="@+id/item_text_artist"
                                 android:fontFamily="sans-serif-condensed"
                                 android:maxLines="1"
-                                android:text="@string/app_name"
                                 android:textColor="#ffffff"
                                 android:textScaleX="1.1"
-                                android:textSize="17sp" />
+                                android:textSize="14sp" />
 
 
                         </RelativeLayout>
@@ -119,12 +127,11 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/app_list"
-
                                 android:padding="10dp"
                                 android:adjustViewBounds="true"
                                 android:scaleType="fitCenter"
                                 android:id="@+id/item_img_viewQueue"
-                                android:background="?attr/selectableItemBackgroundBorderless"/>
+                                android:background="?attr/selectableItemBackground"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -144,22 +151,15 @@
                                 android:adjustViewBounds="true"
                                 android:padding="10dp"
                                 android:id="@+id/item_img_addToPlayListImageView"
-                                android:background="?attr/selectableItemBackgroundBorderless"/>
+                                android:background="?attr/selectableItemBackground"/>
                         </LinearLayout>
 
                     </LinearLayout>
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/item_img_ChangeMusic"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:alpha="0.7"
-                    android:background="@color/transparent"
-                    android:scaleType="fitXY" />
-            </FrameLayout>
+
+            </RelativeLayout>
         </LinearLayout>
 
     </LinearLayout>
@@ -286,11 +286,9 @@
             android:id="@+id/rl_lowerTwo"
             android:layout_weight="3"
             android:weightSum="10"
-
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp">
-
             <TextView
                 android:layout_weight="1.5"
                 android:id="@+id/text_leftTime"

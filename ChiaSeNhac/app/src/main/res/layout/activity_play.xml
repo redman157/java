@@ -277,7 +277,8 @@
         android:layout_marginBottom="@dimen/_10sdp"
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/custom_background_galaxy"
+
+        android:background="@color/transparent"
         android:layout_height="@dimen/_70sdp">
 
         <LinearLayout

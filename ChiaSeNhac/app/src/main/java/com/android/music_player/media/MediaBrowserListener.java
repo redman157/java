@@ -21,6 +21,7 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
     private String TAG = "JJJ";
     public interface OnPlayPause {
         void onCheck(boolean isPlay, PlaybackStateCompat state);
+        void onNext(boolean isNext);
         void onMediaMetadata(MediaMetadataCompat mediaMetadata);
     }
 
@@ -46,7 +47,7 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
                     onPlayPause.onCheck(false,state);
                     break;
                 case PlaybackStateCompat.STATE_SKIPPING_TO_NEXT:
-
+                    onPlayPause.onNext(true);
                     break;
                 case PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS:
                     onPlayPause.onCheck(false,state);

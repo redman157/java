@@ -25,6 +25,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     private MediaMetadataCompat mCurrentMedia;
     private MusicManager mMusicManager;
     private int mState;
+    private boolean isRepeat= false;
     private boolean mCurrentMediaPlayedToCompletion;
 
     // Work-around for a MediaPlayer bug related to the behavior of MediaPlayer.seekTo()
@@ -53,15 +54,18 @@ public class MediaPlayerAdapter extends PlayerAdapter {
             mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    mPlaybackInfoListener.onPlaybackCompleted();
+                    mPlaybackInfoListener.onPlaybackCompleted(true);
 
                     // Set the state to "paused" because it most closely matches the state
                     // in MediaPlayer with regards to available state transitions compared
                     // to "stop".
                     // Paused allows: seekTo(), start(), pause(), stop()
                     // Stop allows: stop()
-
-                    setNewState(PlaybackStateCompat.STATE_PAUSED);
+                    if (!isRepeat) {
+                        setNewState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
+                    }else {
+                        setNewState(PlaybackStateCompat.STATE_PLAYING);
+                    }
                 }
             });
         }
@@ -71,13 +75,15 @@ public class MediaPlayerAdapter extends PlayerAdapter {
 
         mState = newPlayerState;
 
-        Log.d("BBB","setNewState: "+newPlayerState );
+        Log.d("BBB","MediaPlayerAdapter --- setNewState: "+newPlayerState );
         // Whether playback goes to completion, or whether it is stopped, the
         // mCurrentMediaPlayedToCompletion is set to true.
 
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mCurrentMediaPlayedToCompletion = true;
         }
+
+
 
         // Work around for MediaPlayer.getCurrentPosition() when it changes while not playing.
         final long reportPosition;
@@ -92,7 +98,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
             reportPosition = (mMediaPlayer == null)?
                     0 : mMediaPlayer.getCurrentPosition();
         }
-
+        Log.d("TTT", "MediaPlayerAdapter --- setNewState"+reportPosition);
         updatePlaybackState(mState ,reportPosition);
     }
 
@@ -222,6 +228,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     protected void onPause() {
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
+
             setNewState(PlaybackStateCompat.STATE_PAUSED);
         }
     }
@@ -273,15 +280,12 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     }
 
     @Override
-    public void setRepeat(int repeatMode) {
-        if (repeatMode == PlaybackStateCompat.REPEAT_MODE_NONE){
-            Log.d("ZZZ", "MediaPlayerAdapter --- REPEAT_MODE_NONE: Enter");
-            mMediaPlayer.setLooping(false);
-        }else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL){
-            Log.d("ZZZ", "MediaPlayerAdapter --- REPEAT_MODE_ALL: Enter");
-        }else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) {
-            Log.d("ZZZ", "MediaPlayerAdapter --- REPEAT_MODE_ONE: Enter");
+    public void setRepeat(boolean isLoop) {
+        isRepeat = isLoop;
+        if (isRepeat){
             mMediaPlayer.setLooping(true);
+        }else {
+            mMediaPlayer.setLooping(false);
         }
     }
 

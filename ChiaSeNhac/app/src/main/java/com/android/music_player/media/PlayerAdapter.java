@@ -72,7 +72,6 @@ public abstract class PlayerAdapter {
         if (!mPlayOnAudioFocus) {
             mAudioFocusHelper.abandonAudioFocus();
         }
-
         unregisterAudioNoisyReceiver();
         onPause();
     }
@@ -101,7 +100,7 @@ public abstract class PlayerAdapter {
 
     public abstract void setVolume(float volume);
 
-    public abstract void setRepeat(int repeatMode);
+    public abstract void setRepeat(boolean isLoop);
 
     public abstract void setShuffle(int shuffleMode);
     /**

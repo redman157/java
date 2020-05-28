@@ -197,7 +197,6 @@ public class PlayActivity extends AppCompatActivity implements
     }
 
     private void assignData(String mediaId){
-        Log.d("XXX", "PlayAcitivy --- assignData: "+mediaId);
         MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(PlayActivity.this, mediaId);
         mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
         mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
@@ -303,31 +302,6 @@ public class PlayActivity extends AppCompatActivity implements
         }
     }
 
-/*    private void setShuffle(boolean isShuffle) {
-        if (isShuffle) {
-            mBtnShuffle.setImageResource(R.drawable.app_shuffle_blue);
-            // set type hiện tại là trộn bài
-//            type = Constants.VALUE.SHUFFLE;
-            // set mảng trộn
-            mSongShuffle = MusicManager.getInstance().shuffleSongs(mSongs);
-            mMusicManager.setShuffleSongs(mSongShuffle);
-            ChangeSongFragment.newInstance(mSongShuffle);
-
-            mAdapter.addData(mSongShuffle);
-            mAdapter.notifyDataSetChanged();
-        }else {
-            mBtnShuffle.setImageResource(R.drawable.app_shuffle_white);
-            // set type hiện tại là trở về ban đầu
-//            type = mMusicManager.getType();
-            mSongs = mMusicManager.getListSong();
-            ChangeSongFragment.newInstance(null);
-            mAdapter.addData(mSongs);
-            mAdapter.notifyDataSetChanged();
-        }
-        mSeekBarAudio.setProgress(0);
-        mTextLeftTime.setText("00 : 00");
-    }*/
-
     @Override
     public void onCheck(boolean isPlay, PlaybackStateCompat state) {
         // compare status play don't update button play
@@ -337,6 +311,13 @@ public class PlayActivity extends AppCompatActivity implements
         this.mIsPlaying = isPlay;
         Utils.UpdateButtonPlay(mBtnPlayPause, isPlay);
 
+    }
+
+    @Override
+    public void onNext(boolean isNext) {
+        if (isNext){
+            mMediaBrowserHelper.getTransportControls().skipToNext();
+        }
     }
 
     @Override

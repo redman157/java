@@ -110,8 +110,11 @@ public class MediaService extends MediaBrowserServiceCompat {
         private MediaSessionCompat.QueueItem queueItem;
         private int position = -1;
         private MediaMetadataCompat mPreparedMedia;
+        private MusicManager mMusicManager = MusicManager.getInstance();
 
-
+        public MediaSessionCallback(){
+            mMusicManager.setContext(MediaService.this);
+        }
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
             queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
@@ -173,14 +176,19 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         @Override
         public void onSetRepeatMode(int repeatMode) {
-            mPlayback.setRepeat(repeatMode);
+            if (repeatMode == PlaybackStateCompat.REPEAT_MODE_NONE){
+                mPlayback.setRepeat(false);
+            }else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL){
+
+            }else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) {
+                mPlayback.setRepeat(true);
+            }
         }
 
         @Override
         public void onSetShuffleMode(int shuffleMode) {
             mPlayback.setShuffle(shuffleMode);
         }
-
 
         @Override
         public void onPause() {
@@ -226,6 +234,8 @@ public class MediaService extends MediaBrowserServiceCompat {
             mPlayback.seekTo(pos);
         }
 
+
+
         private boolean isReadyToPlay() {
             return (!mPlaylist.isEmpty());
         }
@@ -244,8 +254,6 @@ public class MediaService extends MediaBrowserServiceCompat {
             mSessionCompat.setPlaybackState(state);
 
             Log.d("SSS", "MediaService --- onPlaybackStateChange: " + state.getState());
-
-
             // Manage the started state of this service.
             switch (state.getState()){
                 case PlaybackStateCompat.STATE_PLAYING:
@@ -257,12 +265,15 @@ public class MediaService extends MediaBrowserServiceCompat {
                 case PlaybackStateCompat.STATE_STOPPED:
                     mServiceManager.moveServiceOutOfStartedState(state);
                     break;
+
             }
         }
 
         @Override
-        public void onPlaybackCompleted() {
-            super.onPlaybackCompleted();
+        public void onPlaybackCompleted(boolean isNext) {
+            if (isNext){
+
+            }
         }
 
         class ServiceManager{

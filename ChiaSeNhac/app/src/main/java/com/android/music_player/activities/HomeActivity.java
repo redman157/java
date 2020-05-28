@@ -431,6 +431,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onNext(boolean isNext) {
+
+    }
+
+    @Override
     public void onMediaMetadata(MediaMetadataCompat mediaMetadata) {
 
     }

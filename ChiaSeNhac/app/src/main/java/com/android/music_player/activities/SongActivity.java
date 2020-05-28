@@ -108,12 +108,12 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
             boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
 
             if (isPlayingMedia) {
-                Log.d("XXX", "SongActivity --- brIsPlayService:" +true);
+//                Log.d("XXX", "SongActivity --- brIsPlayService:" +true);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
                 isPlaying = true;
 //                Utils.PauseMediaService(context, mMusicManager.getType(), mMusicManager.getPosition() );
             } else {
-                Log.d("XXX", "SongActivity --- brIsPlayService:" +false);
+//                Log.d("XXX", "SongActivity --- brIsPlayService:" +false);
                 mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
                 isPlaying = false;
 //                Utils.PlayMediaService(context, mMusicManager.getType(), mMusicManager.getPosition());
@@ -375,8 +375,8 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
                 // khi ấn vào songactivity rồi bấm playactivity, rồi back ngược lại trở lại
                 // songactivity update lại nút này để có thể hiểu music chọn bằng cách check type
                 // khác thì mới bấm dc
-                Log.d("XXX", "SongActivity --- current type: "+ mMusicManager.getType() + " ---- " +
-                        "type: "+type);
+//                Log.d("XXX", "SongActivity --- current type: "+ mMusicManager.getType() + " ---- " +
+//                        "type: "+type);
                 if (mMusicManager.getType().equals(type)) {
 //                    Utils.IntentToPlayActivity(this, mMusicManager.getPosition(), mMusicManager.getType());
                 }else {

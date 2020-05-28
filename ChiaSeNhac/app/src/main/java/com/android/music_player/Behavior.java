@@ -3,7 +3,6 @@ package com.android.music_player;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -130,7 +129,6 @@ public class Behavior extends CoordinatorLayout.Behavior<LinearLayout> {
     public void updateProfileImageSize() {
         float updatedValue = ((int) (getUpdatedInterpolatedValue(((float) (profileImageSizeBig)),
                 ((float) (profileImageSizeSmall)))));
-        Log.d("ZZZ", "updateProfileImageSize: $updatedValue");
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) profileImage.getLayoutParams();
         lp.height = (int) updatedValue;
         lp.width = (int) updatedValue;

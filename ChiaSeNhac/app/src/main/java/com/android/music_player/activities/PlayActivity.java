@@ -41,6 +41,7 @@ public class PlayActivity extends AppCompatActivity implements
     private MusicManager mMusicManager;
     public MediaSeekBar mSeekBarAudio;
     public ImageButton mBtnPlayPause;
+
     private ImageButton mBtnPrev, mBtnRepeat, mBtnNext,
     mBtnSeeMore, mBtnAbout, mBtnShuffle, mBtnEqualizer;
     private TextView mTextLeftTime, mTextRightTime, mTextTitle, mTextArtist, mTextAlbum;
@@ -162,6 +163,7 @@ public class PlayActivity extends AppCompatActivity implements
         mTextLeftTime = findViewById(R.id.text_leftTime);
         mTextRightTime = findViewById(R.id.text_rightTime);
         mBtnPlayPause = findViewById(R.id.icon_play);
+
         mBtnPrev = findViewById(R.id.icon_prev);
         mBtnRepeat = findViewById(R.id.icon_repeat);
         mBtnNext = findViewById(R.id.icon_next);
@@ -214,12 +216,11 @@ public class PlayActivity extends AppCompatActivity implements
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.icon_play:
-                // khi bấm play check play trước đã, trong broad cast check play sẽ play video
                 if (mIsPlaying) {
-                    mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
+//                    Utils.UpdateButtonPlay(mBtnPlayPause, true);
                     mMediaBrowserHelper.getTransportControls().pause();
                 } else {
-                    mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
+//                    Utils.UpdateButtonPlay(mBtnPlayPause, false);
                     mMediaBrowserHelper.getTransportControls().playFromMediaId(mMusicManager.getMediaId(), null);
                 }
                 break;
@@ -329,10 +330,13 @@ public class PlayActivity extends AppCompatActivity implements
 
     @Override
     public void onCheck(boolean isPlay, PlaybackStateCompat state) {
+        // compare status play don't update button play
+        if (mIsPlaying == isPlay){
+            return;
+        }
         this.mIsPlaying = isPlay;
-        Log.d("HHH", "PlayActivity --- position: "+state.getPosition());
-
         Utils.UpdateButtonPlay(mBtnPlayPause, isPlay);
+
     }
 
     @Override

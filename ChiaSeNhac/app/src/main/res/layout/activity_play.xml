@@ -29,7 +29,7 @@
         android:background="@color/white"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_music_notes_padded" />
-    
+
     <LinearLayout
         android:layout_below="@id/tb_PlayActivity"
         android:id="@+id/ll_vp_change_music"
@@ -394,7 +394,7 @@
                     android:adjustViewBounds="true"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_media_play_light"
+                    app:srcCompat="@drawable/avd_play_to_pause"
                     android:tint="@color/white" />
             </RelativeLayout>
 

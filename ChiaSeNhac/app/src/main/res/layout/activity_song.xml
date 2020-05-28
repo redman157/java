@@ -151,7 +151,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginEnd="8dp">
 
-                        <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+                        <ImageButton
                             android:id="@+id/imbt_Play_media"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"

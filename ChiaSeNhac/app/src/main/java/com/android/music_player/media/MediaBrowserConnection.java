@@ -71,8 +71,10 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
             mediaController.addQueueItem(mediaItem.getDescription());
         }
 
+
         Utils.Builder builder = new Utils.Builder();
         builder.putBoolean(Constants.INTENT.AUTO_PLAY, true);
+
         // Call prepare now so pressing play just works.
         if (mediaId!= null) {
             MusicManager.getInstance().setContext(context);
@@ -81,7 +83,8 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
             if (MusicManager.getInstance().getCurrentMusic() != null && !mediaId.equals(MusicManager.getInstance().getCurrentMusic().getSongName())){
                 mediaController.getTransportControls().stop();
             }
-            mediaController.getTransportControls().prepareFromMediaId(mediaId, builder.generate().getBundle());
+            mediaController.getTransportControls().prepareFromMediaId(mediaId,
+                    (context instanceof PlayActivity)?  builder.generate().getBundle() : null);
         }
     }
 }

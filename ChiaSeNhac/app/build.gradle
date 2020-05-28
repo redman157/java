@@ -26,6 +26,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
 
     compileOptions {
@@ -84,7 +85,7 @@ dependencies {
     implementation 'com.xgc1986.android:parallaxpagertransformer:1.0.3'
 
     // animation play pause
-    implementation 'me.zhanghai.android.materialplaypausedrawable:library:1.0.0'
+    implementation 'com.github.alxrm:youtube-play-icon:0.9'
 
 
     // android test
@@ -110,4 +111,5 @@ dependencies {
 repositories {
     jcenter()
     google()
+    maven { url "https://jitpack.io" }
 }

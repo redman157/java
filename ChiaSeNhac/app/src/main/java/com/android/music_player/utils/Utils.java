@@ -2,13 +2,13 @@ package com.android.music_player.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
 import com.android.music_player.R;
 
@@ -18,6 +18,8 @@ import java.util.TimeZone;
 
 public class Utils {
     private static Utils.Builder builder;
+    private static AnimatedVectorDrawableCompat vectorDrawableCompat;
+    private static AnimatedVectorDrawable vectorDrawable;
     public Utils(Bundle bundle){
         this.bundle = bundle;
     }
@@ -66,155 +68,31 @@ public class Utils {
     }
     public static void UpdateButtonPlay(ImageButton button, boolean isPlay){
         if (isPlay){
-            button.setImageResource(R.drawable.ic_media_pause_light);
-        }else {
-            button.setImageResource(R.drawable.ic_media_play_light);
-        }
-    }
-
-    public static void ImageViewAnimatedChange(Context c, final ImageView v, final Bitmap new_image) {
-        final Animation anim_out = AnimationUtils.loadAnimation(c, android.R.anim.fade_out);
-        final Animation anim_in  = AnimationUtils.loadAnimation(c, android.R.anim.fade_in);
-        anim_out.setAnimationListener(new Animation.AnimationListener()
-        {
-            @Override public void onAnimationStart(Animation animation) {}
-            @Override public void onAnimationRepeat(Animation animation) {}
-            @Override public void onAnimationEnd(Animation animation)
-            {
-                v.setImageBitmap(new_image);
-                anim_in.setAnimationListener(new Animation.AnimationListener() {
-                    @Override public void onAnimationStart(Animation animation) {}
-                    @Override public void onAnimationRepeat(Animation animation) {}
-                    @Override public void onAnimationEnd(Animation animation) {}
-                });
-                v.startAnimation(anim_in);
+            button.setImageResource(R.drawable.avd_play_to_pause);
+            Drawable drawable = button.getDrawable();
+            if (drawable instanceof AnimatedVectorDrawableCompat) {
+                vectorDrawableCompat = (AnimatedVectorDrawableCompat) drawable;
+                vectorDrawableCompat.start();
+            }else if (drawable instanceof AnimatedVectorDrawable){
+                vectorDrawable = (AnimatedVectorDrawable) drawable;
+                vectorDrawable.start();
             }
-        });
-        v.startAnimation(anim_out);
-    }
-/*    public static void UpdateButtonPlay(ImageButton button){
-        if (MediaPlayerService.mMediaPlayer != null && MediaPlayerService.mMediaPlayer.isPlaying()){
-            button.setImageResource(R.drawable.ic_media_pause_light);
         }else {
-            button.setImageResource(R.drawable.ic_media_play_light);
+            button.setImageResource(R.drawable.avd_pause_to_play);
+            Drawable drawable = button.getDrawable();
+            if (drawable instanceof AnimatedVectorDrawableCompat) {
+                vectorDrawableCompat = (AnimatedVectorDrawableCompat) drawable;
+                vectorDrawableCompat.start();
+            }else if (drawable instanceof AnimatedVectorDrawable){
+                vectorDrawable = (AnimatedVectorDrawable) drawable;
+                vectorDrawable.start();
+            }
         }
-    }*/
-
-    /*public static void PlayMediaService(Context context,String type, int pos){
-        Intent iPlay = new Intent(context, MediaPlayerService.class);
-        iPlay.setAction(Constants.ACTION.PLAY);
-        builder = new Utils.Builder();
-        builder.putString(Constants.INTENT.TYPE, type);
-        builder.putInteger(Constants.INTENT.CURR_POS,pos);
-        iPlay.putExtras(builder.generate().getBundle());
-        context.startService(iPlay);
     }
 
-    public static void PauseMediaService(Context context, String type, int pos){
-        Intent iPause = new Intent(context ,MediaPlayerService.class);
-        iPause.setAction(Constants.ACTION.PAUSE);
-        builder = new Utils.Builder();
-        builder.putString(Constants.INTENT.TYPE, type);
-        builder.putInteger(Constants.INTENT.CURR_POS,pos);
-        iPause.putExtras(builder.generate().getBundle());
-        context.startService(iPause);
-    }
-
-    public static void IntentToPlayActivity(Activity activity, int position, String type){
-        MusicManager manager = MusicManager.getInstance();
-        manager.setContext(activity);
-        Intent intent = new Intent(activity, PlayActivity.class);
-        Utils.Builder builder = new Utils.Builder();
-        builder.putString(Constants.INTENT.TYPE,type);
-        builder.putInteger(Constants.INTENT.CHOOSE_POS, position);
-        builder.putString(Constants.INTENT.SONG_NAME, manager.getListSong().get(position).getSongName());
-        intent.putExtras(builder.generate().getBundle());
-
-        activity.finish();
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-        builder.generate().clear();
-    }
-
-    public static void isPlayMediaService(Context context ,
-                                          String type, int pos){
-        Intent iPlay = new Intent(context, MediaPlayerService.class);
-        iPlay.setAction(Constants.ACTION.IS_PLAY);
-        builder = new Utils.Builder();
-        builder.putString(Constants.INTENT.TYPE, type);
-        builder.putInteger(Constants.INTENT.CURR_POS,pos);
-        iPlay.putExtras(builder.generate().getBundle());
-        context.startService(iPlay);
-    }
-
-    public static void NextMediaService(Context context, String type, int pos){
-        Intent iNext = new Intent(context, MediaPlayerService.class);
-        iNext.setAction(Constants.ACTION.NEXT);
-        builder = new Utils.Builder();
-        builder.putString(Constants.INTENT.TYPE, type);
-        builder.putInteger(Constants.INTENT.CURR_POS,pos);
-        iNext.putExtras(builder.generate().getBundle());
-        context.startService(iNext);
-    }
-    
-    public static void PreviousMediaService(Context context, String type, int pos){
-        Intent iPrevious = new Intent(context, MediaPlayerService.class);
-        iPrevious.setAction(Constants.ACTION.PREVIOUS);
-        builder = new Utils.Builder();
-        builder.putString(Constants.INTENT.TYPE, type);
-        builder.putInteger(Constants.INTENT.CURR_POS,pos);
-        iPrevious.putExtras(builder.generate().getBundle());
-        context.startService(iPrevious);
-    }
-
-    public static void StopMediaService(Context context, String type, int pos){
-        Intent iStop = new Intent(context, MediaPlayerService.class);
-        iStop.setAction(Constants.ACTION.STOP);
-        builder = new Utils.Builder();
-        builder.putString(Constants.INTENT.TYPE, type);
-        builder.putInteger(Constants.INTENT.CURR_POS,pos);
-        iStop.putExtras(builder.generate().getBundle());
-        context.startService(iStop);
-    }
-
-    public static void RepeatMediaService(Context context, boolean isRepeat, String type, int pos){
-        Intent iRepeat = new Intent(context, MediaPlayerService.class);
-        iRepeat.setAction(Constants.ACTION.REPEAT);
-
-        builder = new Utils.Builder();
-        builder.putBoolean(Constants.INTENT.IS_REPEAT, isRepeat);
-        builder.putString(Constants.INTENT.TYPE, type);
-        builder.putInteger(Constants.INTENT.CURR_POS,pos);
-        iRepeat.putExtras(builder.generate().getBundle());
-        context.startService(iRepeat);
-    }
-
-    public static void ShuffleMediaService(Context context ,boolean isShuffle,String type, int pos){
-        Intent inShuffle = new Intent(context, MediaPlayerService.class);
-        inShuffle.setAction(Constants.ACTION.SHUFFLE);
-        builder = new Utils.Builder();
-        builder.putBoolean(Constants.INTENT.IS_SHUFFLE, isShuffle);
-        builder.putString(Constants.INTENT.TYPE, type);
-        builder.putInteger(Constants.INTENT.CURR_POS,pos);
-        inShuffle.putExtras(builder.generate().getBundle());
-        context.startService(inShuffle);
-    }
-
-    public static void ContinueMediaService(Context context,String type, int pos, int seekPos){
-        Intent iSeekChoose = new Intent(context, MediaPlayerService.class);
-        iSeekChoose.setAction(Constants.ACTION.SEEK);
-        builder = new Utils.Builder();
-        builder.putInteger(Constants.INTENT.POSITION_SONG, seekPos);
-        builder.putString(Constants.INTENT.TYPE, type);
-        builder.putInteger(Constants.INTENT.CURR_POS,pos);
-        iSeekChoose.putExtras(builder.generate().getBundle());
-        context.startService(iSeekChoose);
-    }*/
 
     // custom bundle
     private Bundle bundle;
-
-
     public static class Builder{
         private Bundle bundle;
         public Builder (){
@@ -273,5 +151,26 @@ public class Utils {
         }else {
             return defaultValue;
         }
+    }
+
+
+    public static void morph(Context context, boolean isShowingAndroid, ImageButton imageButton) {
+
+        AnimatedVectorDrawable drawablePlay =
+                (AnimatedVectorDrawable) context.getDrawable(R.drawable.consolidated_animated_play);
+        AnimatedVectorDrawable drawablePause =
+                (AnimatedVectorDrawable) context.getDrawable(R.drawable.consolidated_animated_pause);
+
+        AnimatedVectorDrawable prevDrawable = isShowingAndroid ? drawablePause : drawablePlay;
+        if (prevDrawable != null && prevDrawable.isRunning()) {
+            prevDrawable.stop();
+        }
+
+        AnimatedVectorDrawable currentDrawable = isShowingAndroid ? drawablePlay : drawablePause;
+        imageButton.setImageDrawable(currentDrawable);
+        if (currentDrawable != null) {
+            currentDrawable.start();
+        }
+
     }
 }

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,8 +41,6 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
-import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton;
-
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener,
         ViewTreeObserver.OnGlobalLayoutListener, MediaBrowserListener.OnPlayPause {
@@ -58,8 +57,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private SharedPrefsUtils mSharedPrefsUtils;
     private ArrayList<SongModel> mSongs;
     private MusicManager mMusicManager;
-    public MaterialPlayPauseButton mBtnPlayPause;
-    private boolean isPlaying;
+    public ImageButton mBtnPlayPause;
+    private boolean isPlaying = false;
     public LinearLayout mLlPlayMedia;
     public int chooseSong;
     public String type;
@@ -92,6 +91,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 //        mMediaBrowserHelper.onStart();
         chooseSong = mMusicManager.getPosition();
+//        MusicManager.getInstance().setContext(this);
+//        MediaBrowserConnection browserConnection =
+//                MusicManager.getInstance().getMediaBrowserConnection();
+//        browserConnection.setMediaId(mMusicManager.getMediaId());
+//        mMediaBrowserHelper = browserConnection;
+//
+//        mBrowserListener = new MediaBrowserListener();
+//        mBrowserListener.setOnPlayPause(this);
+//        mMediaBrowserHelper.registerCallback("PlayActivity", mBrowserListener);
+//
+//        Log.d("JJJ", "PlayActivity onStart: "+ mMusicManager.getMediaId());
+//
+//        mMediaBrowserHelper.onStart();
         setViewMusic();
     }
 
@@ -120,10 +132,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 
         mMusicManager.setMediaId(mMusicManager.getCurrentMusic()== null? "":mMusicManager.getCurrentMusic().getSongName() );
-      /*  mMediaBrowserHelper = new MediaBrowserConnection(this);
-        mBrowserListener = new MediaBrowserListener();
-        mMediaBrowserHelper.registerCallback(mBrowserListener);*/
+
+        Utils.UpdateButtonPlay(mBtnPlayPause, isPlaying);
     }
+
+
 
 
     private void setupToolbar() {
@@ -184,7 +197,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private void assignView(){
         mBtnPlayPause.setOnClickListener(this);
-        mBtnPlayPause.setAnimationDuration(1500);
         mBtnTitle.setOnClickListener(this);
         mViewPlayMedia.setOnClickListener(this);
     }
@@ -315,7 +327,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.imbt_Play_media:
-//                Utils.isPlayMediaService(this, mMusicManager.getType(), mMusicManager.getPosition());
+                if (isPlaying){
+                    Utils.UpdateButtonPlay(mBtnPlayPause, true);
+                    isPlaying = false;
+                }else {
+                    Utils.UpdateButtonPlay(mBtnPlayPause, false);
+                    isPlaying = true;
+                }
                 break;
             case R.id.layout_play_media:
 

@@ -68,6 +68,7 @@
         <LinearLayout
             android:layout_alignParentBottom="true"
             android:id="@+id/ll_play_media"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/black"
@@ -86,7 +87,4 @@
                 android:background="@color/white" />
         </LinearLayout>
     </RelativeLayout>
-
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

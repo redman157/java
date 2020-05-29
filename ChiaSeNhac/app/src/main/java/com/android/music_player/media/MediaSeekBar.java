@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.android.music_player.utils.Utils;
+
+import java.util.List;
 
 public class MediaSeekBar extends AppCompatSeekBar {
     private MediaControllerCompat mMediaController;
@@ -95,6 +98,21 @@ public class MediaSeekBar extends AppCompatSeekBar {
         }
 
         @Override
+        public void onRepeatModeChanged(int repeatMode) {
+            super.onRepeatModeChanged(repeatMode);
+        }
+
+        @Override
+        public void onQueueTitleChanged(CharSequence title) {
+            super.onQueueTitleChanged(title);
+        }
+
+        @Override
+        public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
+            super.onQueueChanged(queue);
+        }
+
+        @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             super.onPlaybackStateChanged(state);
             Log.d("HHH", "ControllerCallback --- onPlaybackStateChanged: "+ state.getPosition());
@@ -136,7 +154,7 @@ public class MediaSeekBar extends AppCompatSeekBar {
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             super.onMetadataChanged(metadata);
-            Log.d("XXX", "setMediaController --- onMetadataChanged: "+(int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
+            Log.d("HHH", "setMediaController --- onMetadataChanged: "+(int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
             int max;
             if (metadata != null){
                  max = (int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
@@ -155,7 +173,7 @@ public class MediaSeekBar extends AppCompatSeekBar {
                 return;
             }
             final int animatedIntValue = (int) animation.getAnimatedValue();
-            Log.d("XXX", "setMediaController --- animatedIntValue: "+animatedIntValue);
+            Log.d("HHH", "setMediaController --- animatedIntValue: "+animatedIntValue);
             textLeft.setText(Utils.formatTime(animatedIntValue));
             setProgress(animatedIntValue);
         }

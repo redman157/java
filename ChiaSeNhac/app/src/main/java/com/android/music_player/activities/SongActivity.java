@@ -1,13 +1,10 @@
 package com.android.music_player.activities;
 
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.media.MediaMetadataCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +26,7 @@ import com.android.music_player.IconView;
 import com.android.music_player.R;
 import com.android.music_player.adapters.ViewPagerAdapter;
 import com.android.music_player.fragments.AllSongsFragment;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
@@ -45,8 +43,6 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
     public IconView mImgAlbumId;
 
     private SharedPrefsUtils mSharedPrefsUtils;
-    private String type;
-    private ArrayList<SongModel> mSongs;
     public TextView mTextArtist, mTextTitle;
     private Toolbar mToolBar;
     private Button mBtnTitle;
@@ -67,59 +63,10 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
     @Override
     protected void onStart() {
         super.onStart();
-        try {
-            if (!receiverRegistered) {
-                registerReceiver(brPlayPauseActivity, new IntentFilter(Constants.ACTION.BROADCAST_PLAY_PAUSE));
-                registerReceiver(brIsPlayService, new IntentFilter(Constants.ACTION.IS_PLAY));
-                receiverRegistered = true;
-            }
-        }finally {
-            mMusicManager = MusicManager.getInstance();
-            mMusicManager.setContext(this);
-            mSongs = mMusicManager.getListSong();
-
-//            chooseSong = mMusicManager.getPosition();
-
-        }
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(this);
+        setViewMusic();
     }
-
-
-    private BroadcastReceiver brPlayPauseActivity = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent serviceIntent) {
-            // activity gửi broadcast từ service >> activity
-            boolean isPlayingNoti =
-                    serviceIntent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_NOTIFICATION,
-                            false);
-            if (isPlayingNoti) {
-                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_play_light));
-
-            } else {
-                mBtnPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_media_pause_light));
-            }
-            setSongCurrent();
-        }
-    };
-
-    private BroadcastReceiver brIsPlayService = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // activity gửi broadcast xuống service
-            boolean isPlayingMedia = intent.getBooleanExtra(Constants.INTENT.IS_PLAY_MEDIA_SERVICE, false);
-
-            if (isPlayingMedia) {
-//                Log.d("XXX", "SongActivity --- brIsPlayService:" +true);
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-                isPlaying = true;
-//                Utils.PauseMediaService(context, mMusicManager.getType(), mMusicManager.getPosition() );
-            } else {
-//                Log.d("XXX", "SongActivity --- brIsPlayService:" +false);
-                mBtnPlayPause.setImageResource(R.drawable.ic_media_pause_light);
-                isPlaying = false;
-//                Utils.PlayMediaService(context, mMusicManager.getType(), mMusicManager.getPosition());
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,44 +77,29 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
         initView();
         mSharedPrefsUtils = new SharedPrefsUtils(this);
 
-        type = getIntent().getStringExtra(Constants.INTENT.TYPE_MUSIC);
-
-        mSongs = mMusicManager.getListSong(type);
-
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setSongCurrent();
+
         assignView();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.unregisterReceiver(brPlayPauseActivity);
-        this.unregisterReceiver(brIsPlayService);
     }
 
-    public void setSongCurrent(){
-        mTextArtist.setText(mMusicManager.getCurrentSong().getArtist());
-        mTextTitle.setText(mMusicManager.getCurrentSong().getSongName());
+    public void setViewMusic(){
+        if (mMusicManager.getCurrentMusic() != null) {
+            MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
+                    mMusicManager.getCurrentMusic().getSongName());
 
-        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                mMusicManager.getCurrentSong().getAlbumID(),
-                profileImage);
-
-        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                mMusicManager.getCurrentSong().getAlbumID(),
-                mImgMedia);
-
-        ImageUtils.getInstance(this).getSmallImageByPicasso(
-                mMusicManager.getCurrentSong().getAlbumID(),
-                mImgAlbumId);
-
-        profileName.setText(mMusicManager.getCurrentSong().getSongName());
-        profileArtist.setText(mMusicManager.getCurrentSong().getArtist());
-        profileAlbum.setText(mMusicManager.getCurrentSong().getAlbum());
+            mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
+            mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
+            mImgMedia.setImageBitmap(metadataCompat.getBitmap(Constants.METADATA.AlbumID));
+        }
     }
+
 
     public void setSongCurrent(ArrayList<SongModel> mSongs, int position){
         SongModel songModel = mSongs.get(position);
@@ -344,16 +276,14 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
         mBtnPlayPause.setOnClickListener(this);
         mLl_Play_Media.setOnClickListener(this);
         setupViewPager(mViewPagerSong);
-
-//        Utils.UpdateButtonPlay(mBtnPlayPause);
     }
 
     private void setupViewPager(ViewPager viewPager){
         mViewPagerAdapter = new ViewPagerAdapter(this,getSupportFragmentManager());
-        mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
-        mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
-        mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
-        mViewPagerAdapter.addFragment(new AllSongsFragment(mSongs, type));
+        mViewPagerAdapter.addFragment(new AllSongsFragment(mMusicManager.allSortSongs()));
+        mViewPagerAdapter.addFragment(new AllSongsFragment(mMusicManager.allSortSongs()));
+        mViewPagerAdapter.addFragment(new AllSongsFragment(mMusicManager.allSortSongs()));
+        mViewPagerAdapter.addFragment(new AllSongsFragment(mMusicManager.allSortSongs()));
 
         viewPager.setAdapter(mViewPagerAdapter);
         viewPager.setCurrentItem(0);
@@ -372,16 +302,6 @@ public class SongActivity extends AppCompatActivity implements TabLayout.OnTabSe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_title_media:
-                // khi ấn vào songactivity rồi bấm playactivity, rồi back ngược lại trở lại
-                // songactivity update lại nút này để có thể hiểu music chọn bằng cách check type
-                // khác thì mới bấm dc
-//                Log.d("XXX", "SongActivity --- current type: "+ mMusicManager.getType() + " ---- " +
-//                        "type: "+type);
-                if (mMusicManager.getType().equals(type)) {
-//                    Utils.IntentToPlayActivity(this, mMusicManager.getPosition(), mMusicManager.getType());
-                }else {
-//                    Utils.ToastShort(this, "Please choose music!!");
-                }
                 break;
             case R.id.imbt_Play_media:
 //                Utils.isPlayMediaService(this, mMusicManager.getType(), mMusicManager.getPosition());

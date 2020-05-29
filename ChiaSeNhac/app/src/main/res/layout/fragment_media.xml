@@ -5,8 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="10"
-    tools:mContext="com.android.music_player.activities.PlayActivity">
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="100dp"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+    android:weightSum="10">
     <androidx.appcompat.widget.Toolbar
         android:layout_alignParentTop="true"
         android:id="@+id/tb_PlayActivity"
@@ -339,7 +341,7 @@
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/app_repeat_active"
 
-                     />
+                    />
             </RelativeLayout>
 
 
@@ -360,7 +362,7 @@
                     android:adjustViewBounds="true"
                     android:src="@drawable/ic_previous_white"
 
-                  />
+                    />
             </RelativeLayout>
 
             <RelativeLayout

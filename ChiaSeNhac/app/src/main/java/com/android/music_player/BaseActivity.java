@@ -6,11 +6,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.music_player.managers.MusicManager;
+import com.android.music_player.services.MediaService;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 public abstract class BaseActivity extends AppCompatActivity  {
     private boolean serviceBound = false;
-//    private MediaPlayerService mediaPlayerService;
+    private MediaService mediaService;
     private SharedPrefsUtils mSharedPrefsUtils;
     private MusicManager mMusicManager;
 
@@ -42,11 +43,11 @@ public abstract class BaseActivity extends AppCompatActivity  {
     @Override
     protected void onResume() {
         super.onResume();
-//        Intent playerIntent = new Intent(getApplicationContext(), MediaPlayerService.class);
-//        startService(playerIntent);
-        /*if (!serviceBound) {
-            bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-        }*/
+//        Intent playerIntent = new Intent(getApplicationContext(), MediaService.class);
+////        startService(playerIntent);
+//        if (!serviceBound) {
+//            bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+//        }
     }
 
     @Override
@@ -54,14 +55,14 @@ public abstract class BaseActivity extends AppCompatActivity  {
         super.onStop();
     }
 
-    /*//Binding this Client to the AudioPlayer Service
-    public ServiceConnection serviceConnection = new ServiceConnection() {
+    //Binding this Client to the AudioPlayer Service
+    /*public ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             // We've bound to LocalService, cast the IBinder and getData LocalService instance
-            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
-            mediaPlayerService = binder.getService();
-            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
+            MediaService.LocalBinder binder = (MediaService.LocalBinder) service;
+            mediaService = binder.getService();
+//            mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION_SONG,0);
             serviceBound = true;
         }
 

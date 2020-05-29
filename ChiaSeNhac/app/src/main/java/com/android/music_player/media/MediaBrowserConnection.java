@@ -52,6 +52,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
 
     @Override
     protected void onConnected(@NonNull MediaControllerCompat mediaController) {
+
         if (context instanceof PlayActivity) {
             Log.d(TAG, mediaController.getPlaybackInfo().getPlaybackType()+"");
             ((PlayActivity)context).mSeekBarAudio.setMediaController(mediaController,

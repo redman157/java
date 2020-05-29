@@ -41,7 +41,7 @@ public class MediaService extends MediaBrowserServiceCompat {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        return START_STICKY ;
+        return START_NOT_STICKY ;
     }
 
     /**
@@ -87,6 +87,21 @@ public class MediaService extends MediaBrowserServiceCompat {
         stopSelf();
     }
 
+ /*   @Override
+    public IBinder onBind(Intent intent) {
+        if (SEARCH_SERVICE.equals(intent.getAction())) {
+            return super.onBind(intent);
+        }
+        return new LocalBinder();
+    }
+
+    public class LocalBinder extends Binder {
+        public MediaService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return MediaService.this;
+        }
+    }*/
+
     /******* ---------------------------------------------------------------
      Defaults
      ----------------------------------------------------------------*******/
@@ -95,11 +110,16 @@ public class MediaService extends MediaBrowserServiceCompat {
     public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
         // (Optional) Control the level of access for the specified package name.
         // You'll need to write your own logic to do this.
+
+        Log.d("WWW","MediaService --- onGetRoot --- clientPackageName: "+clientPackageName);
+        Log.d("WWW","MediaService --- onGetRoot --- clientUid: "+clientUid);
+        Log.d("WWW","MediaService --- onGetRoot --- rootHints: "+rootHints);
         return new BrowserRoot(MusicLibrary.getRoot(), null);
     }
 
     @Override
     public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
+        Log.d("WWW","MediaService --- onLoadChildren: "+parentId);
         result.sendResult(MusicLibrary.getMediaItems());
     }
 
@@ -115,6 +135,13 @@ public class MediaService extends MediaBrowserServiceCompat {
         public MediaSessionCallback(){
             mMusicManager.setContext(MediaService.this);
         }
+
+        @Override
+        public void onCustomAction(String action, Bundle extras) {
+            Log.d("UUU","MediaService --- MediaSessionCallback: "+action);
+            super.onCustomAction(action, extras);
+        }
+
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
             queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
@@ -141,6 +168,7 @@ public class MediaService extends MediaBrowserServiceCompat {
             if (mPreparedMedia == null) {
                 onPrepareFromMediaId(mediaId, extras);
             }
+
             mPlayback.playFromMedia(MusicLibrary.getMetadata(MediaService.this,mediaId));
 
             Log.d(TAG, "onPlayFromMediaId: MediaSession active");
@@ -233,8 +261,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         public void onSeekTo(long pos) {
             mPlayback.seekTo(pos);
         }
-
-
 
         private boolean isReadyToPlay() {
             return (!mPlaylist.isEmpty());

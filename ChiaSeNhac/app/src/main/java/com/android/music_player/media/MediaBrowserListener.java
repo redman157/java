@@ -25,6 +25,13 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
         void onMediaMetadata(MediaMetadataCompat mediaMetadata);
     }
 
+
+    @Override
+    public void onRepeatModeChanged(int repeatMode) {
+        super.onRepeatModeChanged(repeatMode);
+        Log.d("LLL", "MediaBrowserListener --- onRepeatModeChanged"+repeatMode);
+    }
+
     public void setOnPlayPause(OnPlayPause onPlayPause){
         this.onPlayPause = onPlayPause;
     }

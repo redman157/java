@@ -17,6 +17,7 @@ import com.android.music_player.adapters.SongAdapter;
 import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
@@ -35,6 +36,10 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
         this.type = type;
     }
 
+    public AllSongsFragment(ArrayList<SongModel> songs){
+        mSongs = songs;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +49,7 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
         mSongActivity = (SongActivity) getContext();
 
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
-        mSongAdapter = new SongAdapter(getActivity(), mSongs, type);
+        mSongAdapter = new SongAdapter(getActivity(), mSongs, Constants.VALUE.ALL_NEW_SONGS);
         mSongAdapter.notifyDataSetChanged();
         mSongAdapter.setLimit(false);
         mSongAdapter.setOnClickItem(this);
@@ -67,9 +72,7 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
     }
 
     private void initData(){
-
         mRcSongs.setHasFixedSize(true);
-
         mRcSongs.setLayoutManager(new LinearLayoutManager(
                 getContext(),
                 LinearLayoutManager.VERTICAL, false));
@@ -84,11 +87,11 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
     @Override
     public void onClick(String type, int position) {
         // khi click vào 1 item nào đó, phải lưu type, vị trí chọn lại
-        if (getActivity() instanceof SongActivity) {
+       /* if (getActivity() instanceof SongActivity) {
             mSongActivity.chooseSong = position;
 
             mSongActivity.setSongCurrent(mSongs, position);
             mMusicManager.setType(type);
-        }
+        }*/
     }
 }

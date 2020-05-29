@@ -126,19 +126,21 @@ public class ImageUtils {
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_black_24dp)))
                     .resize(400,400)
                     .onlyScaleDown()
-                    .fetch(new Callback() {
+                    .into(imageView, new Callback() {
                         @Override
                         public void onSuccess() {
-
-                            Picasso.get().load(getSongUri(Long.parseLong(albumID)))
-                                    .into(imageView);
-                            imageView.animate().setDuration(700).alpha(0.7f).start();
+                            if (imageView.getAlpha() == 0f) {
+                                /*Picasso.get().load(getSongUri(Long.parseLong(albumID)))
+                                        .into(imageView);*/
+                                imageView.animate().setDuration(700).alpha(0.7f).start();
+                            }
                         }
 
                         @Override
                         public void onError(Exception e) {
                             Log.d("EEE", e.getMessage());
-                            imageView.setImageResource(R.drawable.ic_music_note_black_24dp);
+                            imageView.setAlpha(0f);
+//                            imageView.setImageResource(R.drawable.ic_music_note_black_24dp);
                             imageView.animate().setDuration(400).alpha(0.7f).start();
                         }
                     });

@@ -61,11 +61,13 @@ public class MusicLibrary {
                 MusicLibrary.getAlbumRes(mediaId));
     }
 
+    // khi change album sẽ có 1 list mới thì mình sẽ edit ở đây
     public static List<MediaBrowserCompat.MediaItem> getMediaItems() {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
         for (MediaMetadataCompat metadata : music.values()) {
             result.add(new MediaBrowserCompat.MediaItem(
-                metadata.getDescription(), MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+                metadata.getDescription(),
+                    MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
         }
         return result;
     }
@@ -77,10 +79,6 @@ public class MusicLibrary {
         list.add(PlaybackStateCompat.fromPlaybackState(PlaybackStateCompat.REPEAT_MODE_ONE));
         return list;
     }
-
-
-
-
 
     public static MediaMetadataCompat getMetadata(Context context, String songName) {
         MediaMetadataCompat metadataWithoutBitmap = music.get(songName);

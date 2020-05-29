@@ -1,5 +1,6 @@
 package com.android.music_player.media;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -61,10 +62,10 @@ public class MediaPlayerAdapter extends PlayerAdapter {
                     // to "stop".
                     // Paused allows: seekTo(), start(), pause(), stop()
                     // Stop allows: stop()
-                    if (!isRepeat) {
-                        setNewState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
+                    if (isRepeat){
+
                     }else {
-                        setNewState(PlaybackStateCompat.STATE_PLAYING);
+                        setNewState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
                     }
                 }
             });
@@ -88,17 +89,18 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         // Work around for MediaPlayer.getCurrentPosition() when it changes while not playing.
         final long reportPosition;
         if (mSeekWhileNotPlaying >= 0){
+            Log.d("TTT", "MediaPlayerAdapter --- mSeekWhileNotPlaying > 0: ");
             reportPosition = mSeekWhileNotPlaying;
 
             if (mState == PlaybackStateCompat.STATE_PLAYING) {
                 mSeekWhileNotPlaying = -1;
-
             }
         }else {
+            Log.d("TTT", "MediaPlayerAdapter --- mSeekWhileNotPlaying > 0: ");
             reportPosition = (mMediaPlayer == null)?
                     0 : mMediaPlayer.getCurrentPosition();
         }
-        Log.d("TTT", "MediaPlayerAdapter --- setNewState"+reportPosition);
+        Log.d("TTT", "MediaPlayerAdapter --- setNewState: "+reportPosition);
         updatePlaybackState(mState ,reportPosition);
     }
 
@@ -228,7 +230,6 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     protected void onPause() {
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
-
             setNewState(PlaybackStateCompat.STATE_PAUSED);
         }
     }
@@ -279,14 +280,10 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         }
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public void setRepeat(boolean isLoop) {
         isRepeat = isLoop;
-        if (isRepeat){
-            mMediaPlayer.setLooping(true);
-        }else {
-            mMediaPlayer.setLooping(false);
-        }
     }
 
     @Override

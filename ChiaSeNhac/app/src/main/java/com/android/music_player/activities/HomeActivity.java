@@ -37,6 +37,7 @@ import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -113,7 +114,60 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
     private Toolbar mToolBar;
+    private View view;
+    private BottomSheetBehavior<? extends View> mBottomSheetBehavior;
+    private void configureBackdrop() {
+        // Get the fragment reference
 
+//        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.filter_fragment);
+
+
+
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View view, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED: {
+
+                    }
+                    break;
+                    case BottomSheetBehavior.STATE_COLLAPSED: {
+                    }
+                    break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View view, float v) {
+
+            }
+        });
+      /*  mLlPlayMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });*/
+//        fragment?.let {
+//            // Get the BottomSheetBehavior from the fragment view
+//            BottomSheetBehavior.from(it.view)?.let { bsb ->
+//                    // Set the initial state of the BottomSheetBehavior to HIDDEN
+//                    bsb.state = BottomSheetBehavior.STATE_HIDDEN
+//
+//                // Set the trigger that will expand your view
+//                fab_filter.setOnClickListener { bsb.state = BottomSheetBehavior.STATE_EXPANDED }
+//
+//                // Set the reference into class attribute (will be used latter)
+//                mBottomSheetBehavior = bsb
+//            }
+//        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,7 +183,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         setupToolbar();
         assignView();
-
 
         mMusicManager.setMediaId(mMusicManager.getCurrentMusic()== null? "":mMusicManager.getCurrentMusic().getSongName() );
 
@@ -326,6 +379,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+
             case R.id.imbt_Play_media:
                 if (isPlaying){
                     Utils.UpdateButtonPlay(mBtnPlayPause, true);
@@ -368,9 +422,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-      /*  if (mLlPlayMedia.getVisibility() == View.VISIBLE){
-            mLlPlayMedia.setVisibility(View.GONE);
-        }*/
     }
 
     @SuppressLint("ResourceAsColor")

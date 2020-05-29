@@ -47,6 +47,7 @@ public class MediaBrowserHelper {
         this.mMediaBrowserServiceClass = mMediaBrowserServiceClass;
 
         mMediaBrowserConnectionCallback = new MediaBrowserConnectionCallback();
+
         mMediaControllerCallback = new MediaControllerCallback();
         mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
     }
@@ -58,7 +59,6 @@ public class MediaBrowserHelper {
                     new ComponentName(mContext, mMediaBrowserServiceClass),
                     mMediaBrowserConnectionCallback,
                             null);
-
             mMediaBrowser.connect();
             Log.d(TAG, "MediaBrowserHelper --- onStart: Creating MediaBrowser, and connecting");
         } else {
@@ -197,6 +197,18 @@ public class MediaBrowserHelper {
         // Happens as a result of onStart().
 
         @Override
+        public void onConnectionSuspended() {
+            super.onConnectionSuspended();
+            Log.d("JJJ","MediaBrowserHelper --- onConnectionSuspended: enter");
+        }
+
+        @Override
+        public void onConnectionFailed() {
+            super.onConnectionFailed();
+            Log.d("JJJ","MediaBrowserHelper --- onConnectionFailed: enter");
+        }
+
+        @Override
         public void onConnected() {
             try {
                 // Get a MediaController for the MediaSession.
@@ -225,6 +237,11 @@ public class MediaBrowserHelper {
         public void onChildrenLoaded(@NonNull String parentId,
                                      @NonNull List<MediaBrowserCompat.MediaItem> children) {
             MediaBrowserHelper.this.onChildrenLoaded(parentId, children);
+        }
+
+        @Override
+        public void onError(@NonNull String parentId) {
+            Log.d("JJJ", "MediaBrowserHelper --- MediaBrowserSubscriptionCallback: "+parentId);
         }
     }
 

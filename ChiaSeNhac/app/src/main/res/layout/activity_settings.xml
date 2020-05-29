@@ -1,10 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sliding_panel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:mContext="com.android.music_player.activities.SettingsActivity">
+    android:orientation="vertical"
+    tools:context=".activities.SettingsActivity">
+
+    <!-- ARTISTS LAYOUT -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:id="@+id/collapseActionView"
+        android:layout_height="match_parent"
+        tools:mContext=".activities.SettingsActivity"
+        android:fitsSystemWindows="false">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:layout_height="wrap_content">
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="@color/transparent"
+                app:titleEnabled="false"
+                android:fitsSystemWindows="true"
+                app:layout_scrollFlags="snap|enterAlwaysCollapsed"
+                app:title="@string/app_name">
+                <androidx.appcompat.widget.Toolbar
+
+                    android:id="@+id/tb_HomeActivity"
+                    android:layout_width="match_parent"
+                    android:gravity="center"
+                    android:layout_height="?attr/actionBarSize"
+                    android:elevation="4dp"
+                    android:background="@color/whiteOpaqueX2"
+                    app:title="@string/app_name"
+                    android:animateLayoutChanges="true"
+                    app:layout_collapseMode="pin"
+                    android:theme="@style/CustomToolBarStyle"
+                    app:popupTheme="@style/CustomPopupStyle"/>
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_height="match_parent">
+            <com.google.android.material.tabs.TabLayout
+                android:layout_alignParentTop="true"
+                android:id="@+id/tab_HomeActivity"
+                android:layout_width="match_parent"
+                app:tabIndicatorColor="@color/red"
+                app:tabIndicatorGravity="bottom"
+                app:tabIndicatorHeight="@dimen/_3sdp"
+                app:tabPaddingStart="@dimen/_1sdp"
+                app:tabPaddingEnd="@dimen/_1sdp"
+                app:tabBackground="@drawable/custom_background_tab_layout"
+                app:tabMode="fixed"
+                app:tabGravity="fill"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"/>
+
+            <androidx.viewpager.widget.ViewPager
+                android:layout_above="@id/ll_play_media"
+                android:id="@+id/vp_Home"
+                android:layout_below="@id/tab_HomeActivity"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:layout_alignParentBottom="true"
+                android:id="@+id/ll_play_media"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white" />
+                <include
+                    layout="@layout/layout_play_media"
+                    android:id="@+id/layout_play_media"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white" />
+            </LinearLayout>
+        </RelativeLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- SLIDING LAYOUT -->
+    <include layout="@layout/sliding_panel" />
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>

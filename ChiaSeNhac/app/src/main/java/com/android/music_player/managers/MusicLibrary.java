@@ -84,8 +84,8 @@ public class MusicLibrary {
         MediaMetadataCompat metadataWithoutBitmap = music.get(songName);
         Bitmap albumArt = ImageUtils.getAlbumArt(context, Long.valueOf(albumRes.get(songName)));
 
-        // Since MediaMetadataCompat is immutable, we need to create a copy to set the album art.
-        // We don't set it initially on all items so that they don't take unnecessary memory.
+        // Since MediaMetadataCompat is immutable, we need to create a copy to assignData the album art.
+        // We don't assignData it initially on all items so that they don't take unnecessary memory.
         MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
         for (String key :
                 new String[]{

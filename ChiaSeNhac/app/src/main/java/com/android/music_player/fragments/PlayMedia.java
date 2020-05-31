@@ -17,7 +17,7 @@ public class PlayMedia extends BottomSheetDialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (view == null) {
-            view = inflater.inflate(R.layout.fragment_media, null);
+            view = inflater.inflate(R.layout.layout_main_media, null);
         }
         return view;
     }

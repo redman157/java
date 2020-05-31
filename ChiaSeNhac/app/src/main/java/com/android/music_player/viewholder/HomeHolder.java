@@ -25,8 +25,7 @@ import com.android.music_player.utils.ImageUtils;
 
 import java.util.ArrayList;
 
-public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-        OnChangePlayListListener, SongAdapter.OnClickListener, OnClickItem {
+public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
     private TextView mTextPlayer_1, mTextPlayer_2, mTextPlayerSongs;
     private RecyclerView mRc_Recently_Add;
     private SongAdapter mSongsAdapter;
@@ -77,19 +76,18 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
             mTextPlayer_2.setText("Play List 2");
         }
     }
-    public void assignView(){
+    public void assignView(SongAdapter mSongsAdapter){
         mImg_Player_Songs.setOnClickListener(this);
         mImg_Player_1.setOnClickListener(this);
         mImg_Player_2.setOnClickListener(this);
         mImg_Shuffle_All.setOnClickListener(this);
         mBtnViewAll.setOnClickListener(this);
 
-        mSongsAdapter = new SongAdapter(mActivity, MusicManager.getInstance().newSongs(),
+    /*    mSongsAdapter = new SongAdapter(mActivity, MusicManager.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS);
         mSongsAdapter.setLimit(true);
         mSongsAdapter.notifyDataSetChanged();
-        mSongsAdapter.setOnClickItem(this);
-        mNewSongs = MusicManager.getInstance().newSongs();
+        mSongsAdapter.setOnClickItem(this);*/
         mRc_Recently_Add.setAdapter(mSongsAdapter);
         mRc_Recently_Add.setNestedScrollingEnabled(false);
         mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(mActivity,
@@ -133,32 +131,5 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
                 mActivity.startActivity(iMostPlay);
                 break;
         }
-    }
-
-    @Override
-    public void onClickItem(ArrayList<String> mostPlayList) {
-
-    }
-
-    @Override
-    public void onClick(int pos) {
-
-    }
-
-    @Override
-    public void onClick(String type, int position) {
-//        if (mActivity instanceof HomeActivity) {
-//            mHomeActivity = (HomeActivity) mActivity;
-//            mHomeActivity.type = type;
-//            mHomeActivity.chooseSong = position;
-//
-//            mHomeActivity.setViewMusic(mMusicManager.getListSong(type), position);
-//            if (position != MusicManager.getInstance().getPosition()) {
-//                (mHomeActivity).mBtnPlayPause.setImageResource(R.drawable.ic_media_play_light);
-//                (mHomeActivity).isContinue = false;
-//            } else {
-//                Utils.UpdateButtonPlay(mHomeActivity.mBtnPlayPause);
-//            }
-//        }
     }
 }

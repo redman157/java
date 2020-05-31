@@ -17,9 +17,10 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder> {
     private Activity activity;
     private MusicManager mMusicManager;
     private SharedPrefsUtils mSharedPrefsUtils;
-
-    public HomeFragmentAdapter(Activity activity){
+    private SongAdapter songAdapter;
+    public HomeFragmentAdapter(Activity activity, SongAdapter songAdapter){
         this.activity = activity;
+        this.songAdapter = songAdapter;
         mSharedPrefsUtils = new SharedPrefsUtils(activity);
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(activity);
@@ -34,7 +35,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder> {
     @Override
     public void onBindViewHolder(@NonNull HomeHolder holder, int position) {
         holder.initView();
-        holder.assignView();
+        holder.assignView(songAdapter);
     }
 
     @Override

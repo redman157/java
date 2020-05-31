@@ -1,6 +1,7 @@
 package com.android.music_player.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,30 +15,33 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.music_player.R;
 import com.android.music_player.adapters.HomeFragmentAdapter;
+import com.android.music_player.adapters.SongAdapter;
 import com.android.music_player.interfaces.OnChangePlayListListener;
+import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.managers.MusicManager;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment implements OnChangePlayListListener, SwipeRefreshLayout.OnRefreshListener {
+public class HomeFragment extends Fragment implements OnChangePlayListListener,
+        SwipeRefreshLayout.OnRefreshListener, OnClickItem {
 
     private View view;
 
     private String type;
     private RecyclerView mRcHome;
     private SharedPrefsUtils mSharedPrefsUtils;
-
     private MusicManager mMusicManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private OnChangePlayListListener onChangePlayListListener;
     private HomeFragmentAdapter mHomeAdapter;
+    private SongAdapter mSongsAdapter;
     public void setOnChangePlayListListener(OnChangePlayListListener onChangePlayListListener){
         this.onChangePlayListListener = onChangePlayListListener;
     }
 
     public static HomeFragment newInstance(ArrayList<String> strings) {
-
         Bundle args = new Bundle();
         args.putStringArrayList("most", strings);
         HomeFragment fragment = new HomeFragment();
@@ -51,6 +55,11 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener, 
         super.onCreate(savedInstanceState);
 
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
+        mSongsAdapter = new SongAdapter(getActivity(), MusicManager.getInstance().newSongs(),
+                Constants.VALUE.NEW_SONGS);
+        mSongsAdapter.setLimit(true);
+        mSongsAdapter.notifyDataSetChanged();
+        mSongsAdapter.setOnClickItem(this);
     }
 
     @Nullable
@@ -62,7 +71,7 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener, 
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(getContext());
         initView();
-        mHomeAdapter = new HomeFragmentAdapter(getActivity());
+        mHomeAdapter = new HomeFragmentAdapter(getActivity(),mSongsAdapter);
         mHomeAdapter.notifyDataSetChanged();
         mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
         mRcHome.setAdapter(mHomeAdapter);
@@ -106,11 +115,21 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener, 
 
     @Override
     public void onClickItem(ArrayList<String> mostPlayList) {
-        newInstance(mostPlayList);
+//        newInstance(mostPlayList);
     }
 
     @Override
     public void onRefresh() {
         loadRecyclerViewData();
+    }
+
+    @Override
+    public void onClick(int pos) {
+
+    }
+
+    @Override
+    public void onClick(String type, int pos) {
+        Log.d("LLL", "HomeFragment --- onclick: "+pos);
     }
 }

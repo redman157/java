@@ -68,7 +68,7 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
         if (mediaMetadata == null) {
             return;
         }
-        // set up việc chuyển page
+        // assignData up việc chuyển page
         if (onPlayPause!= null){
 //            Log.d("VVV", Log.getStackTraceString(new Exception()));
 

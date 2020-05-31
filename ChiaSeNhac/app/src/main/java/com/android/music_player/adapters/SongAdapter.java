@@ -1,7 +1,6 @@
 package com.android.music_player.adapters;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
@@ -67,16 +65,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ItemViewHolder
         final SongModel item;
 
         item = items.get(position);
-        holder.set(item);
+        holder.assignData(item);
         MusicManager.getInstance().setContext(mActivity);
         holder.mL_Recently_Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickItem.onClick(type, position);
                 mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, items.get(position).getAlbumID());
-                Intent intent = new Intent(mActivity, PlayActivity.class);
-                MusicManager.getInstance().setMediaId(items.get(position).getSongName());
-                mActivity.startActivity(intent);
             }
         });
 
@@ -107,7 +102,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ItemViewHolder
             mTextTime = itemView.findViewById(R.id.item_text_time_recently_add);
         }
 
-        public void set(final SongModel song) {
+        public void assignData(final SongModel song) {
             //UI setting code
             mTextName.setText(song.getSongName());
             mTextArtist.setText(song.getArtist());

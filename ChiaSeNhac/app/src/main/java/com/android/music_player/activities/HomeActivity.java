@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,22 +38,29 @@ import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.tabs.TabLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
+import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
+
+
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener,
-        ViewTreeObserver.OnGlobalLayoutListener, MediaBrowserListener.OnPlayPause {
+        ViewTreeObserver.OnGlobalLayoutListener, MediaBrowserListener.OnPlayPause,
+        SlidingUpPanelLayout.PanelSlideListener {
     private ViewPager mViewPager_Home;
-
+    private ImageView mImgChangeState;
+    private RelativeLayout mRlChangeState;
+    private LinearLayout mLlPlayMedia, mLlChangeState, mLlChangeMusic, mLlSeeMore, mLlControlSong;
+    private View mLayoutMedia;
     private String tag = "BBB";
     private ViewPagerAdapter mViewPagerAdapter;
     private TabLayout mTabLayoutHome;
     private ImageUtils imageUtils;
     private View mViewPlayMedia;
-    public ImageView mImgMedia;
+    public ImageView mImgAlbumArt, mImgChangeMusic;
     public TextView mTextTitle, mTextArtist;
     public Button mBtnTitle;
     private SharedPrefsUtils mSharedPrefsUtils;
@@ -60,9 +68,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private MusicManager mMusicManager;
     public ImageButton mBtnPlayPause;
     private boolean isPlaying = false;
-    public LinearLayout mLlPlayMedia;
     public int chooseSong;
     public String type;
+    private SlidingUpPanelLayout mSlidingUpPanelLayout;
     public boolean isContinue;
     private OnChangePlayListListener onChangePlayListListener;
     private MediaBrowserHelper mMediaBrowserHelper;
@@ -108,66 +116,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setViewMusic();
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
 
     }
     private Toolbar mToolBar;
-    private View view;
-    private BottomSheetBehavior<? extends View> mBottomSheetBehavior;
-    private void configureBackdrop() {
-        // Get the fragment reference
 
-//        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.filter_fragment);
-
-
-
-        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View view, int newState) {
-                switch (newState) {
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        break;
-                    case BottomSheetBehavior.STATE_EXPANDED: {
-
-                    }
-                    break;
-                    case BottomSheetBehavior.STATE_COLLAPSED: {
-                    }
-                    break;
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                        break;
-                    case BottomSheetBehavior.STATE_SETTLING:
-                        break;
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View view, float v) {
-
-            }
-        });
-      /*  mLlPlayMedia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });*/
-//        fragment?.let {
-//            // Get the BottomSheetBehavior from the fragment view
-//            BottomSheetBehavior.from(it.view)?.let { bsb ->
-//                    // Set the initial state of the BottomSheetBehavior to HIDDEN
-//                    bsb.state = BottomSheetBehavior.STATE_HIDDEN
-//
-//                // Set the trigger that will expand your view
-//                fab_filter.setOnClickListener { bsb.state = BottomSheetBehavior.STATE_EXPANDED }
-//
-//                // Set the reference into class attribute (will be used latter)
-//                mBottomSheetBehavior = bsb
-//            }
-//        }
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -183,14 +139,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         setupToolbar();
         assignView();
-
         mMusicManager.setMediaId(mMusicManager.getCurrentMusic()== null? "":mMusicManager.getCurrentMusic().getSongName() );
-
         Utils.UpdateButtonPlay(mBtnPlayPause, isPlaying);
     }
-
-
-
 
     private void setupToolbar() {
         setSupportActionBar(mToolBar);
@@ -204,10 +155,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
             mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
-            mImgMedia.setImageBitmap(metadataCompat.getBitmap(Constants.METADATA.AlbumID));
+            mImgAlbumArt.setImageBitmap(metadataCompat.getBitmap(Constants.METADATA.AlbumID));
         }
     }
-
 
     private void setupViewPager(ViewPager viewPager){
         mViewPagerAdapter = new ViewPagerAdapter(this,getSupportFragmentManager());
@@ -231,8 +181,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
-        mTabLayoutHome = findViewById(R.id.tab_HomeActivity);
+        mLlChangeMusic = findViewById(R.id.ll_vp_change_music);
+        mImgChangeMusic = findViewById(R.id.item_img_ChangeMusic);
+        mLlControlSong = findViewById(R.id.ll_control_song);
+        mLlSeeMore = findViewById(R.id.ll_see_more);
+        mLayoutMedia = findViewById(R.id.layout_main_media);
+
+        mImgChangeState = findViewById(R.id.img_change_state);
+        mRlChangeState = findViewById(R.id.rl_change_state);
         mLlPlayMedia = findViewById(R.id.ll_play_media);
+        mSlidingUpPanelLayout = findViewById(R.id.activity_main);
+        mTabLayoutHome = findViewById(R.id.tab_HomeActivity);
         mToolBar = findViewById(R.id.tb_HomeActivity);
         mViewPlayMedia = findViewById(R.id.layout_play_media);
 
@@ -240,15 +199,18 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mTextArtist = mViewPlayMedia.findViewById(R.id.text_artists_media);
         mBtnPlayPause = mViewPlayMedia.findViewById(R.id.imbt_Play_media);
         mBtnTitle = mViewPlayMedia.findViewById(R.id.btn_title_media);
-        mImgMedia = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
+        mImgAlbumArt = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
 
         mViewPager_Home = findViewById(R.id.vp_Home);
         setupViewPager(mViewPager_Home);
-        mImgMedia.getViewTreeObserver().addOnGlobalLayoutListener(this);
+        mImgAlbumArt.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
     }
 
     private void assignView(){
+//        mSlidingUpPanelLayout.removePanelSlideListener(this);
+//        mSlidingUpPanelLayout.setFadeOnClickListener(this);
+        mSlidingUpPanelLayout.addPanelSlideListener(this);
         mBtnPlayPause.setOnClickListener(this);
         mBtnTitle.setOnClickListener(this);
         mViewPlayMedia.setOnClickListener(this);
@@ -393,17 +355,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 break;
             case R.id.btn_title_media:
-//                Utils.IntentToPlayActivity(this, chooseSong, mMusicManager.getType() );
-                /*Intent intent = new Intent(this, PlayActivity.class);
-                Utils.Builder builder = new Utils.Builder();
-                builder.putString(Constants.INTENT.TYPE,type);
-                builder.putInteger(Constants.INTENT.CHOOSE_POS, chooseSong);
-                intent.putExtras(builder.generate().getBundle());
-                finish();
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);*/
+                if (mSlidingUpPanelLayout != null &&
+                        (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED || mSlidingUpPanelLayout.getPanelState() == PanelState.ANCHORED)) {
+                    mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
+                }
 
-                Log.d("FFF","tên : "+mTextTitle.getText());
+                break;
+            case R.id.img_change_state:
+                if (mSlidingUpPanelLayout != null &&
+                        (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED || mSlidingUpPanelLayout.getPanelState() == PanelState.ANCHORED)) {
+                    mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
+                }
                 break;
             case R.id.menu_search:
                 Intent iSearch = new Intent(this, SearchActivity.class);
@@ -417,7 +379,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
+        if (mSlidingUpPanelLayout != null &&
+                (mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
+            mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else {
+//            super.onBackPressed();
+        }
     }
 
     @Override
@@ -461,9 +428,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onGlobalLayout() {
-        mImgMedia.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        mImgAlbumArt.getViewTreeObserver().removeGlobalOnLayoutListener(this);
         final int[] locat_0 = new int[2];
-        mImgMedia.getLocationOnScreen(locat_0);
+        mImgAlbumArt.getLocationOnScreen(locat_0);
         int x_0 = locat_0[0];
         int y_0 = locat_0[1];
 
@@ -489,5 +456,45 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onMediaMetadata(MediaMetadataCompat mediaMetadata) {
 
+    }
+
+    // Panel change state
+    @Override
+    public void onPanelSlide(View panel, float slideOffset) {
+        Log.d("UUU", "onPanelSlide : "+slideOffset);
+        if (slideOffset == 0f) {
+            mLlPlayMedia.setAlpha(1f);
+        }else if (slideOffset > 0.3){
+            mLlPlayMedia.setAlpha(0.3f - slideOffset);
+            mLlPlayMedia.setVisibility(View.GONE);
+        }
+        else {
+            mLlPlayMedia.setAlpha(slideOffset);
+        }
+        mRlChangeState.setAlpha(slideOffset);
+
+    }
+
+    @Override
+    public void onPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
+        /**
+         *  EXPANDED,
+         *  COLLAPSED,
+         *  ANCHORED,
+         *  HIDDEN,
+         *  DRAGGING
+         * **/
+        Log.d("III", "onPanelStateChanged previousState: "+previousState.toString() + " ---newState: "+newState.toString());
+        switch (newState){
+            case EXPANDED:
+
+                mLlPlayMedia.setVisibility(View.GONE);
+                break;
+            case COLLAPSED:
+                mLlPlayMedia.setAlpha(1);
+                mLlPlayMedia.setVisibility(View.VISIBLE);
+                break;
+
+        }
     }
 }

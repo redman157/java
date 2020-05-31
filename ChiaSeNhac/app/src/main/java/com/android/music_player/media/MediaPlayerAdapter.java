@@ -78,7 +78,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
 
         Log.d("BBB","MediaPlayerAdapter --- setNewState: "+newPlayerState );
         // Whether playback goes to completion, or whether it is stopped, the
-        // mCurrentMediaPlayedToCompletion is set to true.
+        // mCurrentMediaPlayedToCompletion is assignData to true.
 
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mCurrentMediaPlayedToCompletion = true;

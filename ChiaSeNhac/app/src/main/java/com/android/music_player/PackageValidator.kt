@@ -88,7 +88,7 @@ class PackageValidator(context: Context, @XmlRes xmlResId: Int) {
          * signature (SHA-256) each call.
          *
          * This is safe to do as we know the UID matches the package's UID (from the check above),
-         * and app UIDs are set at install time. Additionally, a package name + UID is guaranteed to
+         * and app UIDs are assignData at install time. Additionally, a package name + UID is guaranteed to
          * be constant until a reboot. (After a reboot then a previously assigned UID could be
          * reassigned.)
          */

@@ -592,7 +592,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         if (mSlideView != null && mSlideView != child) { // if main view
             // Clip against the slider; no sense drawing what will immediately be covered,
-            // Unless the panel is set to overlay content
+            // Unless the panel is assignData to overlay content
             canvas.getClipBounds(mTmpRect);
 
             if (mIsSlidingUp) {

@@ -14,7 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.R;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.DialogUtils;
@@ -55,10 +55,10 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
         this.songs = songs;
     }
 
-    private OnClickItem onClickItem;
+    private OnClickItemListener onClickItemListener;
 
-    public void setOnClick(OnClickItem onClickItem){
-        this.onClickItem = onClickItem;
+    public void setOnClick(OnClickItemListener onClickItemListener){
+        this.onClickItemListener = onClickItemListener;
     }
 
     @NonNull
@@ -87,7 +87,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
         holder.ll_option_music.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickItem.onClick(position);
+                onClickItemListener.onClickPosition(position);
                 // lúc hiện dialog nếu hiển thị thì sẽ ẩn đi
                 DialogUtils.cancelDialog();
             }

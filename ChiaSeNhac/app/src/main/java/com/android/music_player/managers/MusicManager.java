@@ -160,43 +160,24 @@ public class MusicManager {
     }
 
     public SongModel getCurrentMusic(){
+        Random random = new Random();
+
         String path = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"");
-        for (SongModel songModel : mSongsMain){
-            if (songModel.getPath().equals(path)){
+
+        for (SongModel songModel : mSongsMain) {
+            if (songModel.getPath().equals(path)) {
                 return songModel;
+
             }
         }
         return null;
+
     }
 
     public void setCurrentMusic(String nameSong){
 
         Log.d("CCC","setCurrentSong: " + nameSong);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, nameSong);
-    }
-
-
-    public void setCurrentSong(String path){
-        Log.d("CCC","setCurrentSong: " + path);
-        mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_SONG, path);
-    }
-
-
-    public SongModel getCurrentSong(){
-        String current_path = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_SONG, "");
-//        Log.d("CCC","getCurrentSong: "+current_path);
-        Random rd = new Random();
-        if (current_path.equals("")){
-            return allSortSongs().get(rd.nextInt(mSongsMain.size()));
-        }else {
-            for (SongModel songModel : mSongsMain) {
-                if (songModel.getPath().equals(current_path)){
-
-                    return songModel;
-                }
-            }
-        }
-        return allSortSongs().get(rd.nextInt(mSongsMain.size()));
     }
 
     public int getPosition() {
@@ -216,14 +197,12 @@ public class MusicManager {
     }
 
     public boolean isPlayCurrentSong(String path){
-        if (path.equals(getCurrentSong().getPath())){
+        if (path.equals(getCurrentMusic().getPath())){
             return true;
         }else {
             return false;
         }
     }
-
-
 
     public ArrayList<SongModel> getListSong(){
         this.type = getType();

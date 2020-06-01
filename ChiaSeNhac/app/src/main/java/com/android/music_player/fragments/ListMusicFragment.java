@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.R;
 import com.android.music_player.activities.SongActivity;
 import com.android.music_player.adapters.SongAdapter;
-import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
@@ -22,7 +22,7 @@ import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
 
-public class AllSongsFragment extends Fragment implements SongAdapter.OnClickListener, OnClickItem {
+public class ListMusicFragment extends Fragment implements SongAdapter.OnClickListener, OnClickItemListener {
     private View view;
     private SongAdapter mSongAdapter;
     private ArrayList<SongModel> mSongs;
@@ -31,12 +31,12 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
     private MusicManager mMusicManager;
     private SongActivity mSongActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
-    public AllSongsFragment(ArrayList<SongModel> songs, String type){
+    public ListMusicFragment(ArrayList<SongModel> songs, String type){
         mSongs = songs;
         this.type = type;
     }
 
-    public AllSongsFragment(ArrayList<SongModel> songs){
+    public ListMusicFragment(ArrayList<SongModel> songs){
         mSongs = songs;
     }
 
@@ -52,7 +52,7 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
         mSongAdapter = new SongAdapter(getActivity(), mSongs, Constants.VALUE.ALL_NEW_SONGS);
         mSongAdapter.notifyDataSetChanged();
         mSongAdapter.setLimit(false);
-        mSongAdapter.setOnClickItem(this);
+        mSongAdapter.setOnClickItemListener(this);
 
     }
 
@@ -78,20 +78,24 @@ public class AllSongsFragment extends Fragment implements SongAdapter.OnClickLis
                 LinearLayoutManager.VERTICAL, false));
         mRcSongs.setAdapter(mSongAdapter);
     }
+    @Override
+    public void onClickPosition(int pos) {
+
+    }
 
     @Override
-    public void onClick(int pos) {
+    public void onClickType(String type, int pos) {
+
+    }
+
+    @Override
+    public void onClickMusic(String nameChoose) {
 
     }
 
     @Override
     public void onClick(String type, int position) {
-        // khi click vào 1 item nào đó, phải lưu type, vị trí chọn lại
-       /* if (getActivity() instanceof SongActivity) {
-            mSongActivity.chooseSong = position;
 
-            mSongActivity.setSongCurrent(mSongs, position);
-            mMusicManager.setType(type);
-        }*/
     }
+
 }

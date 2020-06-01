@@ -1,5 +1,6 @@
 package com.android.music_player.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,21 +15,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.music_player.R;
+import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.HomeFragmentAdapter;
 import com.android.music_player.adapters.SongAdapter;
 import com.android.music_player.interfaces.OnChangePlayListListener;
-import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment implements OnChangePlayListListener,
-        SwipeRefreshLayout.OnRefreshListener, OnClickItem {
-
+        SwipeRefreshLayout.OnRefreshListener, OnClickItemListener {
     private View view;
-
     private String type;
     private RecyclerView mRcHome;
     private SharedPrefsUtils mSharedPrefsUtils;
@@ -37,29 +38,51 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener,
     private OnChangePlayListListener onChangePlayListListener;
     private HomeFragmentAdapter mHomeAdapter;
     private SongAdapter mSongsAdapter;
-    public void setOnChangePlayListListener(OnChangePlayListListener onChangePlayListListener){
-        this.onChangePlayListListener = onChangePlayListListener;
+    @Override
+    public void onClickPosition(int pos) {
+
     }
 
-    public static HomeFragment newInstance(ArrayList<String> strings) {
-        Bundle args = new Bundle();
-        args.putStringArrayList("most", strings);
-        HomeFragment fragment = new HomeFragment();
-        fragment.setArguments(args);
-        return fragment;
+    @Override
+    public void onClickType(String type, int pos) {
+
     }
 
+    @Override
+    public void onClickMusic(String nameChoose) {
+        mMusicManager.setCurrentMusic(nameChoose);
+        Log.d("FFF", "HomeFragment --- nameChoose: "+nameChoose);
+        ((HomeActivity) getActivity()).mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+    }
+
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Log.d("FFF", context.getClass().getSimpleName());
+        /*if (context instanceof  OnItemSelectedListener){
+            listener = (OnItemSelectedListener) context;
+        }else {
+            throw new ClassCastException(context.toString()
+                    + " must implement HomeFragment.OnItemSelectedListener");
+        }*/
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
+
+        mMusicManager = MusicManager.getInstance();
+        mMusicManager.setContext(getContext());
         mSongsAdapter = new SongAdapter(getActivity(), MusicManager.getInstance().newSongs(),
                 Constants.VALUE.NEW_SONGS);
         mSongsAdapter.setLimit(true);
         mSongsAdapter.notifyDataSetChanged();
-        mSongsAdapter.setOnClickItem(this);
+        mSongsAdapter.setOnClickItemListener(this);
+
     }
 
     @Nullable
@@ -68,8 +91,7 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener,
 
         view = inflater.inflate(R.layout.fragment_home, null);
 
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(getContext());
+
         initView();
         mHomeAdapter = new HomeFragmentAdapter(getActivity(),mSongsAdapter);
         mHomeAdapter.notifyDataSetChanged();
@@ -123,13 +145,5 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener,
         loadRecyclerViewData();
     }
 
-    @Override
-    public void onClick(int pos) {
 
-    }
-
-    @Override
-    public void onClick(String type, int pos) {
-        Log.d("LLL", "HomeFragment --- onclick: "+pos);
-    }
 }

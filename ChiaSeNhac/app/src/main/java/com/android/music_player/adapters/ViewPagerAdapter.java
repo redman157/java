@@ -12,26 +12,35 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.android.music_player.R;
+import com.android.music_player.fragments.HomeFragment;
+import com.android.music_player.fragments.LibraryFragment;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-public class ViewPagerAdapter extends FragmentPagerAdapter {
+public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private ArrayList<Fragment> mFragments = new ArrayList<>();
+
     private Context context;
     public TextView title;
     public ImageView icon;
+    private FragmentManager fragmentManager;
+    private HomeFragment homeFragment;
+    private LibraryFragment libraryFragment;
+    private Map<Integer, String> mFragmentTags;
     public ViewPagerAdapter(Context context,@NonNull FragmentManager manager) {
         super(manager);
         this.context = context;
+        this.fragmentManager = manager;
+
     }
 
     public void addFragment(Fragment fragment) {
         mFragments.add(fragment);
     }
-
 
     @Override
     public int getItemPosition(@NonNull Object object) {

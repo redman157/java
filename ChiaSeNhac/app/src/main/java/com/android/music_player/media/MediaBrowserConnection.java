@@ -77,7 +77,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         builder.putBoolean(Constants.INTENT.AUTO_PLAY, true);
 
         // Call prepare now so pressing play just works.
-        if (mediaId!= null) {
+        if (mediaId!= null && !mediaId.isEmpty()) {
             MusicManager.getInstance().setContext(context);
             // check replace music when click
 

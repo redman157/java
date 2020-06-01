@@ -1,20 +1,22 @@
-package com.android.music_player;
+package com.android.music_player.utils;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class OnSwipeTouchListener implements View.OnTouchListener {
+public class SwipeTouchUtils implements View.OnTouchListener {
 
     private final GestureDetector gestureDetector;
 
-    public OnSwipeTouchListener (Context ctx){
-        gestureDetector = new GestureDetector(ctx, new GestureListener());
+    public SwipeTouchUtils(Context context){
+        gestureDetector = new GestureDetector(context, new GestureListener());
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
         return gestureDetector.onTouchEvent(event);
     }
 
@@ -60,14 +62,18 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
     }
 
     public void onSwipeRight() {
+        Log.d("FFF","SwipeTouchUtils : Enter");
     }
 
     public void onSwipeLeft() {
+        Log.d("FFF","onSwipeLeft : Enter");
     }
 
     public void onSwipeTop() {
+        Log.d("FFF","onSwipeTop : Enter");
     }
 
     public void onSwipeBottom() {
+        Log.d("FFF","onSwipeBottom : Enter");
     }
 }

@@ -12,14 +12,18 @@ import com.android.music_player.utils.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 public class MusicLibrary {
     public static final TreeMap<String, MediaMetadataCompat> music = new TreeMap<>();
     private static final HashMap<String, Integer> albumRes = new HashMap<>();
     public static final HashMap<String, String> musicFileName = new HashMap<>();
-
+    private static final Set<SongModel> allData = new HashSet<>();
+    private static final Map<String , SongModel> allDataObject = new HashMap<>();
     public static String getRoot() {
         return "root";
     }
@@ -105,23 +109,25 @@ public class MusicLibrary {
     }
 
     public static void createMediaMetadataCompat(SongModel song) {
-            music.put(
-                    song.getSongName(),
-                    new MediaMetadataCompat.Builder()
-                            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, song.getSongName())
-                            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.getAlbum())
-                            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.getArtist())
-                            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getTime())
-                            .putString(MediaMetadataCompat.METADATA_KEY_GENRE, song.getGenres())
-                            .putString(
-                                    MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
-                                    getAlbumArtUri(song.getAlbumID()))
-                            .putString(
-                                    MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI,
-                                    getAlbumArtUri(song.getAlbumID()))
-                            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.getSongName())
-                            .build());
-            albumRes.put(song.getSongName(), Integer.valueOf(song.getAlbumID()));
-            musicFileName.put(song.getSongName(), song.getPath());
+        music.put(
+                song.getSongName(),
+                new MediaMetadataCompat.Builder()
+                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, song.getSongName())
+                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.getAlbum())
+                        .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.getArtist())
+                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getTime())
+                        .putString(MediaMetadataCompat.METADATA_KEY_GENRE, song.getGenres())
+                        .putString(
+                                MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
+                                getAlbumArtUri(song.getAlbumID()))
+                        .putString(
+                                MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI,
+                                getAlbumArtUri(song.getAlbumID()))
+                        .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.getSongName())
+                        .build());
+        albumRes.put(song.getSongName(), Integer.valueOf(song.getAlbumID()));
+        musicFileName.put(song.getSongName(), song.getPath());
+        allData.add(song);
+        allDataObject.put(song.getSongName(), song);
     }
 }

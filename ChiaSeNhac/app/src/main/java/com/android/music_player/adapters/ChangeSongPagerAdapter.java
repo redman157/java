@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.fragments.ChangeSongFragment;
-import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements OnClickItem {
+public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements OnClickItemListener {
     private Context context;
     private ArrayList<Fragment> fragments=  new ArrayList<>();
     private ArrayList<SongModel> mSongModels;
@@ -59,23 +59,6 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
         return POSITION_NONE;
     }
 
-    @Override
-    public void onClick(int pos) {
-       /* MusicManager.getInstance().setPosition(pos - 1);
-
-        if (((PlayActivity)context).isShuffle){
-            Utils.NextMediaService(context, Constants.VALUE.SHUFFLE, mMusicManager.getPosition());
-        }else {
-            Utils.NextMediaService(context, mMusicManager.getType(), mMusicManager.getPosition());
-        }*/
-
-    }
-
-    @Override
-    public void onClick(String type, int index) {
-
-    }
-
     @NonNull
     @Override
     public Fragment getItem(int position) {
@@ -92,6 +75,21 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         super.destroyItem(container, position, object);
+
+    }
+
+    @Override
+    public void onClickPosition(int pos) {
+
+    }
+
+    @Override
+    public void onClickType(String type, int pos) {
+
+    }
+
+    @Override
+    public void onClickMusic(String nameChoose) {
 
     }
 

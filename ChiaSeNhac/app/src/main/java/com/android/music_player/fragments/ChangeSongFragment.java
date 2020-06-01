@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.R;
 import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
-import com.android.music_player.interfaces.OnClickItem;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
@@ -55,11 +55,11 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     public ArrayList<SongModel> getMusicMain() {
         return musicMain;
     }
-    private OnClickItem onClickItem;
+    private OnClickItemListener onClickItemListener;
 
     private MediaMetadataCompat mMediaMetadataCompat;
-    public ChangeSongFragment(OnClickItem onClickItem) {
-        this.onClickItem = onClickItem;
+    public ChangeSongFragment(OnClickItemListener onClickItemListener) {
+        this.onClickItemListener = onClickItemListener;
 
     }
     private Dialog mDlAddPlayList, mDlAddMusic, mDlAllPlayList;
@@ -138,7 +138,7 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
                 for (int i = 0; i < mSongModels.size(); i++) {
                     if (mSongModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
                         mMusicAdapter.setPosition(i);
-                        mMusicAdapter.setOnClick(onClickItem);
+                        mMusicAdapter.setOnClick(onClickItemListener);
                         DialogUtils.showSelectSong(getContext(),mMusicAdapter, i);
                     }
                 }

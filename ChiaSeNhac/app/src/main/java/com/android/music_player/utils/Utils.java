@@ -14,6 +14,8 @@ import com.android.music_player.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class Utils {
@@ -153,24 +155,14 @@ public class Utils {
         }
     }
 
-
-    public static void morph(Context context, boolean isShowingAndroid, ImageButton imageButton) {
-
-        AnimatedVectorDrawable drawablePlay =
-                (AnimatedVectorDrawable) context.getDrawable(R.drawable.consolidated_animated_play);
-        AnimatedVectorDrawable drawablePause =
-                (AnimatedVectorDrawable) context.getDrawable(R.drawable.consolidated_animated_pause);
-
-        AnimatedVectorDrawable prevDrawable = isShowingAndroid ? drawablePause : drawablePlay;
-        if (prevDrawable != null && prevDrawable.isRunning()) {
-            prevDrawable.stop();
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
         }
-
-        AnimatedVectorDrawable currentDrawable = isShowingAndroid ? drawablePlay : drawablePause;
-        imageButton.setImageDrawable(currentDrawable);
-        if (currentDrawable != null) {
-            currentDrawable.start();
-        }
-
+        return null;
     }
+
+
 }

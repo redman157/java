@@ -16,8 +16,6 @@ import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.activities.SongActivity;
 import com.android.music_player.adapters.SongAdapter;
-import com.android.music_player.interfaces.OnChangePlayListListener;
-import com.android.music_player.interfaces.OnClickItem;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
@@ -83,11 +81,7 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mImg_Shuffle_All.setOnClickListener(this);
         mBtnViewAll.setOnClickListener(this);
 
-    /*    mSongsAdapter = new SongAdapter(mActivity, MusicManager.getInstance().newSongs(),
-                Constants.VALUE.NEW_SONGS);
-        mSongsAdapter.setLimit(true);
-        mSongsAdapter.notifyDataSetChanged();
-        mSongsAdapter.setOnClickItem(this);*/
+
         mRc_Recently_Add.setAdapter(mSongsAdapter);
         mRc_Recently_Add.setNestedScrollingEnabled(false);
         mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(mActivity,

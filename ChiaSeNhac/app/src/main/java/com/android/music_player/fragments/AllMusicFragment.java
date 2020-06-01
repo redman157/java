@@ -1,14 +1,10 @@
-package com.android.music_player.activities;
+package com.android.music_player.fragments;
 
-import android.app.Dialog;
-import android.content.Intent;
-import android.os.Build;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.media.MediaMetadataCompat;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -16,120 +12,115 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import com.android.music_player.IconView;
 import com.android.music_player.R;
 import com.android.music_player.adapters.ViewPagerAdapter;
-import com.android.music_player.fragments.ListMusicFragment;
-import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
-import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.ArrayList;
-
-@RequiresApi(api = Build.VERSION_CODES.M)
-public class SongActivity extends AppCompatActivity implements
-        TabLayout.OnTabSelectedListener,ViewPager.OnPageChangeListener,
-        View.OnClickListener{
-    public LinearLayout mLl_Play_Media;
-    public IconView mImgAlbumId;
-
-    private SharedPrefsUtils mSharedPrefsUtils;
-    public TextView mTextArtist, mTextTitle;
+public class AllMusicFragment extends Fragment implements View.OnClickListener,
+        ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener {
+    private MusicManager mMusicManager;
+    private ImageButton mBtnPlayPause;
     private Toolbar mToolBar;
     private Button mBtnTitle;
-
-    public int chooseSong;
-    private ImageButton mBtnPlayPause;
-    public ImageView mImgMedia;
-    private MusicManager mMusicManager;
-    private ActionBar actionBar;
-    private boolean receiverRegistered;
-    private View collapsingProfileHeaderView;
-    private boolean isPlaying;
+    public LinearLayout mLl_Play_Media;
+    public ImageView mImgAlbumId;
+    private SharedPrefsUtils mSharedPrefsUtils;
     public ImageView profileImage;
     public TextView profileName, profileArtist, profileAlbum;
     private TabLayout mTabLayoutSong;
     private ViewPagerAdapter mViewPagerAdapter;
     private ViewPager mViewPagerSong;
+    private View collapsingProfileHeaderView;
     @Override
-    protected void onStart() {
-        super.onStart();
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(this);
-        setViewMusic();
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        //is called when a fragment is connected to an activity.
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_song);
         mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(this);
-        initView();
-        mSharedPrefsUtils = new SharedPrefsUtils(this);
-
-        setSupportActionBar(mToolBar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        assignView();
+        mMusicManager.setContext(getContext());
+        mSharedPrefsUtils = new SharedPrefsUtils(getContext());
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // Defines the xml file for the fragment
+        return inflater.inflate(R.layout.fragment_all_song, container, false);
     }
 
-    public void setViewMusic(){
-        if (mMusicManager.getCurrentMusic() != null) {
-            MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
-                    mMusicManager.getCurrentMusic().getSongName());
 
-            mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
-            mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
-            mImgMedia.setImageBitmap(metadataCompat.getBitmap(Constants.METADATA.AlbumID));
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        // is called after onCreateView()
+        // and ensures that the fragment's root view is non-null. Any view setup should happen here. E.g., view lookups, attaching listeners.
+        // Setup any handles to view objects here
+        initView(view);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // is called when host activity has completed its onCreate() method.
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolBar);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mBtnTitle.setOnClickListener(this);
+        mBtnPlayPause.setOnClickListener(this);
+        mLl_Play_Media.setOnClickListener(this);
+        setupViewPager(mViewPagerSong);
+    }
+    private void setupViewPager(ViewPager viewPager){
+        mViewPagerAdapter = new ViewPagerAdapter(getContext(),getActivity().getSupportFragmentManager());
+        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
+        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
+        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
+        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
+
+        viewPager.setAdapter(mViewPagerAdapter);
+        viewPager.setCurrentItem(0);
+        viewPager.addOnPageChangeListener(this);
+        viewPager.setOnClickListener(this);
+
+        mTabLayoutSong.setupWithViewPager(viewPager);
+
+        for (int i = 0; i < mTabLayoutSong.getTabCount(); i++) {
+            mTabLayoutSong.getTabAt(i).setCustomView(mViewPagerAdapter.getTabSong(i));
         }
+        mTabLayoutSong.addOnTabSelectedListener(this);
     }
 
 
-    public void setSongCurrent(ArrayList<SongModel> mSongs, int position){
-        SongModel songModel = mSongs.get(position);
-        mMusicManager.setPosition(position);
-        mMusicManager.setAlbumID(mSongs.get(position).getAlbumID());
+    private void initView(View view) {
+        collapsingProfileHeaderView = view.findViewById(R.id.collapseActionView);
+        mViewPagerSong = view.findViewById(R.id.vp_AllMusic);
+        mTabLayoutSong = view.findViewById(R.id.tab_AllMusic);
+        profileAlbum = collapsingProfileHeaderView.findViewById(R.id.profileMisc);
+        profileImage = collapsingProfileHeaderView.findViewById(R.id.profileImage);
+        profileName = collapsingProfileHeaderView.findViewById(R.id.profileName);
+        profileArtist = collapsingProfileHeaderView.findViewById(R.id.profileSubtitle);
+        mToolBar = view.findViewById(R.id.tb_AllMusic);
 
-        mTextArtist.setText(songModel.getArtist());
-        mTextTitle.setText(songModel.getSongName());
-
-        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                songModel.getAlbumID(),
-                profileImage);
-
-        ImageUtils.getInstance(SongActivity.this).getSmallImageByPicasso(
-                songModel.getAlbumID(),
-                mImgMedia);
-
-        ImageUtils.getInstance(this).getSmallImageByPicasso(
-                songModel.getAlbumID(),
-                mImgAlbumId);
-
-        profileName.setText(songModel.getSongName());
-        profileArtist.setText(songModel.getArtist());
-        profileAlbum.setText(songModel.getAlbum());
+        mBtnPlayPause = view.findViewById(R.id.imbt_Play_media);
+        mBtnTitle = view.findViewById(R.id.btn_title_media);
+        mLl_Play_Media = view.findViewById(R.id.ll_play_media);
+        mImgAlbumId = view.findViewById(R.id.img_AlbumId);
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        ((AppCompatActivity)getActivity()).getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -252,52 +243,7 @@ public class SongActivity extends AppCompatActivity implements
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void initView() {
-        collapsingProfileHeaderView = findViewById(R.id.collapseActionView);
-        mViewPagerSong = findViewById(R.id.vp_AllSong);
-        mTabLayoutSong = findViewById(R.id.tab_SongActivity);
-        profileAlbum = collapsingProfileHeaderView.findViewById(R.id.profileMisc);
-        profileImage = collapsingProfileHeaderView.findViewById(R.id.profileImage);
-        profileName = collapsingProfileHeaderView.findViewById(R.id.profileName);
-        profileArtist = collapsingProfileHeaderView.findViewById(R.id.profileSubtitle);
-        mToolBar = findViewById(R.id.tb_SongActivity);
-        mTextArtist = findViewById(R.id.text_artists_media);
-        mTextTitle = findViewById(R.id.text_title_media);
-        mImgMedia = findViewById(R.id.img_albumArt_media);
-        mBtnPlayPause = findViewById(R.id.imbt_Play_media);
-        mBtnTitle = findViewById(R.id.btn_title_media);
-        mLl_Play_Media = findViewById(R.id.ll_play_media);
-        mImgAlbumId = findViewById(R.id.img_AlbumId);
-    }
-
-    private void assignView() {
-        mBtnTitle.setOnClickListener(this);
-        mBtnPlayPause.setOnClickListener(this);
-        mLl_Play_Media.setOnClickListener(this);
-        setupViewPager(mViewPagerSong);
-    }
-
-    private void setupViewPager(ViewPager viewPager){
-        mViewPagerAdapter = new ViewPagerAdapter(this,getSupportFragmentManager());
-        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
-        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
-        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
-        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
-
-        viewPager.setAdapter(mViewPagerAdapter);
-        viewPager.setCurrentItem(0);
-        viewPager.addOnPageChangeListener(this);
-        viewPager.setOnClickListener(this);
-
-        mTabLayoutSong.setupWithViewPager(viewPager);
-
-        for (int i = 0; i < mTabLayoutSong.getTabCount(); i++) {
-            mTabLayoutSong.getTabAt(i).setCustomView(mViewPagerAdapter.getTabSong(i));
-        }
-        mTabLayoutSong.addOnTabSelectedListener(this);
-    }
+    }*/
 
     @Override
     public void onClick(View v) {
@@ -346,5 +292,3 @@ public class SongActivity extends AppCompatActivity implements
 
     }
 }
-
-

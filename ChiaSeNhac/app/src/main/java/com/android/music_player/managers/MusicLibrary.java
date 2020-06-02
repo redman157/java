@@ -23,7 +23,7 @@ public class MusicLibrary {
     private static final HashMap<String, Integer> albumRes = new HashMap<>();
     public static final HashMap<String, String> musicFileName = new HashMap<>();
     private static final Set<SongModel> allData = new HashSet<>();
-    private static final Map<String , SongModel> allDataObject = new HashMap<>();
+    public static final Map<String , SongModel> allSongModel = new HashMap<>();
     public static String getRoot() {
         return "root";
     }
@@ -128,6 +128,6 @@ public class MusicLibrary {
         albumRes.put(song.getSongName(), Integer.valueOf(song.getAlbumID()));
         musicFileName.put(song.getSongName(), song.getPath());
         allData.add(song);
-        allDataObject.put(song.getSongName(), song);
+        allSongModel.put(song.getSongName(), song);
     }
 }

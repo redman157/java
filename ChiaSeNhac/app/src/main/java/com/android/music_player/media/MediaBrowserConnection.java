@@ -9,7 +9,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.media.MediaBrowserServiceCompat;
 
-import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.services.MediaService;
 import com.android.music_player.utils.Constants;
@@ -28,6 +27,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     private MediaControllerCompat mediaController;
     private Context context;
     private TextView mTextLeftTime,mTextRightTime;
+    private boolean isPlay;
     public MediaSeekBar getSeekBarAudio() {
         return mSeekBarAudio;
     }
@@ -41,8 +41,14 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         return mediaId;
     }
 
+    public void setMediaId(String mediaId, boolean isPlay) {
+        this.mediaId = mediaId;
+        this.isPlay = isPlay;
+    }
+
     public void setMediaId(String mediaId) {
         this.mediaId = mediaId;
+
     }
 
     public MediaBrowserConnection(Context context) {
@@ -53,11 +59,8 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     @Override
     protected void onConnected(@NonNull MediaControllerCompat mediaController) {
 
-        if (context instanceof PlayActivity) {
-            Log.d(TAG, mediaController.getPlaybackInfo().getPlaybackType()+"");
-            ((PlayActivity)context).mSeekBarAudio.setMediaController(mediaController,
-                    mTextLeftTime, mTextRightTime);
-        }
+        Log.d(TAG, mediaController.getPlaybackInfo().getPlaybackType()+"");
+        mSeekBarAudio.setMediaController(mediaController,mTextLeftTime, mTextRightTime);
     }
 
     @Override
@@ -74,18 +77,19 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
 
 
         Utils.Builder builder = new Utils.Builder();
-        builder.putBoolean(Constants.INTENT.AUTO_PLAY, true);
+        builder.putBoolean(Constants.INTENT.AUTO_PLAY, isPlay);
 
         // Call prepare now so pressing play just works.
         if (mediaId!= null && !mediaId.isEmpty()) {
             MusicManager.getInstance().setContext(context);
             // check replace music when click
 
-            if (MusicManager.getInstance().getCurrentMusic() != null && !mediaId.equals(MusicManager.getInstance().getCurrentMusic().getSongName())){
+            if (MusicManager.getInstance().getCurrentMusic() != null && !getMediaId().equals(MusicManager.getInstance().getCurrentMusic().getSongName())){
                 mediaController.getTransportControls().stop();
             }
             mediaController.getTransportControls().prepareFromMediaId(mediaId,
-                    (context instanceof PlayActivity)?  builder.generate().getBundle() : null);
+                     builder.generate().getBundle());
+            Log.d("CCC", "MediaBrowserConnection --- onChildrenLoaded: "+mediaId + " --- isPlay: "+isPlay);
         }
     }
 }

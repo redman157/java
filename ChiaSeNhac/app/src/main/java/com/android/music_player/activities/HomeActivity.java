@@ -1,5 +1,6 @@
 package com.android.music_player.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -26,17 +29,19 @@ import androidx.fragment.app.FragmentTransaction;
 import com.android.music_player.BaseActivity;
 import com.android.music_player.R;
 import com.android.music_player.fragments.MainFragment;
-import com.android.music_player.interfaces.OnChangePlayListListener;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.media.MediaBrowserConnection;
 import com.android.music_player.media.MediaBrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
+import com.android.music_player.media.MediaSeekBar;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
+import com.android.music_player.utils.SwipeTouchUtils;
 import com.android.music_player.utils.Utils;
+import com.google.android.material.appbar.AppBarLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
@@ -46,29 +51,38 @@ import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
         MediaBrowserListener.OnPlayPause, SlidingUpPanelLayout.PanelSlideListener{
-    private ImageView mImgChangeState;
-    private RelativeLayout mLayoutChangeState;
-    private LinearLayout mLayoutPlayMedia, mLlChangeState, mLayoutChangeMusic, mLayoutSeeMore, mLayoutControlSong;
-    private View mLayoutMedia;
     private String tag = "BBB";
-    private ImageUtils mImageUtils;
-    private View mViewPlayMedia;
-    public ImageView mImgAlbumArt, mImgChangeMusic;
-    public TextView mTextTitle, mTextArtist;
+    private RelativeLayout mViewControlMedia;
+    private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
+    private View mLayoutMedia;
+    public ImageView mImgAlbumArt, mImgChangeMusic, mImgBack;
     public Button mBtnTitle;
-    private SharedPrefsUtils mSharedPrefsUtils;
     private ArrayList<SongModel> mSongs;
     private MusicManager mMusicManager;
-    public ImageButton mBtnPlayPause;
-    private boolean isPlaying = false;
-    public int chooseSong;
-    public String type;
+    public ImageButton mBtnPlayPauseMedia , mBtnPlayPauseMusic;
+    private ImageButton mBtnPrev, mBtnRepeat, mBtnNext, mBtnSetTime,
+            mBtnSeeMore, mBtnAbout, mBtnEqualizer, mBtnFavorite;
+    public MediaSeekBar mSeekBarAudio;
+    private TextView mTextLeftTime, mTextRightTime, mTextTitleMedia, mTextArtistMedia
+            , mTextTitleMusic, mTextArtistMusic , mTextAlbumMusic;
+    private ImageView mImgViewQueue, mImgAddToPlayList, mImgChangeMedia;
+
     public SlidingUpPanelLayout mSlidingUpPanelLayout;
     private Toolbar mToolBar;
-    private OnChangePlayListListener onChangePlayListListener;
     private MediaBrowserHelper mMediaBrowserHelper;
     private MediaBrowserListener mBrowserListener;
     private FrameLayout mLayoutPlaceHolder;
+    private AppBarLayout mAppBarLayout;
+
+    private boolean isPlaying = false;
+    public String type;
+    public MediaBrowserConnection browserConnection;
+    private SharedPrefsUtils mSharedPrefsUtils;
+    private int step = 0;
+    private float alpha = 0 ;
+    private boolean isMore, isSetup;
+    private String nameChoose;
+
 
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
@@ -104,13 +118,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onStopService() {
+        mSeekBarAudio.disconnectController();
         mMediaBrowserHelper.onStop();
     }
 
     @Override
     public void initService() {
-        MediaBrowserConnection browserConnection = MusicManager.getInstance().getMediaBrowserConnection();
-        browserConnection.setMediaId(mMusicManager.getMediaId());
+        browserConnection = mMusicManager.getMediaBrowserConnection();
+        browserConnection.setSeekBarAudio(mSeekBarAudio, mTextLeftTime, mTextRightTime);
+        browserConnection.setMediaId(mMusicManager.getCurrentMusic().getSongName(), false);
         mMediaBrowserHelper = browserConnection;
 
         mBrowserListener = new MediaBrowserListener();
@@ -124,23 +140,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(this);
         mSongs = mMusicManager.getListSong();
-        mImageUtils = ImageUtils.getInstance(this);
-        /*if (mSlidingUpPanelLayout != null) {
-            mSlidingUpPanelLayout.setAnchorPoint(0.3f); // slide up 50% then stop
-
-        }*/
-        if (mMusicManager.getCurrentMusic() == null){
-            mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
-            mMusicManager.setMediaId("");
-        }else {
-            mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
-            mMusicManager.setMediaId(mMusicManager.getCurrentMusic().getSongName());
-        }
+        ImageUtils.getInstance(this);
     }
 
     @Override
     public void changeFragment(Fragment fragment) {
-
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_placeholder, fragment);
 //        fragmentTransaction1.addToBackStack(null);
@@ -156,7 +160,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag("MainFragment");
         changeFragment(mainFragment);
-        setViewMusic(mMusicManager.getCurrentMusic());
+        setViewMusic(mMusicManager.getCurrentMusic().getSongName(), false);
     }
 
 
@@ -173,7 +177,29 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         initView();
         setupToolbar();
         assignView();
-        Utils.UpdateButtonPlay(mBtnPlayPause, isPlaying);
+        Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlaying);
+    }
+
+    private void setMode(int repeat) {
+        switch (repeat){
+            case 0:
+                mBtnRepeat.setImageResource(R.drawable.app_repeat_active);
+                mMediaBrowserHelper.getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE);
+                break;
+            case 1:
+                mBtnRepeat.setImageResource(R.drawable.app_repeat);
+                mMediaBrowserHelper.getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE);
+                break;
+            case 2:
+                mBtnRepeat.setImageResource(R.drawable.app_shuffle_white);
+                mMediaBrowserHelper.getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
+                break;
+            case 3:
+                mBtnRepeat.setImageResource(R.drawable.app_shuffle_black);
+
+                mMediaBrowserHelper.getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                break;
+        }
     }
 
     private void setupToolbar() {
@@ -182,54 +208,126 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     public void setPlayMedia(String songName){
-        mImgChangeState
+        MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
+                songName);
+
+        ImageUtils.getInstance(this).getSmallImageByPicasso(
+                String.valueOf(MusicLibrary.getAlbumRes(songName)),mImgChangeMedia
+        );
+
+        mTextTitleMusic.setText(metadataCompat.getString(Constants.METADATA.Title));
+        mTextAlbumMusic.setText(metadataCompat.getString(Constants.METADATA.Album));
+        mTextArtistMusic.setText(metadataCompat.getString(Constants.METADATA.Artist));
+
     }
 
-
-
-    public void setViewMusic(SongModel songModel){
-        if (songModel != null) {
-            MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
-                    songModel.getSongName());
-
-            mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
-            mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
-            mImgAlbumArt.setImageBitmap(metadataCompat.getBitmap(Constants.METADATA.AlbumID));
+    public boolean setHiddenSliding(SongModel songModel){
+        if (songModel == null){
+            Log.d("CCC", "HomeActivity --- setViewMusic: songmodel null");
+            mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
+//            mMusicManager.setMediaId("");
+            return false;
+        }else {
+            Log.d("CCC", "HomeActivity --- setViewMusic: songmodel khác null");
+            mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
+//            mMusicManager.setMediaId(mMusicManager.getCurrentMusic().getSongName());
+            return true;
         }
     }
 
+    public void setViewMusic(String songName, boolean isSetup){
 
-    private void initView() {
-        mLayoutChangeMusic = findViewById(R.id.ll_vp_change_music);
-        mImgChangeMusic = findViewById(R.id.item_img_ChangeMusic);
-        mLayoutControlSong = findViewById(R.id.ll_control_song);
-        mLayoutSeeMore = findViewById(R.id.ll_see_more);
-        mLayoutMedia = findViewById(R.id.layout_main_media);
+        this.nameChoose = songName;
+        MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
+                songName);
 
-        mImgChangeState = findViewById(R.id.img_change_state);
-        mLayoutChangeState = findViewById(R.id.rl_change_state);
-        mLayoutPlayMedia = findViewById(R.id.ll_play_media);
-        mSlidingUpPanelLayout = findViewById(R.id.activity_main);
-        mToolBar = findViewById(R.id.tb_HomeActivity);
-        mViewPlayMedia = findViewById(R.id.layout_play_media);
+        mTextArtistMedia.setText(metadataCompat.getString(Constants.METADATA.Artist));
+        mTextTitleMedia.setText(metadataCompat.getString(Constants.METADATA.Title));
+        ImageUtils.getInstance(this).getSmallImageByPicasso(
+                String.valueOf(MusicLibrary.getAlbumRes(metadataCompat.getString(Constants.METADATA.Title))),
+                mImgAlbumArt);
 
-        mTextTitle = mViewPlayMedia.findViewById(R.id.text_title_media);
-        mTextArtist = mViewPlayMedia.findViewById(R.id.text_artists_media);
-        mBtnPlayPause = mViewPlayMedia.findViewById(R.id.imbt_Play_media);
-        mBtnTitle = mViewPlayMedia.findViewById(R.id.btn_title_media);
-        mImgAlbumArt = mViewPlayMedia.findViewById(R.id.img_albumArt_media);
-        mLayoutPlaceHolder = findViewById(R.id.fl_placeholder);
+
+        setPlayMedia(songName);
+
+     /*   if (isSetup){
+            mSlidingUpPanelLayout.setPanelState(PanelState.EXPANDED);
+        }else {
+            mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
+        }*/
     }
 
+    private void initView() {
+        mSlidingUpPanelLayout = findViewById(R.id.activity_main);
+        mToolBar = findViewById(R.id.tb_HomeActivity);
+        mLayoutPlaceHolder = findViewById(R.id.fl_placeholder);
+        mAppBarLayout = findViewById(R.id.appBarLayout);
+        mLayoutMedia = findViewById(R.id.layout_main_media);
 
+        // view group mLayoutMedia
+        mLayoutSeeMore = mLayoutMedia.findViewById(R.id.ll_see_more);
+        mLlChangeMusic = mLayoutMedia.findViewById(R.id.ll_change_music);
+        mViewControlMedia = mLayoutMedia.findViewById(R.id.rl_change_state);
+        mViewPanelMedia = mLayoutMedia.findViewById(R.id.ll_play_media);
+        mLayoutControlSong = mLayoutMedia.findViewById(R.id.ll_control_song);
+
+        // status play media
+        mImgAlbumArt = mLayoutMedia.findViewById(R.id.img_albumArt_media);
+        mTextTitleMedia = mLayoutMedia.findViewById(R.id.text_title_media);
+        mTextArtistMedia = mLayoutMedia.findViewById(R.id.text_artists_media);
+        mBtnPlayPauseMedia = mLayoutMedia.findViewById(R.id.imbt_Play_media);
+
+        // thông tin bài hát
+        mImgBack = mLayoutMedia.findViewById(R.id.img_change_state);
+        mTextTitleMusic = mLayoutMedia.findViewById(R.id.text_title);
+        mTextArtistMusic = mLayoutMedia.findViewById(R.id.text_artist);
+        mTextAlbumMusic = mLayoutMedia.findViewById(R.id.text_album);
+        mImgViewQueue = mLayoutMedia.findViewById(R.id.item_img_viewQueue);
+        mImgAddToPlayList = mLayoutMedia.findViewById(R.id.item_img_addToPlayListImageView);
+        mImgChangeMedia = mLayoutMedia.findViewById(R.id.img_album_art);
+
+        // linear control song
+        mBtnAbout = mLayoutMedia.findViewById(R.id.icon_about);
+        mBtnTitle = mLayoutMedia.findViewById(R.id.btn_title_media);
+        mBtnSetTime = mLayoutMedia.findViewById(R.id.icon_set_time);
+        mBtnEqualizer = mLayoutMedia.findViewById(R.id.icon_equalizer);
+        mBtnFavorite = mLayoutMedia.findViewById(R.id.icon_favorite);
+        mImgBack = mLayoutMedia.findViewById(R.id.img_change_state);
+
+        // linear seekbar time
+        mTextLeftTime = mLayoutMedia.findViewById(R.id.text_leftTime);
+        mSeekBarAudio = mLayoutMedia.findViewById(R.id.sb_Time);
+        mTextRightTime = mLayoutMedia.findViewById(R.id.text_rightTime);
+
+        // linear play media
+        mBtnRepeat = mLayoutMedia.findViewById(R.id.icon_change_mode);
+        mBtnPrev = mLayoutMedia.findViewById(R.id.icon_prev);
+        mBtnPlayPauseMusic = mLayoutMedia.findViewById(R.id.icon_play);
+        mBtnNext = mLayoutMedia.findViewById(R.id.icon_next);
+        mBtnSeeMore = mLayoutMedia.findViewById(R.id.icon_image_More);
+    }
 
     private void assignView(){
         mSlidingUpPanelLayout.addPanelSlideListener(this);
 
-        mBtnPlayPause.setOnClickListener(this);
+        mLayoutSeeMore.setOnClickListener(this);
+
+
+        mBtnPlayPauseMedia.setOnClickListener(this);
         mBtnTitle.setOnClickListener(this);
-        mViewPlayMedia.setOnClickListener(this);
-        mImgChangeState.setOnClickListener(this);
+        mBtnFavorite.setOnClickListener(this);
+        mBtnTitle.setOnClickListener(this);
+        mBtnSetTime.setOnClickListener(this);
+        mBtnEqualizer.setOnClickListener(this);
+        mImgBack.setOnClickListener(this);
+        mBtnRepeat.setOnClickListener(this);
+        mBtnPrev.setOnClickListener(this);
+        mBtnPlayPauseMusic.setOnClickListener(this);
+        mBtnNext.setOnClickListener(this);
+        mBtnSeeMore.setOnClickListener(this);
+        mBtnAbout.setOnClickListener(this);
+
+        mViewControlMedia.setOnTouchListener(new SwipeTouchUtils(this));
     }
 
     @Override
@@ -241,6 +339,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+
             case R.id.action_searchBtn:
                 finish();
                 startActivity(new Intent(this, SearchActivity.class));
@@ -264,7 +363,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 startActivity(new Intent(this, EqualizerActivity.class));
                 break;
             case R.id.changeTheme:
-
                 final Dialog dialog = new Dialog(this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_choose_accent_color);
@@ -356,28 +454,73 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onClick(View view) {
+
         switch (view.getId()){
+            case R.id.icon_about:
+                break;
+            case R.id.icon_set_time:
+                break;
+            case R.id.icon_equalizer:
+                startActivity(new Intent(this, EqualizerActivity.class));
+                break;
+            case R.id.icon_favorite:
+                break;
+            case R.id.icon_change_mode:
+                step = step + 1;
+                if (step == 4){
+                    step = 0;
+                }
+                setMode(step);
+                break;
+            case R.id.icon_prev:
+                mMediaBrowserHelper.getTransportControls().skipToPrevious();
+                break;
+            case R.id.icon_play:
 
             case R.id.imbt_Play_media:
+
                 if (isPlaying){
-                    Utils.UpdateButtonPlay(mBtnPlayPause, true);
-                    isPlaying = false;
+                    mMediaBrowserHelper.getTransportControls().pause();
                 }else {
-                    Utils.UpdateButtonPlay(mBtnPlayPause, false);
-                    isPlaying = true;
+                    mMediaBrowserHelper.getTransportControls().playFromMediaId(nameChoose, null);
                 }
                 break;
-            case R.id.layout_play_media:
+            /*case R.id.icon_next:
 
+                break;*/
+            case R.id.icon_image_More:
+                if (!isMore){
+                    mLayoutSeeMore.setAlpha(1);
+                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_black);
+                    isMore = true;
+                    Animation fadeIn = AnimationUtils.loadAnimation(HomeActivity.this,R.anim.fadein);
+                    mLayoutSeeMore.setAnimation(fadeIn);
+                    mLayoutSeeMore.setVisibility(View.VISIBLE);
+                }else {
+                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_white);
+
+                    isMore = false;
+                    mLayoutSeeMore.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLayoutSeeMore.setVisibility(View.GONE);
+                        }
+                    });
+                }
                 break;
             case R.id.btn_title_media:
+                if (mSlidingUpPanelLayout != null &&
+                        (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED)){
+                    mSlidingUpPanelLayout.setPanelState(PanelState.EXPANDED);
 
+                }
+                break;
             case R.id.img_change_state:
-             /*   if (mSlidingUpPanelLayout != null &&
+                if (mSlidingUpPanelLayout != null &&
                         (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED || mSlidingUpPanelLayout.getPanelState() == PanelState.ANCHORED)) {
                     mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
-                }*/
-
+                }
+                Log.d("CCC","hehe");
                 break;
             case R.id.menu_search:
                 Intent iSearch = new Intent(this, SearchActivity.class);
@@ -387,6 +530,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case R.id.vp_Home:
                 break;
         }
+
     }
 
     @Override
@@ -400,36 +544,42 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onCheck(boolean isPlay, PlaybackStateCompat state) {
-        Utils.UpdateButtonPlay(mBtnPlayPause, isPlay);
+        // compare status play don't update button play
+        if (isPlaying == isPlay){
+            return;
+        }
+        this.isPlaying = isPlay;
+
+        Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlay);
+        Utils.UpdateButtonPlay(mBtnPlayPauseMusic, isPlay);
     }
 
     @Override
     public void onNext(boolean isNext) {
-
+        if (isNext){
+            mMediaBrowserHelper.getTransportControls().skipToNext();
+        }
     }
 
     @Override
     public void onMediaMetadata(MediaMetadataCompat mediaMetadata) {
-
+        setViewMusic(mediaMetadata.getString(Constants.METADATA.Title), true);
     }
 
     // Panel change state
     @Override
     public void onPanelSlide(View panel, float slideOffset) {
         Log.d("UUU", "onPanelSlide : "+slideOffset);
-        if (slideOffset == 0f) {
-            mLayoutPlayMedia.setAlpha(1f);
-        }else if (slideOffset > 0.3){
-            mLayoutPlayMedia.setAlpha(0.3f - slideOffset);
-            mLayoutPlayMedia.setVisibility(View.GONE);
+        alpha = slideOffset;
+        if (slideOffset > 0.3){
+            mViewPanelMedia.setVisibility(View.GONE);
+        }else {
+            mViewPanelMedia.setAlpha(slideOffset);
         }
-        else {
-            mLayoutPlayMedia.setAlpha(slideOffset);
-        }
-        mLayoutChangeState.setAlpha(slideOffset);
-
+        mViewControlMedia.setAlpha(alpha);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
         /**
@@ -439,20 +589,31 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
          *  HIDDEN ẩn thanh sliding,
          *  DRAGGING đang vuốt
          * **/
-        Log.d("III", "onPanelStateChanged previousState: "+previousState.toString() + " ---newState: "+newState.toString());
+        Log.d("III", "onPanelStateChanged previousState: " + previousState.toString() + " " +
+                "---newState: " + newState.toString());
 
-        switch (newState){
+        panel.findViewById(R.id.icon_next).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMediaBrowserHelper.getTransportControls().skipToNext();
+
+            }
+        });
+        switch (newState) {
             case EXPANDED:
-                mLayoutPlayMedia.setVisibility(View.GONE);
-                mSlidingUpPanelLayout.setTouchEnabled(false);
+                mViewPanelMedia.setVisibility(View.GONE);
+//                mSlidingUpPanelLayout.setTouchEnabled(false);
+
                 break;
             case COLLAPSED:
-                mLayoutPlayMedia.setAlpha(1);
-                mLayoutPlayMedia.setVisibility(View.VISIBLE);
-                mSlidingUpPanelLayout.setTouchEnabled(true);
+                mViewPanelMedia.setAlpha(1);
+                mViewPanelMedia.setVisibility(View.VISIBLE);
+
+//                mSlidingUpPanelLayout.setTouchEnabled(true);
                 break;
         }
-    }
 
+
+    }
 
 }

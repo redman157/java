@@ -50,8 +50,10 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener,
 
     @Override
     public void onClickMusic(String nameChoose) {
-        mMusicManager.setCurrentMusic(nameChoose);
+//        mMusicManager.setCurrentMusic(nameChoose);
         Log.d("FFF", "HomeFragment --- nameChoose: "+nameChoose);
+        ((HomeActivity) getActivity()).browserConnection.setMediaId(nameChoose, true);
+        ((HomeActivity) getActivity()).setViewMusic(nameChoose, false);
         ((HomeActivity) getActivity()).mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
     }
 
@@ -82,7 +84,6 @@ public class HomeFragment extends Fragment implements OnChangePlayListListener,
         mSongsAdapter.setLimit(true);
         mSongsAdapter.notifyDataSetChanged();
         mSongsAdapter.setOnClickItemListener(this);
-
     }
 
     @Nullable

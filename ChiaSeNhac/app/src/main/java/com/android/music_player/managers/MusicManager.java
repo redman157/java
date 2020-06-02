@@ -44,7 +44,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -160,24 +159,28 @@ public class MusicManager {
     }
 
     public SongModel getCurrentMusic(){
-        Random random = new Random();
+        String nameSong = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"");
+        ArrayList<SongModel> models = new ArrayList<>(mSongsMain);
 
-        String path = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"");
-
-        for (SongModel songModel : mSongsMain) {
-            if (songModel.getPath().equals(path)) {
-                return songModel;
-
+        if (nameSong.equals("")){
+            return models.get(Utils.randomInt());
+        }else {
+            SongModel song = null;
+            for (SongModel songModel : mSongsMain) {
+                if (songModel.getSongName().equals(nameSong)) {
+                    song = songModel;
+                    break;
+                }
             }
+            return song;
         }
-        return null;
-
     }
 
-    public void setCurrentMusic(String nameSong){
-
-        Log.d("CCC","setCurrentSong: " + nameSong);
-        mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, nameSong);
+    public void setCurrentMusic(String path){
+        Log.d("CCC","setCurrentSong: " + path);
+        // convert path --> music name
+        String musicName = Utils.getKeyByValue(MusicLibrary.musicFileName, path);
+        mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, musicName);
     }
 
     public int getPosition() {

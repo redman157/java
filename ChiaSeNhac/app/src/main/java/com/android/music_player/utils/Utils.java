@@ -11,11 +11,13 @@ import android.widget.Toast;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
 import com.android.music_player.R;
+import com.android.music_player.managers.MusicLibrary;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.TimeZone;
 
 public class Utils {
@@ -67,6 +69,11 @@ public class Utils {
             default:
                 return R.color.pink;
         }
+    }
+
+    public static int randomInt(){
+        Random rd = new Random();
+        return rd.nextInt(MusicLibrary.music.size());
     }
     public static void UpdateButtonPlay(ImageButton button, boolean isPlay){
         if (isPlay){

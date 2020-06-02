@@ -6,13 +6,13 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context=".activities.HomeActivity"
     android:gravity="bottom"
+    app:umanoOverlay= "false"
+    app:umanoFadeColor="@color/blackGrey"
     app:umanoPanelHeight="@dimen/_45sdp"
-    app:umanoShadowHeight="5dp"
-    app:umanoParallaxOffset="100dp"
-    app:umanoDragView="@+id/dragView">
+    app:umanoShadowHeight="4dp"
+    app:umanoParallaxOffset="100dp">
 
     <!-- MAIN CONTENT -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -20,7 +20,6 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-
             android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
@@ -34,7 +33,6 @@
                 app:layout_scrollFlags="snap|enterAlwaysCollapsed"
                 app:title="@string/app_name">
             <androidx.appcompat.widget.Toolbar
-
                 android:id="@+id/tb_HomeActivity"
                 android:layout_width="match_parent"
                 android:gravity="center"
@@ -46,25 +44,26 @@
                 app:layout_collapseMode="pin"
                 android:theme="@style/CustomToolBarStyle"
                 app:popupTheme="@style/CustomPopupStyle"/>
-
-
-
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:id="@+id/fl_placeholder"
+            android:clickable="true"
+            android:focusable="false"
+            android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!-- SLIDING LAYOUT -->
+
     <LinearLayout
         android:orientation="vertical"
-        android:clickable="false"
-        android:focusable="false"
         android:id="@+id/dragView"
+        android:clickable="true"
+        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <include layout="@layout/layout_main_media"

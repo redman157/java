@@ -3,23 +3,135 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="10">
     <LinearLayout
         android:layout_alignParentTop="true"
         android:id="@+id/ll_play_media"
+        android:layout_marginLeft="@dimen/_15sdp"
+        android:layout_marginRight="@dimen/_15sdp"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_45sdp"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/white" />
-        <include
-            layout="@layout/layout_play_media"
-            android:id="@+id/layout_play_media"/>
+        <LinearLayout xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            xmlns:app="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+
+            android:orientation="vertical"
+
+            android:background="@color/whiteOpaqueX2"
+            app:ignore="NamespaceTypo">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:weightSum="10"
+                android:background="?android:attr/selectableItemBackground">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    card_view:cardElevation="5dp"
+                    card_view:cardCornerRadius="5dp"
+                    android:layout_height="36dp">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:id="@+id/img_albumArt_media"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_music_notes_padded"/>
+
+                </androidx.cardview.widget.CardView>
+                <RelativeLayout
+                    android:layout_weight="9"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp">
+
+                    <Button
+                        android:id="@+id/btn_title_media"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:layout_marginEnd="?android:attr/actionBarSize"
+                        android:theme="@android:style/ThemeOverlay.Material.Dark" />
+
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout1"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:gravity="center"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginEnd="8dp">
+
+                        <ImageButton
+                            android:id="@+id/imbt_Play_media"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="?attr/selectableItemBackground"
+                            android:layout_alignParentTop="true"
+                            app:srcCompat="@drawable/avd_play_to_pause" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/relativeLayout5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/relativeLayout1"
+                        android:paddingEnd="16dp"
+                        android:paddingStart="8dp">
+
+                        <TextView
+                            android:id="@+id/text_title_media"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:ellipsize="marquee"
+                            android:singleLine="true"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:textColor="@color/blackGrey"
+                            android:textScaleX="1.05"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/text_artists_media"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_below="@+id/text_title_media"
+                            android:fontFamily="sans-serif"
+                            android:maxLines="1"
+                            android:paddingTop="0dp"
+                            android:textColor="@color/blackGrey"
+                            android:textScaleX="1.05"
+                            android:textSize="12sp" />
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -38,29 +150,30 @@
             android:background="@color/transparent"
             android:orientation="horizontal">
             <ImageView
-
                 android:id="@+id/img_change_state"
                 android:padding="@dimen/_10sdp"
                 android:layout_margin="7dp"
                 android:src="@drawable/ic_down_arrow_white"
                 android:layout_width="wrap_content"
                 android:scaleType="fitCenter"
-                android:background="?attr/selectableItemBackground"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/item_img_ChangeMusic"
+            android:id="@+id/img_album_art"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="0dp"
             android:alpha="0.7"
-            android:background="@color/white"
+            android:background="@color/whiteOpaque"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_music_notes_padded" />
+            android:src="@drawable/ic_music_notes_padded"
+            android:contentDescription="TODO"
+            tools:ignore="ContentDescription" />
 
         <LinearLayout
-            android:id="@+id/ll_vp_change_music"
+            android:id="@+id/ll_change_music"
             android:layout_above="@id/ll_see_more"
             android:layout_width="match_parent"
             android:orientation="vertical"
@@ -85,25 +198,20 @@
                             android:layout_gravity="bottom"
                             android:orientation="horizontal"
                             android:weightSum="10"
-
                             android:background="@color/transparent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-
 
                             <RelativeLayout
                                 android:layout_weight="7"
                                 android:id="@+id/relativeLayout6"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_centerVertical="true"
-                                android:layout_toStartOf="@+id/item_img_viewQueue"
                                 android:paddingLeft="@dimen/_8sdp"
                                 android:paddingRight="@dimen/_8sdp">
 
                                 <TextView
-                                    android:id="@+id/item_text_title"
+                                    android:id="@+id/text_title"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentTop="true"
@@ -113,12 +221,12 @@
                                     android:textSize="18sp" />
 
                                 <TextView
-                                    android:id="@+id/item_text_artist"
+                                    android:id="@+id/text_artist"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
                                     android:layout_alignParentStart="true"
-                                    android:layout_below="@+id/item_text_title"
+                                    android:layout_below="@+id/text_title"
                                     android:ellipsize="marquee"
                                     android:singleLine="true"
                                     android:marqueeRepeatLimit="marquee_forever"
@@ -128,12 +236,12 @@
                                     android:textSize="14sp" />
 
                                 <TextView
-                                    android:id="@+id/item_text_album"
+                                    android:id="@+id/text_album"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
                                     android:layout_alignParentStart="true"
-                                    android:layout_below="@+id/item_text_artist"
+                                    android:layout_below="@+id/text_artist"
                                     android:fontFamily="sans-serif-condensed"
                                     android:maxLines="1"
                                     android:textColor="#ffffff"
@@ -180,15 +288,14 @@
                                     android:adjustViewBounds="true"
                                     android:padding="10dp"
                                     android:id="@+id/item_img_addToPlayListImageView"
-                                    android:background="?attr/selectableItemBackground"/>
+                                    android:background="?attr/selectableItemBackground"
+                                    android:contentDescription="TODO"
+                                    tools:ignore="ContentDescription" />
                             </LinearLayout>
 
                         </LinearLayout>
 
                     </LinearLayout>
-
-
-
 
                 </RelativeLayout>
             </LinearLayout>
@@ -234,7 +341,6 @@
 
                 <ImageButton
                     android:adjustViewBounds="true"
-
                     android:id="@+id/icon_set_time"
                     android:layout_width="32dp"
                     android:layout_height="match_parent"
@@ -273,7 +379,6 @@
 
                 <ImageButton
                     android:adjustViewBounds="true"
-
                     android:id="@+id/icon_favorite"
                     android:layout_width="32dp"
                     android:layout_height="match_parent"
@@ -360,15 +465,11 @@
 
                     <ImageButton
                         android:adjustViewBounds="true"
-
                         android:id="@+id/icon_change_mode"
                         android:layout_width="32dp"
                         android:layout_height="match_parent"
-
                         android:background="?android:attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/app_repeat_active"
-
-                        />
+                        android:src="@drawable/app_repeat_active" />
                 </RelativeLayout>
 
 
@@ -385,11 +486,8 @@
                         android:layout_height="match_parent"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/_0"
-
                         android:adjustViewBounds="true"
-                        android:src="@drawable/ic_previous_white"
-
-                        />
+                        android:src="@drawable/ic_previous_white" />
                 </RelativeLayout>
 
                 <RelativeLayout

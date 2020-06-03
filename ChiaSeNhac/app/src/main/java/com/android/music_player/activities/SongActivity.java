@@ -91,14 +91,14 @@ public class SongActivity extends AppCompatActivity implements
     }
 
     public void setViewMusic(){
-        if (mMusicManager.getCurrentMusic() != null) {
-            MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
-                    mMusicManager.getCurrentMusic().getSongName());
 
-            mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
-            mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
-            mImgMedia.setImageBitmap(metadataCompat.getBitmap(Constants.METADATA.AlbumID));
-        }
+        MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
+                mMusicManager.getCurrentMusic());
+
+        mTextArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
+        mTextTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
+        mImgMedia.setImageBitmap(metadataCompat.getBitmap(Constants.METADATA.AlbumID));
+
     }
 
 

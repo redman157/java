@@ -54,13 +54,10 @@ public class MediaSeekBar extends AppCompatSeekBar {
             mControllerCallback = null;
         }
         mMediaController = mediaController;
-        Log.d("XXX", "setMediaController --- mMediaController: "+(mMediaController == null ?
-                "null" :"khác null" ));
     }
 
     public void disconnectController(){
         if (mMediaController != null){
-            Log.d("XXX", "disconnectController: enter");
             mMediaController.unregisterCallback(mControllerCallback);
             mControllerCallback = null;
             mMediaController = null;

@@ -41,7 +41,7 @@ public class MediaService extends MediaBrowserServiceCompat {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        return START_NOT_STICKY ;
+        return START_STICKY ;
     }
 
     /**
@@ -87,21 +87,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         stopSelf();
     }
 
- /*   @Override
-    public IBinder onBind(Intent intent) {
-        if (SEARCH_SERVICE.equals(intent.getAction())) {
-            return super.onBind(intent);
-        }
-        return new LocalBinder();
-    }
-
-    public class LocalBinder extends Binder {
-        public MediaService getService() {
-            // Return this instance of LocalService so clients can call public methods
-            return MediaService.this;
-        }
-    }*/
-
     /******* ---------------------------------------------------------------
      Defaults
      ----------------------------------------------------------------*******/
@@ -119,10 +104,13 @@ public class MediaService extends MediaBrowserServiceCompat {
 
     @Override
     public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
-        Log.d("WWW","MediaService --- onLoadChildren: "+parentId);
-        result.sendResult(MusicLibrary.getMediaItems());
+        // service gọi lên MediaBrowserSubscriptionCallback
+        switch (parentId){
+            case "root":
+                result.sendResult(MusicLibrary.getMediaItems());
+                break;
+        }
     }
-
 
     // MediaSession Callback: Transport Controls -> MediaPlayerAdapter
     public class MediaSessionCallback extends MediaSessionCompat.Callback{
@@ -304,9 +292,9 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         class ServiceManager{
             private void moveServiceToStartedState(PlaybackStateCompat state) {
-
                 Notification notification =
                         mMediaNotificationManager.getNotification(
+
                                 mPlayback.getCurrentMedia(), state, getSessionToken());
 
                 if (!mServiceInStartedState) {
@@ -318,6 +306,9 @@ public class MediaService extends MediaBrowserServiceCompat {
 
                 startForeground(MediaNotificationManager.NOTIFICATION_ID, notification);
             }
+
+
+
             private void updateNotificationForPause(PlaybackStateCompat state) {
                 stopForeground(false);
                 Notification notification =

@@ -84,6 +84,7 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
     @Override
     protected void onPostExecute(Long aLong) {
         ((SplashActivity) mActivity).mTextSync.setText("Done");
+
         CountDownTimer count = new CountDownTimer(1000,3000) {
             @Override
             public void onTick(long millisUntilFinished) {

@@ -18,7 +18,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.android.music_player.R;
 import com.android.music_player.adapters.SongAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
-import com.android.music_player.interfaces.OnChangePlayListListener;
+import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnClickItemListener;
 import com.google.android.material.tabs.TabLayout;
 
@@ -28,17 +28,22 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private ViewPagerAdapter mViewPagerAdapter;
-    private OnChangePlayListListener onChangePlayListListener;
+    private OnChangeListener onChangeListener;
     private Context mContext;
     private FragmentActivity listener;
     private SongAdapter mSongsAdapter;
-    public static MainFragment newInstance() {
-        MainFragment fragmentDemo = new MainFragment();
+
+    public static MainFragment newInstance(OnChangeListener onChangeListener) {
+        MainFragment fragmentDemo = new MainFragment(onChangeListener);
         Bundle args = new Bundle();
         fragmentDemo.setArguments(args);
         return fragmentDemo;
     }
 
+
+    public MainFragment(OnChangeListener onChangeListener){
+        this.onChangeListener = onChangeListener;
+    }
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -126,6 +131,7 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
                 getChildFragmentManager());
 
         HomeFragment homeFragment = new HomeFragment();
+        homeFragment.setOnChangeListener(onChangeListener);
         LibraryFragment libraryFragment = new LibraryFragment();
 
 //        getChildFragmentManager().beginTransaction().add(homeFragment, "HomeFragment").commit();

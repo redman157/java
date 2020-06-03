@@ -46,6 +46,7 @@ public class MediaBrowserHelper {
         this.mContext = mContext;
         this.mMediaBrowserServiceClass = mMediaBrowserServiceClass;
 
+
         mMediaBrowserConnectionCallback = new MediaBrowserConnectionCallback();
 
         mMediaControllerCallback = new MediaControllerCallback();
@@ -60,6 +61,7 @@ public class MediaBrowserHelper {
                     mMediaBrowserConnectionCallback,
                             null);
             mMediaBrowser.connect();
+
             Log.d(TAG, "MediaBrowserHelper --- onStart: Creating MediaBrowser, and connecting");
         } else {
             Log.d(TAG, "MediaBrowserHelper --- mMediaBrowser: khác null");
@@ -109,13 +111,14 @@ public class MediaBrowserHelper {
     }
 
     /**
-     * Called after loading a browsable {@link MediaBrowserCompat.MediaItem}
+     * Called after loading a browserable {@link MediaBrowserCompat.MediaItem}
      *
      * @param parentId The media ID of the parent item.
      * @param children List (possibly empty) of child items.
      */
     protected void onChildrenLoaded(@NonNull String parentId,
                                     @NonNull List<MediaBrowserCompat.MediaItem> children) {
+
     }
 
     /**
@@ -193,7 +196,7 @@ public class MediaBrowserHelper {
 
     // Receives callbacks from the MediaBrowser when it has successfully connected to the
     // MediaBrowserService (MusicService).
-    private class MediaBrowserConnectionCallback extends MediaBrowserCompat.ConnectionCallback {
+    private class MediaBrowserConnectionCallback extends MediaBrowserCompat.ConnectionCallback  {
         // Happens as a result of onStart().
 
         @Override
@@ -225,7 +228,9 @@ public class MediaBrowserHelper {
                 Log.d("BBB", "MediaBrowserConnectionCallback --- exception: "+e.getMessage());
                 throw new RuntimeException(e);
             }
+            // truyền xuống service ParrentID thay đổi
             mMediaBrowser.subscribe(mMediaBrowser.getRoot(), mMediaBrowserSubscriptionCallback);
+
         }
     }
 
@@ -233,9 +238,11 @@ public class MediaBrowserHelper {
     // that is ready for playback.
     public class MediaBrowserSubscriptionCallback extends MediaBrowserCompat.SubscriptionCallback {
 
+        // tu service gọi lên từ onChildrenLoaded
         @Override
         public void onChildrenLoaded(@NonNull String parentId,
                                      @NonNull List<MediaBrowserCompat.MediaItem> children) {
+            Log.d("WWW","MediaBrowserSubscriptionCallback --- onChildrenLoaded: "+parentId);
             MediaBrowserHelper.this.onChildrenLoaded(parentId, children);
         }
 
@@ -248,6 +255,7 @@ public class MediaBrowserHelper {
     // Receives callbacks from the MediaController and updates the UI state,
     // i.e.: Which is the current item, whether it's playing or paused, etc.
     private class MediaControllerCallback extends MediaControllerCompat.Callback{
+
         @Override
         public void onMetadataChanged(final MediaMetadataCompat metadata) {
             performOnAllCallbacks(new CallbackCommand() {

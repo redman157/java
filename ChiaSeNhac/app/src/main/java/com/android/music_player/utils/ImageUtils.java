@@ -121,7 +121,7 @@ public class ImageUtils {
 
     public void getImageByPicassoAnimation(final String albumID, final ImageView imageView) {
         try {
-            imageView.setAlpha(0f);
+//            imageView.setAlpha(0f);
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_black_24dp)))
                     .resize(400,400)

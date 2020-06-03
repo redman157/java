@@ -24,10 +24,11 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     private MediaSeekBar mSeekBarAudio;
     private String TAG = "JJJ";
     private String mediaId;
-    private MediaControllerCompat mediaController;
+    public MediaControllerCompat mMediaController;
     private Context context;
     private TextView mTextLeftTime,mTextRightTime;
     private boolean isPlay;
+    private MusicManager mMusicManager = MusicManager.getInstance();
     public MediaSeekBar getSeekBarAudio() {
         return mSeekBarAudio;
     }
@@ -40,6 +41,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     public String getMediaId() {
         return mediaId;
     }
+
 
     public void setMediaId(String mediaId, boolean isPlay) {
         this.mediaId = mediaId;
@@ -54,7 +56,9 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     public MediaBrowserConnection(Context context) {
         super(context, MediaService.class);
         this.context = context;
+        mMusicManager.setContext(context);
     }
+
 
     @Override
     protected void onConnected(@NonNull MediaControllerCompat mediaController) {
@@ -68,28 +72,29 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
                                     @NonNull List<MediaBrowserCompat.MediaItem> children) {
         super.onChildrenLoaded(parentId, children);
 
-        mediaController = getMediaController();
+        mMediaController = getMediaController();
 
         // Queue up all media items for this simple sample.
         for (final MediaBrowserCompat.MediaItem mediaItem : children) {
-            mediaController.addQueueItem(mediaItem.getDescription());
+            mMediaController.addQueueItem(mediaItem.getDescription());
         }
-
-
-        Utils.Builder builder = new Utils.Builder();
-        builder.putBoolean(Constants.INTENT.AUTO_PLAY, isPlay);
-
-        // Call prepare now so pressing play just works.
         if (mediaId!= null && !mediaId.isEmpty()) {
-            MusicManager.getInstance().setContext(context);
-            // check replace music when click
-
-            if (MusicManager.getInstance().getCurrentMusic() != null && !getMediaId().equals(MusicManager.getInstance().getCurrentMusic().getSongName())){
-                mediaController.getTransportControls().stop();
-            }
-            mediaController.getTransportControls().prepareFromMediaId(mediaId,
-                     builder.generate().getBundle());
-            Log.d("CCC", "MediaBrowserConnection --- onChildrenLoaded: "+mediaId + " --- isPlay: "+isPlay);
+            mMediaController.getTransportControls().prepareFromMediaId(mediaId,
+                    null);
         }
     }
+
+    public void setAutoPlay(String songName, boolean autoPlay){
+        if (mMediaController != null) {
+            Utils.Builder builder = new Utils.Builder();
+            builder.putBoolean(Constants.INTENT.AUTO_PLAY, autoPlay);
+            if (songName.equals(mMusicManager.getCurrentMusic())) {
+                mMediaController.getTransportControls().stop();
+            }
+            mMediaController.getTransportControls().prepareFromMediaId(songName,
+                    builder.generate().getBundle());
+        }
+    }
+
+
 }

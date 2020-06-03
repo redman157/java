@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:fillViewport="true">
     <RelativeLayout
@@ -12,10 +13,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/swipe_container">
-            <androidx.recyclerview.widget.RecyclerView
+            <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+
                 android:id="@+id/rc_home_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
+                <!--app:fastScrollPopupBgColor="?attr/accent_color"
+                app:fastScrollPopupTextColor="?attr/popup_text_color"
+                app:fastScrollThumbColor="?attr/accent_color"
+                app:fastScrollThumbInactiveColor="?attr/accent_color"-->/>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </RelativeLayout>

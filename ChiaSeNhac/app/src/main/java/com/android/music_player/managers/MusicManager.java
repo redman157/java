@@ -158,22 +158,17 @@ public class MusicManager {
         return mSharedPrefsUtils.getString(Constants.PREFERENCES.TYPE, "");
     }
 
-    public SongModel getCurrentMusic(){
+    public String getCurrentMusic(){
         String nameSong = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"");
-        ArrayList<SongModel> models = new ArrayList<>(mSongsMain);
-
-        if (nameSong.equals("")){
-            return models.get(Utils.randomInt());
-        }else {
-            SongModel song = null;
-            for (SongModel songModel : mSongsMain) {
-                if (songModel.getSongName().equals(nameSong)) {
-                    song = songModel;
-                    break;
-                }
+       /* for (SongModel songModel : mSongsMain) {
+            if (songModel.getSongName().equals(nameSong)) {
+                return songModel.getSongName();
             }
-            return song;
-        }
+        }*/
+
+        return nameSong;
+
+
     }
 
     public void setCurrentMusic(String path){
@@ -199,13 +194,13 @@ public class MusicManager {
         processEndOfList(position);
     }
 
-    public boolean isPlayCurrentSong(String path){
+/*    public boolean isPlayCurrentSong(String path){
         if (path.equals(getCurrentMusic().getPath())){
             return true;
         }else {
             return false;
         }
-    }
+    }*/
 
     public ArrayList<SongModel> getListSong(){
         this.type = getType();

@@ -123,7 +123,7 @@ public class SplashActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "Application needs permission to run. Go to Settings > Apps > " +
                         "Noad Player to allow permission.", Toast.LENGTH_SHORT).show();
-                finish();
+
                 // permission denied, boo! Disable the
                 // functionality that depends on this permission.
             }

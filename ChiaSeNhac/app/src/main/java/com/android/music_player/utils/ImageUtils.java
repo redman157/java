@@ -121,7 +121,7 @@ public class ImageUtils {
 
     public void getImageByPicassoAnimation(final String albumID, final ImageView imageView) {
         try {
-//            imageView.setAlpha(0f);
+            imageView.setAlpha(0f);
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))
                     .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_black_24dp)))
                     .resize(400,400)
@@ -141,7 +141,7 @@ public class ImageUtils {
                             Log.d("EEE", e.getMessage());
                             imageView.setAlpha(0f);
 //                            imageView.setImageResource(R.drawable.ic_music_note_black_24dp);
-                            imageView.animate().setDuration(400).alpha(0.7f).start();
+                            imageView.animate().setDuration(500).alpha(0.7f).start();
                         }
                     });
         }

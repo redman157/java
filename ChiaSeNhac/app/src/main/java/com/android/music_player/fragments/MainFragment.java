@@ -134,10 +134,6 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
         homeFragment.setOnChangeListener(onChangeListener);
         LibraryFragment libraryFragment = new LibraryFragment();
 
-//        getChildFragmentManager().beginTransaction().add(homeFragment, "HomeFragment").commit();
-//        getChildFragmentManager().beginTransaction().add(libraryFragment, "LibraryFragment").commit();
-
-
         mViewPagerAdapter.addFragment(homeFragment);
         mViewPagerAdapter.addFragment(libraryFragment);
 

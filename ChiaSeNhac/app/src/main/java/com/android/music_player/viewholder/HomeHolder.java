@@ -8,6 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -92,11 +95,18 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_ViewAll:
-                mRc_Recently_Add.setVisibility(View.GONE);
-                Intent iViewAll = new Intent(mActivity, SongActivity.class);
-                iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.ALL_SONGS);
-                mActivity.finish();
-                mActivity.startActivity(iViewAll);
+
+
+                Fragment allMusicFragment =
+                        ((FragmentActivity)mActivity).getSupportFragmentManager().findFragmentByTag("AllMusicFragment");
+
+                FragmentTransaction transaction =
+                        ((FragmentActivity)mActivity).getSupportFragmentManager().beginTransaction();
+                transaction.replace(((HomeActivity)mActivity).mLayoutPlaceHolder.getId(),
+                        allMusicFragment);
+                transaction.commit();
+//                Log.d("QQQ", "HomeHolder: "+((HomeActivity)mActivity).mLayoutPlaceHolder.getId());
+
                 break;
             case R.id.img_Shuffle_All:
                 break;

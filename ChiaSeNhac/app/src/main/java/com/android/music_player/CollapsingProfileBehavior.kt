@@ -91,7 +91,7 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
     override fun onDependentViewChanged(parent: CoordinatorLayout, child: LinearLayout, dependency: View): Boolean {
         val isDependencyAnAppBar = dependency is AppBarLayout
         if (isDependencyAnAppBar) {
-            toolBarHeight = appBar.findViewById<View>(R.id.tb_SongActivity).height
+            toolBarHeight = appBar.findViewById<View>(R.id.tb_AllMusic).height
             updateNormalizedRange()
             updateOffset()
         }

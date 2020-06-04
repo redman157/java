@@ -45,10 +45,7 @@ public class MediaBrowserHelper {
 
         this.mContext = mContext;
         this.mMediaBrowserServiceClass = mMediaBrowserServiceClass;
-
-
         mMediaBrowserConnectionCallback = new MediaBrowserConnectionCallback();
-
         mMediaControllerCallback = new MediaControllerCallback();
         mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
     }
@@ -175,6 +172,8 @@ public class MediaBrowserHelper {
                 final MediaMetadataCompat metadata = mMediaController.getMetadata();
 
                 if (metadata != null) {
+                    Log.d("CCC",
+                            "MediaBrowserHelper --- registerCallback --- musicID: " + metadata.getDescription().getMediaId());
                     Log.d("JJJ",
                             "MediaBrowserHelper --- registerCallback --- musicID: " + metadata.getDescription().getMediaId());
                     callback.onMetadataChanged(metadata);
@@ -219,8 +218,12 @@ public class MediaBrowserHelper {
                 mMediaController.registerCallback(mMediaControllerCallback);
 
                 // Sync existing MediaSession state to the UI.
-                mMediaControllerCallback.onMetadataChanged(mMediaController.getMetadata());
-                mMediaControllerCallback.onPlaybackStateChanged(mMediaController.getPlaybackState());
+
+                if (mMediaController.getMetadata() != null) {
+                    mMediaControllerCallback.onMetadataChanged(mMediaController.getMetadata());
+                    mMediaControllerCallback.onPlaybackStateChanged(mMediaController.getPlaybackState());
+                }
+
                 Log.d(TAG, "MediaBrowserConnectionCallback --- onConnected: enter");
                 MediaBrowserHelper.this.onConnected(mMediaController);
             }catch (AndroidException e) {
@@ -261,6 +264,7 @@ public class MediaBrowserHelper {
             performOnAllCallbacks(new CallbackCommand() {
                 @Override
                 public void perform(@NonNull MediaControllerCompat.Callback callback) {
+                    // set metadata default when to on app
                     callback.onMetadataChanged(metadata);
                 }
             });
@@ -271,7 +275,10 @@ public class MediaBrowserHelper {
             performOnAllCallbacks(new CallbackCommand() {
                 @Override
                 public void perform(@NonNull MediaControllerCompat.Callback callback) {
+                    // set state default when to on app
+
                     callback.onPlaybackStateChanged(state);
+
                 }
             });
         }

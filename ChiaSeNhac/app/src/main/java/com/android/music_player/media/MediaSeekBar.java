@@ -4,7 +4,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,8 +14,6 @@ import android.widget.TextView;
 import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.android.music_player.utils.Utils;
-
-import java.util.List;
 
 public class MediaSeekBar extends AppCompatSeekBar {
     private MediaControllerCompat mMediaController;
@@ -49,11 +46,11 @@ public class MediaSeekBar extends AppCompatSeekBar {
             mControllerCallback = new ControllerCallback();
             mediaController.registerCallback(mControllerCallback);
         } else if (mMediaController != null) {
-
             mMediaController.unregisterCallback(mControllerCallback);
             mControllerCallback = null;
         }
         mMediaController = mediaController;
+
     }
 
     public void disconnectController(){
@@ -77,6 +74,7 @@ public class MediaSeekBar extends AppCompatSeekBar {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+            Log.d("AAA", "onStopTrackingTouch: "+getProgress());
             mMediaController.getTransportControls().seekTo(getProgress());
             mIsTracking = false;
         }
@@ -89,26 +87,6 @@ public class MediaSeekBar extends AppCompatSeekBar {
     }
 
     private class ControllerCallback extends MediaControllerCompat.Callback implements ValueAnimator.AnimatorUpdateListener{
-        @Override
-        public void onSessionDestroyed() {
-            super.onSessionDestroyed();
-        }
-
-        @Override
-        public void onRepeatModeChanged(int repeatMode) {
-            super.onRepeatModeChanged(repeatMode);
-        }
-
-        @Override
-        public void onQueueTitleChanged(CharSequence title) {
-            super.onQueueTitleChanged(title);
-        }
-
-        @Override
-        public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
-            super.onQueueChanged(queue);
-        }
-
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             super.onPlaybackStateChanged(state);
@@ -151,11 +129,12 @@ public class MediaSeekBar extends AppCompatSeekBar {
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             super.onMetadataChanged(metadata);
-            Log.d("HHH", "setMediaController --- onMetadataChanged: "+(int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
+            Log.d("CCC",
+                    "setMediaController --- onMetadataChanged: "+(int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
             int max;
             if (metadata != null){
-                 max = (int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
-                 textRight.setText(Utils.formatTime(max));
+                max = (int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
+                textRight.setText(Utils.formatTime(max));
             }else {
                 max = 0;
             }

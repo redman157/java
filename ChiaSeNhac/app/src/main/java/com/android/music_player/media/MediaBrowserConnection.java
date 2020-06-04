@@ -59,12 +59,12 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         mMusicManager.setContext(context);
     }
 
-
     @Override
     protected void onConnected(@NonNull MediaControllerCompat mediaController) {
 
         Log.d(TAG, mediaController.getPlaybackInfo().getPlaybackType()+"");
         mSeekBarAudio.setMediaController(mediaController,mTextLeftTime, mTextRightTime);
+
     }
 
     @Override
@@ -78,10 +78,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         for (final MediaBrowserCompat.MediaItem mediaItem : children) {
             mMediaController.addQueueItem(mediaItem.getDescription());
         }
-        if (mediaId!= null && !mediaId.isEmpty()) {
-            mMediaController.getTransportControls().prepareFromMediaId(mediaId,
-                    null);
-        }
+        setMediaId(mediaId, false);
     }
 
     public void setAutoPlay(String songName, boolean autoPlay){

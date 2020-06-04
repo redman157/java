@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.activities.SongActivity;
+import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.SongAdapter;
 import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MusicManager;
@@ -29,7 +29,7 @@ public class ListMusicFragment extends Fragment implements SongAdapter.OnClickLi
     private String type;
     private RecyclerView mRcSongs;
     private MusicManager mMusicManager;
-    private SongActivity mSongActivity;
+    private HomeActivity mHomeActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
     public ListMusicFragment(ArrayList<SongModel> songs, String type){
         mSongs = songs;
@@ -46,7 +46,7 @@ public class ListMusicFragment extends Fragment implements SongAdapter.OnClickLi
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(getContext());
 
-        mSongActivity = (SongActivity) getContext();
+        mHomeActivity = (HomeActivity) getContext();
 
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
         mSongAdapter = new SongAdapter(getActivity(), mSongs, Constants.VALUE.ALL_NEW_SONGS);

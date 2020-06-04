@@ -28,6 +28,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.android.music_player.BaseActivity;
 import com.android.music_player.R;
+import com.android.music_player.fragments.AllMusicFragment;
 import com.android.music_player.fragments.MainFragment;
 import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnConnectionMedia;
@@ -52,7 +53,7 @@ import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
-        MediaBrowserListener.OnPlayPause, SlidingUpPanelLayout.PanelSlideListener, OnChangeListener {
+        MediaBrowserListener.OnMediaListener, SlidingUpPanelLayout.PanelSlideListener, OnChangeListener {
     private String tag = "BBB";
     private RelativeLayout mViewControlMedia;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
@@ -70,10 +71,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private ImageView mImgViewQueue, mImgAddToPlayList, mImgChangeMedia;
 
     public SlidingUpPanelLayout mSlidingUpPanelLayout;
-    private Toolbar mToolBar;
+    public Toolbar mToolBar;
     private MediaBrowserHelper mMediaBrowserHelper;
     private MediaBrowserListener mBrowserListener;
-    private FrameLayout mLayoutPlaceHolder;
+    public  FrameLayout mLayoutPlaceHolder;
     private AppBarLayout mAppBarLayout;
 
     private boolean isPlaying = false;
@@ -128,13 +129,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void initService() {
+        Log.d("CCC", "Home Activity --- initService: "+mMusicManager.getCurrentMusic());
         browserConnection = mMusicManager.getMediaBrowserConnection();
         browserConnection.setSeekBarAudio(mSeekBarAudio, mTextLeftTime, mTextRightTime);
         browserConnection.setMediaId(mMusicManager.getCurrentMusic());
 
-        mBrowserListener = new MediaBrowserListener();
-        mBrowserListener.setOnPlayPause(this);
         mMediaBrowserHelper = browserConnection;
+        mBrowserListener = new MediaBrowserListener();
+        mBrowserListener.setOnMediaListener(this);
+
         mMediaBrowserHelper.registerCallback("HomeActivity", mBrowserListener);
 
     }
@@ -151,13 +154,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void changeFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fl_placeholder, fragment);
+        fragmentTransaction.replace(mLayoutPlaceHolder.getId(), fragment);
 //        fragmentTransaction1.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
     @Override
     protected void onStart() {
+        onStartService();
         super.onStart();
 
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
@@ -167,9 +171,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             Log.d("XXX", "Home Activity --- onStart: COLLAPSED");
             setViewMusic(mMusicManager.getCurrentMusic(), PanelState.COLLAPSED);
         }
-        onStartService();
-        MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag("MainFragment");
-        changeFragment(mainFragment);
+
     }
 
 
@@ -180,8 +182,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (savedInstanceState == null){
             FragmentTransaction fragmentTransaction =
                     getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.add(R.id.fl_placeholder , AllMusicFragment.newInstance(),
+                    "AllMusicFragment");
             fragmentTransaction.add(R.id.fl_placeholder ,MainFragment.newInstance(this),
                     "MainFragment");
+
             fragmentTransaction.commit();
         }
         setContentView(R.layout.activity_home);
@@ -191,6 +196,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         setupToolbar();
         assignView();
 
+      /*  MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag("MainFragment");
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fl_placeholder, mainFragment);
+//        fragmentTransaction1.addToBackStack(null);
+        fragmentTransaction.commit();*/
     }
 
     private void setMode(int repeat) {
@@ -224,10 +234,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
                 songName);
 
-        ImageUtils.getInstance(this).getImageByPicassoAnimation(String.valueOf(MusicLibrary.getAlbumRes(songName)),
+        ImageUtils.getInstance(this).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(songName)),
                 mImgChangeMedia);
 
-
+        mTextRightTime.setText(Utils.formatTime((int) metadataCompat.getLong(Constants.METADATA.Duration)));
         mTextTitleMusic.setText(metadataCompat.getString(Constants.METADATA.Title));
         mTextAlbumMusic.setText(metadataCompat.getString(Constants.METADATA.Album));
         mTextArtistMusic.setText(metadataCompat.getString(Constants.METADATA.Artist));
@@ -317,11 +327,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mBtnAbout.setOnClickListener(this);
 
         Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlaying);
-        if (mMusicManager.getCurrentMusic().equals("")){
-            mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
+        mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
+        /*if (mMusicManager.getCurrentMusic().equals("")){
+
         }else {
             mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
-        }
+        }*/
         mViewControlMedia.setOnTouchListener(new SwipeTouchUtils(this));
     }
 
@@ -515,7 +526,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                         (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED || mSlidingUpPanelLayout.getPanelState() == PanelState.ANCHORED)) {
                     mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
                 }
-                Log.d("CCC","hehe");
                 break;
             case R.id.menu_search:
                 Intent iSearch = new Intent(this, SearchActivity.class);
@@ -538,9 +548,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-
     @Override
-    public void onCheck(boolean isPlay, PlaybackStateCompat state) {
+    public void onCheckPlay(boolean isPlay, PlaybackStateCompat state) {
         // compare status play don't update button play
         if (isPlaying == isPlay){
             return;
@@ -552,14 +561,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onNext(boolean isNext) {
+    public void onComplete(boolean isNext) {
         if (isNext){
-            mMediaBrowserHelper.getTransportControls().skipToNext();
+            onMediaMetadata(mMediaBrowserHelper.getMetadata());
         }
     }
 
     @Override
     public void onMediaMetadata(MediaMetadataCompat mediaMetadata) {
+        Log.d("CCC",
+                "HomeActivity --- onMediaMetadata: "+mediaMetadata.getString(Constants.METADATA.Title));
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
             setViewMusic(mediaMetadata.getString(Constants.METADATA.Title) , PanelState.EXPANDED);
         }else if (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED){

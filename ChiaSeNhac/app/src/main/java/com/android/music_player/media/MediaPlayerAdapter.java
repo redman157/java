@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
-import com.android.music_player.utils.Utils;
 
 import java.io.File;
 
@@ -159,7 +158,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     // Implements PlaybackControl.
     @Override
     public void playFromMedia(MediaMetadataCompat metadata) {
-//        mCurrentMedia = metadata;
+        mCurrentMedia = metadata;
         final String mediaId = metadata.getDescription().getMediaId();
         playFile(MusicLibrary.getMusicFilename(mediaId));
     }
@@ -222,8 +221,6 @@ public class MediaPlayerAdapter extends PlayerAdapter {
                 setNewState(PlaybackStateCompat.STATE_PLAYING);
             }
         } finally {
-            mCurrentMedia = MusicLibrary.getMetadata(mContext,
-                    Utils.getKeyByValue(MusicLibrary.musicFileName, mFilename));
             mMusicManager.setCurrentMusic(mFilename);
 //            mMusicManager.setMediaId(mMusicManager.getCurrentMusic().getSongName());
         }

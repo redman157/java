@@ -56,7 +56,7 @@ public class MusicManager {
     private Map<String, ArrayList<SongModel>> mAlbumLists = new HashMap<>();
     private Map<String, ArrayList<SongModel>> mArtistLists = new HashMap<>();
     private Map<String, ArrayList<SongModel>> mFolderLists = new HashMap<>();
-    private Set<SongModel> mSongsMain = new HashSet<SongModel>();
+    public Set<SongModel> mSongsMain = new HashSet<SongModel>();
 
     private ArrayList<SongModel> queue = new ArrayList<>();
     private ArrayList<SongModel> shuffleSongs = new ArrayList<>();
@@ -160,15 +160,8 @@ public class MusicManager {
 
     public String getCurrentMusic(){
         String nameSong = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"");
-       /* for (SongModel songModel : mSongsMain) {
-            if (songModel.getSongName().equals(nameSong)) {
-                return songModel.getSongName();
-            }
-        }*/
-
+        Log.d("CCC","getCurrentMusic: " + nameSong);
         return nameSong;
-
-
     }
 
     public void setCurrentMusic(String path){
@@ -391,6 +384,7 @@ public class MusicManager {
             clearQueue();
             queue.addAll(list);
             try {
+
                 new Thread(new Runnable() {
                     public void run() {
                         mSharedPrefsUtils.setString(Constants.PREFERENCES.KEY, new Gson().toJson(list));

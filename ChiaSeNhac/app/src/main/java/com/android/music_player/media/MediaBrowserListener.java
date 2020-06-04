@@ -17,11 +17,11 @@ import java.util.List;
  * simple.
  */
 public class MediaBrowserListener extends MediaControllerCompat.Callback {
-    private OnPlayPause onPlayPause;
+    private OnMediaListener onMediaListener;
     private String TAG = "JJJ";
-    public interface OnPlayPause {
-        void onCheck(boolean isPlay, PlaybackStateCompat state);
-        void onNext(boolean isNext);
+    public interface OnMediaListener {
+        void onCheckPlay(boolean isPlay, PlaybackStateCompat state);
+        void onComplete(boolean isNext);
         void onMediaMetadata(MediaMetadataCompat mediaMetadata);
     }
 
@@ -32,13 +32,13 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
         Log.d("LLL", "MediaBrowserListener --- onRepeatModeChanged"+repeatMode);
     }
 
-    public void setOnPlayPause(OnPlayPause onPlayPause){
-        this.onPlayPause = onPlayPause;
+    public void setOnMediaListener(OnMediaListener onMediaListener){
+        this.onMediaListener = onMediaListener;
     }
 
     @Override
     public void onPlaybackStateChanged(PlaybackStateCompat state) {
-        if (state!= null && onPlayPause != null) {
+        if (state!= null && onMediaListener != null) {
             Log.d(TAG,
                     "MediaBrowserListener --- onPlaybackStateChanged: "+state.getState()+" --- " +
                             "current pos:" +
@@ -47,17 +47,17 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
                 case PlaybackStateCompat.STATE_PLAYING:
                     Log.d(TAG,"MediaBrowserListener --- STATE_PLAYING: "+state.getPosition());
 
-                    onPlayPause.onCheck(true, state);
+                    onMediaListener.onCheckPlay(true, state);
                     break;
                 case PlaybackStateCompat.STATE_PAUSED:
                 case PlaybackStateCompat.STATE_STOPPED:
-                    onPlayPause.onCheck(false,state);
+                    onMediaListener.onCheckPlay(false,state);
                     break;
                 case PlaybackStateCompat.STATE_SKIPPING_TO_NEXT:
-                    onPlayPause.onNext(true);
+                    onMediaListener.onComplete(true);
                     break;
                 case PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS:
-                    onPlayPause.onCheck(false,state);
+                    onMediaListener.onCheckPlay(false,state);
                     break;
             }
         }
@@ -69,12 +69,10 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
             return;
         }
         // assignData up việc chuyển page
-        if (onPlayPause!= null){
-//            Log.d("VVV", Log.getStackTraceString(new Exception()));
-
-            Log.d("VVV",
+        if (onMediaListener != null){
+            Log.d("CCC",
                     "MediaBrowserListener --- onMetadataChanged: "+ (mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
-            onPlayPause.onMediaMetadata(mediaMetadata);
+            onMediaListener.onMediaMetadata(mediaMetadata);
         }
     }
 

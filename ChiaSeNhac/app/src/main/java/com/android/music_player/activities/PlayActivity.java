@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayActivity extends AppCompatActivity implements
-        View.OnClickListener, MediaBrowserListener.OnPlayPause {
+        View.OnClickListener, MediaBrowserListener.OnMediaListener {
     private MusicManager mMusicManager;
     public MediaSeekBar mSeekBarAudio;
     public ImageButton mBtnPlayPause;
@@ -82,7 +82,7 @@ public class PlayActivity extends AppCompatActivity implements
         mMediaBrowserHelper = browserConnection;
 
         mBrowserListener = new MediaBrowserListener();
-        mBrowserListener.setOnPlayPause(this);
+        mBrowserListener.setOnMediaListener(this);
         mMediaBrowserHelper.registerCallback("PlayActivity", mBrowserListener);
 
         Log.d("JJJ", "PlayActivity onStart: "+ mMusicManager.getMediaId());
@@ -290,7 +290,7 @@ public class PlayActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onCheck(boolean isPlay, PlaybackStateCompat state) {
+    public void onCheckPlay(boolean isPlay, PlaybackStateCompat state) {
         // compare status play don't update button play
         if (mIsPlaying == isPlay){
             return;
@@ -301,7 +301,7 @@ public class PlayActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNext(boolean isNext) {
+    public void onComplete(boolean isNext) {
         if (isNext){
             mMediaBrowserHelper.getTransportControls().skipToNext();
         }

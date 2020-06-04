@@ -1,11 +1,15 @@
 package com.android.music_player.fragments;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,8 +23,14 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.R;
+import com.android.music_player.activities.EqualizerActivity;
+import com.android.music_player.activities.SearchActivity;
+import com.android.music_player.activities.SettingsActivity;
+import com.android.music_player.activities.SplashActivity;
+import com.android.music_player.activities.TimerActivity;
 import com.android.music_player.adapters.ViewPagerAdapter;
 import com.android.music_player.managers.MusicManager;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.tabs.TabLayout;
 
@@ -29,7 +39,6 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
     private MusicManager mMusicManager;
     private ImageButton mBtnPlayPause;
     private Toolbar mToolBar;
-    private Button mBtnTitle;
     public LinearLayout mLl_Play_Media;
     public ImageView mImgAlbumId;
     private SharedPrefsUtils mSharedPrefsUtils;
@@ -39,9 +48,21 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
     private ViewPagerAdapter mViewPagerAdapter;
     private ViewPager mViewPagerSong;
     private View collapsingProfileHeaderView;
+    private Context context;
+
+    public static AllMusicFragment newInstance() {
+        Bundle args = new Bundle();
+        AllMusicFragment fragment = new AllMusicFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Override
     public void onAttach(@NonNull Context context) {
+
         super.onAttach(context);
+        this.context = context;
+
+        Log.d("AAA","AllMusicFragment: context: "+context.getClass().getSimpleName());
         //is called when a fragment is connected to an activity.
     }
 
@@ -76,9 +97,9 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mBtnTitle.setOnClickListener(this);
-        mBtnPlayPause.setOnClickListener(this);
-        mLl_Play_Media.setOnClickListener(this);
+
+//        mBtnPlayPause.setOnClickListener(this);
+//        mLl_Play_Media.setOnClickListener(this);
         setupViewPager(mViewPagerSong);
     }
     private void setupViewPager(ViewPager viewPager){
@@ -112,50 +133,55 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         profileArtist = collapsingProfileHeaderView.findViewById(R.id.profileSubtitle);
         mToolBar = view.findViewById(R.id.tb_AllMusic);
 
-        mBtnPlayPause = view.findViewById(R.id.imbt_Play_media);
+     /*   mBtnPlayPause = view.findViewById(R.id.imbt_Play_media);
         mBtnTitle = view.findViewById(R.id.btn_title_media);
         mLl_Play_Media = view.findViewById(R.id.ll_play_media);
-        mImgAlbumId = view.findViewById(R.id.img_AlbumId);
+        mImgAlbumId = view.findViewById(R.id.img_AlbumId);*/
     }
 
-   /* @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         ((AppCompatActivity)getActivity()).getMenuInflater().inflate(R.menu.main, menu);
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent iBackMusic = new Intent(this, HomeActivity.class);
-                finish();
-                startActivity(iBackMusic);
+                Log.d("AAA", "ASdasdaksjhdkjasnd");
+               /* ((HomeActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+                 Fragment allMusicFragment =
+                        ((FragmentActivity)getActivity()).getSupportFragmentManager().findFragmentByTag(
+                                "MainFragment");
+
+                FragmentTransaction transaction =
+                        ((FragmentActivity)getActivity()).getSupportFragmentManager().beginTransaction();
+                transaction.replace(((HomeActivity)getActivity()).mLayoutPlaceHolder.getId(),
+                        allMusicFragment);
+                transaction.commit();*/
                 break;
             case R.id.action_searchBtn:
-                finish();
-                startActivity(new Intent(this, SearchActivity.class));
+
+                startActivity(new Intent(getActivity(), SearchActivity.class));
                 break;
             case R.id.sleep_timer:
-                finish();
-                startActivity(new Intent(this, TimerActivity.class));
+
+                startActivity(new Intent(getActivity(), TimerActivity.class));
                 break;
             case R.id.sync:
-                finish();
-                Intent intent = new Intent(this, SplashActivity.class).putExtra(Constants.VALUE.SYNC,
+                Intent intent = new Intent(getActivity(), SplashActivity.class).putExtra(Constants.VALUE.SYNC,
                         true);
                 startActivity(intent);
                 break;
             case R.id.settings:
-                finish();
-                startActivity(new Intent(this, SettingsActivity.class));
+                startActivity(new Intent(getActivity(), SettingsActivity.class));
                 break;
             case R.id.equalizer:
-                finish();
-                startActivity(new Intent(this, EqualizerActivity.class));
+                startActivity(new Intent(getActivity(), EqualizerActivity.class));
                 break;
             case R.id.changeTheme:
-                final Dialog dialog = new Dialog(this);
+                final Dialog dialog = new Dialog(getActivity());
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_choose_accent_color);
                 dialog.findViewById(R.id.orange).setOnClickListener(new View.OnClickListener() {
@@ -164,8 +190,8 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
                         mSharedPrefsUtils.setString(
                                 Constants.PREFERENCES.ACCENT_COLOR, Constants.COLOR.ORANGE);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+
+                        startActivity(getActivity().getIntent());
                     }
                 });
                 dialog.findViewById(R.id.cyan).setOnClickListener(new View.OnClickListener() {
@@ -174,8 +200,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
                         mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
                                 Constants.COLOR.CYAN);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        startActivity(getActivity().getIntent());
                     }
                 });
                 dialog.findViewById(R.id.green).setOnClickListener(new View.OnClickListener() {
@@ -184,8 +209,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
                         mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
                                 Constants.COLOR.GREEN);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        startActivity(getActivity().getIntent());
                     }
                 });
                 dialog.findViewById(R.id.yellow).setOnClickListener(new View.OnClickListener() {
@@ -194,8 +218,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
                         mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
                                 Constants.COLOR.YELLOW);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        startActivity(getActivity().getIntent());
                     }
                 });
                 dialog.findViewById(R.id.pink).setOnClickListener(new View.OnClickListener() {
@@ -204,8 +227,8 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
                         mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
                                 Constants.COLOR.PINK);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+
+                        startActivity(getActivity().getIntent());
                     }
                 });
                 dialog.findViewById(R.id.purple).setOnClickListener(new View.OnClickListener() {
@@ -214,8 +237,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
                         mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
                                 Constants.COLOR.PURPLE);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        startActivity(getActivity().getIntent());
                     }
                 });
                 dialog.findViewById(R.id.grey).setOnClickListener(new View.OnClickListener() {
@@ -224,8 +246,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
                         mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
                                 Constants.COLOR.GREY);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        startActivity(getActivity().getIntent());
                     }
                 });
                 dialog.findViewById(R.id.red).setOnClickListener(new View.OnClickListener() {
@@ -234,8 +255,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
                         mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
                                 Constants.COLOR.RED);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        startActivity(getActivity().getIntent());
                     }
                 });
                 dialog.show();
@@ -243,7 +263,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }*/
+    }
 
     @Override
     public void onClick(View v) {

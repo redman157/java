@@ -31,8 +31,6 @@
                 app:layout_scrollFlags="scroll|enterAlwaysCollapsed|exitUntilCollapsed"
                 tools:ignore="NestedWeights" />
 
-         <!--   <include layout="@layout/custom_toolbar"
-                />-->
             <androidx.appcompat.widget.Toolbar
                 android:layout_alignParentTop="true"
                 android:id="@+id/tb_AllMusic"

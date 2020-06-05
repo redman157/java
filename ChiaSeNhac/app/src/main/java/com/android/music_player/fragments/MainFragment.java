@@ -40,7 +40,6 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
         return fragmentDemo;
     }
 
-
     public MainFragment(OnChangeListener onChangeListener){
         this.onChangeListener = onChangeListener;
     }
@@ -66,9 +65,11 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Defines the xml file for the fragment
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_main, container, false);
+        }
+        return view;
     }
-
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -93,6 +94,16 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
     public void onDetach() {
         super.onDetach();
         this.listener = null;
+    }
+
+    @Override
+    public void onDestroyView() {
+     /*   if (view != null) {
+            ViewGroup parentViewGroup =
+                    (ViewGroup) view.getParent();
+            parentViewGroup.removeAllViews();
+        }*/
+        super.onDestroyView();
     }
 
     @Override

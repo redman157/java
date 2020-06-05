@@ -13,14 +13,16 @@ import com.android.music_player.managers.MusicManager;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.viewholder.HomeHolder;
 
-public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder> {
-    private Activity activity;
+public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder>  {
+    private Activity mActivity;
     private MusicManager mMusicManager;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private SongAdapter songAdapter;
+    private SongAdapter mSongAdapter;
+
+
     public HomeFragmentAdapter(Activity activity, SongAdapter songAdapter){
-        this.activity = activity;
-        this.songAdapter = songAdapter;
+        mActivity = activity;
+        mSongAdapter = songAdapter;
         mSharedPrefsUtils = new SharedPrefsUtils(activity);
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(activity);
@@ -28,19 +30,19 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder> {
     @NonNull
     @Override
     public HomeHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(activity).inflate(R.layout.item_home, null);
-        return new HomeHolder(view,activity);
+        View view = LayoutInflater.from(mActivity).inflate(R.layout.item_home, null);
+        return new HomeHolder(view,mActivity);
     }
 
     @Override
     public void onBindViewHolder(@NonNull HomeHolder holder, int position) {
         holder.initView();
-        holder.assignView(songAdapter);
+        mSongAdapter.notifyDataSetChanged();
+        holder.assignView(mSongAdapter);
     }
 
     @Override
     public int getItemCount() {
         return 1;
     }
-
 }

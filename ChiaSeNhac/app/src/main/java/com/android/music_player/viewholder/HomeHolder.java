@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,7 @@ import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.PlayActivity;
 import com.android.music_player.activities.SongActivity;
 import com.android.music_player.adapters.SongAdapter;
+import com.android.music_player.fragments.AllMusicFragment;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
@@ -57,8 +59,8 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mTextPlayer_1 = view.findViewById(R.id.text_Player_1);
         mTextPlayer_2 = view.findViewById(R.id.text_Player_2);
     }
-    public void initView(){
 
+    public void initView(){
         if (!mMusicManager.getStatistic().getMost(Constants.VALUE.SONG).equals("")) {
             mMostMusic = mMusicManager.getStatistic().getMost(Constants.VALUE.SONG);
             mTextPlayerSongs.setText(mMostMusic);
@@ -77,14 +79,13 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
             mTextPlayer_2.setText("Play List 2");
         }
     }
+
     public void assignView(SongAdapter mSongsAdapter){
         mImg_Player_Songs.setOnClickListener(this);
         mImg_Player_1.setOnClickListener(this);
         mImg_Player_2.setOnClickListener(this);
         mImg_Shuffle_All.setOnClickListener(this);
         mBtnViewAll.setOnClickListener(this);
-
-
         mRc_Recently_Add.setAdapter(mSongsAdapter);
         mRc_Recently_Add.setNestedScrollingEnabled(false);
         mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(mActivity,
@@ -95,18 +96,19 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_ViewAll:
-
-
-                Fragment allMusicFragment =
-                        ((FragmentActivity)mActivity).getSupportFragmentManager().findFragmentByTag("AllMusicFragment");
-
-                FragmentTransaction transaction =
-                        ((FragmentActivity)mActivity).getSupportFragmentManager().beginTransaction();
+                FragmentManager manager = ((FragmentActivity)mActivity).getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                Fragment allMusicFragment;
+                if(manager.findFragmentByTag("AllMusicFragment") != null) {
+                    allMusicFragment = manager.findFragmentByTag("AllMusicFragment");
+                } else {
+                    allMusicFragment =  AllMusicFragment.newInstance();
+                }
+                ((HomeActivity)mActivity).mLayoutPlaceHolder.setAlpha(0);
                 transaction.replace(((HomeActivity)mActivity).mLayoutPlaceHolder.getId(),
                         allMusicFragment);
                 transaction.commit();
-//                Log.d("QQQ", "HomeHolder: "+((HomeActivity)mActivity).mLayoutPlaceHolder.getId());
-
+                ((HomeActivity)mActivity).mLayoutPlaceHolder.setAlpha(1);
                 break;
             case R.id.img_Shuffle_All:
                 break;

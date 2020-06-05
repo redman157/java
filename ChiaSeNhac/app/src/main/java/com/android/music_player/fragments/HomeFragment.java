@@ -45,11 +45,6 @@ public class HomeFragment extends Fragment implements
     }
 
     @Override
-    public void onClickType(String type, int pos) {
-
-    }
-
-    @Override
     public void onClickMusic(String nameChoose) {
         onChangeListener.onNameMusic(nameChoose);
     }
@@ -91,6 +86,7 @@ public class HomeFragment extends Fragment implements
 
 
         initView();
+//        mSongsAdapter.notifyDataSetChanged();
         mHomeAdapter = new HomeFragmentAdapter(getActivity(),mSongsAdapter);
         mHomeAdapter.notifyDataSetChanged();
         mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));

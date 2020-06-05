@@ -1,7 +1,9 @@
 package com.android.music_player.activities;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.media.MediaMetadataCompat;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.android.music_player.BaseActivity;
@@ -152,10 +155,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void changeFragment(Fragment fragment) {
+    public void switchFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(mLayoutPlaceHolder.getId(), fragment);
-//        fragmentTransaction1.addToBackStack(null);
+        fragmentTransaction.replace(R.id.fl_placeholder, fragment);
+        fragmentTransaction.addToBackStack(fragment.getTag());
         fragmentTransaction.commit();
     }
 
@@ -171,7 +174,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             Log.d("XXX", "Home Activity --- onStart: COLLAPSED");
             setViewMusic(mMusicManager.getCurrentMusic(), PanelState.COLLAPSED);
         }
-
     }
 
 
@@ -179,10 +181,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("XXX", "Home Activity --- onCreate: enter");
+        initManager();
         if (savedInstanceState == null){
             FragmentTransaction fragmentTransaction =
                     getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.fl_placeholder , AllMusicFragment.newInstance(),
+            fragmentTransaction.add(R.id.fl_placeholder ,
+                    AllMusicFragment.newInstance(),
                     "AllMusicFragment");
             fragmentTransaction.add(R.id.fl_placeholder ,MainFragment.newInstance(this),
                     "MainFragment");
@@ -191,16 +195,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
         setContentView(R.layout.activity_home);
         initView();
-        initManager();
+
         initService();
         setupToolbar();
         assignView();
 
-      /*  MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag("MainFragment");
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fl_placeholder, mainFragment);
-//        fragmentTransaction1.addToBackStack(null);
-        fragmentTransaction.commit();*/
     }
 
     private void setMode(int repeat) {
@@ -328,11 +327,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlaying);
         mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
-        /*if (mMusicManager.getCurrentMusic().equals("")){
-
-        }else {
-            mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
-        }*/
         mViewControlMedia.setOnTouchListener(new SwipeTouchUtils(this));
     }
 
@@ -345,27 +339,40 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
 
+//                Fragment mainFragment = getSupportFragmentManager().findFragmentByTag(
+//                        "MainFragment");
+
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                Fragment mainFragment;
+                if(manager.findFragmentByTag("MainFragment") != null) {
+                    mainFragment = manager.findFragmentByTag("MainFragment");
+                } else {
+                    mainFragment = MainFragment.newInstance(this);
+                }
+
+                transaction.replace(R.id.fl_placeholder, mainFragment);
+                transaction.commit();
+
+                Log.d("AAA","AllMusicFragment --- "+mainFragment.getTag());
+                break;
             case R.id.action_searchBtn:
-                finish();
                 startActivity(new Intent(this, SearchActivity.class));
                 break;
             case R.id.sleep_timer:
-                finish();
                 startActivity(new Intent(this, TimerActivity.class));
                 break;
             case R.id.sync:
-                finish();
                 Intent intent = new Intent(this, SplashActivity.class).putExtra(Constants.VALUE.SYNC,
                         true);
                 startActivity(intent);
                 break;
             case R.id.settings:
-                finish();
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.equalizer:
-                finish();
                 startActivity(new Intent(this, EqualizerActivity.class));
                 break;
             case R.id.changeTheme:
@@ -460,7 +467,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onClick(View view) {
-
         switch (view.getId()){
             case R.id.icon_about:
                 break;
@@ -544,7 +550,21 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 (mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
             mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         }else {
-            super.onBackPressed();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Bạn có muốn thoát App không ?");
+            builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    System.exit(1);
+                }
+            });
+            builder.show();
         }
     }
 

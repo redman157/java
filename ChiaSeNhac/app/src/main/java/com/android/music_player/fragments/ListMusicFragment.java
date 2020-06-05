@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
@@ -19,6 +18,7 @@ import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 
@@ -27,14 +27,10 @@ public class ListMusicFragment extends Fragment implements SongAdapter.OnClickLi
     private SongAdapter mSongAdapter;
     private ArrayList<SongModel> mSongs;
     private String type;
-    private RecyclerView mRcSongs;
+    private FastScrollRecyclerView mRcSongs;
     private MusicManager mMusicManager;
     private HomeActivity mHomeActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
-    public ListMusicFragment(ArrayList<SongModel> songs, String type){
-        mSongs = songs;
-        this.type = type;
-    }
 
     public ListMusicFragment(ArrayList<SongModel> songs){
         mSongs = songs;
@@ -60,7 +56,7 @@ public class ListMusicFragment extends Fragment implements SongAdapter.OnClickLi
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (view == null) {
-            view = inflater.inflate(R.layout.fragment_allsong, null);
+            view = inflater.inflate(R.layout.fragment_list_music, null);
             initView(view);
         }
         initData();
@@ -80,11 +76,6 @@ public class ListMusicFragment extends Fragment implements SongAdapter.OnClickLi
     }
     @Override
     public void onClickPosition(int pos) {
-
-    }
-
-    @Override
-    public void onClickType(String type, int pos) {
 
     }
 

@@ -134,14 +134,6 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
         val lp = profileImage.layoutParams as LinearLayout.LayoutParams
         lp.height = updatedValue
         lp.width = updatedValue
-        /*if (updatedValue < 100){
-            profileImage.visibility = View.GONE
-            profileName.visibility = View.GONE
-        }else {
-            profileName.visibility = View.VISIBLE
-            profileImage.visibility = View.VISIBLE
-
-        }*/
         profileName.visibility = View.VISIBLE
         profileImage.visibility = View.VISIBLE
         profileImage.layoutParams = lp
@@ -153,7 +145,7 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
 
         val layoutParams = profileImage.layoutParams as LinearLayout.LayoutParams
         layoutParams.bottomMargin = updatedValue
-        layoutParams.leftMargin = updatedValue
+        layoutParams.leftMargin = updatedValue *4
         layoutParams.rightMargin = updatedValue
         profileImage.layoutParams = layoutParams
     }

@@ -84,11 +84,6 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     }
 
     @Override
-    public void onClickType(String type, int pos) {
-
-    }
-
-    @Override
     public void onClickMusic(String nameChoose) {
 
     }

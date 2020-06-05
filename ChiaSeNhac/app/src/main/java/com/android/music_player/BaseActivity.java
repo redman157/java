@@ -17,5 +17,5 @@ public abstract class BaseActivity extends AppCompatActivity  {
     public abstract void onStopService();
     public abstract void initService();
     public abstract void initManager();
-    public abstract void changeFragment(Fragment fragment);
+    public abstract void switchFragment(Fragment fragment);
 }

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_margin="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:background="?attr/selectableItemBackground"
+        android:id="@+id/item_ll_artist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+        <androidx.cardview.widget.CardView
+            android:layout_margin="7dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="10dp"
+            card_view:cardPreventCornerOverlap = "false"
+            card_view:cardElevation="6dp">
+            <ImageView
+                android:id="@+id/item_img_artist"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_library_music_black_24dp"
+                android:scaleType="fitCenter"
+                android:layout_height="match_parent"/>
+        </androidx.cardview.widget.CardView>
+        <LinearLayout
+            android:layout_weight="9"
+            android:layout_width="0dp"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_weight="1"
+                android:textSize="14sp"
+                android:gravity="left|center"
+                android:textColor="@color/black"
+                android:id="@+id/item_text_title_artist"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+            <TextView
+                android:textSize="12sp"
+                android:gravity="left|center"
+                android:textColor="@color/black"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_width="match_parent"
+                android:id="@+id/item_text_info_artist"
+                android:layout_height="0dp"/>
+            <View
+                android:paddingTop="10dp"
+                android:layout_width="match_parent"
+                android:background="#ABAFAF"
+                android:layout_height="1dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

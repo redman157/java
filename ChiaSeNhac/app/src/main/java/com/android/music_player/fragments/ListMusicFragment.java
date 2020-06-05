@@ -12,28 +12,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
-import com.android.music_player.adapters.SongAdapter;
-import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.managers.MusicManager;
-import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
-import java.util.ArrayList;
-
-public class ListMusicFragment extends Fragment implements SongAdapter.OnClickListener, OnClickItemListener {
+public class ListMusicFragment extends Fragment  {
     private View view;
-    private SongAdapter mSongAdapter;
-    private ArrayList<SongModel> mSongs;
-    private String type;
-    private FastScrollRecyclerView mRcSongs;
+    private FastScrollRecyclerView mRcMusic;
     private MusicManager mMusicManager;
     private HomeActivity mHomeActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
-
-    public ListMusicFragment(ArrayList<SongModel> songs){
-        mSongs = songs;
+    private MusicAdapter mMusicAdapter;
+    public ListMusicFragment(MusicAdapter musicAdapter){
+        mMusicAdapter = musicAdapter;
     }
 
     @Override
@@ -41,22 +33,15 @@ public class ListMusicFragment extends Fragment implements SongAdapter.OnClickLi
         super.onCreate(savedInstanceState);
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(getContext());
-
         mHomeActivity = (HomeActivity) getContext();
-
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
-        mSongAdapter = new SongAdapter(getActivity(), mSongs, Constants.VALUE.ALL_NEW_SONGS);
-        mSongAdapter.notifyDataSetChanged();
-        mSongAdapter.setLimit(false);
-        mSongAdapter.setOnClickItemListener(this);
-
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (view == null) {
-            view = inflater.inflate(R.layout.fragment_list_music, null);
+            view = inflater.inflate(R.layout.fragment_list_music, container, false);
             initView(view);
         }
         initData();
@@ -64,29 +49,16 @@ public class ListMusicFragment extends Fragment implements SongAdapter.OnClickLi
     }
 
     private void initView(View view){
-        mRcSongs = view.findViewById(R.id.rc_recently_add);
+        mRcMusic = view.findViewById(R.id.rc_music_add);
     }
 
     private void initData(){
-        mRcSongs.setHasFixedSize(true);
-        mRcSongs.setLayoutManager(new LinearLayoutManager(
+        mRcMusic.setHasFixedSize(true);
+        mRcMusic.setLayoutManager(new LinearLayoutManager(
                 getContext(),
                 LinearLayoutManager.VERTICAL, false));
-        mRcSongs.setAdapter(mSongAdapter);
-    }
-    @Override
-    public void onClickPosition(int pos) {
-
+        mRcMusic.setAdapter(mMusicAdapter);
     }
 
-    @Override
-    public void onClickMusic(String nameChoose) {
-
-    }
-
-    @Override
-    public void onClick(String type, int position) {
-
-    }
 
 }

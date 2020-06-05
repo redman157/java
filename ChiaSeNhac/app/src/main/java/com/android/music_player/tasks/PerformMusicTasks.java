@@ -54,6 +54,14 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
         Map<String, ArrayList<SongModel>> folders = mMusicManager.getFolder();
         if (artists.size() > 0 && albums.size() > 0 && folders.size() > 0) {
             Log.d(tag, "Done filter into data");
+//            Log.d(tag,
+//                    "artist : "+ artists.size() +" albums : "+ albums.size() +" folders : "+ folders.size() );
+            for (Map.Entry<String, ArrayList<SongModel>> entry : artists.entrySet()) {
+                String k = entry.getKey();
+                ArrayList<SongModel> v = entry.getValue();
+                Log.d(tag, "artist name: "+ k +" SongModel: "+v.size());
+            }
+
         }
 
         try {

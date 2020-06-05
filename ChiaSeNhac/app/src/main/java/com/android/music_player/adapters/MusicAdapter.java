@@ -1,136 +1,113 @@
 package com.android.music_player.adapters;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.graphics.Color;
-import android.os.Build;
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.R;
+import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.DialogUtils;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> {
-    private Context mContext;
-    private SongModel mSongModel;
-    private ArrayList<SongModel> songs;
-    private ImageUtils mImageUtils;
-    private int mPossitionMusic;
-    private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
-    private int mOptionMusic;
-    private Dialog dialog;
-    public MusicAdapter(Context context, Dialog dialog,ArrayList<SongModel> songs) {
-        this.songs = songs;
-        mContext = context;
-        this.dialog = dialog;
-        mImageUtils = ImageUtils.getInstance(context);
+public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ItemViewHolder> {
+    private final Activity mActivity;
+    private ArrayList<SongModel> mMusics;
+    private SharedPrefsUtils mSharedPrefsUtils;
+    private SimpleDateFormat mFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
+    private int limit = 10;
+    private boolean isLimit;
+    public void setLimit(boolean isLimit){
+        this.isLimit = isLimit;
     }
-
-
-    public void setPosition(int position){
-        mOptionMusic = position;
-    }
-    public int getPosition(){
-        return mOptionMusic;
-    }
-    public ArrayList<SongModel> getListMusic() {
-        return songs;
-    }
-
-    public void setListMusic(ArrayList<SongModel> songs) {
-        this.songs = songs;
+    public MusicAdapter(Activity activity, ArrayList<SongModel> musics) {
+        this.mMusics = musics;
+        mActivity = activity;
+        mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
     }
 
     private OnClickItemListener onClickItemListener;
-
-    public void setOnClick(OnClickItemListener onClickItemListener){
+    public void setOnClickItemListener(OnClickItemListener onClickItemListener) {
         this.onClickItemListener = onClickItemListener;
     }
-
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_music, null);
-
-        return new ViewHolder(view);
+    public interface OnClickListener {
+        void onClick(String type, int position);
     }
 
     @Override
-    public int getItemCount() {
-        return songs.size();
+    public ItemViewHolder onCreateViewHolder(ViewGroup parent,
+                                             int viewType) {
+
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_music_line, parent, false);
+        return new ItemViewHolder(view);
+
     }
 
     @Override
-    public boolean onFailedToRecycleView(@NonNull ViewHolder holder) {
-        return super.onFailedToRecycleView(holder);
-    }
+    public void onBindViewHolder(ItemViewHolder holder, final int position) {
+        final SongModel item;
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-
-        mSongModel = getListMusic().get(position);
-        holder.setData(position);
-        holder.ll_option_music.setOnClickListener(new View.OnClickListener() {
+        item = mMusics.get(position);
+        holder.assignData(item);
+        MusicManager.getInstance().setContext(mActivity);
+        holder.mLinearMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickItemListener.onClickPosition(position);
-                // lúc hiện dialog nếu hiển thị thì sẽ ẩn đi
-                DialogUtils.cancelDialog();
+                onClickItemListener.onClickMusic(mMusics.get(position).getSongName());
+                mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mMusics.get(position).getAlbumID());
             }
         });
 
     }
 
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
-        private LinearLayout ll_option_music;
-        private TextView textTime, textTitle, textArtist;
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            ll_option_music = itemView.findViewById(R.id.ll_item_option_music);
-            imageView = itemView.findViewById(R.id.item_music_img_music);
-            textTime = itemView.findViewById(R.id.item_music_text_time);
-            textTitle = itemView.findViewById(R.id.item_music_text_title);
-
-            textArtist = itemView.findViewById(R.id.item_music_text_artists);
-        }
-
-        public void setData(int pos){
-            SongModel songModel = getListMusic().get(pos);
-            if (mOptionMusic == pos){
-//                Log.d("KKK", "setData: "+getListMusic().getData(pos).getSongName());
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    textTitle.setTextColor(mContext.getColor(R.color.red));
-                }else {
-                    textTitle.setTextColor(Color.parseColor("#FFFF0000"));
-                }
-            }else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    textTitle.setTextColor(mContext.getColor(R.color.black));
-                }else {
-                    textTitle.setTextColor(Color.parseColor("#FFFFFFFF"));
-                }
-            }
-
-            mImageUtils.getSmallImageByPicasso(songModel.getAlbumID(), imageView);
-            textTime.setText(format.format(songModel.getTime()));
-            textArtist.setText(songModel.getArtist());
-            textTitle.setText(songModel.getSongName());
+    @Override
+    public int getItemCount() {
+        if (isLimit){
+            return limit;
+        }else {
+            return mMusics.size();
         }
     }
+
+    public class ItemViewHolder extends RecyclerView.ViewHolder  {
+        private ImageView mImgMusic;
+        private TextView mTextNameMusic, mTextArtistMusic;
+        private TextView mTextTimeMusic;
+        private ImageButton mBtnMenu;
+        private LinearLayout mLinearMusic;
+        public ItemViewHolder(View itemView) {
+            super(itemView);
+            mLinearMusic = itemView.findViewById(R.id.item_ll_music);
+            mTextArtistMusic = itemView.findViewById(R.id.item_text_artist_music);
+            mImgMusic = itemView.findViewById(R.id.item_img_music);
+            mBtnMenu = itemView.findViewById(R.id.item_btn_music);
+            mTextNameMusic = itemView.findViewById(R.id.item_text_title_music);
+            mTextTimeMusic = itemView.findViewById(R.id.item_text_time_music);
+        }
+
+        public void assignData(final SongModel song) {
+            //UI setting code
+            mTextNameMusic.setText(song.getSongName());
+            mTextArtistMusic.setText(song.getArtist());
+            mTextTimeMusic.setText(mFormat.format(song.getTime()));
+            mImgMusic.setClipToOutline(true);
+
+            ImageUtils.getInstance(mActivity).getSmallImageByPicasso(song.getAlbumID(), mImgMusic);
+        }
+    }
+
 }

@@ -1,6 +1,5 @@
 package com.android.music_player.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.OptionItem;
 import com.android.music_player.R;
-import com.android.music_player.activities.SongActivity;
 import com.android.music_player.adapters.OptionAdapter;
-import com.android.music_player.utils.Constants;
 
 import java.util.ArrayList;
 
@@ -88,10 +85,10 @@ public class LibraryFragment extends Fragment implements OptionAdapter.OnClickLi
     public void onClick(int position) {
         switch (position){
             case 0:
-                Intent iViewAll = new Intent(getContext(), SongActivity.class);
+                /*Intent iViewAll = new Intent(getContext(), SongActivity.class);
                 iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.ALL_SONGS);
                 getActivity().finish();
-                getActivity().startActivity(iViewAll);
+                getActivity().startActivity(iViewAll);*/
                 break;
         }
     }

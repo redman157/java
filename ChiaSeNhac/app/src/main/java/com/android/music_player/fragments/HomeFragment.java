@@ -15,11 +15,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.music_player.R;
 import com.android.music_player.adapters.HomeFragmentAdapter;
-import com.android.music_player.adapters.SongAdapter;
+import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MusicManager;
-import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -32,7 +31,7 @@ public class HomeFragment extends Fragment implements
     private MusicManager mMusicManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private HomeFragmentAdapter mHomeAdapter;
-    private SongAdapter mSongsAdapter;
+    private MusicAdapter mSongsAdapter;
 
     private OnChangeListener onChangeListener;
     public void setOnChangeListener(OnChangeListener onChangeListener){
@@ -71,8 +70,7 @@ public class HomeFragment extends Fragment implements
 
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(getContext());
-        mSongsAdapter = new SongAdapter(getActivity(), MusicManager.getInstance().newSongs(),
-                Constants.VALUE.NEW_SONGS);
+        mSongsAdapter = new MusicAdapter(getActivity(), MusicManager.getInstance().newSongs() );
         mSongsAdapter.setLimit(true);
         mSongsAdapter.notifyDataSetChanged();
         mSongsAdapter.setOnClickItemListener(this);

@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.R;
-import com.android.music_player.adapters.SongAdapter;
+import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
 import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnClickItemListener;
@@ -31,7 +31,7 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
     private OnChangeListener onChangeListener;
     private Context mContext;
     private FragmentActivity listener;
-    private SongAdapter mSongsAdapter;
+    private MusicAdapter mSongsAdapter;
 
     public static MainFragment newInstance(OnChangeListener onChangeListener) {
         MainFragment fragmentDemo = new MainFragment(onChangeListener);
@@ -165,10 +165,6 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
 
     }
 
-    @Override
-    public void onClickType(String type, int pos) {
-
-    }
 
     @Override
     public void onClickMusic(String nameChoose) {

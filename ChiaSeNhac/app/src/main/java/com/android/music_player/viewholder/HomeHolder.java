@@ -1,7 +1,6 @@
 package com.android.music_player.viewholder;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,9 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
-import com.android.music_player.activities.PlayActivity;
-import com.android.music_player.activities.SongActivity;
-import com.android.music_player.adapters.SongAdapter;
+import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.fragments.AllMusicFragment;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
@@ -31,7 +28,7 @@ import java.util.ArrayList;
 public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
     private TextView mTextPlayer_1, mTextPlayer_2, mTextPlayerSongs;
     private RecyclerView mRc_Recently_Add;
-    private SongAdapter mSongsAdapter;
+    private MusicAdapter mSongsAdapter;
     private ArrayList<SongModel> mNewSongs;
     private Button mBtnViewAll;
     private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
@@ -80,7 +77,7 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         }
     }
 
-    public void assignView(SongAdapter mSongsAdapter){
+    public void assignView(MusicAdapter mSongsAdapter){
         mImg_Player_Songs.setOnClickListener(this);
         mImg_Player_1.setOnClickListener(this);
         mImg_Player_2.setOnClickListener(this);
@@ -114,27 +111,24 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
                 break;
             case R.id.img_Player_2:
                 mRc_Recently_Add.setVisibility(View.GONE);
-                Intent intent = new Intent(mActivity, SongActivity.class);
+             /*   Intent intent = new Intent(mActivity, SongActivity.class);
                 intent.putExtra(Constants.INTENT.TYPE_MUSIC, mTextPlayer_2.getText().toString());
-
-                mActivity.finish();
-                mActivity.startActivity(intent);
+                mActivity.startActivity(intent);*/
                 break;
 
             case R.id.img_Player_1:
                 mRc_Recently_Add.setVisibility(View.GONE);
-                Intent iPlayList_2 = new Intent(mActivity, SongActivity.class);
+                /*Intent iPlayList_2 = new Intent(mActivity, SongActivity.class);
                 iPlayList_2.putExtra(Constants.INTENT.TYPE_MUSIC,
                         mTextPlayer_1.getText().toString());
-                mActivity.finish();
-                mActivity.startActivity(iPlayList_2);
+                mActivity.startActivity(iPlayList_2);*/
                 break;
             case R.id.img_Most_Player:
                 mRc_Recently_Add.setVisibility(View.GONE);
-                Intent iMostPlay = new Intent(mActivity, PlayActivity.class);
+              /*  Intent iMostPlay = new Intent(mActivity, PlayActivity.class);
                 iMostPlay.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
 
-                mActivity.startActivity(iMostPlay);
+                mActivity.startActivity(iMostPlay);*/
                 break;
         }
     }

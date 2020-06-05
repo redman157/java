@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.adapters.MusicAdapter;
+import com.android.music_player.adapters.MusicDialogAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
@@ -177,12 +177,12 @@ public class DialogUtils {
     }
 
     public static void showSelectSong(final Context context,
-                                      MusicAdapter musicAdapter, int pos){
+                                      MusicDialogAdapter musicDialogAdapter, int pos){
         dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_option_music);
         RecyclerView mRcOptionMusic = dialog.findViewById(R.id.rc_OptionMusic);
 
-        mRcOptionMusic.setAdapter(musicAdapter);
+        mRcOptionMusic.setAdapter(musicDialogAdapter);
         mRcOptionMusic.setLayoutManager(new LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL, false));
         mRcOptionMusic.getLayoutManager().scrollToPosition(pos);

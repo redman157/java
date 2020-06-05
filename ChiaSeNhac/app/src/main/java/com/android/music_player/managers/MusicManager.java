@@ -16,9 +16,6 @@ import android.text.SpannableString;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.PopupMenu;
-import android.widget.Toast;
-
-import androidx.core.content.ContextCompat;
 
 import com.android.music_player.R;
 import com.android.music_player.database.AllPlaylist;
@@ -35,13 +32,11 @@ import com.android.music_player.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,11 +47,13 @@ public class MusicManager {
     private ArrayList<HashMap<String, String>> artists = new ArrayList<>();*/
 
     private MediaBrowserConnection mMediaBrowserConnection;
-
     private Map<String, ArrayList<SongModel>> mAlbumLists = new HashMap<>();
     private Map<String, ArrayList<SongModel>> mArtistLists = new HashMap<>();
     private Map<String, ArrayList<SongModel>> mFolderLists = new HashMap<>();
-    public Set<SongModel> mSongsMain = new HashSet<SongModel>();
+/*    private Map<String, ArrayList<SongModel>> mAlbumLists = new HashMap<>();
+    private Map<String, ArrayList<SongModel>> mArtistLists = new HashMap<>();
+    private Map<String, ArrayList<SongModel>> mFolderLists = new HashMap<>();
+    public Set<SongModel> mSongsMain = new HashSet<SongModel>();*/
 
     private ArrayList<SongModel> queue = new ArrayList<>();
     private ArrayList<SongModel> shuffleSongs = new ArrayList<>();
@@ -134,8 +131,8 @@ public class MusicManager {
                     Log.d(TAG, e.getMessage());
                 }
             }
-        }else if (mSongsMain != null && mSongsMain.size() > 0){
-            if (mTotalSong == mSongsMain.size()){
+        }else if (MusicLibrary.model != null && MusicLibrary.model.size() > 0){
+            if (mTotalSong == MusicLibrary.model.size()){
                 return;
             }else {
                 crawlData();
@@ -167,22 +164,10 @@ public class MusicManager {
     public void setCurrentMusic(String path){
         Log.d("CCC","setCurrentSong: " + path);
         // convert path --> music name
-        String musicName = Utils.getKeyByValue(MusicLibrary.musicFileName, path);
+        String musicName = Utils.getKeyByValue(MusicLibrary.fileName, path);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, musicName);
     }
 
-    public int getPosition() {
-        int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, -1);
-        return pos;
-    }
-
-    public void setAlbumID(String albumID){
-        mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, albumID);
-    }
-
-    public String getAlbumID(){
-        return mSharedPrefsUtils.getString(Constants.PREFERENCES.SAVE_ALBUM_ID, "");
-    }
     public void setPosition(int position) {
         processEndOfList(position);
     }
@@ -257,7 +242,7 @@ public class MusicManager {
 
     public ArrayList<SongModel> queue() {
         if (queue.isEmpty()){
-            ArrayList<SongModel> list = new ArrayList<>(mSongsMain);
+            ArrayList<SongModel> list = new ArrayList<>(MusicLibrary.info);
             Collections.reverse(list);
             replaceQueue(list);
         }
@@ -280,7 +265,7 @@ public class MusicManager {
     public ArrayList<SongModel> newSongs() {
         grabIfEmpty(); // If no song in list (new songs)
 
-        ArrayList<SongModel> newSongs = new ArrayList<>(mSongsMain);
+        ArrayList<SongModel> newSongs = new ArrayList<>(MusicLibrary.info);
         Collections.reverse(newSongs);
         return newSongs;
     }
@@ -294,7 +279,7 @@ public class MusicManager {
 
     public ArrayList<SongModel> albumSongs(String album) {
         ArrayList<SongModel> songs = new ArrayList<>();
-        ArrayList<SongModel> list = new ArrayList<>(mSongsMain);
+        ArrayList<SongModel> list = new ArrayList<>(MusicLibrary.info);
         Collections.reverse(list);
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getAlbum().equals(album)) {
@@ -315,7 +300,7 @@ public class MusicManager {
 
     public ArrayList<SongModel> artistSongs(String artist) {
         ArrayList<SongModel> songs = new ArrayList<>();
-        ArrayList<SongModel> list = new ArrayList<>(mSongsMain);
+        ArrayList<SongModel> list = new ArrayList<>(MusicLibrary.info);
         Collections.reverse(list);
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getArtist().contains(artist)) {
@@ -331,7 +316,7 @@ public class MusicManager {
      */
 
     public SongModel getSong(String title){
-        for (SongModel model: mSongsMain) {
+        for (SongModel model: MusicLibrary.info) {
             if (model.getSongName().equals(title)){
                 return model;
             }
@@ -350,10 +335,7 @@ public class MusicManager {
 
     public void isSync(boolean sync) {
         if (sync) {
-            mSongsMain.clear();
-            mAlbumLists.clear();
-            mFolderLists.clear();
-            mArtistLists.clear();
+            MusicLibrary.clear();
             queue.clear();
         }
         grabIfEmpty(); // isSync
@@ -374,10 +356,6 @@ public class MusicManager {
         }
     }
 
-    public void playNext(SongModel song) {
-        queue().add(getPosition() + 1, song);
-        Utils.ToastLong(mContext, "PLAYING next: " + song.getSongName());
-    }
 
     public  boolean replaceQueue(final ArrayList<SongModel> list) {
         if (list != null && !list.isEmpty()) {
@@ -431,47 +409,6 @@ public class MusicManager {
             //styledMenuTitle.setSpan(new ForegroundColorSpan(Color.parseColor("#333333")), 0, menuTitle.length(), 0);
             menuItem.setTitle(styledMenuTitle);
             i++;
-        }
-    }
-
-    public void play(int id, ArrayList<SongModel> array) {
-        Log.d("MusicUtilsConsole", "Initiating the play request to MusicPlayback Service");
-        if (!array.isEmpty()) {
-            File file = new File(array.get(id).getPath());
-            if (file.exists()) {
-                replaceQueue(array);
-                setPosition(id);
-                Intent intent = new Intent(Constants.ACTION.PLAY);
-                ContextCompat.startForegroundService(mContext, createExplicitFromImplicitIntent(intent));
-
-            } else {
-                Toast.makeText(mContext,
-                        "Unable to play the song! Try syncing the library!",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    public  void shufflePlay(int id, ArrayList<SongModel> array) {
-        ArrayList<SongModel> arrayList = new ArrayList<>(array);
-        if (arrayList.size() > 0) {
-            SongModel songModel = arrayList.get(id);
-            arrayList.remove(id);
-            Collections.shuffle(arrayList);
-            arrayList.add(0, songModel);
-            play(0, arrayList);
-            Utils.ToastLong(mContext,"Shuffling");
-        }
-    }
-
-    public void shufflePlay(ArrayList<SongModel> songs) {
-        ArrayList<SongModel> data = new ArrayList<>(songs);
-        if (data.size() > 0) {
-            Collections.shuffle(data);
-            play(0, data);
-            Utils.ToastLong(mContext,"Shuffling");
-        } else {
-            Utils.ToastLong(mContext,"Nothing to shuffle");
         }
     }
 
@@ -695,7 +632,7 @@ public class MusicManager {
     }
 
     private void grabIfEmpty() {
-        if (mSongsMain.isEmpty()) {
+        if (MusicLibrary.info.isEmpty()) {
             crawlData();
             Log.d(TAG, "Grabbing data for player...");
         } else {
@@ -782,21 +719,17 @@ public class MusicManager {
                             builder.setPath(path);
                             builder.setTime(currentDuration);
 
-                            mSongsMain.add(builder.generate());
-
                             MusicLibrary.createMediaMetadataCompat(builder.generate());
                         }
                     }
 
                 }
                 while (cursor.moveToNext());
-
-                setMainMusic(mSongsMain);
-                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.TOTAL_SONGS, mSongsMain.size());
+                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.TOTAL_SONGS, MusicLibrary.music.size());
                 cursor.close();
             }
 
-            filterData(mSongsMain);
+            filterData(MusicLibrary.info);
             Log.d(TAG, "CrawlData() performed");
         }catch (SQLiteException e){
         }
@@ -805,9 +738,9 @@ public class MusicManager {
     /*
      * Albums Data && Artist Data && folder Data
      */
-    private void filterData(Set<SongModel> mainList){
+    private void filterData(Set<SongModel> mains){
 
-        ArrayList<SongModel> allSongList = new ArrayList<>(mainList);
+        ArrayList<SongModel> allSongList = new ArrayList<>(mains);
 
         for (int song = 0; song < allSongList.size(); song++) {
             String artist = allSongList.get(song).getArtist();
@@ -815,29 +748,29 @@ public class MusicManager {
             String folder = allSongList.get(song).getPath();
 
             while (true) {
-                if (mArtistLists.get(artist) != null) {
-                    mArtistLists.get(artist).add(allSongList.get(song));
+                if (MusicLibrary.artist.get(artist) != null) {
+                    MusicLibrary.artist.get(artist).add(allSongList.get(song));
                     break;
                 } else {
-                    mArtistLists.put(artist, new ArrayList<SongModel>());
+                    MusicLibrary.artist.put(artist, new ArrayList<SongModel>());
                 }
             }
 
             while (true) {
-                if (mAlbumLists.get(album) != null) {
-                    mAlbumLists.get(album).add(allSongList.get(song));
+                if (MusicLibrary.album.get(album) != null) {
+                    MusicLibrary.album.get(album).add(allSongList.get(song));
                     break;
                 } else {
-                    mAlbumLists.put(album, new ArrayList<SongModel>());
+                    MusicLibrary.album.put(album, new ArrayList<SongModel>());
                 }
             }
 
             while (true) {
-                if (mFolderLists.get(folder) != null) {
-                    mFolderLists.get(folder).add(allSongList.get(song));
+                if (MusicLibrary.folder.get(folder) != null) {
+                    MusicLibrary.folder.get(folder).add(allSongList.get(song));
                     break;
                 } else {
-                    mFolderLists.put(folder, new ArrayList<SongModel>());
+                    MusicLibrary.folder.put(folder, new ArrayList<SongModel>());
                 }
             }
         }
@@ -845,7 +778,7 @@ public class MusicManager {
 
     public Map<String, ArrayList<SongModel>> getAlbum() {
         grabIfEmpty();
-        return mAlbumLists;
+        return MusicLibrary.album;
     }
 
     public void setAlbum(Map<String, ArrayList<SongModel>> albumLists) {
@@ -854,7 +787,7 @@ public class MusicManager {
 
     public Map<String, ArrayList<SongModel>> getArtist() {
         grabIfEmpty();
-        return mArtistLists;
+        return MusicLibrary.artist;
     }
 
     public void setArtist(Map<String, ArrayList<SongModel>> artistLists) {
@@ -863,16 +796,11 @@ public class MusicManager {
 
     public Map<String, ArrayList<SongModel>> getFolder() {
         grabIfEmpty();
-        return mFolderLists;
+        return MusicLibrary.folder;
     }
 
     public void setFolder(Map<String, ArrayList<SongModel>> folderLists) {
         this.mFolderLists = folderLists;
-    }
-
-
-    public void setMainMusic(Set<SongModel> mainList) {
-        this.mSongsMain = mainList;
     }
 
     public ArrayList<SongModel> getQueue() {

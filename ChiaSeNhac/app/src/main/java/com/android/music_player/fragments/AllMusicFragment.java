@@ -18,7 +18,12 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.R;
+import com.android.music_player.adapters.AlbumAdapter;
+import com.android.music_player.adapters.ArtistAdapter;
+import com.android.music_player.adapters.FolderAdapter;
+import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.utils.Constants;
@@ -27,19 +32,24 @@ import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.tabs.TabLayout;
 
 public class AllMusicFragment extends Fragment implements View.OnClickListener,
-        ViewPager.OnPageChangeListener, TabLayout.OnTabSelectedListener {
+        ViewPager.OnPageChangeListener,
+        TabLayout.OnTabSelectedListener, MusicAdapter.OnClickListener, OnClickItemListener {
     private MusicManager mMusicManager;
 
     private Toolbar mToolBar;
     private SharedPrefsUtils mSharedPrefsUtils;
-    public ImageView profileImage;
-    public TextView profileName, profileArtist, profileAlbum;
+    public ImageView mProfile, mBackGround;
+    public TextView TextProfileTitle, TextProfileArtist, TextProfileAlbum;
     private TabLayout mTabLayoutSong;
     private ViewPagerAdapter mViewPagerAdapter;
     private ViewPager mViewPagerSong;
     private View collapsingProfileHeaderView;
     private String songName;
     private View view;
+    private MusicAdapter mMusicAdapter;
+    private FolderAdapter folderAdapter;
+    private AlbumAdapter albumAdapter;
+    private ArtistAdapter artistAdapter;
     public static AllMusicFragment newInstance() {
         Bundle args = new Bundle();
         AllMusicFragment fragment = new AllMusicFragment();
@@ -66,7 +76,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Defines the xml file for the fragment
         if (view == null) {
-            view = inflater.inflate(R.layout.fragment_all_song, container, false);
+            view = inflater.inflate(R.layout.fragment_all_music, container, false);
         }
         return view;
     }
@@ -95,12 +105,35 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         super.onDestroyView();
     }
 
+    private void setAllAdapter(){
+        mMusicAdapter = new MusicAdapter(getActivity(), mMusicManager.allSortSongs());
+        mMusicAdapter.notifyDataSetChanged();
+        mMusicAdapter.setLimit(false);
+        mMusicAdapter.setOnClickItemListener(this);
+
+        artistAdapter = new ArtistAdapter(getActivity(),mMusicManager.getArtist());
+        /*artistAdapter.notifyDataSetChanged();
+        artistAdapter.setLimit(false);
+        mMusicAdapter.setOnClickItemListener(this);*/
+
+        albumAdapter = new AlbumAdapter(getActivity(), mMusicManager.getAlbum());
+      /*  mMusicAdapter.notifyDataSetChanged();
+        mMusicAdapter.setLimit(false);
+        mMusicAdapter.setOnClickItemListener(this);*/
+
+        folderAdapter = new FolderAdapter(getActivity(), mMusicManager.getFolder() );
+        /*mMusicAdapter.notifyDataSetChanged();
+        mMusicAdapter.setLimit(false);
+        mMusicAdapter.setOnClickItemListener(this);*/
+    }
+
     private void setupViewPager(ViewPager viewPager){
+        setAllAdapter();
         mViewPagerAdapter = new ViewPagerAdapter(getContext(),getActivity().getSupportFragmentManager());
-        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
-        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
-        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
-        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicManager.allSortSongs()));
+        mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicAdapter));
+        mViewPagerAdapter.addFragment(new ListArtistFragment(artistAdapter));
+        mViewPagerAdapter.addFragment(new ListAlbumFragment(albumAdapter));
+        mViewPagerAdapter.addFragment(new ListFolderFragment(folderAdapter));
 
         viewPager.setAdapter(mViewPagerAdapter);
         viewPager.setCurrentItem(0);
@@ -120,25 +153,28 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         collapsingProfileHeaderView = view.findViewById(R.id.collapseActionView);
         mViewPagerSong = view.findViewById(R.id.vp_AllMusic);
         mTabLayoutSong = view.findViewById(R.id.tab_AllMusic);
-        profileAlbum = collapsingProfileHeaderView.findViewById(R.id.profileMisc);
-        profileImage = collapsingProfileHeaderView.findViewById(R.id.profileImage);
-        profileName = collapsingProfileHeaderView.findViewById(R.id.profileName);
-        profileArtist = collapsingProfileHeaderView.findViewById(R.id.profileSubtitle);
+        TextProfileAlbum = collapsingProfileHeaderView.findViewById(R.id.profileMisc);
+        mProfile = collapsingProfileHeaderView.findViewById(R.id.profileImage);
+        TextProfileTitle = collapsingProfileHeaderView.findViewById(R.id.profileName);
+        TextProfileArtist = collapsingProfileHeaderView.findViewById(R.id.profileSubtitle);
+        mBackGround = view.findViewById(R.id.img_AlbumId);
         mToolBar = view.findViewById(R.id.tb_AllMusic);
 
         if(!mMusicManager.getCurrentMusic().equals("")){
-            MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(getContext(),
-                    mMusicManager.getCurrentMusic());
-            setTitle(metadataCompat);
+            setTitle(mMusicManager.getCurrentMusic());
         }
     }
 
-    public void setTitle(MediaMetadataCompat metadataCompat){
-        profileAlbum.setText(metadataCompat.getString(Constants.METADATA.Album));
-        profileName.setText(metadataCompat.getString(Constants.METADATA.Title));
-        profileArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
+    public void setTitle(String songName){
+        MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(getContext(), songName);
+        TextProfileAlbum.setText(metadataCompat.getString(Constants.METADATA.Album));
+        TextProfileTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
+        TextProfileArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
+
         ImageUtils.getInstance(getContext()).getSmallImageByPicasso(
-                String.valueOf(MusicLibrary.getAlbumRes(mMusicManager.getCurrentMusic())),profileImage);
+                String.valueOf(MusicLibrary.getAlbumRes(songName)), mProfile);
+        ImageUtils.getInstance(getContext()).getSmallImageByPicasso(
+                String.valueOf(MusicLibrary.getAlbumRes(songName)), mBackGround);
     }
 
     @Override
@@ -185,6 +221,22 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onClickPosition(int pos) {
+
+    }
+
+    @Override
+    public void onClickMusic(String nameChoose) {
+        setTitle(nameChoose);
+        Log.d("AAA","AllMusicFragment --- onClickMusic: "+nameChoose );
+    }
+
+    @Override
+    public void onClick(String type, int position) {
 
     }
 }

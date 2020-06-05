@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.adapters.MusicAdapter;
+import com.android.music_player.adapters.MusicDialogAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MusicLibrary;
@@ -42,7 +42,7 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     public TextView mTextArtist, mTextAlbum,mTextTittle;
     public Dialog mDlOptionMusic;
 
-    private MusicAdapter mMusicAdapter;
+    private MusicDialogAdapter mMusicDialogAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<SongModel> musicMain;
     private MediaBrowserCompat.MediaItem mediaItem;
@@ -132,14 +132,14 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
                 if (mSongModels == null){
                     mSongModels = musicMain;
                 }
-                mMusicAdapter = new MusicAdapter(getContext(), mDlOptionMusic, mSongModels);
-                mMusicAdapter.notifyDataSetChanged();
+                mMusicDialogAdapter = new MusicDialogAdapter(getContext(), mDlOptionMusic, mSongModels);
+                mMusicDialogAdapter.notifyDataSetChanged();
                 int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, -1);
                 for (int i = 0; i < mSongModels.size(); i++) {
                     if (mSongModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
-                        mMusicAdapter.setPosition(i);
-                        mMusicAdapter.setOnClick(onClickItemListener);
-                        DialogUtils.showSelectSong(getContext(),mMusicAdapter, i);
+                        mMusicDialogAdapter.setPosition(i);
+                        mMusicDialogAdapter.setOnClick(onClickItemListener);
+                        DialogUtils.showSelectSong(getContext(), mMusicDialogAdapter, i);
                     }
                 }
 

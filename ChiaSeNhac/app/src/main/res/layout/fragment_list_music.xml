@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
-        android:id="@+id/rc_recently_add"
+        android:id="@+id/rc_music_add"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

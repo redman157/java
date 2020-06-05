@@ -59,7 +59,7 @@ public class CollapsingProfileHeaderView extends LinearLayout {
 
     public void applyAttributes() {
         /*ImageUtils.getInstance(context).getSmallImageByPicasso(songModel.getAlbumID(),
-                profileImage);*/
+                mProfile);*/
 
         profileImage.setImageResource(profileDrawable);
         mTextSongName.setText(profileName);
@@ -82,7 +82,7 @@ public class CollapsingProfileHeaderView extends LinearLayout {
         ImageUtils.getInstance(context).getSmallImageByPicasso(songModel.getAlbumID(),
                 profileImage);
 
-//        profileImage.setImageResource(profileDrawable);
+//        mProfile.setImageResource(profileDrawable);
         mTextSongName.setText(songModel.getSongName());
         mTextSongName.setTextSize(TypedValue.COMPLEX_UNIT_SP,
                 12);

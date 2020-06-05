@@ -56,7 +56,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ItemViewHo
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mFolders.size();
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder  {

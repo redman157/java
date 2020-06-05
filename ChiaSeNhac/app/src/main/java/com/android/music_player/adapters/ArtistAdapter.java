@@ -60,7 +60,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mArtists.size();
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder  {
@@ -72,7 +72,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
             mLinearArtist = itemView.findViewById(R.id.item_ll_artist);
             mTextInfoAritst = itemView.findViewById(R.id.item_text_info_artist);
             mImgArtist = itemView.findViewById(R.id.item_img_artist);
-            mTextArtist = itemView.findViewById(R.id.item_text_artist);
+            mTextArtist = itemView.findViewById(R.id.item_text_title_artist);
         }
 
         @SuppressLint("SetTextI18n")

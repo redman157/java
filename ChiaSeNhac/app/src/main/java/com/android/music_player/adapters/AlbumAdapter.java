@@ -44,7 +44,13 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
         ArrayList<SongModel> model = new ArrayList<>(MusicLibrary.info);
         final SongModel item = model.get(position);
         ArrayList<SongModel> music = mAlbums.get(item.getAlbum());
-        holder.assignData(item, music);
+        for (Map.Entry<String, ArrayList<SongModel>> entry : mAlbums.entrySet()) {
+            String k = entry.getKey();
+            ArrayList<SongModel> v = entry.getValue();
+            holder.assignData(item, music);
+//            Log.d(tag, "artist name: "+ k +" SongModel: "+v.size());
+        }
+
 
         holder.mLinearAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +63,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mAlbums.size();
     }
 
     public class ItemViewHolder extends RecyclerView.ViewHolder  {

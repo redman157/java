@@ -23,9 +23,9 @@ public class ListFolderFragment extends Fragment {
     private MusicManager mMusicManager;
     private HomeActivity mHomeActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private FolderAdapter folderAdapter;
+    private FolderAdapter mFolderAdapter;
     public ListFolderFragment(FolderAdapter folderAdapter){
-        this.folderAdapter = folderAdapter;
+        this.mFolderAdapter = folderAdapter;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ListFolderFragment extends Fragment {
         mFastScrollRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(),
                 LinearLayoutManager.VERTICAL, false));
-        mFastScrollRecyclerView.setAdapter(folderAdapter);
+        mFastScrollRecyclerView.setAdapter(mFolderAdapter);
     }
 
 }

@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.android.music_player.R;
-import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.ArtistAdapter;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -21,11 +20,10 @@ public class ListArtistFragment extends Fragment {
     private View view;
     private FastScrollRecyclerView mFastScrollRecyclerView;
     private MusicManager mMusicManager;
-    private HomeActivity mHomeActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private ArtistAdapter artistAdapter;
+    private ArtistAdapter mArtistAdapter;
     public ListArtistFragment(ArtistAdapter artistAdapter){
-        this.artistAdapter = artistAdapter;
+        this.mArtistAdapter = artistAdapter;
     }
 
     @Override
@@ -33,7 +31,6 @@ public class ListArtistFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mMusicManager = MusicManager.getInstance();
         mMusicManager.setContext(getContext());
-        mHomeActivity = (HomeActivity) getContext();
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
     }
 
@@ -57,7 +54,7 @@ public class ListArtistFragment extends Fragment {
         mFastScrollRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(),
                 LinearLayoutManager.VERTICAL, false));
-        mFastScrollRecyclerView.setAdapter(artistAdapter);
+        mFastScrollRecyclerView.setAdapter(mArtistAdapter);
     }
 
 }

@@ -47,9 +47,9 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
     private String songName;
     private View view;
     private MusicAdapter mMusicAdapter;
-    private FolderAdapter folderAdapter;
-    private AlbumAdapter albumAdapter;
-    private ArtistAdapter artistAdapter;
+    private FolderAdapter mFolderAdapter;
+    private AlbumAdapter mAlbumAdapter;
+    private ArtistAdapter mArtistAdapter;
     public static AllMusicFragment newInstance() {
         Bundle args = new Bundle();
         AllMusicFragment fragment = new AllMusicFragment();
@@ -111,17 +111,17 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         mMusicAdapter.setLimit(false);
         mMusicAdapter.setOnClickItemListener(this);
 
-        artistAdapter = new ArtistAdapter(getActivity(),mMusicManager.getArtist());
-        /*artistAdapter.notifyDataSetChanged();
-        artistAdapter.setLimit(false);
+        mArtistAdapter = new ArtistAdapter(getActivity(),mMusicManager.getArtist());
+        /*mArtistAdapter.notifyDataSetChanged();
+        mArtistAdapter.setLimit(false);
         mMusicAdapter.setOnClickItemListener(this);*/
 
-        albumAdapter = new AlbumAdapter(getActivity(), mMusicManager.getAlbum());
+        mAlbumAdapter = new AlbumAdapter(getActivity(), mMusicManager.getAlbum());
       /*  mMusicAdapter.notifyDataSetChanged();
         mMusicAdapter.setLimit(false);
         mMusicAdapter.setOnClickItemListener(this);*/
 
-        folderAdapter = new FolderAdapter(getActivity(), mMusicManager.getFolder() );
+        mFolderAdapter = new FolderAdapter(getActivity(), mMusicManager.getFolder() );
         /*mMusicAdapter.notifyDataSetChanged();
         mMusicAdapter.setLimit(false);
         mMusicAdapter.setOnClickItemListener(this);*/
@@ -131,9 +131,9 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         setAllAdapter();
         mViewPagerAdapter = new ViewPagerAdapter(getContext(),getActivity().getSupportFragmentManager());
         mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicAdapter));
-        mViewPagerAdapter.addFragment(new ListArtistFragment(artistAdapter));
-        mViewPagerAdapter.addFragment(new ListAlbumFragment(albumAdapter));
-        mViewPagerAdapter.addFragment(new ListFolderFragment(folderAdapter));
+        mViewPagerAdapter.addFragment(new ListArtistFragment(mArtistAdapter));
+        mViewPagerAdapter.addFragment(new ListAlbumFragment(mAlbumAdapter));
+        mViewPagerAdapter.addFragment(new ListFolderFragment(mFolderAdapter));
 
         viewPager.setAdapter(mViewPagerAdapter);
         viewPager.setCurrentItem(0);

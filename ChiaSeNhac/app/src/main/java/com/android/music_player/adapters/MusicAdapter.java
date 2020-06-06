@@ -16,6 +16,7 @@ import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.DialogUtils;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 
@@ -59,16 +60,23 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ItemViewHold
 
     @Override
     public void onBindViewHolder(ItemViewHolder holder, final int position) {
-        final SongModel item;
+        final SongModel model;
 
-        item = mMusics.get(position);
-        holder.assignData(item);
+        model = mMusics.get(position);
+        holder.assignData(model);
         MusicManager.getInstance().setContext(mActivity);
         holder.mLinearMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onClickItemListener.onClickMusic(mMusics.get(position).getSongName());
                 mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mMusics.get(position).getAlbumID());
+            }
+        });
+
+        holder.mBtnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogUtils.showSetMusic(mActivity, model.getSongName());
             }
         });
 

@@ -23,9 +23,9 @@ public class ListAlbumFragment extends Fragment {
     private MusicManager mMusicManager;
     private HomeActivity mHomeActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private AlbumAdapter albumAdapter;
+    private AlbumAdapter mAlbumAdapter;
     public ListAlbumFragment(AlbumAdapter albumAdapter){
-        this.albumAdapter = albumAdapter;
+        this.mAlbumAdapter = albumAdapter;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ListAlbumFragment extends Fragment {
         mFastScrollRecyclerView.setLayoutManager(new LinearLayoutManager(
                 getContext(),
                 LinearLayoutManager.VERTICAL, false));
-        mFastScrollRecyclerView.setAdapter(albumAdapter);
+        mFastScrollRecyclerView.setAdapter(mAlbumAdapter);
     }
 
 }

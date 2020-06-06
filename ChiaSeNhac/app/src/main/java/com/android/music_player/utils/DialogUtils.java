@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.R;
 import com.android.music_player.adapters.MusicDialogAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
+import com.android.music_player.adapters.SelectMusicAdapter;
 import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 
@@ -41,6 +42,28 @@ public class DialogUtils {
 
     }
 
+    public static void showSetMusic(final Context context, String title){
+        SelectMusicAdapter selectMusicAdapter = new SelectMusicAdapter(context);
+        dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_selection_music);
+
+        RecyclerView options = dialog.findViewById(R.id.rc_selection_music);
+        TextView textTitle = dialog.findViewById(R.id.text_title);
+        Button btnCancel = dialog.findViewById(R.id.btn_cancel);
+
+        textTitle.setText(title);
+        options.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+        options.hasFixedSize();
+        options.setAdapter(selectMusicAdapter);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+    }
 
     public static void showAllPlayList(final Context context, PlayListAdapter.OnClickItem onClickItem){
         MusicManager.getInstance().setContext(context);

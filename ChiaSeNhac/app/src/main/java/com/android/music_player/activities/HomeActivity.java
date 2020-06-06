@@ -340,10 +340,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-
-//                Fragment mainFragment = getSupportFragmentManager().findFragmentByTag(
-//                        "MainFragment");
-
                 FragmentManager manager = getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
                 Fragment mainFragment;
@@ -355,8 +351,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
                 transaction.replace(R.id.fl_placeholder, mainFragment);
                 transaction.commit();
-
-                Log.d("AAA","AllMusicFragment --- "+mainFragment.getTag());
                 break;
             case R.id.action_searchBtn:
                 startActivity(new Intent(this, SearchActivity.class));

@@ -81,10 +81,7 @@ public class HomeFragment extends Fragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_home, null);
-
-
         initView();
-//        mSongsAdapter.notifyDataSetChanged();
         mHomeAdapter = new HomeFragmentAdapter(getActivity(),mSongsAdapter);
         mHomeAdapter.notifyDataSetChanged();
         mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));

@@ -687,6 +687,7 @@ public class MusicManager {
                                     .getColumnIndex(MediaStore.Audio.Media.TITLE)).replace("_", " ").trim().replaceAll(" +", " ");
                             String artistName = cursor.getString(cursor
                                     .getColumnIndex(MediaStore.Audio.Media.ARTIST));
+
                             String albumName = cursor.getString(cursor
                                     .getColumnIndex(MediaStore.Audio.Media.ALBUM));
 
@@ -740,7 +741,7 @@ public class MusicManager {
      */
     private void filterData(Set<SongModel> mains){
 
-        ArrayList<SongModel> allSongList = new ArrayList<>(mains);
+        ArrayList<SongModel> allSongList = new ArrayList<>(MusicLibrary.info);
 
         for (int song = 0; song < allSongList.size(); song++) {
             String artist = allSongList.get(song).getArtist();

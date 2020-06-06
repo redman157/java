@@ -12,13 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.ImageUtils;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHolder>  {
@@ -40,16 +40,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        MusicManager.getInstance().setContext(mActivity);
-        ArrayList<SongModel> model = new ArrayList<>(MusicLibrary.info);
-        final SongModel item = model.get(position);
-        ArrayList<SongModel> music = mAlbums.get(item.getAlbum());
-        for (Map.Entry<String, ArrayList<SongModel>> entry : mAlbums.entrySet()) {
-            String k = entry.getKey();
-            ArrayList<SongModel> v = entry.getValue();
-            holder.assignData(item, music);
-//            Log.d(tag, "artist name: "+ k +" SongModel: "+v.size());
-        }
+        List<String> keys = new ArrayList<>(mAlbums.keySet());
+        Collections.sort(keys);
+
+        String album = keys.get(position);
+        ArrayList<SongModel> music = mAlbums.get(album);
+        holder.assignData(album, music);
 
 
         holder.mLinearAlbum.setOnClickListener(new View.OnClickListener() {
@@ -79,12 +75,13 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
             mTextAlbum = itemView.findViewById(R.id.item_text_title_album);
         }
 
-        public void assignData(final SongModel song, ArrayList<SongModel> models) {
+        public void assignData(final String album, ArrayList<SongModel> models) {
             //UI setting code
-            mTextAlbum.setText(song.getAlbum());
+            mTextAlbum.setText(album);
             mTextInfoAlbum.setText(models.size() + " bài hát");
             mImgAlbum.setClipToOutline(true);
-            ImageUtils.getInstance(mActivity).getSmallImageByPicasso(song.getAlbumID(), mImgAlbum);
+            ImageUtils.getInstance(mActivity).getSmallImageByPicasso(models.get(0).getAlbumID(),
+                    mImgAlbum);
         }
     }
 }

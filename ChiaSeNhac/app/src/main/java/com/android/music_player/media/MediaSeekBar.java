@@ -46,6 +46,7 @@ public class MediaSeekBar extends AppCompatSeekBar {
             mControllerCallback = new ControllerCallback();
             mediaController.registerCallback(mControllerCallback);
         } else if (mMediaController != null) {
+            Log.d("KKK", "setMediaController: enter");
             mMediaController.unregisterCallback(mControllerCallback);
             mControllerCallback = null;
         }
@@ -53,8 +54,8 @@ public class MediaSeekBar extends AppCompatSeekBar {
 
     }
 
-    public void disconnectController(){
-        if (mMediaController != null){
+    public void disconnectController() {
+        if (mMediaController != null) {
             mMediaController.unregisterCallback(mControllerCallback);
             mControllerCallback = null;
             mMediaController = null;
@@ -90,7 +91,8 @@ public class MediaSeekBar extends AppCompatSeekBar {
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
             super.onPlaybackStateChanged(state);
-            Log.d("HHH", "ControllerCallback --- onPlaybackStateChanged: "+ state.getPosition());
+            Log.d("JJJ",
+                    "MediaSeekBar --- ControllerCallback --- onPlaybackStateChanged: "+ state.getPosition());
 
             if (mProgressAnimator != null){
                 mProgressAnimator.cancel();
@@ -114,7 +116,7 @@ public class MediaSeekBar extends AppCompatSeekBar {
                 int timeToEnd = (int) ((getMax() - progress) / state.getPlaybackSpeed());
 
                 if (timeToEnd < 0){
-                    Log.d("HHH","onPlaybackStateChanged --- timeToEnd : enter");
+                    Log.d("JJJ","MediaSeekBar --- onPlaybackStateChanged --- timeToEnd : enter");
                     timeToEnd = 0;
                 }
                 mProgressAnimator = ValueAnimator.ofInt(progress, getMax())
@@ -129,8 +131,8 @@ public class MediaSeekBar extends AppCompatSeekBar {
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
             super.onMetadataChanged(metadata);
-            Log.d("CCC",
-                    "setMediaController --- onMetadataChanged: "+(int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
+            Log.d("JJJ",
+                    "MediaSeekBar --- setMediaController --- onMetadataChanged: "+(int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
             int max;
             if (metadata != null){
                 max = (int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
@@ -149,7 +151,8 @@ public class MediaSeekBar extends AppCompatSeekBar {
                 return;
             }
             final int animatedIntValue = (int) animation.getAnimatedValue();
-            Log.d("HHH", "setMediaController --- animatedIntValue: "+animatedIntValue);
+            Log.d("JJJ",
+                    "MediaSeekBar --- setMediaController --- animatedIntValue: "+animatedIntValue);
             textLeft.setText(Utils.formatTime(animatedIntValue));
             setProgress(animatedIntValue);
         }

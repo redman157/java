@@ -89,7 +89,7 @@ public class Statistic {
         ArrayList<String> most = new ArrayList<>();
         try {
             if (isSelect(cursor)){
-                if (cursor.getString(1).equals(Constants.VALUE.PLAY_LIST)) {
+                if (cursor.getString(1).equals(Constants.VALUE.MOST_PLAY_LIST)) {
                     List<Integer> sorted;
                     Log.d(TAG, cursor.getCount() + " kích thước");
 
@@ -141,7 +141,7 @@ public class Statistic {
         }
         return null;
     }
-    public String getMost(String type){
+    public String getMusicMost(String type){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
         int max = 0;
         String name = "";
@@ -194,7 +194,7 @@ public class Statistic {
             String SQL_UPDATE =
                     "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET "+Database.STATISTIC.MOST
                     +" = "  +""+ most +""
-                            +" WHERE "+Database.STATISTIC.TITLE + " = "+"'"+name+"'";
+                            +" WHERE "+Database.STATISTIC.NAME + " = "+"'"+name+"'";
             Log.d(TAG, SQL_UPDATE);
             mDatabase.queryData(SQL_UPDATE);
             closeDatabase();
@@ -228,7 +228,7 @@ public class Statistic {
         String SQL_UPDATE =
                 "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET " +
                         Database.STATISTIC.MOST +" = " +"'" + 0 +"'"+
-                        " WHERE "+Database.STATISTIC.TITLE + " = "+fileName;
+                        " WHERE "+Database.STATISTIC.NAME + " = "+fileName;
         mDatabase.queryData(SQL_UPDATE);
     }
 

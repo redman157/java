@@ -11,6 +11,7 @@ import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.ImageUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -85,6 +86,22 @@ public class MusicLibrary {
                     MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
         }
         return result;
+    }
+
+    public static void setMediaShuffle(Context context, List<MediaBrowserCompat.MediaItem> mediaItems){
+        MusicManager.getInstance().setContext(context);
+        Collections.shuffle(mediaItems);
+        for (int i = 0; i < mediaItems.size(); i++){
+            if (mediaItems.get(i).getDescription().getMediaId().equals(MusicManager.getInstance().getCurrentMusic())){
+                mediaItems.remove(i);
+                mediaItems.add(0, mediaItems.get(i));
+            }
+        }
+    }
+
+    public static void setMediaDefault(List<MediaBrowserCompat.MediaItem> mediaItems){
+        mediaItems.clear();
+
     }
 
     public static ArrayList<PlaybackStateCompat> getRepeatList(){

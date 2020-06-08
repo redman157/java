@@ -75,7 +75,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     public SlidingUpPanelLayout mSlidingUpPanelLayout;
     public Toolbar mToolBar;
-    private MediaBrowserHelper mMediaBrowserHelper;
+    public MediaBrowserHelper mMediaBrowserHelper;
     private MediaBrowserListener mBrowserListener;
     public  FrameLayout mLayoutPlaceHolder;
     private AppBarLayout mAppBarLayout;
@@ -115,6 +115,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
         Log.d("XXX", "Home Activity --- onDestroy: enter");
 
     }
@@ -126,8 +127,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onStopService() {
-        mSeekBarAudio.disconnectController();
-        mMediaBrowserHelper.onStop();
+//        mSeekBarAudio.disconnectController();
+//        mMediaBrowserHelper.onStop();
     }
 
     @Override
@@ -484,7 +485,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case R.id.icon_play:
 
             case R.id.imbt_Play_media:
-
                 if (isPlaying){
                     mMediaBrowserHelper.getTransportControls().pause();
                 }else {

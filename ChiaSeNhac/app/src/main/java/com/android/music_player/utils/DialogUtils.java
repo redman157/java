@@ -109,7 +109,7 @@ public class DialogUtils {
                 String namePlayList = editTitle.getText().toString();
                 if (!namePlayList.isEmpty()){
                     if (MusicManager.getInstance().addPlayList(namePlayList)) {
-                        Utils.ToastShort(context, "Create TITLE Name: "+namePlayList);
+                        Utils.ToastShort(context, "Create NAME Name: "+namePlayList);
                     }
                     else {
                         Utils.ToastShort(context, "Bài hát đã add vào playlist: "+namePlayList);

@@ -19,6 +19,7 @@ import java.util.List;
 public class MediaBrowserListener extends MediaControllerCompat.Callback {
     private OnMediaListener onMediaListener;
     private String TAG = "JJJ";
+
     public interface OnMediaListener {
         void onCheckPlay(boolean isPlay, PlaybackStateCompat state);
         void onComplete(boolean isNext);

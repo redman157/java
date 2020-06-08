@@ -30,8 +30,8 @@ public class Constants {
     }
     public @interface VALUE {
         int MAX_SLIDERS = 5;
-        String SONG = "Song";
-        String PLAY_LIST = "PlayList";
+        String MOST_SONG = "Song";
+        String MOST_PLAY_LIST = "PlayList";
         String ID = "ID";
         String SHUFFLE = "shuffle";
         String NAME_PLAYLIST = "NAME_PLAYLIST";

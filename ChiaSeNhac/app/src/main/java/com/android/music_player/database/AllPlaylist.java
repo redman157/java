@@ -52,7 +52,6 @@ public class AllPlaylist {
     }
 
     public void addPlayList(String title) {
-
         String SQL_INSERT =
                 "INSERT INTO "+ Database.ALL_PLAY_LISTS.TABLE_NAME
                         +" VALUES(null"  + ","+

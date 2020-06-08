@@ -91,7 +91,7 @@
                             android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:src="@drawable/app_shuffle_inactive"
-                            android:id="@+id/img_Most_Player"
+                            android:id="@+id/img_most_player"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"/>
                     </androidx.cardview.widget.CardView>
@@ -206,7 +206,7 @@
                         app:cardPreventCornerOverlap = "false"
                         app:cardElevation="6dp">
                         <ImageView
-                            android:id="@+id/img_Player_1"
+                            android:id="@+id/img_player_1"
                             android:layout_width="match_parent"
                             android:src="@drawable/ic_music_notes_padded"
 
@@ -237,7 +237,7 @@
                         app:cardPreventCornerOverlap = "false"
                         app:cardElevation="6dp">
                         <ImageView
-                            android:id="@+id/img_Player_2"
+                            android:id="@+id/img_player_2"
                             android:layout_width="match_parent"
                             android:src="@drawable/ic_music_notes_padded"
                             android:scaleType="fitXY"

@@ -24,6 +24,7 @@ import com.android.music_player.media.PlayerAdapter;
 import com.android.music_player.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MediaService extends MediaBrowserServiceCompat {
@@ -82,6 +83,11 @@ public class MediaService extends MediaBrowserServiceCompat {
     }
 
     @Override
+    public void onCustomAction(@NonNull String action, Bundle extras, @NonNull Result<Bundle> result) {
+        super.onCustomAction(action, extras, result);
+    }
+
+    @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         stopSelf();
@@ -103,13 +109,12 @@ public class MediaService extends MediaBrowserServiceCompat {
     }
 
     @Override
-    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
+        public void onLoadChildren(@NonNull String parentId,
+                                   @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
         // service gọi lên MediaBrowserSubscriptionCallback
-        switch (parentId){
-            case "root":
-                result.sendResult(MusicLibrary.getMediaItems());
-                break;
-        }
+        // Use result.detach to allow calling result.sendResult from another thread
+        // Assign returned result to temporary variable
+        result.sendResult(MusicLibrary.getMediaItems());
     }
 
     // MediaSession Callback: Transport Controls -> MediaPlayerAdapter
@@ -124,11 +129,6 @@ public class MediaService extends MediaBrowserServiceCompat {
             mMusicManager.setContext(MediaService.this);
         }
 
-        @Override
-        public void onCustomAction(String action, Bundle extras) {
-            Log.d("UUU","MediaService --- MediaSessionCallback: "+action);
-            super.onCustomAction(action, extras);
-        }
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
@@ -194,17 +194,41 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onSetRepeatMode(int repeatMode) {
             if (repeatMode == PlaybackStateCompat.REPEAT_MODE_NONE){
-                mPlayback.setRepeat(false);
+
             }else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL){
 
             }else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) {
-                mPlayback.setRepeat(true);
+
             }
         }
 
         @Override
         public void onSetShuffleMode(int shuffleMode) {
-            mPlayback.setShuffle(shuffleMode);
+            switch (shuffleMode){
+                case PlaybackStateCompat.SHUFFLE_MODE_ALL:
+                    ArrayList<MediaSessionCompat.QueueItem> mShuffle = new ArrayList<>(mPlaylist);
+                    Collections.shuffle(mShuffle);
+                    MediaSessionCompat.QueueItem mCurrentQueue =
+                            new MediaSessionCompat.QueueItem(mPlayback.getCurrentMedia().getDescription(), mPlayback.getCurrentMedia().getDescription().hashCode());
+                    mShuffle.remove(mCurrentQueue);
+                    for (int i = 0 ; i < mShuffle.size(); i ++){
+                        if (mShuffle.get(i).getDescription().getMediaId().equals(
+                                mPlayback.getCurrentMedia().getDescription().getMediaId())){
+                            mShuffle.add(0, mCurrentQueue);
+                            break;
+                        }
+                    }
+                    mSessionCompat.setQueue(mShuffle);
+
+                    Log.d("KKK",
+                            "SHUFFLE_MODE_ALL: "+ mShuffle.get(0).getDescription().getMediaId());
+                    break;
+                case PlaybackStateCompat.SHUFFLE_MODE_NONE:
+                    mSessionCompat.setQueue(mPlaylist);
+                    Log.d("KKK",
+                            "SHUFFLE_MODE_NONE: "+ mSessionCompat.getController().getQueue().get(0).getDescription().getMediaId());
+                    break;
+            }
         }
 
         @Override

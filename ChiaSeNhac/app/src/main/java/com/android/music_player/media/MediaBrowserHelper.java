@@ -45,6 +45,7 @@ public class MediaBrowserHelper {
 
         this.mContext = mContext;
         this.mMediaBrowserServiceClass = mMediaBrowserServiceClass;
+
         mMediaBrowserConnectionCallback = new MediaBrowserConnectionCallback();
         mMediaControllerCallback = new MediaControllerCallback();
         mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
@@ -72,6 +73,7 @@ public class MediaBrowserHelper {
             Log.d(TAG, "MediaBrowserHelper --- mMediaController enter");
         }
         if (mMediaBrowser != null && mMediaBrowser.isConnected()) {
+//            mMediaBrowser.unsubscribe(mMediaBrowser.getRoot(), mMediaBrowserSubscriptionCallback);
             mMediaBrowser.disconnect();
             mMediaBrowser = null;
             Log.d(TAG, "MediaBrowserHelper --- mMediaBrowser enter");
@@ -234,6 +236,7 @@ public class MediaBrowserHelper {
             // truyền xuống service ParrentID thay đổi
             mMediaBrowser.subscribe(mMediaBrowser.getRoot(), mMediaBrowserSubscriptionCallback);
 
+
         }
     }
 
@@ -246,6 +249,7 @@ public class MediaBrowserHelper {
         public void onChildrenLoaded(@NonNull String parentId,
                                      @NonNull List<MediaBrowserCompat.MediaItem> children) {
             Log.d("WWW","MediaBrowserSubscriptionCallback --- onChildrenLoaded: "+parentId);
+
             MediaBrowserHelper.this.onChildrenLoaded(parentId, children);
         }
 

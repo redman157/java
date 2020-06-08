@@ -82,6 +82,7 @@ public class HomeFragment extends Fragment implements
 
         view = inflater.inflate(R.layout.fragment_home, null);
         initView();
+        mSwipeRefreshLayout.setRefreshing(false);
         mHomeAdapter = new HomeFragmentAdapter(getActivity(),mSongsAdapter);
         mHomeAdapter.notifyDataSetChanged();
         mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -93,17 +94,7 @@ public class HomeFragment extends Fragment implements
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
 
-        mSwipeRefreshLayout.post(new Runnable() {
 
-            @Override
-            public void run() {
-
-                mSwipeRefreshLayout.setRefreshing(true);
-
-                // Fetching data from server
-                loadRecyclerViewData();
-            }
-        });
         return view;
     }
 
@@ -119,15 +110,23 @@ public class HomeFragment extends Fragment implements
     }
 
     private void loadRecyclerViewData(){
-        mSwipeRefreshLayout.setRefreshing(true);
-        getActivity().getIntent();
-        mSwipeRefreshLayout.setRefreshing(false);
+        startActivity(getActivity().getIntent());
     }
 
 
     @Override
     public void onRefresh() {
-        loadRecyclerViewData();
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+
+                mSwipeRefreshLayout.setRefreshing(true);
+
+                // Fetching data from server
+                loadRecyclerViewData();
+            }
+        });
+
     }
 
 

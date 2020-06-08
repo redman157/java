@@ -62,7 +62,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     @Override
     protected void onConnected(@NonNull MediaControllerCompat mediaController) {
 
-        Log.d(TAG, mediaController.getPlaybackInfo().getPlaybackType()+"");
+        Log.d(TAG, "onConnected: "+mediaController.getPlaybackInfo().getPlaybackType());
         mSeekBarAudio.setMediaController(mediaController,mTextLeftTime, mTextRightTime);
 
     }
@@ -77,6 +77,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         // Queue up all media items for this simple sample.
         for (final MediaBrowserCompat.MediaItem mediaItem : children) {
             mMediaController.addQueueItem(mediaItem.getDescription());
+
         }
         setMediaId(mediaId, false);
     }

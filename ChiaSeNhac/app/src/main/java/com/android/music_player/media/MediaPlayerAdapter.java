@@ -1,6 +1,5 @@
 package com.android.music_player.media;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -12,6 +11,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MusicManager;
 
@@ -41,8 +41,8 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     }
     /**
      * Once the {@link MediaPlayer} is released, it can't be used again, and another one has to be
-     * created. In the onStop() method of the {@link PlayActivity} the {@link MediaPlayer} is
-     * released. Then in the onStart() of the {@link PlayActivity} a new {@link MediaPlayer}
+     * created. In the onStop() method of the {@link HomeActivity} the {@link MediaPlayer} is
+     * released. Then in the onStart() of the {@link HomeActivity} a new {@link MediaPlayer}
      * object has to be created. That's why this method is private, and called by load(int) and
      * not the constructor.
      */
@@ -220,8 +220,11 @@ public class MediaPlayerAdapter extends PlayerAdapter {
                 setNewState(PlaybackStateCompat.STATE_PLAYING);
             }
         } finally {
+            // start được save bài hiện đang play và tăng điểm play lên
             mMusicManager.setCurrentMusic(mFilename);
-//            mMusicManager.setMediaId(mMusicManager.getCurrentMusic().getSongName());
+         /*   mMusicManager.getStatistic().increase(
+                    Constants.VALUE.MOST_SONG, Utils.getKeyByValue(MusicLibrary.fileName,
+                            mFilename));*/
         }
     }
 
@@ -279,18 +282,4 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         }
     }
 
-    @SuppressLint("WrongConstant")
-    @Override
-    public void setRepeat(boolean isLoop) {
-        isRepeat = isLoop;
-    }
-
-    @Override
-    public void setShuffle(int shuffleMode) {
-        if (shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_NONE){
-            Log.d("CCC", "MediaPlayerAdapter --- SHUFFLE_MODE_NONE: Enter");
-        }else if (shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL){
-            Log.d("CCC", "MediaPlayerAdapter --- SHUFFLE_MODE_ALL: Enter");
-        }
-    }
 }

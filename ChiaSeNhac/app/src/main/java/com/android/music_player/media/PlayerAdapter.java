@@ -100,9 +100,6 @@ public abstract class PlayerAdapter {
 
     public abstract void setVolume(float volume);
 
-    public abstract void setRepeat(boolean isLoop);
-
-    public abstract void setShuffle(int shuffleMode);
     /**
      * Helper class for managing audio focus related tasks.
      */

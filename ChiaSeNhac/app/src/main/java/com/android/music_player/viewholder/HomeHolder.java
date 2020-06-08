@@ -22,6 +22,7 @@ import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
@@ -47,9 +48,9 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
         mTextPlayerSongs = view.findViewById(R.id.text_Player_Songs);
         mRc_Recently_Add = view.findViewById(R.id.rc_recently_add);
         mImg_Player_Songs = view.findViewById(R.id.img_Player_Songs);
-        mImg_Player_1 = view.findViewById(R.id.img_Player_1);
-        mImg_Player_2 = view.findViewById(R.id.img_Player_2);
-        mImg_Most_Player = view.findViewById(R.id.img_Most_Player);
+        mImg_Player_1 = view.findViewById(R.id.img_player_1);
+        mImg_Player_2 = view.findViewById(R.id.img_player_2);
+        mImg_Most_Player = view.findViewById(R.id.img_most_player);
         mImg_Recently_Add = view.findViewById(R.id.img_Recently_Add);
         mImg_Shuffle_All = view.findViewById(R.id.img_Shuffle_All);
         mBtnViewAll = view.findViewById(R.id.btn_ViewAll);
@@ -58,16 +59,19 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
     }
 
     public void initView(){
-        if (!mMusicManager.getStatistic().getMost(Constants.VALUE.SONG).equals("")) {
-            mMostMusic = mMusicManager.getStatistic().getMost(Constants.VALUE.SONG);
+
+        if (mMusicManager.getStatistic().getMusicMost(Constants.VALUE.MOST_SONG).equals("")) {
+            mTextPlayerSongs.setText("");
+            mImg_Player_Songs.setImageResource(R.drawable.ic_music_notes_padded);
+        }else {
+            mMostMusic = mMusicManager.getStatistic().getMusicMost(Constants.VALUE.MOST_SONG);
             mTextPlayerSongs.setText(mMostMusic);
             ImageUtils.getInstance(mActivity).getSmallImageByPicasso(mMusicManager.getSong(mMostMusic).getAlbumID(),
                     mImg_Player_Songs);
-        }else {
-            mTextPlayerSongs.setText("");
-            mImg_Player_Songs.setImageResource(R.drawable.ic_music_notes_padded);
         }
-        if (mMostPlayList != null) {
+
+        mMostPlayList = mMusicManager.getPlayListMost();
+        if (mMostPlayList != null)  {
             mTextPlayer_1.setText(mMostPlayList.get(0));
             mTextPlayer_2.setText(mMostPlayList.size() < 2 ? mMostPlayList.get(0) :
                     mMostPlayList.get(1));
@@ -109,26 +113,26 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
                 break;
             case R.id.img_Shuffle_All:
                 break;
-            case R.id.img_Player_2:
+            case R.id.img_player_2:
                 mRc_Recently_Add.setVisibility(View.GONE);
              /*   Intent intent = new Intent(mActivity, SongActivity.class);
                 intent.putExtra(Constants.INTENT.TYPE_MUSIC, mTextPlayer_2.getText().toString());
                 mActivity.startActivity(intent);*/
                 break;
 
-            case R.id.img_Player_1:
+            case R.id.img_player_1:
                 mRc_Recently_Add.setVisibility(View.GONE);
                 /*Intent iPlayList_2 = new Intent(mActivity, SongActivity.class);
                 iPlayList_2.putExtra(Constants.INTENT.TYPE_MUSIC,
                         mTextPlayer_1.getText().toString());
                 mActivity.startActivity(iPlayList_2);*/
                 break;
-            case R.id.img_Most_Player:
+            case R.id.img_most_player:
                 mRc_Recently_Add.setVisibility(View.GONE);
-              /*  Intent iMostPlay = new Intent(mActivity, PlayActivity.class);
-                iMostPlay.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.NEW_SONGS);
-
-                mActivity.startActivity(iMostPlay);*/
+                if (!mMusicManager.getStatistic().getMusicMost(Constants.VALUE.MOST_SONG).equals("")) {
+                    ((HomeActivity) mActivity).setViewMusic(mMusicManager.getStatistic().getMusicMost(Constants.VALUE.MOST_SONG), SlidingUpPanelLayout.PanelState.EXPANDED);
+                    ((HomeActivity) mActivity).mMediaBrowserHelper.getTransportControls().playFromMediaId(mMusicManager.getStatistic().getMusicMost(Constants.VALUE.MOST_SONG), null);
+                }
                 break;
         }
     }

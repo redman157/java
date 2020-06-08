@@ -11,7 +11,7 @@ public class Database {
         String PATH = "path";
         String ARTIST = "artist";
         String ALBUM = "album";
-        String FILE_NAME = "TITLE";
+        String FILE_NAME = "NAME";
         String ALBUM_ID = "album_id";
         String FAKE_PATH = "fake_path";
 
@@ -38,16 +38,15 @@ public class Database {
         String DATABASE_NAME = "statistic.db";
         String TABLE_NAME = "statistic";
         String ID = "id";
-        String TITLE = "title";
+        String NAME = "name";
         String MOST = "most";
-        String SONG_MOST = "song_most";
-        String TYPE_NAME = "type_name";
+        String TYPE = "type_name";
 
         String CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + "," +
-                    TYPE_NAME       + " TEXT "  + "," +
-                    TITLE           + " TEXT "    + "," +
+                    TYPE            + " TEXT "    + "," +
+                    NAME            + " TEXT "    + "," +
                     MOST            + " INTEGER " + ");";
 
         String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
@@ -109,7 +108,6 @@ public class Database {
         String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" +
                         ID             + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +
-
                         NAME_PLAY_LISTS + " TEXT "  + "," +
                         NAME_SONGS      + " TEXT " + ");";
         String QUERY = "SELECT * FROM " + TABLE_NAME;

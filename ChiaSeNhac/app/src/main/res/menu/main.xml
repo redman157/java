@@ -3,7 +3,7 @@
     <item
         android:id="@+id/action_searchBtn"
         android:orderInCategory="100"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/search"/>
 

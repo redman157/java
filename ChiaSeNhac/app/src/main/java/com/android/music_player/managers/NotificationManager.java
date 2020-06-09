@@ -1,8 +1,7 @@
-package com.android.music_player.media;
+package com.android.music_player.managers;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -21,14 +20,13 @@ import androidx.media.session.MediaButtonReceiver;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
-import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.services.MediaService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageUtils;
 
-public class MediaNotificationManager {
+public class NotificationManager {
     public static final int NOTIFICATION_ID = 412;
-    private static final String TAG = MediaNotificationManager.class.getSimpleName();
+    private static final String TAG = NotificationManager.class.getSimpleName();
     private static final String CHANNEL_ID = "com.android.music_player.channel";
     private static final int REQUEST_CODE = 501;
     private final MediaService mService;
@@ -38,12 +36,12 @@ public class MediaNotificationManager {
     private final NotificationCompat.Action mNextAction;
     private final NotificationCompat.Action mPrevAction;
     private final NotificationCompat.Action mStopAction;
-    private final NotificationManager mNotificationManager;
+    private final android.app.NotificationManager mNotificationManager;
 
-    public MediaNotificationManager(MediaService service) {
+    public NotificationManager(MediaService service) {
         mService = service;
         mNotificationManager =
-                (NotificationManager) mService.getSystemService(Context.NOTIFICATION_SERVICE);
+                (android.app.NotificationManager) mService.getSystemService(Context.NOTIFICATION_SERVICE);
 
         mPlayAction = new NotificationCompat.Action(
                 R.drawable.app_play,
@@ -85,7 +83,7 @@ public class MediaNotificationManager {
 
     }
 
-    public NotificationManager getNotificationManager() {
+    public android.app.NotificationManager getNotificationManager() {
         return mNotificationManager;
     }
 
@@ -198,7 +196,7 @@ public class MediaNotificationManager {
             CharSequence name = "MediaSession";
             // The user-visible description of the channel.
             String description = "MediaSession and MediaPlayer";
-            int importance = NotificationManager.IMPORTANCE_LOW;
+            int importance = android.app.NotificationManager.IMPORTANCE_LOW;
             NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
             // Configure the notification channel.
             mChannel.setDescription(description);

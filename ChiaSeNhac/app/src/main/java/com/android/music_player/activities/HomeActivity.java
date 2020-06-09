@@ -1,11 +1,14 @@
 package com.android.music_player.activities;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -24,7 +27,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -32,6 +37,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.android.music_player.BaseActivity;
 import com.android.music_player.R;
 import com.android.music_player.fragments.AllMusicFragment;
+import com.android.music_player.fragments.HomeFragment;
+import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.fragments.MainFragment;
 import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnConnectionMedia;
@@ -48,6 +55,7 @@ import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.SwipeTouchUtils;
 import com.android.music_player.utils.Utils;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.navigation.NavigationView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
@@ -79,7 +87,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private MediaBrowserListener mBrowserListener;
     public  FrameLayout mLayoutPlaceHolder;
     private AppBarLayout mAppBarLayout;
-
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
     private boolean isPlaying = false;
     public String type;
     public MediaBrowserConnection browserConnection;
@@ -89,6 +98,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private boolean isMore, isSetup;
     private String nameChoose;
 
+    private int mItemToOpenWhenDrawerCloses = -1;
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
         super.onAttachFragment(fragment);
@@ -100,7 +110,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         Log.d("XXX", "Home Activity --- onPause: enter");
     }
@@ -127,8 +137,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onStopService() {
-//        mSeekBarAudio.disconnectController();
-//        mMediaBrowserHelper.onStop();
+        mSeekBarAudio.disconnectController();
+        mMediaBrowserHelper.onStop();
     }
 
     @Override
@@ -179,10 +189,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("XXX", "Home Activity --- onCreate: enter");
         initManager();
+
+//        initializeFromParams(savedInstanceState, getIntent());
+
         if (savedInstanceState == null){
             FragmentTransaction fragmentTransaction =
                     getSupportFragmentManager().beginTransaction();
@@ -195,11 +208,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             fragmentTransaction.commit();
         }
         setContentView(R.layout.activity_home);
-        initView();
 
+        initView();
+//        initializeToolbar();
         initService();
         setupToolbar();
         assignView();
+
+    }
+
+    public void initializeFromParams(Bundle savedInstanceState, Intent intent){
 
     }
 
@@ -226,10 +244,97 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     private void setupToolbar() {
+        mToolBar.inflateMenu(R.menu.main);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView == null) {
+            throw new IllegalStateException("Layout requires a NavigationView " +
+                    "with id 'nav_view'");
+        }
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                mToolBar, R.string.open_content_drawer, R.string.close_content_drawer);
+        mDrawerLayout.setDrawerListener(mDrawerListener);
+        populateDrawerItems(navigationView);
         setSupportActionBar(mToolBar);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
+  /*      getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);*/
+        updateDrawerToggle();
     }
 
+    private void populateDrawerItems(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                        menuItem.setChecked(true);
+                        mItemToOpenWhenDrawerCloses = menuItem.getItemId();
+                        mDrawerLayout.closeDrawers();
+                        return true;
+                    }
+                });
+        if (TimerActivity.class.isAssignableFrom(getClass())) {
+            navigationView.setCheckedItem(R.id.sleep_timer);
+        } else if (LibraryFragment.class.isAssignableFrom(getClass())) {
+            navigationView.setCheckedItem(R.id.navigation_library);
+        }
+    }
+
+    protected void updateDrawerToggle() {
+        if (mDrawerToggle == null) {
+            return;
+        }
+        boolean isRoot = getFragmentManager().getBackStackEntryCount() == 0;
+        mDrawerToggle.setDrawerIndicatorEnabled(isRoot);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(!isRoot);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(!isRoot);
+            getSupportActionBar().setHomeButtonEnabled(!isRoot);
+        }
+        if (isRoot) {
+            mDrawerToggle.syncState();
+        }
+    }
+
+    private final DrawerLayout.DrawerListener mDrawerListener = new DrawerLayout.DrawerListener() {
+        @Override
+        public void onDrawerClosed(View drawerView) {
+            if (mDrawerToggle != null) mDrawerToggle.onDrawerClosed(drawerView);
+            if (mItemToOpenWhenDrawerCloses >= 0) {
+                Bundle extras = ActivityOptions.makeCustomAnimation(
+                        HomeActivity.this, R.anim.fadein, R.anim.fadeout).toBundle();
+
+                Class activityClass = null;
+                switch (mItemToOpenWhenDrawerCloses) {
+                    case R.id.sleep_timer:
+                        activityClass = TimerActivity.class;
+                        break;
+                    case R.id.navigation_home:
+                        activityClass = HomeFragment.class;
+                        break;
+                }
+                if (activityClass != null) {
+                    startActivity(new Intent(HomeActivity.this, activityClass), extras);
+                    finish();
+                }
+            }
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            if (mDrawerToggle != null) mDrawerToggle.onDrawerStateChanged(newState);
+        }
+
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+            if (mDrawerToggle != null) mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            if (mDrawerToggle != null) mDrawerToggle.onDrawerOpened(drawerView);
+            if (getSupportActionBar() != null) getSupportActionBar()
+                    .setTitle(R.string.app_name);
+        }
+    };
     public void setPlayMedia(String songName){
         MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
                 songName);
@@ -261,7 +366,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     private void initView() {
         mSlidingUpPanelLayout = findViewById(R.id.activity_main);
-        mToolBar = findViewById(R.id.tb_HomeActivity);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        mToolBar = findViewById(R.id.toolbar);
         mLayoutPlaceHolder = findViewById(R.id.fl_placeholder);
         mAppBarLayout = findViewById(R.id.appBarLayout);
         mLayoutMedia = findViewById(R.id.layout_main_media);
@@ -332,6 +439,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
@@ -339,6 +458,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         switch (item.getItemId()) {
             case android.R.id.home:
                 FragmentManager manager = getSupportFragmentManager();
@@ -620,7 +742,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         switch (newState) {
             case EXPANDED:
-                mViewPanelMedia.setVisibility(View.GONE);
+                mViewPanelMedia.setAlpha(0);
+                mViewPanelMedia.setVisibility(View.VISIBLE);
                 break;
             case COLLAPSED:
                 mViewPanelMedia.setAlpha(1);
@@ -636,4 +759,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
 
+    @Override
+    public MediaBrowserCompat getMediaBrowser() {
+        return null;
+    }
 }

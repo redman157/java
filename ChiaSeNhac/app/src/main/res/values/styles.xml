@@ -83,6 +83,22 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <style name="CarTheme" parent="CustomToolBarPlay">
+        <!-- colorPrimaryDark is currently used in Android Auto for:
+             - App background
+             - Drawer right side ("more" custom actions) background
+             - Notification icon badge tinting
+             - Overview “now playing” icon tinting
+         -->
+        <item name="colorPrimaryDark">#ffbf360c</item>
+
+        <!-- colorAccent is used in Android Auto for:
+             - Spinner
+             - progress bar
+             - floating action button background (Play/Pause in media apps)
+         -->
+        <item name="colorAccent">@color/cyan</item>
+    </style>
     <!--
         *
         -->

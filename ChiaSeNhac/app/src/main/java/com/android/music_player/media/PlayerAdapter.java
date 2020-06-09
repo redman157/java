@@ -50,12 +50,11 @@ public abstract class PlayerAdapter {
         mAudioManager = (AudioManager) mApplicationContext.getSystemService(Context.AUDIO_SERVICE);
         mAudioFocusHelper = new AudioFocusHelper();
     }
+    public abstract boolean isPlaying();
 
     public abstract void playFromMedia(MediaMetadataCompat metadata);
 
     public abstract MediaMetadataCompat getCurrentMedia();
-
-    public abstract boolean isPlaying();
 
     public final void play(){
         if (mAudioFocusHelper.requestAudioFocus()){

@@ -1,4 +1,4 @@
-package com.android.music_player.media;
+package com.android.music_player.managers;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -12,12 +12,16 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.android.music_player.activities.HomeActivity;
-import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.managers.MusicManager;
+import com.android.music_player.media.PlaybackInfoListener;
+import com.android.music_player.media.PlayerAdapter;
 
 import java.io.File;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class MediaPlayerAdapter extends PlayerAdapter {
+public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnCompletionListener
+        , MediaPlayer.OnPreparedListener{
     private final Context mContext;
     private MediaPlayer mMediaPlayer;
     private String mFilename;
@@ -32,7 +36,7 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     // while not playing.
     private int mSeekWhileNotPlaying = -1;
 
-    public MediaPlayerAdapter(@NonNull Context context, PlaybackInfoListener listener) {
+    public MediaPlayerManager(@NonNull Context context, PlaybackInfoListener listener) {
         super(context);
         this.mContext = context.getApplicationContext();
         mPlaybackInfoListener = listener;
@@ -51,55 +55,35 @@ public class MediaPlayerAdapter extends PlayerAdapter {
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setWakeMode(mContext.getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    mPlaybackInfoListener.onPlaybackCompleted(true);
-
-                    // Set the state to "paused" because it most closely matches the state
-                    // in MediaPlayer with regards to available state transitions compared
-                    // to "stop".
-                    // Paused allows: seekTo(), start(), pause(), stop()
-                    // Stop allows: stop()
-                    if (isRepeat){
-
-                    }else {
-                        setNewState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
-                    }
-                }
-            });
+            mMediaPlayer.setOnCompletionListener(this);
         }
     }
     // This is the main reducer for the player state machine.
     private void setNewState(@PlaybackStateCompat.State int newPlayerState){
-
         mState = newPlayerState;
 
-        Log.d("BBB","MediaPlayerAdapter --- setNewState: "+newPlayerState );
+        Log.d("BBB","MediaPlayerManager --- setNewState: "+newPlayerState );
         // Whether playback goes to completion, or whether it is stopped, the
         // mCurrentMediaPlayedToCompletion is assignData to true.
 
         if (mState == PlaybackStateCompat.STATE_STOPPED) {
             mCurrentMediaPlayedToCompletion = true;
         }
-
-
-
         // Work around for MediaPlayer.getCurrentPosition() when it changes while not playing.
         final long reportPosition;
         if (mSeekWhileNotPlaying >= 0){
-            Log.d("TTT", "MediaPlayerAdapter --- mSeekWhileNotPlaying > 0: ");
+            Log.d("TTT", "MediaPlayerManager --- mSeekWhileNotPlaying > 0: ");
             reportPosition = mSeekWhileNotPlaying;
 
             if (mState == PlaybackStateCompat.STATE_PLAYING) {
                 mSeekWhileNotPlaying = -1;
             }
         }else {
-            Log.d("TTT", "MediaPlayerAdapter --- mSeekWhileNotPlaying > 0: ");
+            Log.d("TTT", "MediaPlayerManager --- mSeekWhileNotPlaying > 0: ");
             reportPosition = (mMediaPlayer == null)?
                     0 : mMediaPlayer.getCurrentPosition();
         }
-        Log.d("TTT", "MediaPlayerAdapter --- setNewState: "+reportPosition);
+        Log.d("TTT", "MediaPlayerManager --- setNewState: "+reportPosition);
         updatePlaybackState(mState ,reportPosition);
     }
 
@@ -217,21 +201,22 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         try {
             if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
                 mMediaPlayer.start();
-                setNewState(PlaybackStateCompat.STATE_PLAYING);
+
             }
         } finally {
             // start được save bài hiện đang play và tăng điểm play lên
+            setNewState(PlaybackStateCompat.STATE_PLAYING);
             mMusicManager.setCurrentMusic(mFilename);
-         /*   mMusicManager.getStatistic().increase(
-                    Constants.VALUE.MOST_SONG, Utils.getKeyByValue(MusicLibrary.fileName,
-                            mFilename));*/
         }
     }
 
     @Override
     protected void onPause() {
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-            mMediaPlayer.pause();
+        try {
+            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause();
+            }
+        }finally {
             setNewState(PlaybackStateCompat.STATE_PAUSED);
         }
     }
@@ -239,9 +224,12 @@ public class MediaPlayerAdapter extends PlayerAdapter {
     @Override
     protected void onStop() {
         // Regardless of whether or not the MediaPlayer has been created / started, the state must
-        // be updated, so that MediaNotificationManager can take down the notification.
-        setNewState(PlaybackStateCompat.STATE_STOPPED);
-        release();
+        // be updated, so that NotificationManager can take down the notification.
+        try {
+            release();
+        }finally {
+            setNewState(PlaybackStateCompat.STATE_STOPPED);
+        }
     }
 
     @Override
@@ -282,4 +270,68 @@ public class MediaPlayerAdapter extends PlayerAdapter {
         }
     }
 
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mPlaybackInfoListener.onPlaybackCompleted(true);
+
+        // Set the state to "paused" because it most closely matches the state
+        // in MediaPlayer with regards to available state transitions compared
+        // to "stop".
+        // Paused allows: seekTo(), start(), pause(), stop()
+        // Stop allows: stop()
+        if (isRepeat){
+
+        }else {
+            setNewState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
+        }
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+
+    }
+
+    /**
+     * Syncs the mMediaPlayer position with mPlaybackProgressCallback via recurring task.
+     */
+    private ScheduledExecutorService mExecutor;
+    private Runnable mSeekBarPositionUpdateTask;
+    private void startUpdatingCallbackWithPosition() {
+        if (mExecutor == null) {
+            mExecutor = Executors.newSingleThreadScheduledExecutor();
+        }
+        if (mSeekBarPositionUpdateTask == null) {
+            mSeekBarPositionUpdateTask = new Runnable() {
+                @Override
+                public void run() {
+                    updateProgressCallbackTask();
+                }
+            };
+        }
+
+        mExecutor.scheduleAtFixedRate(
+                mSeekBarPositionUpdateTask,
+                0,
+                1000,
+                TimeUnit.MILLISECONDS
+        );
+    }
+
+    // Reports media playback position to mPlaybackProgressCallback.
+    private void stopUpdatingCallbackWithPosition() {
+        if (mExecutor != null) {
+            mExecutor.shutdownNow();
+            mExecutor = null;
+            mSeekBarPositionUpdateTask = null;
+        }
+    }
+
+    private void updateProgressCallbackTask() {
+        if (mMediaPlayer!= null && mMediaPlayer.isPlaying()) {
+            int currentPosition = mMediaPlayer.getCurrentPosition();
+            if (mPlaybackInfoListener != null) {
+                mPlaybackInfoListener.onPositionChanged(currentPosition);
+            }
+        }
+    }
 }

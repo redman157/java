@@ -15,7 +15,7 @@
     app:umanoParallaxOffset="100dp">
 
     <!-- MAIN CONTENT -->
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <!--<androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -55,8 +55,41 @@
             android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include layout="@layout/include_toolbar"
+                android:id="@+id/toolbar_container"/>
+            <FrameLayout
+                android:layout_below="@id/toolbar_container"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:id="@+id/fl_placeholder"
+                android:clickable="true"
+                android:focusable="false"
+                android:focusableInTouchMode="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:headerLayout="@layout/nav_header"
+            app:menu="@menu/navigation"/>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
     <!-- SLIDING LAYOUT -->
 
     <LinearLayout
@@ -69,5 +102,6 @@
         <include layout="@layout/layout_main_media"
             android:id="@+id/layout_main_media"/>
     </LinearLayout>
+
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

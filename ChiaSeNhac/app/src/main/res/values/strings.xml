@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="open_content_drawer">Open the main menu</string>
+    <string name="close_content_drawer">Close the main menu</string>
+    <string name="touch_to_cast">Touch to connect to a Google Cast device</string>
     <string name="collapsing_profile_behavior" translatable="false">com.android.music_player.CollapsingProfileBehavior</string>
     <string name="behavior" translatable="false">com.android.music_player.Behavior</string>
     <string name="test_profile_image_desc">Profile Image</string>

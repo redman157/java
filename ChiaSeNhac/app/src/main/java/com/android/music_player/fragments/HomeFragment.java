@@ -14,11 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.music_player.R;
+import com.android.music_player.adapters.BrowseAdapter;
 import com.android.music_player.adapters.HomeFragmentAdapter;
-import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnClickItemListener;
-import com.android.music_player.managers.MusicManager;
+import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
@@ -28,12 +29,21 @@ public class HomeFragment extends Fragment implements
     private String type;
     private FastScrollRecyclerView mRcHome;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private MusicManager mMusicManager;
+    private MediaManager mMediaManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private HomeFragmentAdapter mHomeAdapter;
-    private MusicAdapter mSongsAdapter;
+    private BrowseAdapter mSongsAdapter;
 
     private OnChangeListener onChangeListener;
+
+    public static HomeFragment newInstance(OnChangeListener onChangeListener) {
+        Bundle args = new Bundle();
+        HomeFragment fragment = new HomeFragment();
+        fragment.setOnChangeListener(onChangeListener);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public void setOnChangeListener(OnChangeListener onChangeListener){
         this.onChangeListener = onChangeListener;
     }
@@ -65,13 +75,11 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
-
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(getContext());
-        mSongsAdapter = new MusicAdapter(getActivity(), MusicManager.getInstance().newSongs() );
-        mSongsAdapter.setLimit(true);
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(getContext());
+        mSongsAdapter = new BrowseAdapter(getActivity(), MusicLibrary.music,
+                false);
         mSongsAdapter.notifyDataSetChanged();
         mSongsAdapter.setOnClickItemListener(this);
     }
@@ -93,8 +101,6 @@ public class HomeFragment extends Fragment implements
                 android.R.color.holo_green_dark,
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
-
-
         return view;
     }
 
@@ -110,7 +116,7 @@ public class HomeFragment extends Fragment implements
     }
 
     private void loadRecyclerViewData(){
-        startActivity(getActivity().getIntent());
+//        startActivity(getActivity().getIntent());
     }
 
 

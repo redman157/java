@@ -9,23 +9,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.managers.MusicManager;
+import com.android.music_player.managers.MediaManager;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.viewholder.HomeHolder;
 
 public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder>  {
     private Activity mActivity;
-    private MusicManager mMusicManager;
+    private MediaManager mMediaManager;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private MusicAdapter mMusicAdapter;
+    private BrowseAdapter mBrowseAdapter;
 
 
-    public HomeFragmentAdapter(Activity activity, MusicAdapter musicAdapter){
+    public HomeFragmentAdapter(Activity activity, BrowseAdapter browseAdapter){
         mActivity = activity;
-        mMusicAdapter = musicAdapter;
+        mBrowseAdapter = browseAdapter;
         mSharedPrefsUtils = new SharedPrefsUtils(activity);
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(activity);
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(activity);
     }
     @NonNull
     @Override
@@ -37,8 +37,8 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder>  {
     @Override
     public void onBindViewHolder(@NonNull HomeHolder holder, int position) {
         holder.initView();
-        mMusicAdapter.notifyDataSetChanged();
-        holder.assignView(mMusicAdapter);
+        mBrowseAdapter.notifyDataSetChanged();
+        holder.assignView(mBrowseAdapter);
     }
 
     @Override

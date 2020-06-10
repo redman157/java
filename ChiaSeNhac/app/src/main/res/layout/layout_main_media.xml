@@ -12,10 +12,10 @@
         android:id="@+id/ll_play_media"
         android:layout_marginLeft="@dimen/_15sdp"
         android:layout_marginRight="@dimen/_15sdp"
+        android:background="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -24,9 +24,7 @@
             xmlns:app="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_40sdp"
-
             android:orientation="vertical"
-
             android:background="@color/whiteOpaqueX2"
             app:ignore="NamespaceTypo">
 
@@ -139,6 +137,7 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:background="@color/black"
         android:id="@+id/rl_change_state"
         android:layout_width="match_parent"
         android:layout_below="@id/ll_play_media"
@@ -173,6 +172,7 @@
             tools:ignore="ContentDescription" />
 
         <LinearLayout
+
             android:id="@+id/ll_change_music"
             android:layout_above="@id/ll_see_more"
             android:layout_width="match_parent"
@@ -180,6 +180,7 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
+
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">

@@ -92,6 +92,8 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
         val isDependencyAnAppBar = dependency is AppBarLayout
         if (isDependencyAnAppBar) {
             toolBarHeight = appBar.findViewById<View>(R.id.tb_AllMusic).height
+            Log.d("ZZZ", "onDependentViewChanged: $toolBarHeight");
+
             updateNormalizedRange()
             updateOffset()
         }
@@ -193,6 +195,12 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
     }
 
     private fun getUpdatedInterpolatedValue(openSizeTarget: Float, closedSizeTarget: Float): Float {
-        return getIntercept(closedSizeTarget - openSizeTarget, normalizedRange, openSizeTarget)
+        var intercept : Float = getIntercept(closedSizeTarget - openSizeTarget, normalizedRange, openSizeTarget)
+        return if (intercept > 0){
+            intercept
+        }else{
+            0f
+        }
+
     }
 }

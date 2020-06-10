@@ -20,12 +20,12 @@ import com.android.music_player.R;
 import com.android.music_player.adapters.MusicDialogAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.managers.MusicManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.DialogUtils;
-import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.DialogHelper;
+import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.text.SimpleDateFormat;
@@ -74,7 +74,7 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     public void setMedia(MediaMetadataCompat mediaItem){
         this.mMediaMetadataCompat = mediaItem;
     }
-    private MusicManager mMusicManager;
+    private MediaManager mMediaManager;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,8 +85,8 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     @Override
     public void onStart() {
         super.onStart();
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(getContext());
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(getContext());
     }
 
     @Nullable
@@ -99,7 +99,7 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
         mTextArtist.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
         mTextAlbum.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
         mTextTittle.setText(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
-        ImageUtils.getInstance(getContext()).getSmallImageByPicasso(
+        ImageHelper.getInstance(getContext()).getSmallImageByPicasso(
                 String.valueOf(MusicLibrary.getAlbumRes(mMediaMetadataCompat.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID))),
                 mImgAlbumArt);
 
@@ -139,13 +139,13 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
                     if (mSongModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
                         mMusicDialogAdapter.setPosition(i);
                         mMusicDialogAdapter.setOnClick(onClickItemListener);
-                        DialogUtils.showSelectSong(getContext(), mMusicDialogAdapter, i);
+                        DialogHelper.showSelectSong(getContext(), mMusicDialogAdapter, i);
                     }
                 }
 
                 break;
             case R.id.item_img_addToPlayListImageView:
-                DialogUtils.showAllPlayList(getContext(), this);
+                DialogHelper.showAllPlayList(getContext(), this);
 
                 break;
         }
@@ -153,8 +153,8 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(String title) {
-        DialogUtils.cancelDialog();
-        DialogUtils.showAddSongs(getContext(),mSongModel ,title);
+        DialogHelper.cancelDialog();
+        DialogHelper.showAddSongs(getContext(),mSongModel ,title);
 
     }
 }

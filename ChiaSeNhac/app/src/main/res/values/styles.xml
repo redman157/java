@@ -5,13 +5,16 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
 <!--        <item name="android:windowTranslucentStatus">true</item>-->
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="colorPrimary">@color/whiteOpaqueX4</item>
+        <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/black</item>
+       <!-- <item name="colorPrimary">@color/blackGrey</item>
+        <item name="colorPrimaryDark">@color/blackGrey</item>
+        <item name="colorAccent">@color/blackGrey</item>-->
         <item name="colorControlNormal">@color/whiteOpaqueX4</item>
         <item name="android:textColorPrimary">@color/black</item>
         <item name="android:textColorSecondary">@color/black</item>
-        <item name="android:windowBackground">@color/background</item>
+        <item name="android:windowBackground">@color/white</item>
         <item name="android:navigationBarColor">@color/navigationBar</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:buttonStyle">?android:borderlessButtonStyle</item>

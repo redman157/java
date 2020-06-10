@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
@@ -25,8 +25,11 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
     private final Activity mActivity;
     private Map<String, ArrayList<SongModel>> mAlbums;
     private SharedPrefsUtils mSharedPrefsUtils;
+    private List<String> keys;
     public AlbumAdapter(Activity activity,  Map<String, ArrayList<SongModel>> albums) {
         this.mAlbums = albums;
+        keys = new ArrayList<>(mAlbums.keySet());
+        Collections.sort(keys);
         mActivity = activity;
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
     }
@@ -40,9 +43,6 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        List<String> keys = new ArrayList<>(mAlbums.keySet());
-        Collections.sort(keys);
-
         String album = keys.get(position);
         ArrayList<SongModel> music = mAlbums.get(album);
         holder.assignData(album, music);
@@ -80,7 +80,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
             mTextAlbum.setText(album);
             mTextInfoAlbum.setText(models.size() + " bài hát");
             mImgAlbum.setClipToOutline(true);
-            ImageUtils.getInstance(mActivity).getSmallImageByPicasso(models.get(0).getAlbumID(),
+            ImageHelper.getInstance(mActivity).getSmallImageByPicasso(models.get(0).getAlbumID(),
                     mImgAlbum);
         }
     }

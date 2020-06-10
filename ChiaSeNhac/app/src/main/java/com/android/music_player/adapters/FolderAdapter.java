@@ -23,8 +23,11 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ItemViewHo
     private final Activity mActivity;
     private Map<String, ArrayList<SongModel>> mFolders;
     private SharedPrefsUtils mSharedPrefsUtils;
+    private List<String> keys;
     public FolderAdapter(Activity activity, Map<String, ArrayList<SongModel>> folders) {
         this.mFolders = folders;
+        keys = new ArrayList<>(mFolders.keySet());
+        Collections.sort(keys);
         mActivity = activity;
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
     }
@@ -38,9 +41,6 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ItemViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        List<String> keys = new ArrayList<>(mFolders.keySet());
-        Collections.sort(keys);
-
         String folder = keys.get(position).split("/")[keys.get(position).split("/").length - 2];
 
         ArrayList<SongModel> music = mFolders.get(keys.get(position));

@@ -27,7 +27,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     private String mFilename;
     private PlaybackInfoListener mPlaybackInfoListener;
     private MediaMetadataCompat mCurrentMedia;
-    private MusicManager mMusicManager;
+    private MediaManager mMediaManager;
     private int mState;
     private boolean isRepeat= false;
     private boolean mCurrentMediaPlayedToCompletion;
@@ -40,8 +40,8 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         super(context);
         this.mContext = context.getApplicationContext();
         mPlaybackInfoListener = listener;
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(context);
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(context);
     }
     /**
      * Once the {@link MediaPlayer} is released, it can't be used again, and another one has to be
@@ -206,7 +206,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         } finally {
             // start được save bài hiện đang play và tăng điểm play lên
             setNewState(PlaybackStateCompat.STATE_PLAYING);
-            mMusicManager.setCurrentMusic(mFilename);
+            mMediaManager.setCurrentMusic(mFilename);
         }
     }
 

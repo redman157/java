@@ -14,7 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.fragments.ChangeSongFragment;
 import com.android.music_player.interfaces.OnClickItemListener;
-import com.android.music_player.managers.MusicManager;
+import com.android.music_player.managers.MediaManager;
 import com.android.music_player.models.SongModel;
 
 import java.util.ArrayList;
@@ -26,15 +26,15 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     private ArrayList<Fragment> fragments=  new ArrayList<>();
     private ArrayList<SongModel> mSongModels;
     private List<MediaBrowserCompat.MediaItem> items;
-    private MusicManager mMusicManager;
+    private MediaManager mMediaManager;
     private String songName;
     private TreeMap<String, MediaMetadataCompat> music;
 
     public ChangeSongPagerAdapter(Context context, @NonNull FragmentManager fm) {
         super(fm);
         this.context = context;
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(context);
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(context);
     }
 
     public void addData(ArrayList<SongModel> songModels) {

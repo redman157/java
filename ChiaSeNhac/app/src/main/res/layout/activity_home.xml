@@ -79,7 +79,22 @@
                 android:focusable="false"
                 android:focusableInTouchMode="true"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent">
+                <!--    <fragment
+                        android:tag="HomeFragment"
+                        android:id="@+id/home_fragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:name="com.android.music_player.fragments.HomeFragment"/>
+                    <fragment
+                        android:tag="AllMusicFragment"
+                        android:id="@+id/all_music_fragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:name="com.android.music_player.fragments.AllMusicFragment"/>-->
+            </FrameLayout>
+
+
         </RelativeLayout>
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/nav_view"
@@ -87,7 +102,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             app:headerLayout="@layout/nav_header"
-            app:menu="@menu/navigation"/>
+            app:menu="@menu/library"/>
 
     </androidx.drawerlayout.widget.DrawerLayout>
     <!-- SLIDING LAYOUT -->

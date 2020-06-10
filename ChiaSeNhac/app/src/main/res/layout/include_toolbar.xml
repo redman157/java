@@ -27,7 +27,11 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:background="?attr/colorPrimary"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_scrollFlags="scroll|enterAlways"/>
+        android:elevation="4dp"
+        app:titleTextColor="@color/black"
+        android:animateLayoutChanges="true"
+        app:layout_collapseMode="pin"
+        android:theme="@style/CustomToolBarStyle"
+        app:popupTheme="@style/CustomPopupStyle"/>
 
 </com.google.android.material.appbar.AppBarLayout>

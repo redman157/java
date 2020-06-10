@@ -10,10 +10,10 @@ import android.util.Log;
 
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.SplashActivity;
-import com.android.music_player.managers.MusicManager;
+import com.android.music_player.managers.MediaManager;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
     private boolean sync;
     private String tag = "PerformMusicTasksLog";
-    private MusicManager mMusicManager;
+    private MediaManager mMediaManager;
     private SharedPrefsUtils mSharedPrefsUtils;
 
     @SuppressLint("StaticFieldLeak")
@@ -32,7 +32,7 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
         mActivity = activity;
         
         this.sync = sync;
-        mMusicManager = MusicManager.getInstance();
+        mMediaManager = MediaManager.getInstance();
 
 
     }
@@ -41,17 +41,17 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
     protected void onPreExecute() {
         super.onPreExecute();
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
-        mMusicManager.setContext(mActivity);
-        mMusicManager.installData();
+        mMediaManager.setContext(mActivity);
+        mMediaManager.installData();
 
     }
 
     @Override
     protected Long doInBackground(String... strings) {
 
-        Map<String, ArrayList<SongModel>> artists = mMusicManager.getArtist();
-        Map<String, ArrayList<SongModel>> albums = mMusicManager.getAlbum();
-        Map<String, ArrayList<SongModel>> folders = mMusicManager.getFolder();
+        Map<String, ArrayList<SongModel>> artists = mMediaManager.getArtist();
+        Map<String, ArrayList<SongModel>> albums = mMediaManager.getAlbum();
+        Map<String, ArrayList<SongModel>> folders = mMediaManager.getFolder();
         if (artists.size() > 0 && albums.size() > 0 && folders.size() > 0) {
             Log.d(tag, "Done filter into data");
 //            Log.d(tag,
@@ -66,8 +66,8 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
 
         try {
             // lần đầu tiên cài app
-            if(mMusicManager.isPlayListMost()){
-                mMusicManager.addPlayListFirst();
+            if(mMediaManager.isPlayListMost()){
+                mMediaManager.addPlayListFirst();
             }
             Log.d(tag, "Sync: "+sync);
             if (sync) {
@@ -100,7 +100,7 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
             @Override
             public void onFinish() {
                 Bitmap bitmap =
-                        ImageUtils.getInstance(mActivity).getBitmapIntoPicasso(mSharedPrefsUtils.getString(Constants.PREFERENCES.SAVE_ALBUM_ID,"0"));
+                        ImageHelper.getInstance(mActivity).getBitmapIntoPicasso(mSharedPrefsUtils.getString(Constants.PREFERENCES.SAVE_ALBUM_ID,"0"));
                 Intent intent = new Intent(mActivity, HomeActivity.class);
                 intent.putExtra("SendAlbumId", bitmap);
                 mActivity.finish();

@@ -9,30 +9,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
-import com.android.music_player.adapters.MusicAdapter;
-import com.android.music_player.managers.MusicManager;
+import com.android.music_player.adapters.BrowseAdapter;
+import com.android.music_player.managers.MediaManager;
 import com.android.music_player.utils.SharedPrefsUtils;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 public class ListMusicFragment extends Fragment  {
     private View view;
-    private FastScrollRecyclerView mRcMusic;
-    private MusicManager mMusicManager;
+    private RecyclerView mRcMusic;
+    private MediaManager mMediaManager;
     private HomeActivity mHomeActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private MusicAdapter mMusicAdapter;
-    public ListMusicFragment(MusicAdapter musicAdapter){
-        mMusicAdapter = musicAdapter;
+    private BrowseAdapter mBrowseAdapter;
+    public ListMusicFragment(BrowseAdapter browseAdapter){
+        mBrowseAdapter = browseAdapter;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(getContext());
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(getContext());
         mHomeActivity = (HomeActivity) getContext();
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
     }
@@ -54,10 +54,13 @@ public class ListMusicFragment extends Fragment  {
 
     private void initData(){
         mRcMusic.setHasFixedSize(true);
+        mRcMusic.setItemViewCacheSize(20);
+        mRcMusic.setDrawingCacheEnabled(true);
+        mRcMusic.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         mRcMusic.setLayoutManager(new LinearLayoutManager(
                 getContext(),
                 LinearLayoutManager.VERTICAL, false));
-        mRcMusic.setAdapter(mMusicAdapter);
+        mRcMusic.setAdapter(mBrowseAdapter);
     }
 
 

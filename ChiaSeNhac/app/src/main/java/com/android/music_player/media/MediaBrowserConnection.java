@@ -9,10 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.media.MediaBrowserServiceCompat;
 
-import com.android.music_player.managers.MusicManager;
+import com.android.music_player.managers.MediaManager;
 import com.android.music_player.services.MediaService;
+import com.android.music_player.utils.BundleHelper;
 import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.Utils;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     private Context context;
     private TextView mTextLeftTime,mTextRightTime;
     private boolean isPlay;
-    private MusicManager mMusicManager = MusicManager.getInstance();
+    private MediaManager mMediaManager = MediaManager.getInstance();
     public MediaSeekBar getSeekBarAudio() {
         return mSeekBarAudio;
     }
@@ -56,7 +56,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     public MediaBrowserConnection(Context context) {
         super(context, MediaService.class);
         this.context = context;
-        mMusicManager.setContext(context);
+        mMediaManager.setContext(context);
     }
 
     @Override
@@ -84,9 +84,9 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
 
     public void setAutoPlay(String songName, boolean autoPlay){
         if (mMediaController != null) {
-            Utils.Builder builder = new Utils.Builder();
+            BundleHelper.Builder builder = new BundleHelper.Builder();
             builder.putBoolean(Constants.INTENT.AUTO_PLAY, autoPlay);
-            if (songName.equals(mMusicManager.getCurrentMusic())) {
+            if (songName.equals(mMediaManager.getCurrentMusic())) {
                 mMediaController.getTransportControls().stop();
             }
             mMediaController.getTransportControls().prepareFromMediaId(songName,

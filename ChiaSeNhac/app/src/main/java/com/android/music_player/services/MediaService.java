@@ -16,7 +16,7 @@ import androidx.core.content.ContextCompat;
 import androidx.media.MediaBrowserServiceCompat;
 
 import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.managers.MusicManager;
+import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.NotificationManager;
 import com.android.music_player.managers.MediaPlayerManager;
 import com.android.music_player.media.PlaybackInfoListener;
@@ -36,7 +36,7 @@ public class MediaService extends MediaBrowserServiceCompat {
     private NotificationManager mNotificationManager;
     private MediaSessionCallback mCallback;
     private boolean mServiceInStartedState;
-    private MusicManager mMusicManager;
+    private MediaManager mMediaManager;
     private boolean mServiceStarted;
     private boolean isAutoPlay = false;
     @Override
@@ -53,8 +53,8 @@ public class MediaService extends MediaBrowserServiceCompat {
         // Create a new MediaSession.
         initMediaSession();
 
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(this);
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(this);
 
         if (mPlayback == null){
             mPlayback = new MediaPlayerManager(this, new MediaPlayerListener());
@@ -130,10 +130,10 @@ public class MediaService extends MediaBrowserServiceCompat {
         private MediaSessionCompat.QueueItem queueItem;
         private int position = -1;
         private MediaMetadataCompat mPreparedMedia;
-        private MusicManager mMusicManager = MusicManager.getInstance();
+        private MediaManager mMediaManager = MediaManager.getInstance();
 
         public MediaSessionCallback(){
-            mMusicManager.setContext(MediaService.this);
+            mMediaManager.setContext(MediaService.this);
         }
 
 

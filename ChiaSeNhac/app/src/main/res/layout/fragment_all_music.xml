@@ -4,15 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
+
         android:layout_height="@dimen/app_bar_height"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentScrim="@color/transparent"
+            android:background="@color/whiteOpaqueX4"
             app:expandedTitleGravity="center_horizontal"
             app:layout_collapseMode="pin"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
@@ -31,19 +35,33 @@
                 app:layout_scrollFlags="scroll|enterAlwaysCollapsed|exitUntilCollapsed"
                 tools:ignore="NestedWeights" />
 
+            <LinearLayout
+                android:id="@+id/ll_all_music"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+                <ImageView
+                    android:layout_margin="7dp"
+                    android:id="@+id/img_back"
+                    android:adjustViewBounds="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_arrow_back_black_24dp"/>
+            </LinearLayout>
             <androidx.appcompat.widget.Toolbar
-                android:layout_alignParentTop="true"
                 android:id="@+id/tb_AllMusic"
                 android:layout_width="match_parent"
-                android:gravity="center"
                 android:layout_height="?attr/actionBarSize"
+                android:layout_alignParentTop="true"
+                android:animateLayoutChanges="true"
                 android:background="@color/transparent"
                 android:elevation="4dp"
-                app:titleTextColor="@color/black"
-                android:animateLayoutChanges="true"
-                app:layout_collapseMode="pin"
+                android:gravity="center"
                 android:theme="@style/CustomToolBarStyle"
-                app:popupTheme="@style/CustomPopupStyle"/>
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/CustomPopupStyle"
+                app:titleTextColor="@color/black" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>

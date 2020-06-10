@@ -29,19 +29,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ImageUtils {
+public class ImageHelper {
 
     private Context mContext;
-    private static ImageUtils instance;
-    public static ImageUtils getInstance(Context context){
+    private static ImageHelper instance;
+    public static ImageHelper getInstance(Context context){
         if (instance == null){
-            instance = new ImageUtils(context);
+            instance = new ImageHelper(context);
         }
         return instance;
     }
 
 
-    public ImageUtils(Context context) {
+    public ImageHelper(Context context) {
         this.mContext = context;
     }
 

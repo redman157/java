@@ -13,14 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.AlbumAdapter;
-import com.android.music_player.managers.MusicManager;
+import com.android.music_player.managers.MediaManager;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 public class ListAlbumFragment extends Fragment {
     private View view;
     private FastScrollRecyclerView mFastScrollRecyclerView;
-    private MusicManager mMusicManager;
+    private MediaManager mMediaManager;
     private HomeActivity mHomeActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
     private AlbumAdapter mAlbumAdapter;
@@ -31,8 +31,8 @@ public class ListAlbumFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(getContext());
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(getContext());
         mHomeActivity = (HomeActivity) getContext();
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
     }

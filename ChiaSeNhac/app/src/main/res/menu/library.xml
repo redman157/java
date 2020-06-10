@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_all_music"
+        android:icon="@drawable/ic_music_note_black_24dp"
+        android:title="All The Music"/>
+
+    <item
+        android:id="@+id/navigation_all_playlist"
+        android:icon="@drawable/app_playlist"
+        android:title="All The PlayList"/>
+
+    <item
+        android:id="@+id/navigation_favorites"
+        android:icon="@drawable/app_heart"
+        android:title="Favorites"/>
+
+    <item
+        android:id="@+id/navigation_recently_played"
+        android:icon="@drawable/ic_access_time_black_48dp"
+        android:title="Recently Played"/>
+    <item
+        android:id="@+id/navigation_download"
+        android:icon="@drawable/ic_music_note_black_24dp"
+        android:title="Download"/>
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_music_note_black_24dp"
+        android:title="Settings"/>
+    <item
+        android:id="@+id/navigation_about"
+        android:icon="@drawable/ic_info_outline_black_24dp"
+        android:title="About"/>
+
+
+</menu>

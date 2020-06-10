@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
@@ -26,10 +26,12 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
     private final Activity mActivity;
     private Map<String, ArrayList<SongModel>> mArtists;
     private SharedPrefsUtils mSharedPrefsUtils;
-
+    private List<String> keys;
     public ArtistAdapter(Activity activity, Map<String, ArrayList<SongModel>> artists) {
         this.mArtists = artists;
         mActivity = activity;
+        keys = new ArrayList<>(mArtists.keySet());
+        Collections.sort(keys);
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
     }
 
@@ -43,9 +45,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        List<String> keys = new ArrayList<>(mArtists.keySet());
-        Collections.sort(keys);
-
         String item = keys.get(position);
         ArrayList<SongModel> music = mArtists.get(item);
 
@@ -82,7 +81,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
             mTextArtist.setText(artist);
             mTextInfoArtist.setText(models.size() +" bài hát");
             mImgArtist.setClipToOutline(true);
-            ImageUtils.getInstance(mActivity).getSmallImageByPicasso(models.get(0).getAlbumID(),
+            ImageHelper.getInstance(mActivity).getSmallImageByPicasso(models.get(0).getAlbumID(),
                     mImgArtist);
         }
     }

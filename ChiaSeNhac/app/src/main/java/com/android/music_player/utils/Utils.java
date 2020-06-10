@@ -1,14 +1,12 @@
 package com.android.music_player.utils;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -25,16 +23,7 @@ import java.util.Random;
 import java.util.TimeZone;
 
 public class Utils {
-    private static Utils.Builder builder;
-    private static AnimatedVectorDrawableCompat vectorDrawableCompat;
-    private static AnimatedVectorDrawable vectorDrawable;
-    public Utils(Bundle bundle){
-        this.bundle = bundle;
-    }
 
-    public Utils(Intent intent){
-        bundle = intent.getExtras();
-    }
 
     public static String formatTime(int currentDuration){
         TimeZone tz = TimeZone.getTimeZone("UTC");
@@ -104,6 +93,10 @@ public class Utils {
         Random rd = new Random();
         return rd.nextInt(MusicLibrary.music.size());
     }
+
+
+    private static AnimatedVectorDrawableCompat vectorDrawableCompat;
+    private static AnimatedVectorDrawable vectorDrawable;
     public static void UpdateButtonPlay(ImageButton button, boolean isPlay){
         if (isPlay){
             button.setImageResource(R.drawable.avd_play_to_pause);
@@ -125,69 +118,6 @@ public class Utils {
                 vectorDrawable = (AnimatedVectorDrawable) drawable;
                 vectorDrawable.start();
             }
-        }
-    }
-
-
-    // custom bundle
-    private Bundle bundle;
-    public static class Builder{
-        private Bundle bundle;
-        public Builder (){
-            bundle = new Bundle();
-        }
-        public Utils.Builder putString(String key, String value){
-            bundle.putString(key, value);
-            return this;
-        }
-
-        public Utils.Builder putBoolean(String key, boolean value){
-            bundle.putBoolean(key, value);
-            return this;
-        }
-
-        public Utils.Builder putInteger(String key, int value){
-            bundle.putInt(key, value);
-            return this;
-        }
-
-        public Utils generate(){
-            return new Utils(bundle);
-        }
-    }
-
-    public Bundle getBundle() {
-        return bundle;
-    }
-
-    public String getString(String key, String defaultValue){
-        if (bundle!= null) {
-            return bundle.getString(key);
-        }else {
-            return defaultValue;
-        }
-    }
-
-    public void clear(){
-        if(bundle!=null) {
-            bundle.clear();
-
-        }
-    }
-
-    public int getInteger(String key, int defaultValue){
-        if (bundle!= null) {
-            return bundle.getInt(key);
-        }else {
-            return defaultValue;
-        }
-    }
-
-    public boolean getBoolean(String key, boolean defaultValue){
-        if (bundle!= null) {
-            return bundle.getBoolean(key);
-        }else {
-            return defaultValue;
         }
     }
 

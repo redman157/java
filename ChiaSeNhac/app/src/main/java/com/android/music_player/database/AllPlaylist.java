@@ -6,7 +6,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import com.android.music_player.managers.MusicManager;
+import com.android.music_player.managers.MediaManager;
 import com.android.music_player.utils.Constants;
 
 import java.util.ArrayList;
@@ -123,8 +123,8 @@ public class AllPlaylist {
             Log.d(TAG, e.getMessage());
         }catch (CursorIndexOutOfBoundsException e) {
             // play list không có thì sẽ mặc định tạo
-            MusicManager.getInstance().setContext(mContext);
-            MusicManager.getInstance().addPlayListFirst();
+            MediaManager.getInstance().setContext(mContext);
+            MediaManager.getInstance().addPlayListFirst();
             return  false;
         } finally {
             closeDatabase();

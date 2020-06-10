@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.utils.DialogUtils;
+import com.android.music_player.utils.DialogHelper;
 
 import java.util.ArrayList;
 
@@ -71,7 +71,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.ViewHo
             textView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    DialogUtils.showDeletePlayList(mContext, title);
+                    DialogHelper.showDeletePlayList(mContext, title);
                     return false;
                 }
             });

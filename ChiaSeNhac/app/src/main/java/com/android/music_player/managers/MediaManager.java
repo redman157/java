@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v4.media.MediaBrowserCompat;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.MenuItem;
@@ -42,20 +43,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-public class MusicManager {
-    /*private ArrayList<HashMap<String, String>> getAlbumsList = new ArrayList<>();
-    private ArrayList<HashMap<String, String>> artists = new ArrayList<>();*/
-
+public class MediaManager {
     private MediaBrowserConnection mMediaBrowserConnection;
-    private Map<String, ArrayList<SongModel>> mAlbumLists = new HashMap<>();
-    private Map<String, ArrayList<SongModel>> mArtistLists = new HashMap<>();
-    private Map<String, ArrayList<SongModel>> mFolderLists = new HashMap<>();
-/*    private Map<String, ArrayList<SongModel>> mAlbumLists = new HashMap<>();
-    private Map<String, ArrayList<SongModel>> mArtistLists = new HashMap<>();
-    private Map<String, ArrayList<SongModel>> mFolderLists = new HashMap<>();
-    public Set<SongModel> mSongsMain = new HashSet<SongModel>();*/
-
-    private ArrayList<SongModel> queue = new ArrayList<>();
+    private ArrayList<MediaBrowserCompat.MediaItem> queue = new ArrayList<>();
     private ArrayList<SongModel> shuffleSongs = new ArrayList<>();
     private String TAG = "SongsManagerConsole";
     /* access modifiers changed from: private */
@@ -69,7 +59,7 @@ public class MusicManager {
     private Statistic mStatistic;
     private RelationSongs mRelationSongs;
     @SuppressLint("StaticFieldLeak")
-    private static MusicManager instance;
+    private static MediaManager instance;
     private String type;
     private String mediaId;
 
@@ -84,14 +74,14 @@ public class MusicManager {
         this.mediaId = mediaId;
     }
 
-    public static MusicManager getInstance() {
+    public static MediaManager getInstance() {
         if (instance == null){
-            instance = new MusicManager();
+            instance = new MediaManager();
         }
         return instance;
     }
 
-    private MusicManager() {
+    private MediaManager() {
 
     }
 
@@ -121,11 +111,11 @@ public class MusicManager {
             if (queue.isEmpty()) {
                 try {
                     // sao lưu file
-                    Type type = new TypeToken<ArrayList<SongModel>>() {
+                    Type type = new TypeToken<ArrayList<MediaBrowserCompat.MediaItem>>() {
                     }.getType();
-                    ArrayList<SongModel> restoreData = new Gson().fromJson(mSharedPrefsUtils.getString(Constants.PREFERENCES.KEY, null), type);
+                    ArrayList<MediaBrowserCompat.MediaItem> restoreData = new Gson().fromJson(mSharedPrefsUtils.getString(Constants.PREFERENCES.KEY, null), type);
                     replaceQueue(restoreData);
-                    Log.d(TAG, "Retrieved queue from storage in MusicManager. " + restoreData.size() + " mSongsMain!");
+                    Log.d(TAG, "Retrieved queue from storage in MediaManager. " + restoreData.size() + " mSongsMain!");
                 } catch (Exception e) {
                     Log.d(TAG, "Unable to retrieve data while queue is empty.");
                     Log.d(TAG, e.getMessage());
@@ -168,104 +158,34 @@ public class MusicManager {
         mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, musicName);
     }
 
-    public void setPosition(int position) {
-        processEndOfList(position);
-    }
-
-/*    public boolean isPlayCurrentSong(String path){
-        if (path.equals(getCurrentMusic().getPath())){
-            return true;
-        }else {
-            return false;
-        }
-    }*/
-
-    public ArrayList<SongModel> getListSong(){
-        this.type = getType();
-        Log.d("BBB", "MusicManager --- getListSong: "+type);
-        ArrayList<SongModel> song = new ArrayList<>();
-        if (mAllPlaylist.searchPlayList(type)) {
-            song = getAllSongToPlayList(type);
-
-            return song;
-        }else {
-            if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
-                song = MusicManager.getInstance().newSongs();
-                return song;
-            } else if (type.equals(Constants.VALUE.ALL_SONGS) || type.equals("")) {
-                song = MusicManager.getInstance().allSortSongs();
-                return song;
-            } else if (type.equals(Constants.VALUE.SHUFFLE)){
-                song = MusicManager.getInstance().getShuffleSongs();
-                return song;
-            }
-        }
-        return null;
-    }
-
-    public ArrayList<SongModel> getListSong(String type){
-//        Log.d("BBB", "MusicManager --- getListSong: "+type);
-        ArrayList<SongModel> song = new ArrayList<>();
-        if (mAllPlaylist.searchPlayList(type)) {
-            song = getAllSongToPlayList(type);
-
-            return song;
-        }else {
-            if (type.equals(Constants.VALUE.NEW_SONGS) || type.equals(Constants.VALUE.ALL_NEW_SONGS)) {
-                song = MusicManager.getInstance().newSongs();
-                return song;
-            } else if (type.equals(Constants.VALUE.ALL_SONGS) || type.equals("")) {
-                song = MusicManager.getInstance().allSortSongs();
-                return song;
-            } else if (type.equals(Constants.VALUE.SHUFFLE)){
-                song = MusicManager.getInstance().getShuffleSongs();
-                return song;
-            }
-        }
-        return null;
-    }
-
-    public void processEndOfList(int position){
-
-        if (getListSong()!= null) {
-            int size = (getListSong().size());
-            if (position >= size) {
-
-                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, 0);
-            } else if (position < 0) {
-                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, size - 1);
-            } else {
-                mSharedPrefsUtils.setInteger(Constants.PREFERENCES.POSITION, position);
-            }
-        }
-    }
-
-    public ArrayList<SongModel> queue() {
+    public List<MediaBrowserCompat.MediaItem> queue() {
         if (queue.isEmpty()){
-            ArrayList<SongModel> list = new ArrayList<>(MusicLibrary.info);
+            List<MediaBrowserCompat.MediaItem> list =
+                    new ArrayList<>(MusicLibrary.getMediaItems());
             Collections.reverse(list);
             replaceQueue(list);
         }
         return queue;
     }
 
-    public ArrayList<SongModel> allSortSongs() {
+    public ArrayList<MediaBrowserCompat.MediaItem> allSortSongs() {
         grabIfEmpty(); // If no song in list
         // Sorted list of 0-9 A-Z
-        ArrayList<SongModel> songs = new ArrayList<>(newSongs());
-        Collections.sort(songs, new Comparator<SongModel>() {
+        ArrayList<MediaBrowserCompat.MediaItem> songs = new ArrayList<>(newSongs());
+        Collections.sort(songs, new Comparator<MediaBrowserCompat.MediaItem>() {
             @Override
-            public int compare(SongModel song1, SongModel song2) {
-                return song1.getSongName().compareTo(song2.getSongName());
+            public int compare(MediaBrowserCompat.MediaItem mediaItem1,
+                               MediaBrowserCompat.MediaItem mediaItem2) {
+                return mediaItem1.getMediaId().compareTo(mediaItem2.getMediaId());
             }
         });
         return songs;
     }
 
-    public ArrayList<SongModel> newSongs() {
+    public ArrayList<MediaBrowserCompat.MediaItem> newSongs() {
         grabIfEmpty(); // If no song in list (new songs)
 
-        ArrayList<SongModel> newSongs = new ArrayList<>(MusicLibrary.info);
+        ArrayList<MediaBrowserCompat.MediaItem> newSongs = new ArrayList<>(MusicLibrary.getMediaItems());
         Collections.reverse(newSongs);
         return newSongs;
     }
@@ -360,23 +280,8 @@ public class MusicManager {
         grabIfEmpty(); // isSync
     }
 
-    public void addToQueue(SongModel song) {
-        queue().add(song);
-        Utils.ToastLong(mContext, "Added to current queue!");
-    }
 
-    public void addToQueue(ArrayList<SongModel> arrayList) {
-        ArrayList<SongModel> arrayList1 = new ArrayList<>(arrayList);
-        if (arrayList1.size() > 0) {
-            queue().addAll(arrayList1);
-            Utils.ToastLong(mContext, "Added to current queue!");
-        } else {
-            Utils.ToastLong(mContext, "Nothing to add");
-        }
-    }
-
-
-    public  boolean replaceQueue(final ArrayList<SongModel> list) {
+    public  boolean replaceQueue(final List<MediaBrowserCompat.MediaItem> list) {
         if (list != null && !list.isEmpty()) {
             clearQueue();
             queue.addAll(list);
@@ -532,7 +437,7 @@ public class MusicManager {
                 return songs;
             }else {
 
-                Log.d(TAG, "MusicManager --- getAllSongToPlayList: error getAllSongToPlayList");
+                Log.d(TAG, "MediaManager --- getAllSongToPlayList: error getAllSongToPlayList");
                 return null;
 
             }
@@ -547,7 +452,7 @@ public class MusicManager {
             mAllPlaylist.addPlayList("Play List 2");
 
         }else {
-            Log.d(TAG, "MusicManager --- addPlayListFirst size > 0");
+            Log.d(TAG, "MediaManager --- addPlayListFirst size > 0");
         }
     }
 
@@ -801,17 +706,9 @@ public class MusicManager {
         return MusicLibrary.album;
     }
 
-    public void setAlbum(Map<String, ArrayList<SongModel>> albumLists) {
-        this.mAlbumLists = albumLists;
-    }
-
     public Map<String, ArrayList<SongModel>> getArtist() {
         grabIfEmpty();
         return MusicLibrary.artist;
-    }
-
-    public void setArtist(Map<String, ArrayList<SongModel>> artistLists) {
-        this.mArtistLists = artistLists;
     }
 
     public Map<String, ArrayList<SongModel>> getFolder() {
@@ -819,13 +716,6 @@ public class MusicManager {
         return MusicLibrary.folder;
     }
 
-    public void setFolder(Map<String, ArrayList<SongModel>> folderLists) {
-        this.mFolderLists = folderLists;
-    }
-
-    public ArrayList<SongModel> getQueue() {
-        return queue;
-    }
 
     public AllPlaylist getAllPlaylistDB() {
         return mAllPlaylist;

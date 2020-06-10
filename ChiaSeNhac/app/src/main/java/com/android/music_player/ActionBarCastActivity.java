@@ -22,7 +22,6 @@ import android.app.MediaRouteButton;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -38,13 +37,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.LibraryFragment;
-import com.google.android.gms.cast.framework.CastButtonFactory;
-import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.cast.framework.CastState;
-import com.google.android.gms.cast.framework.CastStateListener;
 import com.google.android.gms.cast.framework.IntroductoryOverlay;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.navigation.NavigationView;
 
 /**
@@ -62,8 +55,6 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     private static final String TAG = ActionBarCastActivity.class.getSimpleName();
 
     private static final int DELAY_MILLIS = 1000;
-
-    private CastContext mCastContext;
     private MenuItem mMediaRouteMenuItem;
     private Toolbar mToolbar;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -72,23 +63,6 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     private boolean mToolbarInitialized;
 
     private int mItemToOpenWhenDrawerCloses = -1;
-
-    private CastStateListener mCastStateListener = new CastStateListener() {
-        @Override
-        public void onCastStateChanged(int newState) {
-            if (newState != CastState.NO_DEVICES_AVAILABLE) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mMediaRouteMenuItem.isVisible()) {
-                            Log.d(TAG, "Cast Icon is visible");
-                            showFtu();
-                        }
-                    }
-                }, DELAY_MILLIS);
-            }
-        }
-    };
 
     private final DrawerLayout.DrawerListener mDrawerListener = new DrawerLayout.DrawerListener() {
         @Override
@@ -145,12 +119,12 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Activity onCreate");
 
-        int playServicesAvailable =
-                GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-
-        if (playServicesAvailable == ConnectionResult.SUCCESS) {
-            mCastContext = CastContext.getSharedInstance(this);
-        }
+//        int playServicesAvailable =
+//                GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+//
+//        if (playServicesAvailable == ConnectionResult.SUCCESS) {
+//            mCastContext = CastContext.getSharedInstance(this);
+//        }
     }
 
     @Override
@@ -174,9 +148,9 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        if (mCastContext != null) {
-            mCastContext.addCastStateListener(mCastStateListener);
-        }
+//        if (mCastContext != null) {
+//            mCastContext.addCastStateListener(mCastStateListener);
+//        }
 
         // Whenever the fragment back stack changes, we may need to update the
         // action bar toggle: only top level screens show the hamburger-like icon, inner
@@ -196,9 +170,9 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
 
-        if (mCastContext != null) {
-            mCastContext.removeCastStateListener(mCastStateListener);
-        }
+//        if (mCastContext != null) {
+//            mCastContext.removeCastStateListener(mCastStateListener);
+//        }
         getFragmentManager().removeOnBackStackChangedListener(mBackStackChangedListener);
     }
 
@@ -207,10 +181,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main, menu);
 
-        if (mCastContext != null) {
-            mMediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(),
-                    menu, R.id.action_searchBtn);
-        }
+//        if (mCastContext != null) {
+//            mMediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(),
+//                    menu, R.id.action_searchBtn);
+//        }
         return true;
     }
 

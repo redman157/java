@@ -113,7 +113,7 @@ dependencies {
     implementation('com.google.apis:google-api-services-drive:v3-rev136-1.25.0') {
         exclude group: 'com.google.guava'
     }
-    implementation 'com.google.android.exoplayer:exoplayer:2.7.3'
+//    implementation 'com.google.android.exoplayer:exoplayer:2.7.3'
     implementation 'com.google.android.gms:play-services-cast-framework:15.0.0'
 
 

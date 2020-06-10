@@ -8,7 +8,7 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.ImageHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,10 +20,28 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class MusicLibrary {
+    public static MusicLibrary instance;
+
+    public static MusicLibrary getInstance() {
+        if (instance == null){
+            instance = new MusicLibrary();
+        }
+        return instance;
+    }
+    enum State {
+        NON_INITIALIZED, INITIALIZING, INITIALIZED
+    }
+
+    private  MusicLibrary() {
+    }
+
     public static final TreeMap<String, MediaMetadataCompat> music = new TreeMap<>();
     public static final HashMap<String, Integer> albumID = new HashMap<>();
     public static final HashMap<String, String> fileName = new HashMap<>();
+    public static final Set<MediaMetadataCompat> metadata = new HashSet<>();
     public static final Set<SongModel> info = new HashSet<>();
+
+    public ArrayList<MediaMetadataCompat> queue = new ArrayList<>();
     public static final Map<String, ArrayList<SongModel>> album = new HashMap<>();
     public static final Map<String, ArrayList<SongModel>> artist = new HashMap<>();
     public static final Map<String, ArrayList<SongModel>> folder = new HashMap<>();
@@ -46,11 +64,15 @@ public class MusicLibrary {
 
 
     public static String getAlbumArtUri(String albumArtResName) {
-        return ImageUtils.getSongUri(Long.valueOf(albumArtResName)).getPath();
+        return ImageHelper.getSongUri(Long.valueOf(albumArtResName)).getPath();
     }
 
     public static String getMusicFilename(String mediaId) {
         return fileName.containsKey(mediaId) ? fileName.get(mediaId) : null;
+    }
+
+    public static SongModel getSongModel(String mediaId){
+        return model.containsKey(mediaId)? model.get(mediaId): null;
     }
 
     public static int getAlbumRes(String mediaId) {
@@ -89,10 +111,10 @@ public class MusicLibrary {
     }
 
     public static void setMediaShuffle(Context context, List<MediaBrowserCompat.MediaItem> mediaItems){
-        MusicManager.getInstance().setContext(context);
+        MediaManager.getInstance().setContext(context);
         Collections.shuffle(mediaItems);
         for (int i = 0; i < mediaItems.size(); i++){
-            if (mediaItems.get(i).getDescription().getMediaId().equals(MusicManager.getInstance().getCurrentMusic())){
+            if (mediaItems.get(i).getDescription().getMediaId().equals(MediaManager.getInstance().getCurrentMusic())){
                 mediaItems.remove(i);
                 mediaItems.add(0, mediaItems.get(i));
             }
@@ -114,7 +136,7 @@ public class MusicLibrary {
 
     public static MediaMetadataCompat getMetadata(Context context, String songName) {
         MediaMetadataCompat metadataWithoutBitmap = music.get(songName);
-        Bitmap albumArt = ImageUtils.getAlbumArt(context, Long.valueOf(albumID.get(songName)));
+        Bitmap albumArt = ImageHelper.getAlbumArt(context, Long.valueOf(albumID.get(songName)));
 
         // Since MediaMetadataCompat is immutable, we need to create a copy to assignData the album art.
         // We don't assignData it initially on all items so that they don't take unnecessary memory.

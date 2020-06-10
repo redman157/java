@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.R;
 import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.DialogUtils;
-import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.DialogHelper;
+import com.android.music_player.utils.ImageHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.
     private Context mContext;
     private SongModel mSongModel;
     private ArrayList<SongModel> songs;
-    private ImageUtils mImageUtils;
+    private ImageHelper mImageUtils;
     private int mPossitionMusic;
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
     private int mOptionMusic;
@@ -37,7 +37,7 @@ public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.
         this.songs = songs;
         mContext = context;
         this.dialog = dialog;
-        mImageUtils = ImageUtils.getInstance(context);
+        mImageUtils = ImageHelper.getInstance(context);
     }
 
 
@@ -89,7 +89,7 @@ public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.
             public void onClick(View v) {
                 onClickItemListener.onClickPosition(position);
                 // lúc hiện dialog nếu hiển thị thì sẽ ẩn đi
-                DialogUtils.cancelDialog();
+                DialogHelper.cancelDialog();
             }
         });
 

@@ -36,29 +36,24 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.android.music_player.BaseActivity;
 import com.android.music_player.R;
-import com.android.music_player.fragments.AllMusicFragment;
 import com.android.music_player.fragments.HomeFragment;
-import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.fragments.MainFragment;
 import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnConnectionMedia;
+import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.managers.MusicManager;
 import com.android.music_player.media.MediaBrowserConnection;
 import com.android.music_player.media.MediaBrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
 import com.android.music_player.media.MediaSeekBar;
-import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.SwipeTouchUtils;
 import com.android.music_player.utils.Utils;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
-import java.util.ArrayList;
 
 import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
@@ -71,8 +66,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private View mLayoutMedia;
     public ImageView mImgAlbumArt, mImgChangeMusic, mImgBack;
     public Button mBtnTitle;
-    private ArrayList<SongModel> mSongs;
-    private MusicManager mMusicManager;
+    private MediaManager mMediaManager;
     public ImageButton mBtnPlayPauseMedia , mBtnPlayPauseMusic;
     private ImageButton mBtnPrev, mBtnRepeat, mBtnNext, mBtnSetTime,
             mBtnSeeMore, mBtnAbout, mBtnEqualizer, mBtnFavorite;
@@ -143,10 +137,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void initService() {
-        Log.d("CCC", "Home Activity --- initService: "+mMusicManager.getCurrentMusic());
-        browserConnection = mMusicManager.getMediaBrowserConnection();
+        Log.d("CCC", "Home Activity --- initService: "+ mMediaManager.getCurrentMusic());
+        browserConnection = mMediaManager.getMediaBrowserConnection();
         browserConnection.setSeekBarAudio(mSeekBarAudio, mTextLeftTime, mTextRightTime);
-        browserConnection.setMediaId(mMusicManager.getCurrentMusic());
+        browserConnection.setMediaId(mMediaManager.getCurrentMusic());
 
         mMediaBrowserHelper = browserConnection;
         mBrowserListener = new MediaBrowserListener();
@@ -159,10 +153,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void initManager() {
         mSharedPrefsUtils = new SharedPrefsUtils(this);
-        mMusicManager = MusicManager.getInstance();
-        mMusicManager.setContext(this);
-        mSongs = mMusicManager.getListSong();
-        ImageUtils.getInstance(this);
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(this);
+        ImageHelper.getInstance(this);
     }
 
     @Override
@@ -180,10 +173,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
             Log.d("XXX", "Home Activity --- onStart: EXPANDED");
-            setViewMusic(mMusicManager.getCurrentMusic(),PanelState.EXPANDED );
+            setViewMusic(mMediaManager.getCurrentMusic(),PanelState.EXPANDED );
         }else if (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED){
             Log.d("XXX", "Home Activity --- onStart: COLLAPSED");
-            setViewMusic(mMusicManager.getCurrentMusic(), PanelState.COLLAPSED);
+            setViewMusic(mMediaManager.getCurrentMusic(), PanelState.COLLAPSED);
         }
     }
 
@@ -199,27 +192,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (savedInstanceState == null){
             FragmentTransaction fragmentTransaction =
                     getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.fl_placeholder ,
-                    AllMusicFragment.newInstance(),
-                    "AllMusicFragment");
-            fragmentTransaction.add(R.id.fl_placeholder ,MainFragment.newInstance(this),
-                    "MainFragment");
+            fragmentTransaction.add(R.id.fl_placeholder , HomeFragment.newInstance(this),
+                    "HomeFragment");
 
             fragmentTransaction.commit();
         }
+
         setContentView(R.layout.activity_home);
 
         initView();
-//        initializeToolbar();
         initService();
         setupToolbar();
         assignView();
-
     }
 
-    public void initializeFromParams(Bundle savedInstanceState, Intent intent){
-
-    }
 
     private void setMode(int repeat) {
         switch (repeat){
@@ -245,7 +231,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     private void setupToolbar() {
         mToolBar.inflateMenu(R.menu.main);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView =  findViewById(R.id.nav_view);
         if (navigationView == null) {
             throw new IllegalStateException("Layout requires a NavigationView " +
                     "with id 'nav_view'");
@@ -255,8 +241,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mDrawerLayout.setDrawerListener(mDrawerListener);
         populateDrawerItems(navigationView);
         setSupportActionBar(mToolBar);
-  /*      getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);*/
         updateDrawerToggle();
     }
 
@@ -271,11 +255,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                         return true;
                     }
                 });
-        if (TimerActivity.class.isAssignableFrom(getClass())) {
-            navigationView.setCheckedItem(R.id.sleep_timer);
-        } else if (LibraryFragment.class.isAssignableFrom(getClass())) {
-            navigationView.setCheckedItem(R.id.navigation_library);
-        }
+//        if (TimerActivity.class.isAssignableFrom(getClass())) {
+//            navigationView.setCheckedItem(R.id.sleep_timer);
+//        } else if (LibraryFragment.class.isAssignableFrom(getClass())) {
+//            navigationView.setCheckedItem(R.id.navigation_library);
+//        }
     }
 
     protected void updateDrawerToggle() {
@@ -304,12 +288,28 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
                 Class activityClass = null;
                 switch (mItemToOpenWhenDrawerCloses) {
-                    case R.id.sleep_timer:
-                        activityClass = TimerActivity.class;
+                    case R.id.navigation_all_music:
+//                        activityClass = TimerActivity.class;
                         break;
-                    case R.id.navigation_home:
-                        activityClass = HomeFragment.class;
+                    case R.id.navigation_all_playlist:
+//                        activityClass = HomeFragment.class;
                         break;
+                    case R.id.navigation_favorites:
+//                        activityClass = HomeFragment.class;
+                        break;
+                    case R.id.navigation_recently_played:
+//                        activityClass = HomeFragment.class;
+                        break;
+                    case R.id.navigation_download:
+//                        activityClass = HomeFragment.class;
+                        break;
+                    case R.id.navigation_about:
+//                        activityClass = HomeFragment.class;
+                        break;
+                    case R.id.navigation_settings:
+//                        activityClass = HomeFragment.class;
+                        break;
+
                 }
                 if (activityClass != null) {
                     startActivity(new Intent(HomeActivity.this, activityClass), extras);
@@ -339,7 +339,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
                 songName);
 
-        ImageUtils.getInstance(this).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(songName)),
+        ImageHelper.getInstance(this).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(songName)),
                 mImgChangeMedia);
 
         mTextRightTime.setText(Utils.formatTime((int) metadataCompat.getLong(Constants.METADATA.Duration)));
@@ -357,7 +357,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 songName);
         mTextArtistMedia.setText(metadataCompat.getString(Constants.METADATA.Artist));
         mTextTitleMedia.setText(metadataCompat.getString(Constants.METADATA.Title));
-        ImageUtils.getInstance(this).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(songName)),
+        ImageHelper.getInstance(this).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(songName)),
                 mImgAlbumArt);
         setPlayMedia(songName);
 
@@ -453,7 +453,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -466,8 +466,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 FragmentManager manager = getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
                 Fragment mainFragment;
-                if(manager.findFragmentByTag("MainFragment") != null) {
-                    mainFragment = manager.findFragmentByTag("MainFragment");
+                if(manager.findFragmentByTag("HomeFragment") != null) {
+                    mainFragment = manager.findFragmentByTag("HomeFragment");
                 } else {
                     mainFragment = MainFragment.newInstance(this);
                 }

@@ -22,7 +22,7 @@ import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.services.MediaService;
 import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.ImageUtils;
+import com.android.music_player.utils.ImageHelper;
 
 public class NotificationManager {
     public static final int NOTIFICATION_ID = 412;
@@ -117,7 +117,7 @@ public class NotificationManager {
                     .setColorized(true).setColor(mService.getResources().getColor(R.color.white))
 
                     .setSmallIcon(R.drawable.ic_music_note_white_24dp)
-                    .setLargeIcon(ImageUtils.getAlbumArt(mService,
+                    .setLargeIcon(ImageHelper.getAlbumArt(mService,
                             Long.valueOf(MusicLibrary.getAlbumRes(description.getMediaId()))))
                     // Pending intent that is fired when user clicks on notification.
                     .setContentIntent(createContentIntent())
@@ -160,7 +160,7 @@ public class NotificationManager {
                     .setContentTitle(description.getTitle())
                     // Subtitle - Usually Artist name.
                     .setContentText(description.getSubtitle())
-                    .setLargeIcon(ImageUtils.getAlbumArt(mService,
+                    .setLargeIcon(ImageHelper.getAlbumArt(mService,
                             Long.valueOf(MusicLibrary.getAlbumRes(description.getMediaId()))))  .setSubText(MusicLibrary.getMusicFilename(description.getMediaId()))
                     // When notification is deleted (when playback is paused and notification can be
                     // deleted) fire MediaButtonPendingIntent with ACTION_STOP.

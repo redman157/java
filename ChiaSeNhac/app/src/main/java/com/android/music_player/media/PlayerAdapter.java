@@ -113,6 +113,7 @@ public abstract class PlayerAdapter {
         private void abandonAudioFocus() {
             mAudioManager.abandonAudioFocus(this);
         }
+
         @Override
         public void onAudioFocusChange(int focusChange) {
             switch (focusChange){

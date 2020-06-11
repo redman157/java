@@ -8,8 +8,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Menu;
@@ -24,6 +27,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -45,7 +49,6 @@ import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.media.MediaBrowserConnection;
 import com.android.music_player.media.MediaBrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
-import com.android.music_player.media.MediaSeekBar;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -55,11 +58,16 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.navigation.NavigationView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener,
-        MediaBrowserListener.OnMediaListener, SlidingUpPanelLayout.PanelSlideListener, OnChangeListener {
+public class HomeActivity extends BaseActivity implements MediaBrowserConnection.OnMediaController,View.OnClickListener,
+        MediaBrowserListener.OnChangeMusicListener, SlidingUpPanelLayout.PanelSlideListener, OnChangeListener {
     private String tag = "BBB";
     private RelativeLayout mViewControlMedia;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
@@ -70,7 +78,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public ImageButton mBtnPlayPauseMedia , mBtnPlayPauseMusic;
     private ImageButton mBtnPrev, mBtnRepeat, mBtnNext, mBtnSetTime,
             mBtnSeeMore, mBtnAbout, mBtnEqualizer, mBtnFavorite;
-    public MediaSeekBar mSeekBarAudio;
+    public SeekBar mSeekBarAudio;
     private TextView mTextLeftTime, mTextRightTime, mTextTitleMedia, mTextArtistMedia
             , mTextTitleMusic, mTextArtistMusic , mTextAlbumMusic;
     private ImageView mImgViewQueue, mImgAddToPlayList, mImgChangeMedia;
@@ -106,32 +114,28 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("XXX", "Home Activity --- onPause: enter");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d("XXX", "Home Activity --- onStop: enter");
         onStopService();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        Log.d("XXX", "Home Activity --- onDestroy: enter");
-
     }
 
     @Override
     public void onStartService() {
         mMediaBrowserHelper.onStart();
+
     }
 
     @Override
     public void onStopService() {
-        mSeekBarAudio.disconnectController();
+//        mSeekBarAudio.disconnectController();
         mMediaBrowserHelper.onStop();
     }
 
@@ -139,13 +143,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void initService() {
         Log.d("CCC", "Home Activity --- initService: "+ mMediaManager.getCurrentMusic());
         browserConnection = mMediaManager.getMediaBrowserConnection();
-        browserConnection.setSeekBarAudio(mSeekBarAudio, mTextLeftTime, mTextRightTime);
+//        browserConnection.setSeekBarAudio(mSeekBarAudio, mTextLeftTime, mTextRightTime);
         browserConnection.setMediaId(mMediaManager.getCurrentMusic());
 
         mMediaBrowserHelper = browserConnection;
+        browserConnection.setOnMediaController(this);
         mBrowserListener = new MediaBrowserListener();
-        mBrowserListener.setOnMediaListener(this);
-
+        mBrowserListener.setOnChangeMusicListener(this);
         mMediaBrowserHelper.registerCallback("HomeActivity", mBrowserListener);
 
     }
@@ -172,10 +176,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         super.onStart();
 
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
-            Log.d("XXX", "Home Activity --- onStart: EXPANDED");
             setViewMusic(mMediaManager.getCurrentMusic(),PanelState.EXPANDED );
         }else if (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED){
-            Log.d("XXX", "Home Activity --- onStart: COLLAPSED");
             setViewMusic(mMediaManager.getCurrentMusic(), PanelState.COLLAPSED);
         }
     }
@@ -184,11 +186,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("XXX", "Home Activity --- onCreate: enter");
         initManager();
-
-//        initializeFromParams(savedInstanceState, getIntent());
-
         if (savedInstanceState == null){
             FragmentTransaction fragmentTransaction =
                     getSupportFragmentManager().beginTransaction();
@@ -436,6 +434,26 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlaying);
         mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
         mViewControlMedia.setOnTouchListener(new SwipeTouchUtils(this));
+
+        mSeekBarAudio.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mTextLeftTime.setText(Utils.formatTime(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                if (mScheduleFuture != null) {
+                    mScheduleFuture.cancel(false);
+                }
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Log.d("XXX", "HomeActivity --- onStopTrackingTouch: "+seekBar.getProgress());
+                mMediaBrowserHelper.getTransportControls().seekTo(seekBar.getProgress());
+            }
+        });
     }
 
     @Override
@@ -603,18 +621,21 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case R.id.icon_prev:
                 mMediaBrowserHelper.getTransportControls().skipToPrevious();
+
                 break;
             case R.id.icon_play:
 
             case R.id.imbt_Play_media:
                 if (isPlaying){
                     mMediaBrowserHelper.getTransportControls().pause();
+                    stopSeekBarUpdate();
                 }else {
                     mMediaBrowserHelper.getTransportControls().playFromMediaId(nameChoose, null);
                 }
                 break;
             case R.id.icon_next:
                 mMediaBrowserHelper.getTransportControls().skipToNext();
+
                 break;
             case R.id.icon_image_More:
                 if (!isMore){
@@ -657,7 +678,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case R.id.vp_Home:
                 break;
         }
-
     }
 
     @Override
@@ -685,32 +705,42 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
-    public void onCheckPlay(boolean isPlay, PlaybackStateCompat state) {
+    public void onStateChange(boolean isPlay, PlaybackStateCompat state) {
         // compare status play don't update button play
-        if (isPlaying == isPlay){
-            return;
+        Log.d("CCC", "HomeActivity --- PlaybackStateCompat: "+state.getPosition());
+        if (isPlaying != isPlay){
+            Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlay);
+            Utils.UpdateButtonPlay(mBtnPlayPauseMusic, isPlay);
         }
-        this.isPlaying = isPlay;
 
-        Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlay);
-        Utils.UpdateButtonPlay(mBtnPlayPauseMusic, isPlay);
+        this.isPlaying = isPlay;
+        mLastPlaybackState = state;
+        if (isPlay && state.getState() == PlaybackStateCompat.STATE_PLAYING || state.getState() == PlaybackStateCompat.STATE_BUFFERING) {
+            scheduleSeekBarUpdate();
+        }
+
+
+    }
+
+    @Override
+    public void onMediaMetadata(MediaMetadataCompat mediaMetadata) {
+//        mSeekBarAudio.setUpdateMedia(mediaMetadata);
+        Log.d("CCC",
+                "HomeActivity --- onMediaMetadata: "+mediaMetadata.getString(Constants.METADATA.Title));
+        updateDuration(mediaMetadata);
+        if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
+            setViewMusic(mediaMetadata.getString(Constants.METADATA.Title) , PanelState.EXPANDED);
+        }else if (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED){
+            setViewMusic(mediaMetadata.getString(Constants.METADATA.Title) , PanelState.COLLAPSED);
+        }
+
     }
 
     @Override
     public void onComplete(boolean isNext) {
         if (isNext){
             onMediaMetadata(mMediaBrowserHelper.getMetadata());
-        }
-    }
 
-    @Override
-    public void onMediaMetadata(MediaMetadataCompat mediaMetadata) {
-        Log.d("CCC",
-                "HomeActivity --- onMediaMetadata: "+mediaMetadata.getString(Constants.METADATA.Title));
-        if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
-            setViewMusic(mediaMetadata.getString(Constants.METADATA.Title) , PanelState.EXPANDED);
-        }else if (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED){
-            setViewMusic(mediaMetadata.getString(Constants.METADATA.Title) , PanelState.COLLAPSED);
         }
     }
 
@@ -762,5 +792,73 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public MediaBrowserCompat getMediaBrowser() {
         return null;
+    }
+
+    @Override
+    public void onController(MediaControllerCompat mediaController) {
+
+        if (mMediaBrowserHelper.isConnect()){
+            Log.d("ZZZ", mediaController == null ? "null" : "khac null" );
+//            mSeekBarAudio.setMediaController(mediaController,mTextLeftTime, mTextRightTime);
+//            mSeekBarAudio.setOnChangeMusicListener(this);
+        }
+    }
+
+    private final ScheduledExecutorService mExecutorService =
+            Executors.newSingleThreadScheduledExecutor();
+    private static final long PROGRESS_UPDATE_INTERNAL = 1000;
+    private static final long PROGRESS_UPDATE_INITIAL_INTERVAL = 100;
+    private ScheduledFuture<?> mScheduleFuture;
+    private PlaybackStateCompat mLastPlaybackState;
+    private final Handler mHandler = new Handler();
+    private final Runnable mUpdateProgressTask = new Runnable() {
+        @Override
+        public void run() {
+            updateProgress();
+        }
+    };
+    private void scheduleSeekBarUpdate() {
+        stopSeekBarUpdate();
+        if (!mExecutorService.isShutdown()) {
+            mScheduleFuture = mExecutorService.scheduleAtFixedRate(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            mHandler.post(mUpdateProgressTask);
+                        }
+                    }, PROGRESS_UPDATE_INITIAL_INTERVAL,
+                    PROGRESS_UPDATE_INTERNAL, TimeUnit.MILLISECONDS);
+        }
+    }
+    private boolean mIsTracking = false;
+    private void stopSeekBarUpdate() {
+        if (mScheduleFuture != null) {
+            mScheduleFuture.cancel(false);
+        }
+    }
+    private void updateProgress() {
+        if (mLastPlaybackState == null) {
+            return;
+        }
+        long currentPosition = mLastPlaybackState.getPosition();
+        if (mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING
+                ||mLastPlaybackState.getState() == PlaybackStateCompat.STATE_BUFFERING) {
+            // Calculate the elapsed time between the last position update and now and unless
+            // paused, we can assume (delta * speed) + current position is approximately the
+            // latest position. This ensure that we do not repeatedly call the getPlaybackState()
+            // on MediaControllerCompat.
+            long timeDelta = SystemClock.elapsedRealtime() -
+                    mLastPlaybackState.getLastPositionUpdateTime();
+            currentPosition += (int) timeDelta * mLastPlaybackState.getPlaybackSpeed();
+        }
+        mSeekBarAudio.setProgress((int) currentPosition);
+    }
+    private void updateDuration(MediaMetadataCompat metadata) {
+        if (metadata == null) {
+            return;
+        }
+        int duration = (int) metadata.getLong(MediaMetadataCompat.METADATA_KEY_DURATION);
+        mSeekBarAudio.setMax(duration);
+        mTextRightTime.setText(Utils.formatTime(duration));
     }
 }

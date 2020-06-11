@@ -3,6 +3,7 @@ package com.android.music_player.managers;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.media.MediaMetadataCompat;
@@ -72,16 +73,16 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         // Work around for MediaPlayer.getCurrentPosition() when it changes while not playing.
         final long reportPosition;
         if (mSeekWhileNotPlaying >= 0){
-            Log.d("TTT", "MediaPlayerManager --- mSeekWhileNotPlaying > 0: ");
-            reportPosition = mSeekWhileNotPlaying;
 
-            if (mState == PlaybackStateCompat.STATE_PLAYING) {
+            reportPosition = mSeekWhileNotPlaying;
+            Log.d("BBB", "MediaPlayerManager --- mSeekWhileNotPlaying > 0: "+reportPosition);
+            if (mState == PlaybackStateCompat.STATE_BUFFERING) {
                 mSeekWhileNotPlaying = -1;
             }
         }else {
-            Log.d("TTT", "MediaPlayerManager --- mSeekWhileNotPlaying > 0: ");
             reportPosition = (mMediaPlayer == null)?
                     0 : mMediaPlayer.getCurrentPosition();
+            Log.d("BBB", "MediaPlayerManager --- mSeekWhileNotPlaying < 0: "+reportPosition);
         }
         Log.d("TTT", "MediaPlayerManager --- setNewState: "+reportPosition);
         updatePlaybackState(mState ,reportPosition);
@@ -96,6 +97,16 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         stateBuilder.setActions(getAvailableActions());
         stateBuilder.setState(state, reportPosition, 1.0f, SystemClock.elapsedRealtime());
 
+        if (isPlaying()){
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("isPlay", true);
+            stateBuilder.setExtras(bundle);
+        }else {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("isPlay", false);
+            stateBuilder.setExtras(bundle);
+        }
+
         mPlaybackInfoListener.onPlaybackStateChange(stateBuilder.build());
     }
 
@@ -107,7 +118,9 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
      */
     @PlaybackStateCompat.Actions
     private long getAvailableActions() {
-        long actions = PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
+        long actions =
+                PlaybackStateCompat.STATE_BUFFERING|
+                PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
                 PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
                 PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
                 PlaybackStateCompat.ACTION_SET_REPEAT_MODE|
@@ -259,7 +272,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
 
             // Set the state (to the current state) because the position changed and should
             // be reported to clients.
-            setNewState(mState);
+            setNewState(PlaybackStateCompat.STATE_BUFFERING);
         }
     }
 
@@ -279,11 +292,9 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         // to "stop".
         // Paused allows: seekTo(), start(), pause(), stop()
         // Stop allows: stop()
-        if (isRepeat){
 
-        }else {
-            setNewState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
-        }
+        setNewState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
+
     }
 
     @Override

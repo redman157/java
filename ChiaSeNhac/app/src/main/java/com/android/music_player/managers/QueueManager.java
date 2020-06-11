@@ -22,7 +22,7 @@ package com.android.music_player.managers;
  * given MusicProvider to provide the actual media metadata.
  */
 public class QueueManager {
-   /* private static final String TAG = QueueManager.class.getClass().getSimpleName();
+ /*   private static final String TAG = QueueManager.class.getClass().getSimpleName();
 
     private MetadataUpdateListener mListener;
     private Resources mResources;

@@ -17,11 +17,11 @@ import java.util.List;
  * simple.
  */
 public class MediaBrowserListener extends MediaControllerCompat.Callback {
-    private OnMediaListener onMediaListener;
+    private OnChangeMusicListener onChangeMusicListener;
     private String TAG = "JJJ";
 
-    public interface OnMediaListener {
-        void onCheckPlay(boolean isPlay, PlaybackStateCompat state);
+    public interface OnChangeMusicListener {
+        void onStateChange(boolean isPlay, PlaybackStateCompat state);
         void onComplete(boolean isNext);
         void onMediaMetadata(MediaMetadataCompat mediaMetadata);
     }
@@ -33,32 +33,40 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
         Log.d("LLL", "MediaBrowserListener --- onRepeatModeChanged"+repeatMode);
     }
 
-    public void setOnMediaListener(OnMediaListener onMediaListener){
-        this.onMediaListener = onMediaListener;
+    public void setOnChangeMusicListener(OnChangeMusicListener onChangeMusicListener){
+        this.onChangeMusicListener = onChangeMusicListener;
     }
 
     @Override
     public void onPlaybackStateChanged(PlaybackStateCompat state) {
-        if (state!= null && onMediaListener != null) {
+        if (state!= null && onChangeMusicListener != null) {
             Log.d(TAG,
                     "MediaBrowserListener --- onPlaybackStateChanged: "+state.getState()+" --- " +
                             "current pos:" +
                             " "+state.getPosition());
+            boolean isPlay = state.getExtras().getBoolean("isPlay");
             switch (state.getState()) {
                 case PlaybackStateCompat.STATE_PLAYING:
                     Log.d(TAG,"MediaBrowserListener --- STATE_PLAYING: "+state.getPosition());
 
-                    onMediaListener.onCheckPlay(true, state);
+                    onChangeMusicListener.onStateChange(isPlay, state);
+                    break;
+                case PlaybackStateCompat.STATE_BUFFERING:
+                    Log.d(TAG,"MediaBrowserListener --- STATE_BUFFERING: "+state.getPosition() +
+                            " --- "+state.getExtras().getBoolean("isPlay"));
+                    onChangeMusicListener.onStateChange(isPlay,
+                            state);
                     break;
                 case PlaybackStateCompat.STATE_PAUSED:
+
                 case PlaybackStateCompat.STATE_STOPPED:
-                    onMediaListener.onCheckPlay(false,state);
+                    onChangeMusicListener.onStateChange(isPlay,state);
                     break;
                 case PlaybackStateCompat.STATE_SKIPPING_TO_NEXT:
-                    onMediaListener.onComplete(true);
+                    onChangeMusicListener.onStateChange(isPlay, state);
                     break;
                 case PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS:
-                    onMediaListener.onCheckPlay(false,state);
+                    onChangeMusicListener.onStateChange(isPlay,state);
                     break;
             }
         }
@@ -70,10 +78,10 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
             return;
         }
         // assignData up việc chuyển page
-        if (onMediaListener != null){
+        if (onChangeMusicListener != null){
             Log.d("CCC",
                     "MediaBrowserListener --- onMetadataChanged: "+ (mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
-            onMediaListener.onMediaMetadata(mediaMetadata);
+            onChangeMusicListener.onMediaMetadata(mediaMetadata);
         }
     }
 

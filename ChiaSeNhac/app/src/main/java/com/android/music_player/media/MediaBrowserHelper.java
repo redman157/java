@@ -51,6 +51,13 @@ public class MediaBrowserHelper {
         mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
     }
 
+    public boolean isConnect(){
+        if (mMediaBrowser != null && mMediaBrowser.isConnected()){
+            return true;
+        }else {
+            return false;
+        }
+    }
     public void onStart(){
         if (mMediaBrowser == null){
             mMediaBrowser = new MediaBrowserCompat
@@ -127,7 +134,7 @@ public class MediaBrowserHelper {
     }
 
     @NonNull
-    protected final MediaControllerCompat getMediaController() {
+    public final MediaControllerCompat getMediaController() {
         if (mMediaController == null) {
             Log.d(TAG,"MediaBrowserHelper --- MediaController is null!" );
             throw new IllegalStateException("MediaBrowserHelper --- MediaController is null!");
@@ -156,6 +163,7 @@ public class MediaBrowserHelper {
         }
         return mMediaController.getTransportControls();
     }
+
 
     public MediaMetadataCompat getMetadata(){
         if (mMediaController == null) {

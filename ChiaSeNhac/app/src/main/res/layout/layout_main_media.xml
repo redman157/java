@@ -429,6 +429,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:background="@null"
                     android:progressDrawable="@drawable/progress_bar_accent"
                     android:thumb="@drawable/custom_thum_seekbar"
                     android:thumbOffset="0dp" />

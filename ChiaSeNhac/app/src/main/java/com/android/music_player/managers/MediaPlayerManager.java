@@ -293,7 +293,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         // Paused allows: seekTo(), start(), pause(), stop()
         // Stop allows: stop()
 
-        setNewState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
+//        setNewState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
 
     }
 

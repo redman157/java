@@ -443,15 +443,15 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                if (mScheduleFuture != null) {
-                    mScheduleFuture.cancel(false);
-                }
+                mIsTracking = true;
+
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.d("XXX", "HomeActivity --- onStopTrackingTouch: "+seekBar.getProgress());
                 mMediaBrowserHelper.getTransportControls().seekTo(seekBar.getProgress());
+                mIsTracking = false;
             }
         });
     }
@@ -628,7 +628,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
             case R.id.imbt_Play_media:
                 if (isPlaying){
                     mMediaBrowserHelper.getTransportControls().pause();
-                    stopSeekBarUpdate();
+//                    stopSeekBarUpdate();
                 }else {
                     mMediaBrowserHelper.getTransportControls().playFromMediaId(nameChoose, null);
                 }
@@ -814,10 +814,14 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     private final Runnable mUpdateProgressTask = new Runnable() {
         @Override
         public void run() {
+            if (mIsTracking) {
+                return;
+            }
             updateProgress();
         }
     };
     private void scheduleSeekBarUpdate() {
+
         stopSeekBarUpdate();
         if (!mExecutorService.isShutdown()) {
             mScheduleFuture = mExecutorService.scheduleAtFixedRate(

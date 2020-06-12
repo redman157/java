@@ -54,8 +54,8 @@ public class HomeFragment extends Fragment implements
     }
 
     @Override
-    public void onClickMusic(String nameChoose) {
-        onChangeListener.onNameMusic(nameChoose);
+    public void onClickMusic(String musicID) {
+        onChangeListener.onMusicID(musicID);
     }
 
 

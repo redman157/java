@@ -58,6 +58,8 @@ public class MediaBrowserHelper {
             return false;
         }
     }
+
+
     public void onStart(){
         if (mMediaBrowser == null){
             mMediaBrowser = new MediaBrowserCompat
@@ -164,7 +166,6 @@ public class MediaBrowserHelper {
         return mMediaController.getTransportControls();
     }
 
-
     public MediaMetadataCompat getMetadata(){
         if (mMediaController == null) {
             Log.d(TAG, "MediaBrowserHelper --- getTransportControls: MediaController is null!");
@@ -201,6 +202,10 @@ public class MediaBrowserHelper {
                         "MediaBrowserHelper --- registerCallback --- mMediaController: null");
             }
         }
+    }
+
+    public MediaBrowserCompat getMediaBrowser(){
+        return mMediaBrowser;
     }
 
     // Receives callbacks from the MediaBrowser when it has successfully connected to the
@@ -242,6 +247,7 @@ public class MediaBrowserHelper {
                 throw new RuntimeException(e);
             }
             // truyền xuống service ParrentID thay đổi
+
             mMediaBrowser.subscribe(mMediaBrowser.getRoot(), mMediaBrowserSubscriptionCallback);
 
 
@@ -288,9 +294,7 @@ public class MediaBrowserHelper {
                 @Override
                 public void perform(@NonNull MediaControllerCompat.Callback callback) {
                     // set state default when to on app
-
                     callback.onPlaybackStateChanged(state);
-
                 }
             });
         }
@@ -303,6 +307,7 @@ public class MediaBrowserHelper {
             onPlaybackStateChanged(null);
             MediaBrowserHelper.this.onDisconnected();
         }
-
     }
+
+
 }

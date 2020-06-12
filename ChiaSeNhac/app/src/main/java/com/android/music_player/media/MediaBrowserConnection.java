@@ -38,16 +38,6 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     public void setOnMediaController(OnMediaController onMediaController){
         this.onMediaController = onMediaController;
     }
-    public void setSeekBarAudio(MediaSeekBar mSeekBarAudio, TextView mTextLeftTime, TextView mTextRightTime) {
-        this.mSeekBarAudio = mSeekBarAudio;
-        this.mTextLeftTime = mTextLeftTime;
-        this.mTextRightTime = mTextRightTime;
-    }
-
-    public String getMediaId() {
-        return mediaId;
-    }
-
 
     public void setMediaId(String mediaId, boolean isPlay) {
         this.mediaId = mediaId;
@@ -67,8 +57,9 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
 
     @Override
     protected void onConnected(@NonNull MediaControllerCompat mediaController) {
-        onMediaController.onController(mediaController);
-
+        if (onMediaController != null) {
+            onMediaController.onController(mediaController);
+        }
         Log.d(TAG, "onConnected: "+mediaController.getPlaybackInfo().getPlaybackType());
 
 //        mSeekBarAudio.setMediaController(mediaController, mTextLeftTime, mTextRightTime);
@@ -101,5 +92,8 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         }
     }
 
-
+    @Override
+    public MediaBrowserCompat getMediaBrowser() {
+        return super.getMediaBrowser();
+    }
 }

@@ -15,50 +15,6 @@
     app:umanoParallaxOffset="100dp">
 
     <!-- MAIN CONTENT -->
-    <!--<androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBarLayout"
-            android:layout_width="match_parent"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            android:layout_height="wrap_content">
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:contentScrim="@color/transparent"
-                app:titleEnabled="false"
-                android:fitsSystemWindows="true"
-                app:layout_scrollFlags="snap|enterAlwaysCollapsed"
-                app:title="@string/app_name">
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/tb_HomeActivity"
-                    android:layout_width="match_parent"
-                    android:gravity="center"
-                    android:layout_height="?attr/actionBarSize"
-                    android:elevation="4dp"
-                    android:background="@color/whiteOpaqueX2"
-                    app:title="@string/app_name"
-                    android:animateLayoutChanges="true"
-                    app:layout_collapseMode="pin"
-                    android:theme="@style/CustomToolBarStyle"
-                    app:popupTheme="@style/CustomPopupStyle"/>
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <FrameLayout
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:id="@+id/fl_placeholder"
-            android:clickable="true"
-            android:focusable="false"
-            android:focusableInTouchMode="true"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
-
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
@@ -101,6 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Light"
             app:headerLayout="@layout/nav_header"
             app:menu="@menu/library"/>
 

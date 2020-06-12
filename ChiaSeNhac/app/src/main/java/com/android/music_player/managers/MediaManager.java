@@ -25,7 +25,6 @@ import com.android.music_player.database.RelationSongs;
 import com.android.music_player.database.SongOfPlayList;
 import com.android.music_player.database.Statistic;
 import com.android.music_player.media.MediaBrowserConnection;
-import com.android.music_player.media.MediaSeekBar;
 import com.android.music_player.models.SongModel;
 import com.android.music_player.tasks.RenamePlayListTask;
 import com.android.music_player.utils.Constants;
@@ -134,9 +133,10 @@ public class MediaManager {
         if (mMediaBrowserConnection == null && mContext != null) {
             mMediaBrowserConnection = new MediaBrowserConnection(mContext);
         }
-        mMediaBrowserConnection.setMediaId(getCurrentMusic());
+
         return mMediaBrowserConnection;
     }
+
 
 
     public void setType(String type){

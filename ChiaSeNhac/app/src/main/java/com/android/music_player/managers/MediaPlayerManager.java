@@ -75,7 +75,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         if (mSeekWhileNotPlaying >= 0){
 
             reportPosition = mSeekWhileNotPlaying;
-            Log.d("BBB", "MediaPlayerManager --- mSeekWhileNotPlaying > 0: "+reportPosition);
+            Log.d("BBB", "MediaPlayerManager --- mSeekWhileNotPlaying > 0: "+reportPosition );
             if (mState == PlaybackStateCompat.STATE_BUFFERING) {
                 mSeekWhileNotPlaying = -1;
             }

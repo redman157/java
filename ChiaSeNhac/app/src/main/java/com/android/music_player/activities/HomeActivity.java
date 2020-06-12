@@ -438,12 +438,12 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         mSeekBarAudio.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mTextLeftTime.setText(Utils.formatTime(progress));
+
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                mIsTracking = true;
+
 
             }
 
@@ -451,7 +451,6 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
             public void onStopTrackingTouch(SeekBar seekBar) {
                 Log.d("XXX", "HomeActivity --- onStopTrackingTouch: "+seekBar.getProgress());
                 mMediaBrowserHelper.getTransportControls().seekTo(seekBar.getProgress());
-                mIsTracking = false;
             }
         });
     }
@@ -628,7 +627,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
             case R.id.imbt_Play_media:
                 if (isPlaying){
                     mMediaBrowserHelper.getTransportControls().pause();
-//                    stopSeekBarUpdate();
+                    stopSeekBarUpdate();
                 }else {
                     mMediaBrowserHelper.getTransportControls().playFromMediaId(nameChoose, null);
                 }
@@ -707,7 +706,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     @Override
     public void onStateChange(boolean isPlay, PlaybackStateCompat state) {
         // compare status play don't update button play
-        Log.d("CCC", "HomeActivity --- PlaybackStateCompat: "+state.getPosition());
+//        Log.d("CCC", "HomeActivity --- PlaybackStateCompat: "+state.getPosition()+ " --- isplay: "+isPlay);
         if (isPlaying != isPlay){
             Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlay);
             Utils.UpdateButtonPlay(mBtnPlayPauseMusic, isPlay);
@@ -715,7 +714,9 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
 
         this.isPlaying = isPlay;
         mLastPlaybackState = state;
-        if (isPlay && state.getState() == PlaybackStateCompat.STATE_PLAYING || state.getState() == PlaybackStateCompat.STATE_BUFFERING) {
+        if (isPlay &&
+                (state.getState() == PlaybackStateCompat.STATE_PLAYING || state.getState() == PlaybackStateCompat.STATE_BUFFERING)) {
+            Log.d("CCC", "HomeActivity --- PlaybackStateCompat: "+state.getPosition()+ " --- isplay: "+isPlay);
             scheduleSeekBarUpdate();
         }
 
@@ -814,9 +815,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     private final Runnable mUpdateProgressTask = new Runnable() {
         @Override
         public void run() {
-            if (mIsTracking) {
-                return;
-            }
+
             updateProgress();
         }
     };
@@ -834,7 +833,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
                     PROGRESS_UPDATE_INTERNAL, TimeUnit.MILLISECONDS);
         }
     }
-    private boolean mIsTracking = false;
+
     private void stopSeekBarUpdate() {
         if (mScheduleFuture != null) {
             mScheduleFuture.cancel(false);
@@ -855,6 +854,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
                     mLastPlaybackState.getLastPositionUpdateTime();
             currentPosition += (int) timeDelta * mLastPlaybackState.getPlaybackSpeed();
         }
+        mTextLeftTime.setText(Utils.formatTime((int) currentPosition));
         mSeekBarAudio.setProgress((int) currentPosition);
     }
     private void updateDuration(MediaMetadataCompat metadata) {

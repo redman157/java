@@ -134,7 +134,7 @@ public class MediaManager {
         if (mMediaBrowserConnection == null && mContext != null) {
             mMediaBrowserConnection = new MediaBrowserConnection(mContext);
         }
-
+        mMediaBrowserConnection.setMediaId(getCurrentMusic());
         return mMediaBrowserConnection;
     }
 

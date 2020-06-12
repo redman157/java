@@ -62,12 +62,6 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
                 case PlaybackStateCompat.STATE_STOPPED:
                     onChangeMusicListener.onStateChange(isPlay,state);
                     break;
-                case PlaybackStateCompat.STATE_SKIPPING_TO_NEXT:
-                    onChangeMusicListener.onStateChange(isPlay, state);
-                    break;
-                case PlaybackStateCompat.STATE_SKIPPING_TO_PREVIOUS:
-                    onChangeMusicListener.onStateChange(isPlay,state);
-                    break;
             }
         }
     }

@@ -142,11 +142,9 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     @Override
     public void initService() {
         Log.d("CCC", "Home Activity --- initService: "+ mMediaManager.getCurrentMusic());
-        browserConnection = mMediaManager.getMediaBrowserConnection();
-//        browserConnection.setSeekBarAudio(mSeekBarAudio, mTextLeftTime, mTextRightTime);
-        browserConnection.setMediaId(mMediaManager.getCurrentMusic());
 
-        mMediaBrowserHelper = browserConnection;
+        browserConnection = mMediaManager.getMediaBrowserConnection();
+        mMediaBrowserHelper =  browserConnection;
         browserConnection.setOnMediaController(this);
         mBrowserListener = new MediaBrowserListener();
         mBrowserListener.setOnChangeMusicListener(this);
@@ -435,6 +433,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
         mViewControlMedia.setOnTouchListener(new SwipeTouchUtils(this));
 
+
         mSeekBarAudio.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -720,7 +719,6 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
             scheduleSeekBarUpdate();
         }
 
-
     }
 
     @Override
@@ -728,6 +726,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
 //        mSeekBarAudio.setUpdateMedia(mediaMetadata);
         Log.d("CCC",
                 "HomeActivity --- onMediaMetadata: "+mediaMetadata.getString(Constants.METADATA.Title));
+
         updateDuration(mediaMetadata);
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
             setViewMusic(mediaMetadata.getString(Constants.METADATA.Title) , PanelState.EXPANDED);
@@ -797,14 +796,16 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
 
     @Override
     public void onController(MediaControllerCompat mediaController) {
-
         if (mMediaBrowserHelper.isConnect()){
             Log.d("ZZZ", mediaController == null ? "null" : "khac null" );
-//            mSeekBarAudio.setMediaController(mediaController,mTextLeftTime, mTextRightTime);
-//            mSeekBarAudio.setOnChangeMusicListener(this);
+//            mSeekBarAudio.setMediaController(mediaController, mTextLeftTime, mTextRightTime);
         }
     }
 
+
+    /**
+     * Setup seekbar for mediaplayer controler
+     * */
     private final ScheduledExecutorService mExecutorService =
             Executors.newSingleThreadScheduledExecutor();
     private static final long PROGRESS_UPDATE_INTERNAL = 1000;
@@ -815,10 +816,10 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     private final Runnable mUpdateProgressTask = new Runnable() {
         @Override
         public void run() {
-
             updateProgress();
         }
     };
+
     private void scheduleSeekBarUpdate() {
 
         stopSeekBarUpdate();
@@ -839,11 +840,16 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
             mScheduleFuture.cancel(false);
         }
     }
+
     private void updateProgress() {
         if (mLastPlaybackState == null) {
             return;
         }
+
         long currentPosition = mLastPlaybackState.getPosition();
+        if (currentPosition > mSeekBarAudio.getMax()) {
+            return;
+        }
         if (mLastPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING
                 ||mLastPlaybackState.getState() == PlaybackStateCompat.STATE_BUFFERING) {
             // Calculate the elapsed time between the last position update and now and unless
@@ -857,6 +863,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         mTextLeftTime.setText(Utils.formatTime((int) currentPosition));
         mSeekBarAudio.setProgress((int) currentPosition);
     }
+
     private void updateDuration(MediaMetadataCompat metadata) {
         if (metadata == null) {
             return;

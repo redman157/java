@@ -122,7 +122,6 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
                 PlaybackStateCompat.STATE_BUFFERING|
                 PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID |
                 PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
-                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
                 PlaybackStateCompat.ACTION_SET_REPEAT_MODE|
                 PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE|
                 PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
@@ -292,9 +291,6 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         // to "stop".
         // Paused allows: seekTo(), start(), pause(), stop()
         // Stop allows: stop()
-
-//        setNewState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT);
-
     }
 
     @Override

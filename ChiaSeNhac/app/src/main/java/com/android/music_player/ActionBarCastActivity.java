@@ -17,8 +17,9 @@ package com.android.music_player;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.FragmentManager;
-import android.app.MediaRouteButton;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -34,10 +36,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 
+import com.android.music_player.activities.EqualizerActivity;
+import com.android.music_player.activities.SearchActivity;
+import com.android.music_player.activities.SettingsActivity;
+import com.android.music_player.activities.SplashActivity;
+import com.android.music_player.activities.TimerActivity;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.LibraryFragment;
-import com.google.android.gms.cast.framework.IntroductoryOverlay;
+import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.navigation.NavigationView;
 
 /**
@@ -52,7 +61,7 @@ import com.google.android.material.navigation.NavigationView;
  */
 public abstract class ActionBarCastActivity extends AppCompatActivity {
 
-    private static final String TAG = ActionBarCastActivity.class.getSimpleName();
+    private static final String TAG = "ActionBarCastActivity";
 
     private static final int DELAY_MILLIS = 1000;
     private MenuItem mMediaRouteMenuItem;
@@ -63,6 +72,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     private boolean mToolbarInitialized;
 
     private int mItemToOpenWhenDrawerCloses = -1;
+    private SharedPrefsUtils mSharedPrefsUtils ;
 
     private final DrawerLayout.DrawerListener mDrawerListener = new DrawerLayout.DrawerListener() {
         @Override
@@ -106,6 +116,8 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
         }
     };
 
+
+
     private final FragmentManager.OnBackStackChangedListener mBackStackChangedListener =
         new FragmentManager.OnBackStackChangedListener() {
             @Override
@@ -118,13 +130,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Activity onCreate");
-
-//        int playServicesAvailable =
-//                GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-//
-//        if (playServicesAvailable == ConnectionResult.SUCCESS) {
-//            mCastContext = CastContext.getSharedInstance(this);
-//        }
+        mSharedPrefsUtils = new SharedPrefsUtils(this);
     }
 
     @Override
@@ -147,15 +153,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-
-//        if (mCastContext != null) {
-//            mCastContext.addCastStateListener(mCastStateListener);
-//        }
-
         // Whenever the fragment back stack changes, we may need to update the
         // action bar toggle: only top level screens show the hamburger-like icon, inner
         // screens - either Activities or fragments - show the "Up" icon instead.
-        getFragmentManager().addOnBackStackChangedListener(mBackStackChangedListener);
+        getSupportFragmentManager().addOnBackStackChangedListener(mBackStackChangedListener);
     }
 
     @Override
@@ -169,22 +170,13 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-
-//        if (mCastContext != null) {
-//            mCastContext.removeCastStateListener(mCastStateListener);
-//        }
-        getFragmentManager().removeOnBackStackChangedListener(mBackStackChangedListener);
+        getSupportFragmentManager().removeOnBackStackChangedListener(mBackStackChangedListener);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.main, menu);
-
-//        if (mCastContext != null) {
-//            mMediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getApplicationContext(),
-//                    menu, R.id.action_searchBtn);
-//        }
         return true;
     }
 
@@ -198,23 +190,147 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
             onBackPressed();
             return true;
         }
+        switch (item.getItemId()) {
+            case android.R.id.home:
+
+                break;
+            case R.id.action_searchBtn:
+                startActivity(new Intent(this, SearchActivity.class));
+                break;
+            case R.id.sleep_timer:
+                startActivity(new Intent(this, TimerActivity.class));
+                break;
+            case R.id.sync:
+                Intent intent = new Intent(this, SplashActivity.class).putExtra(Constants.VALUE.SYNC,
+                        true);
+                startActivity(intent);
+                break;
+            case R.id.settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case R.id.equalizer:
+                startActivity(new Intent(this, EqualizerActivity.class));
+                break;
+            case R.id.changeTheme:
+                final Dialog dialog = new Dialog(this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.dialog_choose_accent_color);
+                dialog.findViewById(R.id.orange).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setString(
+                                Constants.PREFERENCES.ACCENT_COLOR, Constants.COLOR.ORANGE);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.cyan).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
+                                Constants.COLOR.CYAN);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.green).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
+                                Constants.COLOR.GREEN);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.yellow).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
+                                Constants.COLOR.YELLOW);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.pink).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
+                                Constants.COLOR.PINK);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.purple).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
+                                Constants.COLOR.PURPLE);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.grey).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
+                                Constants.COLOR.GREY);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.red).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
+                                Constants.COLOR.RED);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.show();
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
     public void onBackPressed() {
+
         // If the drawer is open, back will close it
         if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();
             return;
         }
         // Otherwise, it may return to the previous fragment stack
-        FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager.getBackStackEntryCount() > 0) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 1) {
             fragmentManager.popBackStack();
         } else {
             // Lastly, it will rely on the system behavior for back
-            super.onBackPressed();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Bạn có muốn thoát App không ?");
+            builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    System.exit(1);
+                }
+            });
+            builder.show();
         }
     }
 
@@ -231,14 +347,14 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     }
 
     protected void initializeToolbar() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
         if (mToolbar == null) {
             throw new IllegalStateException("Layout is required to include a Toolbar with id " +
                 "'toolbar'");
         }
         mToolbar.inflateMenu(R.menu.main);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         if (mDrawerLayout != null) {
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             if (navigationView == null) {
@@ -261,6 +377,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     }
 
     private void populateDrawerItems(NavigationView navigationView) {
+
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -268,14 +385,15 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         menuItem.setChecked(true);
                         mItemToOpenWhenDrawerCloses = menuItem.getItemId();
                         mDrawerLayout.closeDrawers();
+
                         return true;
                     }
                 });
-        if (HomeFragment.class.isAssignableFrom(getClass())) {
+        /*if (HomeFragment.class.isAssignableFrom(getClass())) {
             navigationView.setCheckedItem(R.id.navigation_home);
         } else if (LibraryFragment.class.isAssignableFrom(getClass())) {
             navigationView.setCheckedItem(R.id.navigation_library);
-        }
+        }*/
     }
 
     protected void updateDrawerToggle() {
@@ -308,19 +426,6 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
         MediaControllerCompat.setMediaController(this, mediaController);
     }
 
-    /**
-     * Shows the Cast First Time User experience to the user (an overlay that explains what is
-     * the Cast icon)
-     */
-    private void showFtu() {
-        Menu menu = mToolbar.getMenu();
-        View view = menu.findItem(R.id.action_searchBtn).getActionView();
-        if (view != null && view instanceof MediaRouteButton) {
-            IntroductoryOverlay overlay = new IntroductoryOverlay.Builder(this, mMediaRouteMenuItem)
-                    .setTitleText(R.string.touch_to_cast)
-                    .setSingleTime()
-                    .build();
-            overlay.show();
-        }
-    }
+
+
 }

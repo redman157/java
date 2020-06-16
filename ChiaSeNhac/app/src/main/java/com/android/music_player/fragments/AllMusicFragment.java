@@ -13,21 +13,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.R;
-import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.AlbumAdapter;
 import com.android.music_player.adapters.ArtistAdapter;
 import com.android.music_player.adapters.BrowseAdapter;
 import com.android.music_player.adapters.FolderAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
-import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnClickItemListener;
-import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -53,10 +49,11 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
     private AlbumAdapter mAlbumAdapter;
     private ArtistAdapter mArtistAdapter;
     private ImageView mImgBack;
+    private static AllMusicFragment fragment = null;
     public static AllMusicFragment newInstance() {
-        Bundle args = new Bundle();
-        AllMusicFragment fragment = new AllMusicFragment();
-        fragment.setArguments(args);
+        if (fragment == null){
+            fragment = new AllMusicFragment();
+        }
         return fragment;
     }
     @Override
@@ -80,6 +77,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         // Defines the xml file for the fragment
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_all_music, container, false);
+
         }
         return view;
     }
@@ -92,6 +90,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         // Setup any handles to view objects here
         initView(view);
         assignView();
+
     }
 
     @Override
@@ -102,6 +101,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupViewPager(mViewPagerSong);
+
     }
 
     @Override
@@ -132,23 +132,25 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
 
     private void setupViewPager(ViewPager viewPager){
         setAllAdapter();
-        mViewPagerAdapter = new ViewPagerAdapter(getContext(),getActivity().getSupportFragmentManager());
-        mViewPagerAdapter.addFragment(new ListMusicFragment(mBrowseAdapter));
-        mViewPagerAdapter.addFragment(new ListArtistFragment(mArtistAdapter));
-        mViewPagerAdapter.addFragment(new ListAlbumFragment(mAlbumAdapter));
-        mViewPagerAdapter.addFragment(new ListFolderFragment(mFolderAdapter));
+        if (mViewPagerAdapter == null) {
+            mViewPagerAdapter = new ViewPagerAdapter(getContext(), getActivity().getSupportFragmentManager());
+            mViewPagerAdapter.addFragment(new ListMusicFragment(mBrowseAdapter));
+            mViewPagerAdapter.addFragment(new ListArtistFragment(mArtistAdapter));
+            mViewPagerAdapter.addFragment(new ListAlbumFragment(mAlbumAdapter));
+            mViewPagerAdapter.addFragment(new ListFolderFragment(mFolderAdapter));
 
-        viewPager.setAdapter(mViewPagerAdapter);
-        viewPager.setCurrentItem(0);
-        viewPager.addOnPageChangeListener(this);
-        viewPager.setOnClickListener(this);
+            viewPager.setAdapter(mViewPagerAdapter);
+            viewPager.setCurrentItem(0);
+            viewPager.addOnPageChangeListener(this);
+            viewPager.setOnClickListener(this);
 
-        mTabLayoutSong.setupWithViewPager(viewPager);
+            mTabLayoutSong.setupWithViewPager(viewPager);
 
-        for (int i = 0; i < mTabLayoutSong.getTabCount(); i++) {
-            mTabLayoutSong.getTabAt(i).setCustomView(mViewPagerAdapter.getTabSong(i));
+            for (int i = 0; i < mTabLayoutSong.getTabCount(); i++) {
+                mTabLayoutSong.getTabAt(i).setCustomView(mViewPagerAdapter.getTabSong(i));
+            }
+            mTabLayoutSong.addOnTabSelectedListener(this);
         }
-        mTabLayoutSong.addOnTabSelectedListener(this);
     }
 
 
@@ -161,7 +163,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         TextProfileTitle = collapsingProfileHeaderView.findViewById(R.id.profileName);
         TextProfileArtist = collapsingProfileHeaderView.findViewById(R.id.profileSubtitle);
         mBackGround = view.findViewById(R.id.img_AlbumId);
-        mImgBack = view.findViewById(R.id.img_back);
+//        mImgBack = view.findViewById(R.id.img_back);
 
         if(!mMediaManager.getCurrentMusic().equals("")){
             setTitle(mMediaManager.getCurrentMusic());
@@ -169,7 +171,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
     }
 
     public void assignView(){
-        mImgBack.setOnClickListener(this);
+//        mImgBack.setOnClickListener(this);
     }
 
     public void setTitle(String songName){
@@ -188,7 +190,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.img_back:
-                FragmentManager manager = getActivity().getSupportFragmentManager();
+                /*FragmentManager manager = getActivity().getSupportFragmentManager();
                 FragmentTransaction transaction = manager.beginTransaction();
                 Fragment mainFragment;
                 if(manager.findFragmentByTag("HomeFragment") != null) {
@@ -198,7 +200,8 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
                 }
                 transaction.replace(((HomeActivity)getActivity()).mLayoutPlaceHolder.getId(),
                         mainFragment);
-                transaction.commit();
+                transaction.commit();*/
+                getActivity().getSupportFragmentManager().popBackStack();
                 break;
             case R.id.btn_title_media:
                 break;

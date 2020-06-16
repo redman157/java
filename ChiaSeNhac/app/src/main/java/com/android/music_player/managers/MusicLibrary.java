@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.ImageHelper;
@@ -48,6 +47,10 @@ public class MusicLibrary {
     public static final Map<String , SongModel> model = new HashMap<>();
     public static String getRoot() {
         return "root";
+    }
+
+    public static String getShuffle(){
+        return "shuffle";
     }
 
     public static void clear(){
@@ -110,15 +113,17 @@ public class MusicLibrary {
         return result;
     }
 
-    public static void setMediaShuffle(Context context, List<MediaBrowserCompat.MediaItem> mediaItems){
-        MediaManager.getInstance().setContext(context);
+    public static List<MediaBrowserCompat.MediaItem> getMediaShuffle(){
+        List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>(getMediaItems());
         Collections.shuffle(mediaItems);
         for (int i = 0; i < mediaItems.size(); i++){
             if (mediaItems.get(i).getDescription().getMediaId().equals(MediaManager.getInstance().getCurrentMusic())){
                 mediaItems.remove(i);
                 mediaItems.add(0, mediaItems.get(i));
+                break;
             }
         }
+        return mediaItems;
     }
 
     public static void setMediaDefault(List<MediaBrowserCompat.MediaItem> mediaItems){
@@ -126,13 +131,6 @@ public class MusicLibrary {
 
     }
 
-    public static ArrayList<PlaybackStateCompat> getRepeatList(){
-        ArrayList<PlaybackStateCompat> list = new ArrayList<>();
-        list.add(PlaybackStateCompat.fromPlaybackState(PlaybackStateCompat.REPEAT_MODE_NONE));
-        list.add(PlaybackStateCompat.fromPlaybackState(PlaybackStateCompat.REPEAT_MODE_ALL));
-        list.add(PlaybackStateCompat.fromPlaybackState(PlaybackStateCompat.REPEAT_MODE_ONE));
-        return list;
-    }
 
     public static MediaMetadataCompat getMetadata(Context context, String songName) {
         MediaMetadataCompat metadataWithoutBitmap = music.get(songName);

@@ -120,7 +120,15 @@ public class MediaService extends MediaBrowserServiceCompat {
         // service gọi lên MediaBrowserSubscriptionCallback
         // Use result.detach to allow calling result.sendResult from another thread
         // Assign returned result to temporary variable
-        result.sendResult(MusicLibrary.getMediaItems());
+        switch (parentId){
+            case "root":
+                result.sendResult(MusicLibrary.getMediaItems());
+                break;
+            case "shuffle":
+                result.sendResult(MusicLibrary.getMediaShuffle());
+                break;
+        }
+
 
     }
 

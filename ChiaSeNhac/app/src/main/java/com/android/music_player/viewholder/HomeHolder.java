@@ -7,10 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -90,23 +87,18 @@ public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickL
                 LinearLayoutManager.VERTICAL, false));
     }
 
+
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_ViewAll:
-                FragmentManager manager = ((FragmentActivity)mActivity).getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                Fragment allMusicFragment;
-                if(manager.findFragmentByTag("AllMusicFragment") != null) {
-                    allMusicFragment = manager.findFragmentByTag("AllMusicFragment");
-                } else {
-                    allMusicFragment =  AllMusicFragment.newInstance();
-                }
-                ((HomeActivity)mActivity).mLayoutPlaceHolder.setAlpha(0);
-                transaction.replace(((HomeActivity)mActivity).mLayoutPlaceHolder.getId(),
-                        allMusicFragment);
-                transaction.commit();
-                ((HomeActivity)mActivity).mLayoutPlaceHolder.setAlpha(1);
+                ((FragmentActivity)mActivity).getSupportFragmentManager().beginTransaction()
+                        .replace(((HomeActivity)mActivity).mLayoutPlaceHolder.getId(),
+                                AllMusicFragment.newInstance(),
+                                ((HomeActivity)mActivity).HOME_FRAGMENT_TAG)
+                        .addToBackStack(null)
+                        .commit();
                 break;
             case R.id.img_Shuffle_All:
                 break;

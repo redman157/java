@@ -238,7 +238,6 @@ public class MediaBrowserHelper {
                     mMediaControllerCallback.onMetadataChanged(mMediaController.getMetadata());
                     mMediaControllerCallback.onPlaybackStateChanged(mMediaController.getPlaybackState());
                 }
-
                 Log.d(TAG, "MediaBrowserConnectionCallback --- onConnected: enter");
                 MediaBrowserHelper.this.onConnected(mMediaController);
             }catch (AndroidException e) {
@@ -248,7 +247,7 @@ public class MediaBrowserHelper {
             }
             // truyền xuống service ParrentID thay đổi
 
-            mMediaBrowser.subscribe(mMediaBrowser.getRoot(), mMediaBrowserSubscriptionCallback);
+//            mMediaBrowser.subscribe(MusicLibrary.getRoot(), mMediaBrowserSubscriptionCallback);
 
 
         }

@@ -10,7 +10,7 @@
     android:gravity="bottom"
     app:umanoOverlay= "false"
     app:umanoFadeColor="@color/blackGrey"
-    app:umanoPanelHeight="@dimen/_45sdp"
+    app:umanoPanelHeight="@dimen/_80sdp"
     app:umanoShadowHeight="4dp"
     app:umanoParallaxOffset="100dp">
 
@@ -36,18 +36,19 @@
                 android:focusableInTouchMode="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <!--    <fragment
-                        android:tag="HomeFragment"
-                        android:id="@+id/home_fragment"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:name="com.android.music_player.fragments.HomeFragment"/>
-                    <fragment
+                  <!--  <fragment
                         android:tag="AllMusicFragment"
                         android:id="@+id/all_music_fragment"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:name="com.android.music_player.fragments.AllMusicFragment"/>-->
+                        class="com.android.music_player.fragments.AllMusicFragment"/>
+                    <fragment
+                        android:tag="HomeFragment"
+                        android:id="@+id/home_fragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        class="com.android.music_player.fragments.HomeFragment"/>-->
+
             </FrameLayout>
 
 

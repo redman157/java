@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.media.session.MediaControllerCompat;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.android.music_player.managers.MediaManager;
@@ -13,7 +12,7 @@ import com.android.music_player.media.MediaBrowserListener;
 import com.android.music_player.services.MediaService;
 import com.android.music_player.utils.SharedPrefsUtils;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends ActionBarCastActivity {
     private boolean serviceBound = false;
     private MediaService mediaService;
     private SharedPrefsUtils mSharedPrefsUtils;

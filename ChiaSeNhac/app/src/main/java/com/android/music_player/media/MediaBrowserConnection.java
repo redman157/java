@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.media.MediaBrowserServiceCompat;
 
 import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.services.MediaService;
 import com.android.music_player.utils.BundleHelper;
 import com.android.music_player.utils.Constants;
@@ -28,6 +29,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     private Context context;
     private TextView mTextLeftTime,mTextRightTime;
     private boolean isPlay;
+    private MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
     private MediaManager mMediaManager = MediaManager.getInstance();
 
     public OnMediaController onMediaController;
@@ -52,6 +54,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     public MediaBrowserConnection(Context context) {
         super(context, MediaService.class);
         this.context = context;
+        mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
         mMediaManager.setContext(context);
     }
 
@@ -61,7 +64,8 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
             onMediaController.onController(mediaController);
         }
         Log.d(TAG, "onConnected: "+mediaController.getPlaybackInfo().getPlaybackType());
-
+        // khi connect mình sẽ set bài hát ở đây
+        this.getMediaBrowser().subscribe(MusicLibrary.getRoot(), mMediaBrowserSubscriptionCallback);
 //        mSeekBarAudio.setMediaController(mediaController, mTextLeftTime, mTextRightTime);
     }
 

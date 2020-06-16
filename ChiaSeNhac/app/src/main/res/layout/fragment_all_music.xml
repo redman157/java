@@ -35,7 +35,7 @@
                 app:layout_scrollFlags="scroll|enterAlwaysCollapsed|exitUntilCollapsed"
                 tools:ignore="NestedWeights" />
 
-            <LinearLayout
+       <!--     <LinearLayout
                 android:id="@+id/ll_all_music"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -48,7 +48,7 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:src="@drawable/ic_arrow_back_black_24dp"/>
-            </LinearLayout>
+            </LinearLayout>-->
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/tb_AllMusic"
                 android:layout_width="match_parent"

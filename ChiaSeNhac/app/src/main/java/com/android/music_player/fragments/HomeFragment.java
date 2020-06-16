@@ -35,12 +35,12 @@ public class HomeFragment extends Fragment implements
     private BrowseAdapter mSongsAdapter;
 
     private OnChangeListener onChangeListener;
-
+    private static HomeFragment fragment = null;
     public static HomeFragment newInstance(OnChangeListener onChangeListener) {
-        Bundle args = new Bundle();
-        HomeFragment fragment = new HomeFragment();
+        if (fragment == null){
+            fragment = new HomeFragment();
+        }
         fragment.setOnChangeListener(onChangeListener);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -64,12 +64,6 @@ public class HomeFragment extends Fragment implements
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Log.d("FFF", context.getClass().getSimpleName());
-        /*if (context instanceof  OnItemSelectedListener){
-            listener = (OnItemSelectedListener) context;
-        }else {
-            throw new ClassCastException(context.toString()
-                    + " must implement HomeFragment.OnItemSelectedListener");
-        }*/
     }
 
     @Override

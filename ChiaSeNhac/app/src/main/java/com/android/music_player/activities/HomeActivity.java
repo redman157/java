@@ -1,12 +1,7 @@
 package com.android.music_player.activities;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -14,10 +9,7 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -29,18 +21,16 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.android.music_player.BaseActivity;
 import com.android.music_player.R;
+import com.android.music_player.fragments.AllMusicFragment;
 import com.android.music_player.fragments.HomeFragment;
-import com.android.music_player.fragments.MainFragment;
 import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
@@ -50,10 +40,8 @@ import com.android.music_player.media.MediaBrowserListener;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
-import com.android.music_player.utils.SwipeTouchUtils;
 import com.android.music_player.utils.Utils;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.navigation.NavigationView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.concurrent.Executors;
@@ -69,9 +57,9 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     private String tag = "BBB";
     private RelativeLayout mViewControlMedia;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
-    private View mLayoutMedia;
+    private View mLayoutMedia, mLayoutState;
     public ImageView mImgAlbumArt, mImgChangeMusic, mImgBack;
-    public Button mBtnTitle;
+    public Button mBtnTitle, mBtnHome, mBtnLibrary;
     private MediaManager mMediaManager;
     public ImageButton mBtnPlayPauseMedia , mBtnPlayPauseMusic;
     private ImageButton mBtnPrev, mBtnRepeat, mBtnNext, mBtnSetTime,
@@ -100,7 +88,8 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     private String nameChoose;
 
     private int mItemToOpenWhenDrawerCloses = -1;
-
+    public  final String HOME_FRAGMENT_TAG = "fragment_home";
+    public  final String ALL_MUSIC_FRAGMENT_TAG = "fragment_all_music";
     @Override
     public void initManager() {
         mSharedPrefsUtils = new SharedPrefsUtils(this);
@@ -134,22 +123,45 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initManager();
-        if (savedInstanceState == null){
-            FragmentTransaction fragmentTransaction =
-                    getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.add(R.id.fl_placeholder , HomeFragment.newInstance(this),
-                    "HomeFragment");
-
-            fragmentTransaction.commit();
-        }
 
         setContentView(R.layout.activity_home);
-
+        initializeToolbar();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(R.string.app_name);
+        }
+        initializeFromParams(savedInstanceState, getIntent());
         initView();
-        setupToolbar();
+
+//        setupToolbar();
         assignView();
     }
 
+    protected void initializeFromParams(Bundle savedInstanceState, Intent intent) {
+        String mediaId = null;
+        // check if we were started from a "Play XYZ" voice search. If so, we save the extras
+        // (which contain the query details) in a parameter, so we can reuse it later, when the
+        // MediaSession is connected.
+
+        if (savedInstanceState == null) {
+            // If there is a saved media ID, use it
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fl_placeholder ,
+                            AllMusicFragment.newInstance(),
+                            HOME_FRAGMENT_TAG)
+                    .add(R.id.fl_placeholder ,
+                            HomeFragment.newInstance(this),
+                            HOME_FRAGMENT_TAG)
+                    .setCustomAnimations(   R.animator.slide_in_from_right, R.animator.slide_out_to_left,
+                            R.animator.slide_in_from_left, R.animator.slide_out_to_right)
+                    .commit();
+        }else {
+//            mediaId = savedInstanceState.getString(SAVED_MEDIA_ID);
+        }
+
+//        navigateToBrowser(mediaId);
+    }
 
     private void setMode(int repeat) {
         switch (repeat){
@@ -171,113 +183,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
                 break;
         }
     }
-
-    private void setupToolbar() {
-        mToolBar.inflateMenu(R.menu.main);
-        NavigationView navigationView =  findViewById(R.id.nav_view);
-        if (navigationView == null) {
-            throw new IllegalStateException("Layout requires a NavigationView " +
-                    "with id 'nav_view'");
-        }
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                mToolBar, R.string.open_content_drawer, R.string.close_content_drawer);
-        mDrawerLayout.setDrawerListener(mDrawerListener);
-        populateDrawerItems(navigationView);
-        setSupportActionBar(mToolBar);
-        updateDrawerToggle();
-    }
-
-    private void populateDrawerItems(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                        menuItem.setChecked(true);
-                        mItemToOpenWhenDrawerCloses = menuItem.getItemId();
-                        mDrawerLayout.closeDrawers();
-                        return true;
-                    }
-                });
-//        if (TimerActivity.class.isAssignableFrom(getClass())) {
-//            navigationView.setCheckedItem(R.id.sleep_timer);
-//        } else if (LibraryFragment.class.isAssignableFrom(getClass())) {
-//            navigationView.setCheckedItem(R.id.navigation_library);
-//        }
-    }
-
-    protected void updateDrawerToggle() {
-        if (mDrawerToggle == null) {
-            return;
-        }
-        boolean isRoot = getFragmentManager().getBackStackEntryCount() == 0;
-        mDrawerToggle.setDrawerIndicatorEnabled(isRoot);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowHomeEnabled(!isRoot);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(!isRoot);
-            getSupportActionBar().setHomeButtonEnabled(!isRoot);
-        }
-        if (isRoot) {
-            mDrawerToggle.syncState();
-        }
-    }
-
-    private final DrawerLayout.DrawerListener mDrawerListener = new DrawerLayout.DrawerListener() {
-        @Override
-        public void onDrawerClosed(View drawerView) {
-            if (mDrawerToggle != null) mDrawerToggle.onDrawerClosed(drawerView);
-            if (mItemToOpenWhenDrawerCloses >= 0) {
-                Bundle extras = ActivityOptions.makeCustomAnimation(
-                        HomeActivity.this, R.anim.fadein, R.anim.fadeout).toBundle();
-
-                Class activityClass = null;
-                switch (mItemToOpenWhenDrawerCloses) {
-                    case R.id.navigation_all_music:
-//                        activityClass = TimerActivity.class;
-                        break;
-                    case R.id.navigation_all_playlist:
-//                        activityClass = HomeFragment.class;
-                        break;
-                    case R.id.navigation_favorites:
-//                        activityClass = HomeFragment.class;
-                        break;
-                    case R.id.navigation_recently_played:
-//                        activityClass = HomeFragment.class;
-                        break;
-                    case R.id.navigation_download:
-//                        activityClass = HomeFragment.class;
-                        break;
-                    case R.id.navigation_about:
-//                        activityClass = HomeFragment.class;
-                        break;
-                    case R.id.navigation_settings:
-//                        activityClass = HomeFragment.class;
-                        break;
-
-                }
-                if (activityClass != null) {
-                    startActivity(new Intent(HomeActivity.this, activityClass), extras);
-                    finish();
-                }
-            }
-        }
-
-        @Override
-        public void onDrawerStateChanged(int newState) {
-            if (mDrawerToggle != null) mDrawerToggle.onDrawerStateChanged(newState);
-        }
-
-        @Override
-        public void onDrawerSlide(View drawerView, float slideOffset) {
-            if (mDrawerToggle != null) mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
-        }
-
-        @Override
-        public void onDrawerOpened(View drawerView) {
-            if (mDrawerToggle != null) mDrawerToggle.onDrawerOpened(drawerView);
-            if (getSupportActionBar() != null) getSupportActionBar()
-                    .setTitle(R.string.app_name);
-        }
-    };
+    
     public void setPlayMedia(String songName){
         MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
                 songName);
@@ -307,6 +213,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         mSlidingUpPanelLayout.setPanelState(state);
     }
 
+    @SuppressLint("ResourceAsColor")
     private void initView() {
         mSlidingUpPanelLayout = findViewById(R.id.activity_main);
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -357,6 +264,13 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         mBtnPlayPauseMusic = mLayoutMedia.findViewById(R.id.icon_play);
         mBtnNext = mLayoutMedia.findViewById(R.id.icon_next);
         mBtnSeeMore = mLayoutMedia.findViewById(R.id.icon_image_More);
+
+        // linear button state
+
+        mLayoutState= mLayoutMedia.findViewById(R.id.layout_state_home);
+        mBtnHome = mLayoutMedia.findViewById(R.id.btn_home);
+        mBtnHome.setTextColor(R.color.red);
+        mBtnLibrary = mLayoutMedia.findViewById(R.id.btn_library);
     }
 
     private void assignView(){
@@ -375,11 +289,9 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         mBtnNext.setOnClickListener(this);
         mBtnSeeMore.setOnClickListener(this);
         mBtnAbout.setOnClickListener(this);
-
+        mBtnHome.setOnClickListener(this);
+        mBtnLibrary.setOnClickListener(this);
         Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlaying);
-        mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
-        mViewControlMedia.setOnTouchListener(new SwipeTouchUtils(this));
-
 
         mSeekBarAudio.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -395,159 +307,46 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                Log.d("XXX", "HomeActivity --- onStopTrackingTouch: "+seekBar.getProgress());
                 getController().getTransportControls().seekTo(seekBar.getProgress());
             }
         });
     }
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                FragmentManager manager = getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                Fragment mainFragment;
-                if(manager.findFragmentByTag("HomeFragment") != null) {
-                    mainFragment = manager.findFragmentByTag("HomeFragment");
-                } else {
-                    mainFragment = MainFragment.newInstance(this);
-                }
-
-                transaction.replace(R.id.fl_placeholder, mainFragment);
-                transaction.commit();
-                break;
-            case R.id.action_searchBtn:
-                startActivity(new Intent(this, SearchActivity.class));
-                break;
-            case R.id.sleep_timer:
-                startActivity(new Intent(this, TimerActivity.class));
-                break;
-            case R.id.sync:
-                Intent intent = new Intent(this, SplashActivity.class).putExtra(Constants.VALUE.SYNC,
-                        true);
-                startActivity(intent);
-                break;
-            case R.id.settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                break;
-            case R.id.equalizer:
-                startActivity(new Intent(this, EqualizerActivity.class));
-                break;
-            case R.id.changeTheme:
-                final Dialog dialog = new Dialog(this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.dialog_choose_accent_color);
-                dialog.findViewById(R.id.orange).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(
-                                Constants.PREFERENCES.ACCENT_COLOR, Constants.COLOR.ORANGE);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.cyan).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.CYAN);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.green).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.GREEN);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.yellow).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.YELLOW);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.pink).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.PINK);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.purple).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.PURPLE);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.grey).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.GREY);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.red).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.RED);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.show();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onClick(View view) {
         switch (view.getId()){
+            case R.id.btn_home:
+                mBtnLibrary.setTextColor(R.color.black);
+                mBtnHome.setTextColor(R.color.red);
+                mBtnHome.setEnabled(false);
+                mBtnLibrary.setEnabled(true);
+
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fl_placeholder ,
+                                HomeFragment.newInstance(this),
+                                HOME_FRAGMENT_TAG)
+
+                        .setCustomAnimations(   R.animator.slide_in_from_right, R.animator.slide_out_to_left,
+                                R.animator.slide_in_from_left, R.animator.slide_out_to_right)
+                        .commit();
+                break;
+            case R.id.btn_library:
+                mBtnHome.setEnabled(true);
+                mBtnLibrary.setEnabled(false);
+                mBtnHome.setTextColor(R.color.black);
+                mBtnLibrary.setTextColor(R.color.red);
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fl_placeholder ,
+                                AllMusicFragment.newInstance(),
+                                HOME_FRAGMENT_TAG)
+
+                        .setCustomAnimations(   R.animator.slide_in_from_right, R.animator.slide_out_to_left,
+                                R.animator.slide_in_from_left, R.animator.slide_out_to_right)
+                        .commit();
+                break;
             case R.id.icon_about:
                 break;
             case R.id.icon_set_time:
@@ -625,7 +424,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         }
     }
 
-    @Override
+    /*@Override
     public void onBackPressed() {
         if (mSlidingUpPanelLayout != null &&
                 (mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mSlidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
@@ -647,7 +446,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
             });
             builder.show();
         }
-    }
+    }*/
 
     @Override
     public void onStateChange(boolean isPlay, PlaybackStateCompat state) {
@@ -695,11 +494,11 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         Log.d("UUU", "onPanelSlide : "+slideOffset);
         alpha = slideOffset;
         if (slideOffset > 0.3){
-            mViewPanelMedia.setVisibility(View.GONE);
+            mLayoutState.setVisibility(View.GONE);
         }else {
-            mViewPanelMedia.setAlpha(slideOffset);
+            mLayoutState.setAlpha(slideOffset);
         }
-        mViewControlMedia.setAlpha(alpha);
+        mLayoutState.setAlpha(alpha);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -717,12 +516,12 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
 
         switch (newState) {
             case EXPANDED:
-                mViewPanelMedia.setAlpha(0);
-                mViewPanelMedia.setVisibility(View.VISIBLE);
+                mLayoutState.setAlpha(0);
+                mLayoutState.setVisibility(View.VISIBLE);
                 break;
             case COLLAPSED:
-                mViewPanelMedia.setAlpha(1);
-                mViewPanelMedia.setVisibility(View.VISIBLE);
+                mLayoutState.setAlpha(1);
+                mLayoutState.setVisibility(View.VISIBLE);
                 break;
         }
     }

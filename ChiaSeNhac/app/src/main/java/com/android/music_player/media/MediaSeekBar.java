@@ -86,7 +86,6 @@ public class MediaSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBarC
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        Log.d("ZZZ", "onStopTrackingTouch: "+getProgress());
         mControllerCompat.getTransportControls().seekTo(getProgress());
     }
 

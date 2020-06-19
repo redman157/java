@@ -3,6 +3,7 @@ package com.android.music_player.media;
 import android.content.Context;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -29,7 +30,7 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     private Context context;
     private TextView mTextLeftTime,mTextRightTime;
     private boolean isPlay;
-    private MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
+    public MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
     private MediaManager mMediaManager = MediaManager.getInstance();
 
     public OnMediaController onMediaController;
@@ -48,7 +49,6 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
 
     public void setMediaId(String mediaId) {
         this.mediaId = mediaId;
-
     }
 
     public MediaBrowserConnection(Context context) {
@@ -59,14 +59,21 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     }
 
     @Override
-    protected void onConnected(@NonNull MediaControllerCompat mediaController) {
+    protected void onConnected(@NonNull MediaControllerCompat mediaController,
+                               MediaBrowserCompat mediaBrowser) {
         if (onMediaController != null) {
             onMediaController.onController(mediaController);
         }
         Log.d(TAG, "onConnected: "+mediaController.getPlaybackInfo().getPlaybackType());
         // khi connect mình sẽ set bài hát ở đây
-        this.getMediaBrowser().subscribe(MusicLibrary.getRoot(), mMediaBrowserSubscriptionCallback);
-//        mSeekBarAudio.setMediaController(mediaController, mTextLeftTime, mTextRightTime);
+        Log.d("MMM","onConnected: "+mediaBrowser.getRoot() );
+
+        mediaBrowser.subscribe(MusicLibrary.MEDIA_ID_ROOT, mMediaBrowserSubscriptionCallback);
+    }
+
+    @Override
+    public void setSubscribe(String parentID, MediaBrowserSubscriptionCallback mediaBrowserSubscriptionCallback) {
+        super.setSubscribe(parentID, mediaBrowserSubscriptionCallback);
     }
 
     @Override
@@ -77,10 +84,22 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         mMediaController = getMediaController();
 
         // Queue up all media items for this simple sample.
-        for (final MediaBrowserCompat.MediaItem mediaItem : children) {
-            mMediaController.addQueueItem(mediaItem.getDescription());
 
+        if (mMediaController.getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_NONE) {
+
+            for (final MediaBrowserCompat.MediaItem mediaItem : children) {
+                mMediaController.addQueueItem(mediaItem.getDescription());
+            }
+            Log.d("MMM", this.getClass().getSimpleName() + " --- onChildrenLoaded: " +
+                    "SHUFFLE_MODE_NONE enter");
+        }else if (mMediaController.getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_ALL){
+            for (final MediaBrowserCompat.MediaItem mediaItem : MusicLibrary.getMediaShuffle(children)) {
+                mMediaController.addQueueItem(mediaItem.getDescription());
+            }
+            Log.d("MMM", this.getClass().getSimpleName() + " --- onChildrenLoaded: " +
+                    "SHUFFLE_MODE_ALL enter");
         }
+
         setMediaId(mediaId, false);
     }
 
@@ -96,8 +115,4 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         }
     }
 
-    @Override
-    public MediaBrowserCompat getMediaBrowser() {
-        return super.getMediaBrowser();
-    }
 }

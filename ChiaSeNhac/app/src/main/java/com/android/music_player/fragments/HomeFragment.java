@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.music_player.R;
+import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.BrowseAdapter;
 import com.android.music_player.adapters.HomeFragmentAdapter;
 import com.android.music_player.interfaces.OnChangeListener;
@@ -52,13 +53,10 @@ public class HomeFragment extends Fragment implements
     public void onClickPosition(int pos) {
 
     }
-
     @Override
     public void onClickMusic(String musicID) {
         onChangeListener.onMusicID(musicID);
     }
-
-
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -81,11 +79,10 @@ public class HomeFragment extends Fragment implements
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        view = inflater.inflate(R.layout.fragment_home, null);
+        view = inflater.inflate(R.layout.fragment_home, container, false);
         initView();
         mSwipeRefreshLayout.setRefreshing(false);
-        mHomeAdapter = new HomeFragmentAdapter(getActivity(),mSongsAdapter);
+        mHomeAdapter = new HomeFragmentAdapter((HomeActivity)getActivity(),mSongsAdapter);
         mHomeAdapter.notifyDataSetChanged();
         mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
         mRcHome.setAdapter(mHomeAdapter);

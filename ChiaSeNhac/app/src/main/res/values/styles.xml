@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <!-- colorPrimary thanh trạng thái trên của app, màu nền mặc định-->
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-<!--        <item name="android:windowTranslucentStatus">true</item>-->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowActionBarOverlay">true</item>
-        <item name="colorPrimary">@color/black</item>
+
+        <item name="colorPrimary">@color/light_grey</item>
         <item name="colorPrimaryDark">@color/primaryDark</item>
         <item name="colorAccent">@color/black</item>
-       <!-- <item name="colorPrimary">@color/blackGrey</item>
-        <item name="colorPrimaryDark">@color/blackGrey</item>
-        <item name="colorAccent">@color/blackGrey</item>-->
         <item name="colorControlNormal">@color/whiteOpaqueX4</item>
         <item name="android:textColorPrimary">@color/black</item>
         <item name="android:textColorSecondary">@color/black</item>
-<!--        <item name="android:windowBackground">@color/white</item>-->
+        <item name="android:windowBackground">@color/whiteOpaqueX6</item>
         <item name="android:navigationBarColor">@color/navigationBar</item>
-        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowContentOverlay">@color/light_grey</item>
         <item name="android:buttonStyle">?android:borderlessButtonStyle</item>
     </style>
 

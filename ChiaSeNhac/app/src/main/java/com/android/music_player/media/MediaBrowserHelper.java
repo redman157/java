@@ -24,7 +24,7 @@ import java.util.Map;
  * Helper class for a MediaBrowser that handles connecting, disconnecting,
  * and basic browsing with simplified callbacks.
  */
-public class MediaBrowserHelper {
+public abstract class MediaBrowserHelper {
 //    private static final String TAG = MediaBrowserHelper.class.getSimpleName();
     private static final String TAG = "JJJ";
     private Context mContext;
@@ -36,19 +36,15 @@ public class MediaBrowserHelper {
 
     private final MediaBrowserConnectionCallback mMediaBrowserConnectionCallback;
     private final MediaControllerCallback mMediaControllerCallback;
-    private final MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
 
     private MediaBrowserCompat mMediaBrowser;
     public MediaBrowserHelper(Context mContext,
                               Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass) {
         // thực hiện công việc kết nối từ activity tới service
-
         this.mContext = mContext;
         this.mMediaBrowserServiceClass = mMediaBrowserServiceClass;
-
         mMediaBrowserConnectionCallback = new MediaBrowserConnectionCallback();
         mMediaControllerCallback = new MediaControllerCallback();
-        mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
     }
 
     public boolean isConnect(){
@@ -115,7 +111,12 @@ public class MediaBrowserHelper {
      *                        MediaSession.
      */
 
-    protected void onConnected(@NonNull MediaControllerCompat mediaController) {
+    protected void onConnected(@NonNull MediaControllerCompat mediaController,
+                               MediaBrowserCompat mediaBrowser) {
+    }
+
+    protected void setSubscribe(String parentID, MediaBrowserSubscriptionCallback mediaBrowserSubscriptionCallback){
+        mMediaBrowser.subscribe(parentID, mediaBrowserSubscriptionCallback);
     }
 
     /**
@@ -204,10 +205,6 @@ public class MediaBrowserHelper {
         }
     }
 
-    public MediaBrowserCompat getMediaBrowser(){
-        return mMediaBrowser;
-    }
-
     // Receives callbacks from the MediaBrowser when it has successfully connected to the
     // MediaBrowserService (MusicService).
     private class MediaBrowserConnectionCallback extends MediaBrowserCompat.ConnectionCallback  {
@@ -239,24 +236,20 @@ public class MediaBrowserHelper {
                     mMediaControllerCallback.onPlaybackStateChanged(mMediaController.getPlaybackState());
                 }
                 Log.d(TAG, "MediaBrowserConnectionCallback --- onConnected: enter");
-                MediaBrowserHelper.this.onConnected(mMediaController);
+                MediaBrowserHelper.this.onConnected(mMediaController, mMediaBrowser);
             }catch (AndroidException e) {
                 Log.d(TAG, String.format("onConnected: Problem: %s", e.toString()));
                 Log.d("BBB", "MediaBrowserConnectionCallback --- exception: "+e.getMessage());
                 throw new RuntimeException(e);
             }
             // truyền xuống service ParrentID thay đổi
-
 //            mMediaBrowser.subscribe(MusicLibrary.getRoot(), mMediaBrowserSubscriptionCallback);
-
-
         }
     }
 
     // Receives callbacks from the MediaBrowser when the MediaBrowserService has loaded new media
     // that is ready for playback.
     public class MediaBrowserSubscriptionCallback extends MediaBrowserCompat.SubscriptionCallback {
-
         // tu service gọi lên từ onChildrenLoaded
         @Override
         public void onChildrenLoaded(@NonNull String parentId,
@@ -264,6 +257,7 @@ public class MediaBrowserHelper {
             Log.d("WWW","MediaBrowserSubscriptionCallback --- onChildrenLoaded: "+parentId);
 
             MediaBrowserHelper.this.onChildrenLoaded(parentId, children);
+
         }
 
         @Override

@@ -133,7 +133,6 @@ public class MediaManager {
         if (mMediaBrowserConnection == null && mContext != null) {
             mMediaBrowserConnection = new MediaBrowserConnection(mContext);
         }
-
         return mMediaBrowserConnection;
     }
 

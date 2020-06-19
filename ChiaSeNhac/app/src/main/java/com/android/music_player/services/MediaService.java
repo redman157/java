@@ -15,16 +15,16 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.media.MediaBrowserServiceCompat;
 
-import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.MediaManager;
-import com.android.music_player.managers.NotificationManager;
 import com.android.music_player.managers.MediaPlayerManager;
+import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.managers.NotificationManager;
+import com.android.music_player.managers.QueueManager;
 import com.android.music_player.media.PlaybackInfoListener;
 import com.android.music_player.media.PlayerAdapter;
 import com.android.music_player.utils.Constants;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MediaService extends MediaBrowserServiceCompat {
@@ -39,6 +39,7 @@ public class MediaService extends MediaBrowserServiceCompat {
     private MediaManager mMediaManager;
     private boolean mServiceStarted;
     private boolean isAutoPlay = false;
+    private QueueManager queueManager;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY ;
@@ -60,8 +61,6 @@ public class MediaService extends MediaBrowserServiceCompat {
             mPlayback = new MediaPlayerManager(this, new MediaPlayerListener());
             mNotificationManager = new NotificationManager(this);
         }
-
-
         Log.d(TAG, "onCreate: MusicService creating MediaSession, and NotificationManager");
     }
 
@@ -109,10 +108,9 @@ public class MediaService extends MediaBrowserServiceCompat {
         Log.d("WWW","MediaService --- onGetRoot --- clientPackageName: "+clientPackageName);
         Log.d("WWW","MediaService --- onGetRoot --- clientUid: "+clientUid);
         Log.d("WWW","MediaService --- onGetRoot --- rootHints: "+rootHints);
-        return new BrowserRoot(MusicLibrary.getRoot(), null);
+        // lúc connect sẽ chạy vô đây để check root
+        return new BrowserRoot(MusicLibrary.MEDIA_ID_ROOT, null);
     }
-
-
 
     @Override
     public void onLoadChildren(@NonNull String parentId,
@@ -120,16 +118,12 @@ public class MediaService extends MediaBrowserServiceCompat {
         // service gọi lên MediaBrowserSubscriptionCallback
         // Use result.detach to allow calling result.sendResult from another thread
         // Assign returned result to temporary variable
-        switch (parentId){
-            case "root":
-                result.sendResult(MusicLibrary.getMediaItems());
-                break;
-            case "shuffle":
-                result.sendResult(MusicLibrary.getMediaShuffle());
-                break;
+        Log.d("WWW", "MediaService --- onLoadChildren: "+parentId);
+        if (parentId.equals(MusicLibrary.MEDIA_ID_EMPTY_ROOT)) {
+
+        }else if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)) {
+            result.sendResult(MusicLibrary.getMediaItems());
         }
-
-
     }
 
     // MediaSession Callback: Transport Controls -> MediaPlayerManager
@@ -145,19 +139,31 @@ public class MediaService extends MediaBrowserServiceCompat {
         }
 
 
+        public void updateMediaQueue(){
+            if (mSessionCompat == null){
+
+            }
+        }
+
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
+
             queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
             mPlaylist.add(queueItem);
             mSessionCompat.setQueue(mPlaylist);
+//            Log.d("MMM", "onAddQueueItem: "+mPlaylist.size());
+
         }
 
         @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
+//            Log.d("NNN", "onRemoveQueueItem: "+description.getMediaId());
             queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
             mPlaylist.remove(queueItem);
             mSessionCompat.setQueue(mPlaylist);
+
         }
+
 
         @Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
@@ -171,9 +177,7 @@ public class MediaService extends MediaBrowserServiceCompat {
             if (mPreparedMedia == null) {
                 onPrepareFromMediaId(mediaId, extras);
             }
-
             mPlayback.playFromMedia(MusicLibrary.getMetadata(MediaService.this,mediaId));
-
             Log.d(TAG, "onPlayFromMediaId: MediaSession active");
         }
 
@@ -209,39 +213,54 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onSetRepeatMode(int repeatMode) {
             if (repeatMode == PlaybackStateCompat.REPEAT_MODE_NONE){
-
-            }else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL){
-
+                mPlayback.setRepeat(false);
+                mSessionCompat.setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE);
             }else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) {
-
+                mPlayback.setRepeat(true);
+                mSessionCompat.setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE);
             }
         }
+
 
         @Override
         public void onSetShuffleMode(int shuffleMode) {
             switch (shuffleMode){
+                case PlaybackStateCompat.SHUFFLE_MODE_NONE:
+                    mSessionCompat.setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
+//                    mSessionCompat.setQueue(mPlaylist);
+                    Log.d("KKK",
+                            "SHUFFLE_MODE_NONE: "+ mPlaylist.get(1).getDescription().getMediaId());
+                    break;
+
                 case PlaybackStateCompat.SHUFFLE_MODE_ALL:
-                    ArrayList<MediaSessionCompat.QueueItem> mShuffle = new ArrayList<>(mPlaylist);
+                    
+                    mSessionCompat.setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                   /* ArrayList<MediaSessionCompat.QueueItem> mShuffle = new ArrayList<>(mPlaylist);
                     Collections.shuffle(mShuffle);
+                    MediaMetadataCompat currentMedia = MusicLibrary.getMetadata(MediaService.this,
+                            mMediaManager.getCurrentMusic());
                     MediaSessionCompat.QueueItem mCurrentQueue =
-                            new MediaSessionCompat.QueueItem(mPlayback.getCurrentMedia().getDescription(), mPlayback.getCurrentMedia().getDescription().hashCode());
+                            new MediaSessionCompat.QueueItem(currentMedia.getDescription(),
+                                    currentMedia.getDescription().hashCode());
                     mShuffle.remove(mCurrentQueue);
                     for (int i = 0 ; i < mShuffle.size(); i ++){
                         if (mShuffle.get(i).getDescription().getMediaId().equals(
-                                mPlayback.getCurrentMedia().getDescription().getMediaId())){
+                                currentMedia.getDescription().getMediaId())){
                             mShuffle.add(0, mCurrentQueue);
                             break;
                         }
                     }
-                    mSessionCompat.setQueue(mShuffle);
 
-                    Log.d("KKK",
-                            "SHUFFLE_MODE_ALL: "+ mShuffle.get(0).getDescription().getMediaId());
-                    break;
-                case PlaybackStateCompat.SHUFFLE_MODE_NONE:
-                    mSessionCompat.setQueue(mPlaylist);
-                    Log.d("KKK",
-                            "SHUFFLE_MODE_NONE: "+ mSessionCompat.getController().getQueue().get(0).getDescription().getMediaId());
+                    for (MediaSessionCompat.QueueItem queueItem : mPlaylist){
+                        onRemoveQueueItem(queueItem.getDescription());
+                    }
+
+                    for (MediaSessionCompat.QueueItem queueItem : mShuffle){
+                        onAddQueueItem(queueItem.getDescription());
+                    }*/
+
+                /*    Log.d("KKK",
+                            "SHUFFLE_MODE_ALL: "+ mShuffle.get(1).getDescription().getMediaId());*/
                     break;
             }
         }
@@ -289,6 +308,7 @@ public class MediaService extends MediaBrowserServiceCompat {
         }
     }
 
+
     // MediaPlayerManager Callback: MediaPlayerManager state -> MediaService.
     public class MediaPlayerListener extends PlaybackInfoListener{
         private final ServiceManager mServiceManager;
@@ -318,9 +338,13 @@ public class MediaService extends MediaBrowserServiceCompat {
         }
 
         @Override
-        public void onPlaybackCompleted(boolean isNext) {
-            if (isNext){
+        public void onPlaybackCompleted(boolean isCompleted) {
+            if (isCompleted){
                 mCallback.onSkipToNext();
+            }else {
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
+                mCallback.onPrepareFromMediaId(mMediaManager.getCurrentMusic(),  bundle);
             }
         }
 

@@ -11,7 +11,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_marginBottom="12dp"
-        android:layout_marginLeft="48dp"
+        android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
         android:background="@drawable/rounded_box"
         android:contentDescription="@string/test_profile_image_desc" />

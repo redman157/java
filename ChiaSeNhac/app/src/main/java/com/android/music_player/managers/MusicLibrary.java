@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.util.ArrayMap;
 
 import com.android.music_player.models.SongModel;
 import com.android.music_player.utils.ImageHelper;
@@ -45,14 +47,14 @@ public class MusicLibrary {
     public static final Map<String, ArrayList<SongModel>> artist = new HashMap<>();
     public static final Map<String, ArrayList<SongModel>> folder = new HashMap<>();
     public static final Map<String , SongModel> model = new HashMap<>();
-    public static String getRoot() {
-        return "root";
-    }
+    public static final Map<String, List<MediaSessionCompat.QueueItem>> mPlayingQueue =
+            new ArrayMap<>();
+    public static String MEDIA_ID_ROOT = "__Root__";
+    public static String MEDIA_ID_EMPTY_ROOT = "__Empty_Root__";
 
-    public static String getShuffle(){
-        return "shuffle";
+    public enum MEDIA_ID{
+        ROOT,
     }
-
     public static void clear(){
         music.clear();
         albumID.clear();
@@ -106,15 +108,16 @@ public class MusicLibrary {
     public static List<MediaBrowserCompat.MediaItem> getMediaItems() {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
         for (MediaMetadataCompat metadata : music.values()) {
-            result.add(new MediaBrowserCompat.MediaItem(
-                metadata.getDescription(),
-                    MediaBrowserCompat.MediaItem.FLAG_PLAYABLE));
+            MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(
+                    metadata.getDescription(),
+                    MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
+            result.add(mediaItem);
         }
         return result;
     }
 
-    public static List<MediaBrowserCompat.MediaItem> getMediaShuffle(){
-        List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>(getMediaItems());
+    public static List<MediaBrowserCompat.MediaItem> getMediaShuffle( List<MediaBrowserCompat.MediaItem> children){
+        List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>(children);
         Collections.shuffle(mediaItems);
         for (int i = 0; i < mediaItems.size(); i++){
             if (mediaItems.get(i).getDescription().getMediaId().equals(MediaManager.getInstance().getCurrentMusic())){
@@ -128,9 +131,7 @@ public class MusicLibrary {
 
     public static void setMediaDefault(List<MediaBrowserCompat.MediaItem> mediaItems){
         mediaItems.clear();
-
     }
-
 
     public static MediaMetadataCompat getMetadata(Context context, String songName) {
         MediaMetadataCompat metadataWithoutBitmap = music.get(songName);
@@ -156,7 +157,7 @@ public class MusicLibrary {
         return builder.build();
     }
 
-    public static void createMediaMetadataCompat(SongModel song) {
+    public static void createMediaMetadataCompat(SongModel song ) {
         music.put(
                 song.getSongName(),
                 new MediaMetadataCompat.Builder()

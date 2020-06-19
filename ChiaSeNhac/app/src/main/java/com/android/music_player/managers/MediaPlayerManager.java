@@ -3,6 +3,7 @@ package com.android.music_player.managers;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.session.MediaSession;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.SystemClock;
@@ -32,7 +33,8 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     private int mState;
     private boolean isRepeat= false;
     private boolean mCurrentMediaPlayedToCompletion;
-
+    private MediaSession.Callback mCallBack;
+    private MediaSession.QueueItem mQueueItem;
     // Work-around for a MediaPlayer bug related to the behavior of MediaPlayer.seekTo()
     // while not playing.
     private int mSeekWhileNotPlaying = -1;
@@ -163,6 +165,8 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         return mCurrentMedia;
     }
 
+
+
     private void playFile(String filename){
         boolean mediaChanged = (mFilename == null || !filename.equals(mFilename));
         if (mCurrentMediaPlayedToCompletion){
@@ -283,9 +287,17 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     }
 
     @Override
-    public void onCompletion(MediaPlayer mp) {
-        mPlaybackInfoListener.onPlaybackCompleted(true);
+    public void setRepeat(boolean repeat) {
+        isRepeat = repeat;
+    }
 
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        if (isRepeat){
+            mPlaybackInfoListener.onPlaybackCompleted(false);
+        }else {
+            mPlaybackInfoListener.onPlaybackCompleted(true);
+        }
         // Set the state to "paused" because it most closely matches the state
         // in MediaPlayer with regards to available state transitions compared
         // to "stop".
@@ -341,4 +353,6 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
             }
         }
     }
+
+
 }

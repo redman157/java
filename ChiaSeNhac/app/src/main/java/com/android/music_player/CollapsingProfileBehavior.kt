@@ -147,7 +147,7 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
 
         val layoutParams = profileImage.layoutParams as LinearLayout.LayoutParams
         layoutParams.bottomMargin = updatedValue
-        layoutParams.leftMargin = updatedValue *4
+        layoutParams.leftMargin = updatedValue
         layoutParams.rightMargin = updatedValue
         profileImage.layoutParams = layoutParams
     }

@@ -89,8 +89,6 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         // and ensures that the fragment's root view is non-null. Any view setup should happen here. E.g., view lookups, attaching listeners.
         // Setup any handles to view objects here
         initView(view);
-        assignView();
-
     }
 
     @Override
@@ -143,16 +141,13 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
             viewPager.setCurrentItem(0);
             viewPager.addOnPageChangeListener(this);
             viewPager.setOnClickListener(this);
-
             mTabLayoutSong.setupWithViewPager(viewPager);
-
             for (int i = 0; i < mTabLayoutSong.getTabCount(); i++) {
                 mTabLayoutSong.getTabAt(i).setCustomView(mViewPagerAdapter.getTabSong(i));
             }
             mTabLayoutSong.addOnTabSelectedListener(this);
         }
     }
-
 
     private void initView(View view) {
         collapsingProfileHeaderView = view.findViewById(R.id.collapseActionView);
@@ -163,18 +158,14 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         TextProfileTitle = collapsingProfileHeaderView.findViewById(R.id.profileName);
         TextProfileArtist = collapsingProfileHeaderView.findViewById(R.id.profileSubtitle);
         mBackGround = view.findViewById(R.id.img_AlbumId);
-//        mImgBack = view.findViewById(R.id.img_back);
-
-        if(!mMediaManager.getCurrentMusic().equals("")){
-            setTitle(mMediaManager.getCurrentMusic());
-        }
+        setTitle(mMediaManager.getCurrentMusic());
     }
 
-    public void assignView(){
-//        mImgBack.setOnClickListener(this);
-    }
 
     public void setTitle(String songName){
+        if (songName.equals("")){
+            songName = (String) MusicLibrary.music.keySet().toArray()[0];
+        }
         MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(getContext(), songName);
         TextProfileAlbum.setText(metadataCompat.getString(Constants.METADATA.Album));
         TextProfileTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
@@ -190,17 +181,6 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.img_back:
-                /*FragmentManager manager = getActivity().getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                Fragment mainFragment;
-                if(manager.findFragmentByTag("HomeFragment") != null) {
-                    mainFragment = manager.findFragmentByTag("HomeFragment");
-                } else {
-                    mainFragment = MainFragment.newInstance((OnChangeListener) this);
-                }
-                transaction.replace(((HomeActivity)getActivity()).mLayoutPlaceHolder.getId(),
-                        mainFragment);
-                transaction.commit();*/
                 getActivity().getSupportFragmentManager().popBackStack();
                 break;
             case R.id.btn_title_media:

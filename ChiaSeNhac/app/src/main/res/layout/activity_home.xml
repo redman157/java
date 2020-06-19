@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".activities.HomeActivity"
     android:gravity="bottom"
+    app:umanoFlingVelocity="1000"
     app:umanoOverlay= "false"
     app:umanoFadeColor="@color/blackGrey"
     app:umanoPanelHeight="@dimen/_80sdp"
@@ -59,6 +60,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
+
             android:theme="@style/ThemeOverlay.MaterialComponents.Light"
             app:headerLayout="@layout/nav_header"
             app:menu="@menu/library"/>

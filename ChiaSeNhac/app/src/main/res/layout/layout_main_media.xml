@@ -5,16 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <include
-        android:layout_alignParentTop="true"
-        android:id="@+id/layout_state_home"
-        layout="@layout/layout_state_home"
-        tools:ignore="IncludeLayoutParam" />
+    <LinearLayout
+        android:id="@+id/ll_top"
+        android:background="@color/whiteOpaqueX6"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_80sdp">
+        <include
+
+            android:layout_alignParentTop="true"
+            android:id="@+id/layout_state_home"
+            layout="@layout/layout_state_home"
+            tools:ignore="IncludeLayoutParam" />
+    </LinearLayout>
     <RelativeLayout
         android:background="@color/black"
         android:id="@+id/rl_change_state"
         android:layout_width="match_parent"
-        android:layout_below="@+id/layout_state_home"
+        android:layout_below="@+id/ll_top"
         android:layout_height="match_parent">
         <LinearLayout
             android:layout_alignParentTop="true"
@@ -182,7 +189,7 @@
             android:visibility="visible"
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:weightSum="4"
+            android:weightSum="5"
             android:layout_marginLeft="@dimen/_20sdp"
             android:layout_marginRight="@dimen/_20sdp"
             android:layout_height="@dimen/_40sdp">
@@ -225,6 +232,21 @@
                     />
             </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <ImageButton
+                    android:adjustViewBounds="true"
+                    android:id="@+id/icon_shuffle"
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/app_shuffle_white" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="0dp"
@@ -340,7 +362,7 @@
 
                     <ImageButton
                         android:adjustViewBounds="true"
-                        android:id="@+id/icon_change_mode"
+                        android:id="@+id/icon_replay"
                         android:layout_width="32dp"
                         android:layout_height="match_parent"
                         android:background="?android:attr/selectableItemBackgroundBorderless"

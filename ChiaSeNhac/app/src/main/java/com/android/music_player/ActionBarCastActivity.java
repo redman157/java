@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -73,11 +74,21 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
 
     private int mItemToOpenWhenDrawerCloses = -1;
     private SharedPrefsUtils mSharedPrefsUtils ;
+    public abstract void OnStateChange( STATE state);
+    public abstract void IsClose(STATE state);
+    public enum STATE{
+        OPEN, CLOSE, DONE, PROCESS, CONTROL
+    }
 
     private final DrawerLayout.DrawerListener mDrawerListener = new DrawerLayout.DrawerListener() {
         @Override
         public void onDrawerClosed(View drawerView) {
-            if (mDrawerToggle != null) mDrawerToggle.onDrawerClosed(drawerView);
+            state = STATE.CLOSE;
+
+            IsClose(state);
+            if (mDrawerToggle != null) {
+                mDrawerToggle.onDrawerClosed(drawerView);
+            }
             if (mItemToOpenWhenDrawerCloses >= 0) {
                 Bundle extras = ActivityOptions.makeCustomAnimation(
                     ActionBarCastActivity.this, R.anim.fadein, R.anim.fadeout).toBundle();
@@ -100,23 +111,53 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
 
         @Override
         public void onDrawerStateChanged(int newState) {
-            if (mDrawerToggle != null) mDrawerToggle.onDrawerStateChanged(newState);
+            STATE state = null;
+            switch (newState){
+                // 0 - DONE
+                // 1 - Thao tac vuot
+                // 2 - tha theo huong di (open or close)
+                case 0:
+                    state = STATE.DONE;
+                    imgBack.setClickable(true);
+                    break;
+                case 1:
+                    state = STATE.PROCESS;
+                    imgBack.setClickable(false);
+                    break;
+                case 2:
+                    state = STATE.CONTROL;
+                    imgBack.setClickable(false);
+                    break;
+            }
+            OnStateChange(state);
+            if (mDrawerToggle != null) {
+                mDrawerToggle.onDrawerStateChanged(newState);
+            }
         }
 
         @Override
         public void onDrawerSlide(View drawerView, float slideOffset) {
-            if (mDrawerToggle != null) mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
+            if (mDrawerToggle != null){
+                mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
+            }
         }
 
         @Override
         public void onDrawerOpened(View drawerView) {
-            if (mDrawerToggle != null) mDrawerToggle.onDrawerOpened(drawerView);
-            if (getSupportActionBar() != null) getSupportActionBar()
-                    .setTitle(R.string.app_name);
+            state = STATE.OPEN;
+            imgBack.setClickable(true);
+            IsClose(state);
+            if (mDrawerToggle != null) {
+                mDrawerToggle.onDrawerOpened(drawerView);
+            }
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(R.string.app_name);
+            }
         }
     };
 
-
+    private STATE state;
+    private ImageView imgBack;
 
     private final FragmentManager.OnBackStackChangedListener mBackStackChangedListener =
         new FragmentManager.OnBackStackChangedListener() {
@@ -185,6 +226,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
         if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+
         // If not handled by drawerToggle, home needs to be handled by returning to previous
         if (item != null && item.getItemId() == android.R.id.home) {
             onBackPressed();
@@ -356,12 +398,22 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         if (mDrawerLayout != null) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            NavigationView navigationView = findViewById(R.id.nav_view);
             if (navigationView == null) {
                 throw new IllegalStateException("Layout requires a NavigationView " +
                         "with id 'nav_view'");
             }
 
+            View headerView = navigationView.getHeaderView(0);
+            imgBack = headerView.findViewById(R.id.nav_back);
+            imgBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (state == STATE.OPEN) {
+                        mDrawerLayout.closeDrawers();
+                    }
+                }
+            });
             // Create an ActionBarDrawerToggle that will handle opening/closing of the drawer:
             mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 mToolbar, R.string.open_content_drawer, R.string.close_content_drawer);
@@ -377,23 +429,16 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     }
 
     private void populateDrawerItems(NavigationView navigationView) {
-
         navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                        menuItem.setChecked(true);
-                        mItemToOpenWhenDrawerCloses = menuItem.getItemId();
-                        mDrawerLayout.closeDrawers();
-
-                        return true;
-                    }
-                });
-        /*if (HomeFragment.class.isAssignableFrom(getClass())) {
-            navigationView.setCheckedItem(R.id.navigation_home);
-        } else if (LibraryFragment.class.isAssignableFrom(getClass())) {
-            navigationView.setCheckedItem(R.id.navigation_library);
-        }*/
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    menuItem.setChecked(true);
+                    mItemToOpenWhenDrawerCloses = menuItem.getItemId();
+                    mDrawerLayout.closeDrawers();
+                    return true;
+                }
+            });
     }
 
     protected void updateDrawerToggle() {

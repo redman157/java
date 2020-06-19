@@ -13,7 +13,7 @@ public abstract class PlaybackInfoListener {
 
     public abstract void onPlaybackStateChange(PlaybackStateCompat state);
 
-    public abstract void onPlaybackCompleted(boolean isNext);
+    public abstract void onPlaybackCompleted(boolean isCompleted);
 
     public void onPositionChanged(int position) {
     }

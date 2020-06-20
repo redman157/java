@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+
     android:layout_height="match_parent"
     android:orientation="vertical">
     <LinearLayout
@@ -11,14 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_80sdp">
         <include
-
             android:layout_alignParentTop="true"
-            android:id="@+id/layout_state_home"
-            layout="@layout/layout_state_home"
+            android:id="@+id/layout_panel_home"
+            layout="@layout/layout_panel_home"
             tools:ignore="IncludeLayoutParam" />
     </LinearLayout>
     <RelativeLayout
-        android:background="@color/black"
         android:id="@+id/rl_change_state"
         android:layout_width="match_parent"
         android:layout_below="@+id/ll_top"
@@ -30,7 +29,7 @@
             android:background="@color/transparent"
             android:orientation="horizontal">
             <ImageView
-                android:id="@+id/img_change_state"
+                android:id="@+id/img_close_panel"
                 android:padding="@dimen/_10sdp"
                 android:layout_margin="7dp"
                 android:src="@drawable/ic_down_arrow_white"
@@ -202,11 +201,11 @@
 
                 <ImageButton
                     android:adjustViewBounds="true"
-
                     android:id="@+id/icon_about"
-                    android:layout_width="32dp"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_margin="7dp"
+                    android:layout_centerInParent="true"
                     android:layout_height="match_parent"
-
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_info_outline_black_24dp"
                     android:tint="@color/white"
@@ -223,7 +222,9 @@
                 <ImageButton
                     android:adjustViewBounds="true"
                     android:id="@+id/icon_set_time"
-                    android:layout_width="32dp"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_margin="7dp"
+                    android:layout_centerInParent="true"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -242,7 +243,9 @@
                 <ImageButton
                     android:adjustViewBounds="true"
                     android:id="@+id/icon_shuffle"
-                    android:layout_width="32dp"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_margin="7dp"
+                    android:layout_centerInParent="true"
                     android:layout_height="match_parent"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/app_shuffle_white" />
@@ -258,7 +261,9 @@
                 <ImageButton
                     android:adjustViewBounds="true"
                     android:id="@+id/icon_equalizer"
-                    android:layout_width="32dp"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_margin="7dp"
+                    android:layout_centerInParent="true"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -276,7 +281,9 @@
                 <ImageButton
                     android:adjustViewBounds="true"
                     android:id="@+id/icon_favorite"
-                    android:layout_width="32dp"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_margin="7dp"
+                    android:layout_centerInParent="true"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -363,7 +370,9 @@
                     <ImageButton
                         android:adjustViewBounds="true"
                         android:id="@+id/icon_replay"
-                        android:layout_width="32dp"
+                        android:layout_margin="7dp"
+                        android:layout_centerInParent="true"
+                        android:layout_width="@dimen/_32sdp"
                         android:layout_height="match_parent"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:src="@drawable/app_repeat_active" />
@@ -372,18 +381,18 @@
 
                 <RelativeLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_gravity="center"
                     android:gravity="center">
 
                     <ImageButton
                         android:id="@+id/icon_prev"
-                        android:layout_width="32dp"
+                        android:layout_width="@dimen/_32sdp"
                         android:layout_height="match_parent"
+                        android:layout_margin="7dp"
+                        android:layout_centerInParent="true"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/_0"
-                        android:adjustViewBounds="true"
                         android:src="@drawable/ic_previous_white" />
                 </RelativeLayout>
 
@@ -392,17 +401,20 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
+
+                    xmlns:playpauseview="http://schemas.android.com/apk/res-auto"
                     android:layout_gravity="center"
                     android:gravity="center">
 
-                    <ImageButton
+
+                    <com.android.music_player.PlayPauseView
                         android:id="@+id/icon_play"
-                        android:layout_width="32dp"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:background="?android:attr/selectableItemBackgroundBorderless"
-                        android:scaleType="centerCrop"
-                        app:srcCompat="@drawable/avd_play_to_pause"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerInParent="true"
+                        android:clickable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        playpauseview:isCircleDraw="false"
                         android:tint="@color/white" />
                 </RelativeLayout>
 
@@ -416,11 +428,11 @@
 
                     <ImageButton
                         android:id="@+id/icon_next"
-                        android:layout_width="32dp"
+                        android:layout_width="@dimen/_32sdp"
                         android:layout_height="match_parent"
-
+                        android:layout_margin="7dp"
+                        android:layout_centerInParent="true"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
-                        android:adjustViewBounds="true"
                         android:src="@drawable/ic_next_white"
                         />
                 </RelativeLayout>
@@ -438,6 +450,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
+                        android:layout_margin="7dp"
+                        android:layout_centerInParent="true"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
 
                         android:scaleType="fitCenter"

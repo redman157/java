@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:playpauseview="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/custom_background_panel"
+    android:weightSum="10"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_80sdp">
+    <LinearLayout
+        android:layout_weight="6"
+        xmlns:app="http://schemas.android.com/tools"
+        android:id="@+id/ll_play_media"
+        android:background="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white" />
+
+        <RelativeLayout
+            app:ignore="NamespaceTypo"
+            android:elevation="3dp"
+            android:layout_marginLeft="@dimen/_15sdp"
+            android:layout_marginRight="@dimen/_15sdp"
+            android:background="@color/whiteOpaqueX2"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+
+            <LinearLayout
+                android:layout_toStartOf="@+id/imbt_Play_media"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:elevation="3dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    card_view:cardElevation="5dp"
+                    card_view:cardCornerRadius="5dp">
+                    <ImageView
+                        android:id="@+id/img_albumArt_media"
+                        android:layout_gravity="center"
+                        android:layout_width="?attr/actionBarSize"
+                        android:layout_height="?attr/actionBarSize"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_music_notes_padded"/>
+                </androidx.cardview.widget.CardView>
+
+                <RelativeLayout
+                    android:id="@+id/rl_info_music"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:theme="@android:style/ThemeOverlay.Material.Dark">
+
+                    <TextView
+                        android:padding="4dp"
+                        android:id="@+id/text_title_media"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name"
+                        android:fontFamily="sans-serif"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:textStyle="bold"
+                        android:scrollHorizontally="true"
+                        android:freezesText="true"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:ellipsize="marquee"
+                        android:singleLine="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:textColor="@color/blackGrey"
+                        android:textScaleX="1.05"
+                        android:textSize="15sp" />
+
+                    <TextView
+
+                        android:layout_below="@id/text_title_media"
+                        android:id="@+id/text_artists_media"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:singleLine="true"
+                        android:fontFamily="sans-serif"
+                        android:maxLines="1"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="@color/blackGrey"
+                        android:textScaleX="1.05"
+                        android:textStyle="normal"
+                        android:textSize="12sp" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <com.android.music_player.PlayPauseView
+                android:id="@+id/imbt_Play_media"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical|right"
+                playpauseview:isCircleDraw="false" />
+        </RelativeLayout>
+
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_change_state"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="4"
+        android:background="@color/whiteOpaqueX4"
+        android:layout_height="0dp">
+        <Button
+            android:id="@+id/btn_home"
+            android:text="Home"
+            android:enabled="false"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <View
+            android:background="@color/black"
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_library"
+            android:text="Library"
+            android:background="?attr/selectableItemBackground"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</LinearLayout>

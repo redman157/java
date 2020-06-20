@@ -233,7 +233,7 @@ public class MediaService extends MediaBrowserServiceCompat {
                     break;
 
                 case PlaybackStateCompat.SHUFFLE_MODE_ALL:
-                    
+
                     mSessionCompat.setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
                    /* ArrayList<MediaSessionCompat.QueueItem> mShuffle = new ArrayList<>(mPlaylist);
                     Collections.shuffle(mShuffle);

@@ -161,7 +161,6 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
         setTitle(mMediaManager.getCurrentMusic());
     }
 
-
     public void setTitle(String songName){
         if (songName.equals("")){
             songName = (String) MusicLibrary.music.keySet().toArray()[0];
@@ -183,7 +182,7 @@ public class AllMusicFragment extends Fragment implements View.OnClickListener,
             case R.id.img_back:
                 getActivity().getSupportFragmentManager().popBackStack();
                 break;
-            case R.id.btn_title_media:
+            case R.id.rl_info_music:
                 break;
             case R.id.imbt_Play_media:
 //                Utils.isPlayMediaService(this, mMediaManager.getType(), mMediaManager.getPosition());

@@ -73,35 +73,17 @@ public class BrowseAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
     @Override
     public MediaItemViewHolder onCreateViewHolder(ViewGroup parent,
                                                   int viewType) {
-
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_music_line, parent, false);
-
         // If the state of convertView is different, we need to adapt the view to the
         // new state.
-
-
         return new MediaItemViewHolder(view, mActivity);
-
     }
 
     @Override
     public void onBindViewHolder(MediaItemViewHolder holder, final int position) {
-        Integer cachedState = STATE_INVALID;
-
-//        final MediaBrowserCompat.MediaItem item = mMusics.get(position);
-//        final SongModel songModel = MusicLibrary.getSongModel(mMusics.get(position).getMediaId());
         final MediaMetadataCompat description = MusicLibrary.getMetadata(mActivity,keys.get(position));
         holder.assignData(description);
-        /*int state = getMediaItemState(mActivity, item);
-        if (cachedState == null || cachedState != state) {
-            Drawable drawable = getDrawableByState(mActivity, state);
-            if (drawable != null) {
-                holder.mImageView.setImageDrawable(drawable);
-                holder.mImageView.setVisibility(View.VISIBLE);
-            }
-        }*/
-
         holder.mLinearMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

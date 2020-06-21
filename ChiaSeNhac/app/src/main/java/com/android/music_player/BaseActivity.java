@@ -29,7 +29,6 @@ public abstract class BaseActivity extends ActionBarCastActivity {
         super.onCreate(savedInstanceState);
         mMediaManager.setContext(this);
         mMediaBrowserHelper = mMediaManager.getMediaBrowserConnection();
-        mMediaManager.getMediaBrowserConnection().setMediaId(mMediaManager.getCurrentMusic());
     }
 
     @Override

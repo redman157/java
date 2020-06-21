@@ -3,7 +3,6 @@ package com.android.music_player.media;
 import android.content.Context;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -36,19 +35,6 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     public OnMediaController onMediaController;
     public interface OnMediaController{
         void onController(MediaControllerCompat mediaController);
-    }
-
-    public void setOnMediaController(OnMediaController onMediaController){
-        this.onMediaController = onMediaController;
-    }
-
-    public void setMediaId(String mediaId, boolean isPlay) {
-        this.mediaId = mediaId;
-        this.isPlay = isPlay;
-    }
-
-    public void setMediaId(String mediaId) {
-        this.mediaId = mediaId;
     }
 
     public MediaBrowserConnection(Context context) {
@@ -84,33 +70,21 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         mMediaController = getMediaController();
 
         // Queue up all media items for this simple sample.
-
-        if (mMediaController.getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_NONE) {
-
-            for (final MediaBrowserCompat.MediaItem mediaItem : children) {
-                mMediaController.addQueueItem(mediaItem.getDescription());
-            }
-            Log.d("MMM", this.getClass().getSimpleName() + " --- onChildrenLoaded: " +
-                    "SHUFFLE_MODE_NONE enter");
-        }else if (mMediaController.getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_ALL){
-            for (final MediaBrowserCompat.MediaItem mediaItem : MusicLibrary.getMediaShuffle(children)) {
-                mMediaController.addQueueItem(mediaItem.getDescription());
-            }
-            Log.d("MMM", this.getClass().getSimpleName() + " --- onChildrenLoaded: " +
-                    "SHUFFLE_MODE_ALL enter");
+        for (final MediaBrowserCompat.MediaItem mediaItem : children) {
+            mMediaController.addQueueItem(mediaItem.getDescription());
         }
 
-        setMediaId(mediaId, false);
     }
 
-    public void setAutoPlay(String songName, boolean autoPlay){
+    public void setAutoPlay(String mediaID, boolean autoPlay){
+        Log.d("VVV", "SetAutoPlay: "+mediaID);
         if (mMediaController != null) {
             BundleHelper.Builder builder = new BundleHelper.Builder();
             builder.putBoolean(Constants.INTENT.AUTO_PLAY, autoPlay);
-            if (songName.equals(mMediaManager.getCurrentMusic())) {
+            if (mediaID.equals(mMediaManager.getCurrentMusic())) {
                 mMediaController.getTransportControls().stop();
             }
-            mMediaController.getTransportControls().prepareFromMediaId(songName,
+            mMediaController.getTransportControls().prepareFromMediaId(mediaID,
                     builder.generate().getBundle());
         }
     }

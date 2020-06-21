@@ -171,10 +171,7 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         @Override
         public void onPrepareFromMediaId(String mediaId, Bundle extras) {
-            isShuffleMedia();
-            mMainList = mSessionCompat.getController().getQueue();
-//            position = MusicLibrary.getPosition(mMainList ,mediaId);
-
+            setupMediaList();
             mPreparedMedia = MusicLibrary.getMetadata(MediaService.this,
                    mediaId);
             mSessionCompat.setMetadata(mPreparedMedia);
@@ -236,8 +233,7 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         @Override
         public void onSkipToNext() {
-            isShuffleMedia();
-            mMainList = mSessionCompat.getController().getQueue();
+            setupMediaList();
             int currentPos = MusicLibrary.getPosition(mMainList ,mMediaManager.getCurrentMusic());
             currentPos = (currentPos + 1) % mMainList.size();
             String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
@@ -245,14 +241,12 @@ public class MediaService extends MediaBrowserServiceCompat {
             mPreparedMedia = null;
             Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
-            onPlayFromMediaId(mediaId, bundle );
+            onPlayFromMediaId(mediaId, bundle);
             Log.d("JJJ", "MediaService --- onSkipToNext: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
         }
         @Override
         public void onSkipToPrevious() {
-            isShuffleMedia();
-
-            mMainList = mSessionCompat.getController().getQueue();
+            setupMediaList();
             int currentPos = MusicLibrary.getPosition(mMainList ,mMediaManager.getCurrentMusic());
             currentPos = currentPos > 0 ? currentPos - 1 : mPlayList.size() - 1;
             mPreparedMedia = null;
@@ -263,7 +257,7 @@ public class MediaService extends MediaBrowserServiceCompat {
             Log.d("JJJ", "MediaService --- onSkipToPrevious: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
         }
 
-        private void isShuffleMedia() {
+        private void setupMediaList() {
             if (mSessionCompat.getController().getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_NONE) {
                 mSessionCompat.setQueue(mPlayList);
             } else if (mSessionCompat.getController().getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
@@ -271,6 +265,7 @@ public class MediaService extends MediaBrowserServiceCompat {
                         MediaService.this, mMediaManager.getCurrentMusic()), mPlayList);
                 mSessionCompat.setQueue(mShuffleList);
             }
+            mMainList = mSessionCompat.getController().getQueue();
         }
 
         @Override

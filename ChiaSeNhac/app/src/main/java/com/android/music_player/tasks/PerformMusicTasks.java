@@ -30,11 +30,8 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
 
     public PerformMusicTasks(Activity activity, Boolean sync) {
         mActivity = activity;
-        
         this.sync = sync;
         mMediaManager = MediaManager.getInstance();
-
-
     }
 
     @Override

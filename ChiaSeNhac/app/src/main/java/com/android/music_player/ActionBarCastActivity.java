@@ -77,7 +77,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     public abstract void OnStateChange( STATE state);
     public abstract void IsClose(STATE state);
     public enum STATE{
-        OPEN, CLOSE, DONE, PROCESS, CONTROL
+        OPEN, CLOSE, DONE, PROCESS, CONTROL, DRAWING
     }
 
     private final DrawerLayout.DrawerListener mDrawerListener = new DrawerLayout.DrawerListener() {
@@ -139,6 +139,9 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
         public void onDrawerSlide(View drawerView, float slideOffset) {
             if (mDrawerToggle != null){
                 mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
+                if (state != STATE.DRAWING){
+                    OnStateChange(STATE.DRAWING);
+                }
             }
         }
 
@@ -346,7 +349,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        baseBackPressed();
+    }
 
+    public void baseBackPressed(){
         // If the drawer is open, back will close it
         if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawers();

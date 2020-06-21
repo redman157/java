@@ -127,10 +127,11 @@ public class MediaService extends MediaBrowserServiceCompat {
     }
 
     // MediaSession Callback: Transport Controls -> MediaPlayerManager
-    public class MediaSessionCallback extends MediaSessionCompat.Callback{
-        private final List<MediaSessionCompat.QueueItem> mPlaylist = new ArrayList<>();
+    public class MediaSessionCallback extends MediaSessionCompat.Callback {
+        private final List<MediaSessionCompat.QueueItem> mPlayList = new ArrayList<>();
+        private List<MediaSessionCompat.QueueItem> mShuffleList = new ArrayList<>();
+        private List<MediaSessionCompat.QueueItem> mMainList = new ArrayList<>();
         private MediaSessionCompat.QueueItem queueItem;
-        private int position = -1;
         private MediaMetadataCompat mPreparedMedia;
         private MediaManager mMediaManager = MediaManager.getInstance();
 
@@ -138,32 +139,19 @@ public class MediaService extends MediaBrowserServiceCompat {
             mMediaManager.setContext(MediaService.this);
         }
 
-
-        public void updateMediaQueue(){
-            if (mSessionCompat == null){
-
-            }
-        }
-
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
-
             queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
-            mPlaylist.add(queueItem);
-            mSessionCompat.setQueue(mPlaylist);
-//            Log.d("MMM", "onAddQueueItem: "+mPlaylist.size());
-
+            mPlayList.add(queueItem);
+            mSessionCompat.setQueue(mPlayList);
         }
 
         @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
-//            Log.d("NNN", "onRemoveQueueItem: "+description.getMediaId());
             queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
-            mPlaylist.remove(queueItem);
-            mSessionCompat.setQueue(mPlaylist);
-
+            mPlayList.remove(queueItem);
+            mSessionCompat.setQueue(mPlayList);
         }
-
 
         @Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
@@ -183,16 +171,12 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         @Override
         public void onPrepareFromMediaId(String mediaId, Bundle extras) {
-            if (mPlaylist.isEmpty()) {
-                // Nothing to play.
-                return;
-            }
-            position = MusicLibrary.getPosition(mediaId);
+            isShuffleMedia();
+            mMainList = mSessionCompat.getController().getQueue();
+//            position = MusicLibrary.getPosition(mMainList ,mediaId);
 
             mPreparedMedia = MusicLibrary.getMetadata(MediaService.this,
-                    mPlaylist.get(position).getDescription().getMediaId());
-            Log.d("CCC", "MediaService --- onPrepareFromMediaId --- pos: "+position +" --- " +
-                    "mediaId: "+mPreparedMedia.getString(Constants.METADATA.Title));
+                   mediaId);
             mSessionCompat.setMetadata(mPreparedMedia);
             Log.d("JJJ", "MediaService --- onPrepareFromMediaId: "+mediaId);
             if (extras != null) {
@@ -211,6 +195,11 @@ public class MediaService extends MediaBrowserServiceCompat {
         }
 
         @Override
+        public void onCustomAction(String action, Bundle extras) {
+            super.onCustomAction(action, extras);
+        }
+
+        @Override
         public void onSetRepeatMode(int repeatMode) {
             if (repeatMode == PlaybackStateCompat.REPEAT_MODE_NONE){
                 mPlayback.setRepeat(false);
@@ -221,46 +210,15 @@ public class MediaService extends MediaBrowserServiceCompat {
             }
         }
 
-
         @Override
         public void onSetShuffleMode(int shuffleMode) {
             switch (shuffleMode){
                 case PlaybackStateCompat.SHUFFLE_MODE_NONE:
                     mSessionCompat.setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
-//                    mSessionCompat.setQueue(mPlaylist);
-                    Log.d("KKK",
-                            "SHUFFLE_MODE_NONE: "+ mPlaylist.get(1).getDescription().getMediaId());
                     break;
-
                 case PlaybackStateCompat.SHUFFLE_MODE_ALL:
 
                     mSessionCompat.setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
-                   /* ArrayList<MediaSessionCompat.QueueItem> mShuffle = new ArrayList<>(mPlaylist);
-                    Collections.shuffle(mShuffle);
-                    MediaMetadataCompat currentMedia = MusicLibrary.getMetadata(MediaService.this,
-                            mMediaManager.getCurrentMusic());
-                    MediaSessionCompat.QueueItem mCurrentQueue =
-                            new MediaSessionCompat.QueueItem(currentMedia.getDescription(),
-                                    currentMedia.getDescription().hashCode());
-                    mShuffle.remove(mCurrentQueue);
-                    for (int i = 0 ; i < mShuffle.size(); i ++){
-                        if (mShuffle.get(i).getDescription().getMediaId().equals(
-                                currentMedia.getDescription().getMediaId())){
-                            mShuffle.add(0, mCurrentQueue);
-                            break;
-                        }
-                    }
-
-                    for (MediaSessionCompat.QueueItem queueItem : mPlaylist){
-                        onRemoveQueueItem(queueItem.getDescription());
-                    }
-
-                    for (MediaSessionCompat.QueueItem queueItem : mShuffle){
-                        onAddQueueItem(queueItem.getDescription());
-                    }*/
-
-                /*    Log.d("KKK",
-                            "SHUFFLE_MODE_ALL: "+ mShuffle.get(1).getDescription().getMediaId());*/
                     break;
             }
         }
@@ -278,8 +236,11 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         @Override
         public void onSkipToNext() {
-            position = (position + 1) % mPlaylist.size();
-            String mediaId = mPlaylist.get(position).getDescription().getMediaId();
+            isShuffleMedia();
+            mMainList = mSessionCompat.getController().getQueue();
+            int currentPos = MusicLibrary.getPosition(mMainList ,mMediaManager.getCurrentMusic());
+            currentPos = (currentPos + 1) % mMainList.size();
+            String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
             // bundle update trạng thái auto play và position của nó
             mPreparedMedia = null;
             Bundle bundle = new Bundle();
@@ -289,13 +250,27 @@ public class MediaService extends MediaBrowserServiceCompat {
         }
         @Override
         public void onSkipToPrevious() {
-            position = position > 0 ? position - 1 : mPlaylist.size() - 1;
+            isShuffleMedia();
+
+            mMainList = mSessionCompat.getController().getQueue();
+            int currentPos = MusicLibrary.getPosition(mMainList ,mMediaManager.getCurrentMusic());
+            currentPos = currentPos > 0 ? currentPos - 1 : mPlayList.size() - 1;
             mPreparedMedia = null;
-            String mediaId = mPlaylist.get(position).getDescription().getMediaId();
+            String mediaId = mPlayList.get(currentPos).getDescription().getMediaId();
             Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
             onPlayFromMediaId(mediaId, bundle );
             Log.d("JJJ", "MediaService --- onSkipToPrevious: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
+        }
+
+        private void isShuffleMedia() {
+            if (mSessionCompat.getController().getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_NONE) {
+                mSessionCompat.setQueue(mPlayList);
+            } else if (mSessionCompat.getController().getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
+                mShuffleList = MusicLibrary.getRandomQueue(MusicLibrary.getMetadata(
+                        MediaService.this, mMediaManager.getCurrentMusic()), mPlayList);
+                mSessionCompat.setQueue(mShuffleList);
+            }
         }
 
         @Override
@@ -304,8 +279,9 @@ public class MediaService extends MediaBrowserServiceCompat {
         }
 
         private boolean isReadyToPlay() {
-            return (!mPlaylist.isEmpty());
+            return (!mPlayList.isEmpty());
         }
+
     }
 
 
@@ -340,6 +316,7 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onPlaybackCompleted(boolean isCompleted) {
             if (isCompleted){
+
                 mCallback.onSkipToNext();
             }else {
                 Bundle bundle = new Bundle();

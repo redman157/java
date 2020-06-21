@@ -2,6 +2,7 @@ package com.android.music_player.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -57,7 +58,9 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     private RelativeLayout mViewControlMedia, mViewMusic;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
     private View mLayoutMedia, mLayoutState;
+
     public ImageView mImgAlbumArt, mImgChangeMusic, mImgBack;
+    private LinearLayout mLinearTop;
     public Button mBtnHome, mBtnLibrary;
     private MediaManager mMediaManager;
     public PlayPauseView mBtnPlayPauseMedia , mBtnPlayPausePanel;
@@ -89,6 +92,15 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(this);
         ImageHelper.getInstance(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
+            mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
+        }else {
+            baseBackPressed();
+        }
     }
 
     @Override
@@ -215,8 +227,13 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
 
         // linear button state
         mLayoutState= mLayoutMedia.findViewById(R.id.layout_panel_home);
+        mLinearTop = findViewById(R.id.ll_top);
         mBtnHome = mLayoutMedia.findViewById(R.id.btn_home);
-        mBtnHome.setTextColor(R.color.red);
+        if (Build.VERSION.SDK_INT > 23) {
+            mBtnHome.setTextColor(R.color.red);
+        }else {
+            mBtnHome.setTextColor(getResources().getColor(R.color.red));
+        }
         mViewMusic = mLayoutState.findViewById(R.id.rl_info_music);
         mBtnLibrary = mLayoutMedia.findViewById(R.id.btn_library);
     }
@@ -343,6 +360,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
                 }else {
                     mBtnPlayPauseMedia.Play();
                     mBtnPlayPausePanel.Play();
+
                     this.getController().getTransportControls().playFromMediaId(nameChoose, null);
                 }
                 break;
@@ -443,6 +461,10 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
                 }else if (this.state == STATE.CLOSE){
                     mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
                 }
+                mSlidingUpPanelLayout.setTouchEnabled(true);
+                break;
+            case DRAWING:
+                mSlidingUpPanelLayout.setTouchEnabled(false);
                 break;
             case CONTROL:
                 break;
@@ -451,11 +473,9 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         }
     }
 
-
     @Override
     public void IsClose(STATE state) {
         this.state = state;
-
         if (state == STATE.OPEN){
             mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
 
@@ -470,12 +490,6 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     public void onPanelSlide(View panel, float slideOffset) {
         Log.d("UUU", "onPanelSlide : "+slideOffset);
         alpha = slideOffset;
-
-        if (slideOffset > 0.3){
-            mLayoutState.setVisibility(View.GONE);
-        }else {
-            mLayoutState.setAlpha(slideOffset);
-        }
         mLayoutState.setAlpha(alpha);
     }
 
@@ -495,13 +509,14 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         switch (newState) {
             case EXPANDED:
                 mLayoutState.setAlpha(0);
-
                 mLayoutState.setVisibility(View.GONE);
                 break;
             case COLLAPSED:
-
                 mLayoutState.setAlpha(1);
                 mLayoutState.setVisibility(View.VISIBLE);
+                break;
+            case DRAGGING:
+                mLayoutState.setVisibility(View.GONE);
                 break;
         }
     }

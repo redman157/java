@@ -99,6 +99,15 @@ public class MusicLibrary {
         return -1;
     }
 
+    public static int getPosition(List<MediaSessionCompat.QueueItem> music, String songName){
+        for (int i = 0; i < music.size(); i++){
+            if (songName.equals(music.get(i).getDescription().getMediaId())){
+                return i;
+            }
+        }
+        return  -1;
+    }
+
     public static Bitmap getAlbumBitmap(Context context, String mediaId) {
         return BitmapFactory.decodeResource(context.getResources(),
                 MusicLibrary.getAlbumRes(mediaId));
@@ -115,6 +124,46 @@ public class MusicLibrary {
         }
         return result;
     }
+
+    public static List<MediaSessionCompat.QueueItem> getRandomQueue(MediaMetadataCompat currentMedia,
+            List<MediaSessionCompat.QueueItem> playList) {
+        List<MediaSessionCompat.QueueItem> result = new ArrayList<>();
+        for (MediaSessionCompat.QueueItem tracks : playList){
+            result.add(tracks);
+        }
+        Collections.shuffle(result);
+        MediaSessionCompat.QueueItem mCurrentQueue =
+                new MediaSessionCompat.QueueItem(currentMedia.getDescription(),
+                        currentMedia.getDescription().hashCode());
+        result.remove(currentMedia);
+        result.add(0, mCurrentQueue);
+
+        return result;
+    }
+
+//    private static List<MediaSessionCompat.QueueItem> convertToQueue(
+//            Iterable<MediaMetadataCompat> tracks, String... categories) {
+//        List<MediaSessionCompat.QueueItem> queue = new ArrayList<>();
+//        int count = 0;
+//        for (MediaMetadataCompat track : tracks) {
+//
+//            // We create a hierarchy-aware mediaID, so we know what the queue is about by looking
+//            // at the QueueItem media IDs.
+//
+//
+//            MediaMetadataCompat trackCopy = new MediaMetadataCompat.Builder(track)
+//                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, hierarchyAwareMediaID)
+//                    .build();
+//
+//            // We don't expect queues to change after created, so we use the item index as the
+//            // queueId. Any other number unique in the queue would work.
+//            MediaSessionCompat.QueueItem item = new MediaSessionCompat.QueueItem(trackCopy.getDescription(), count++);
+//            queue.add(item);
+//        }
+//        return queue;
+//
+//    }
+
 
     public static List<MediaBrowserCompat.MediaItem> getMediaShuffle( List<MediaBrowserCompat.MediaItem> children){
         List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>(children);

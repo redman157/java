@@ -14,12 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapter.HomeHolder>  {
     private HomeActivity mHomeActivity;
@@ -80,11 +83,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
         public void initView(){
 
-            if (mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_SONG).equals("")) {
+            if (mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).equals("")) {
                 mTextPlayerSongs.setText("");
                 mImg_Player_Songs.setImageResource(R.drawable.ic_music_notes_padded);
             }else {
-                mMostMusic = mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_SONG);
+                mMostMusic = mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC);
                 mTextPlayerSongs.setText(mMostMusic);
                 ImageHelper.getInstance(mHomeActivity).getSmallImageByPicasso(mMediaManager.getSong(mMostMusic).getAlbumID(),
                         mImg_Player_Songs);
@@ -117,8 +120,14 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.img_Shuffle_All:
+                    Random random = new Random();
+                    List<String> keys = new ArrayList<>(MusicLibrary.music.keySet());
+                    int index = random.nextInt(keys.size());
+                    mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(
+                            keys.get(index), null
+                    );
                     Log.d("CCC",
-                            "Check thử: "+mMediaManager.getMediaBrowserConnection().getMediaController().getShuffleMode());
+                            "Check thử: "+keys.get(index));
                     break;
                 case R.id.img_player_2:
 
@@ -128,9 +137,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
                     break;
                 case R.id.img_most_player:
-                    if (!mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_SONG).equals("")) {
-                        (mHomeActivity).setViewMusic(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_SONG), SlidingUpPanelLayout.PanelState.EXPANDED);
-                        (mHomeActivity).mMediaBrowserHelper.getTransportControls().playFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_SONG), null);
+                    if (!mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).equals("")) {
+                        (mHomeActivity).setViewMusic(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), SlidingUpPanelLayout.PanelState.EXPANDED);
+                        (mHomeActivity).mBrowserHelper.getTransportControls().playFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), null);
                     }
                     break;
             }

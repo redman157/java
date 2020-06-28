@@ -407,7 +407,7 @@
                     android:gravity="center">
 
 
-                    <com.android.music_player.PlayPauseView
+                    <com.android.music_player.view.PlayPauseView
                         android:id="@+id/icon_play"
                         android:layout_width="40dp"
                         android:layout_height="40dp"

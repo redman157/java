@@ -6,7 +6,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,22 +14,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RelationSongs {
+public class RelationMusic {
     private Context mContext;
     private String TAG = "RelationMusicLog";
     /* renamed from: db */
-    private SongOfPlayList mSongOfPlayList;
+    private MusicOfPlayList mMusicOfPlayList;
     private ReaderSQL mDatabase;
 
-    public RelationSongs(Context context){
+    public RelationMusic(Context context){
         mContext = context;
         this.mDatabase = new ReaderSQL(context, Database.RELATION_SONGS.DATABASE_NAME, null, 1);
-        mSongOfPlayList = new SongOfPlayList(context);
+        mMusicOfPlayList = new MusicOfPlayList(context);
         mDatabase.queryData(Database.RELATION_SONGS.CREATE_TABLE);
         mDatabase.close();
     }
 
-    public RelationSongs closeDatabase(){
+    public RelationMusic closeDatabase(){
         mDatabase.close();
         return this;
     }
@@ -121,11 +121,11 @@ public class RelationSongs {
         closeDatabase();
     }
 
-    public boolean compareIdSong(SongModel songModel){
+    public boolean compareIdSong(MusicModel musicModel){
         Cursor cursor = mDatabase.getData(Database.RELATION_SONGS.QUERY);
         if (isSelect(cursor)){
             do {
-                if (cursor.getString(2).equals(mSongOfPlayList.getSongName(songModel))){
+                if (cursor.getString(2).equals(mMusicOfPlayList.getSongName(musicModel))){
                     return true;
                 }
             }

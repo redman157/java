@@ -11,7 +11,7 @@ import android.util.Log;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.SplashActivity;
 import com.android.music_player.managers.MediaManager;
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -46,17 +46,17 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
     @Override
     protected Long doInBackground(String... strings) {
 
-        Map<String, ArrayList<SongModel>> artists = mMediaManager.getArtist();
-        Map<String, ArrayList<SongModel>> albums = mMediaManager.getAlbum();
-        Map<String, ArrayList<SongModel>> folders = mMediaManager.getFolder();
+        Map<String, ArrayList<MusicModel>> artists = mMediaManager.getArtist();
+        Map<String, ArrayList<MusicModel>> albums = mMediaManager.getAlbum();
+        Map<String, ArrayList<MusicModel>> folders = mMediaManager.getFolder();
         if (artists.size() > 0 && albums.size() > 0 && folders.size() > 0) {
             Log.d(tag, "Done filter into data");
 //            Log.d(tag,
 //                    "artist : "+ artists.size() +" albums : "+ albums.size() +" folders : "+ folders.size() );
-            for (Map.Entry<String, ArrayList<SongModel>> entry : artists.entrySet()) {
+            for (Map.Entry<String, ArrayList<MusicModel>> entry : artists.entrySet()) {
                 String k = entry.getKey();
-                ArrayList<SongModel> v = entry.getValue();
-                Log.d(tag, "artist name: "+ k +" SongModel: "+v.size());
+                ArrayList<MusicModel> v = entry.getValue();
+                Log.d(tag, "artist name: "+ k +" MusicModel: "+v.size());
             }
 
         }

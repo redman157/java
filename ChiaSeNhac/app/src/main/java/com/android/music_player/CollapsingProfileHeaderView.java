@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.ImageHelper;
 
 public class CollapsingProfileHeaderView extends LinearLayout {
@@ -78,17 +78,17 @@ public class CollapsingProfileHeaderView extends LinearLayout {
         mTextAlbums = this.findViewById(R.id.profileMisc);
     }
 
-    public void applyAttributes(SongModel songModel) {
-        ImageHelper.getInstance(context).getSmallImageByPicasso(songModel.getAlbumID(),
+    public void applyAttributes(MusicModel musicModel) {
+        ImageHelper.getInstance(context).getSmallImageByPicasso(musicModel.getAlbumID(),
                 profileImage);
 
 //        mProfile.setImageResource(profileDrawable);
-        mTextSongName.setText(songModel.getSongName());
+        mTextSongName.setText(musicModel.getSongName());
         mTextSongName.setTextSize(TypedValue.COMPLEX_UNIT_SP,
                 12);
-        mTextArtist.setText(songModel.getAlbum());
+        mTextArtist.setText(musicModel.getAlbum());
         mTextArtist.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
-        mTextAlbums.setText(songModel.getArtist());
+        mTextAlbums.setText(musicModel.getArtist());
         mTextAlbums.setCompoundDrawablesWithIntrinsicBounds(miscIcon, 0, 0, 0);
         mTextAlbums.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
     }

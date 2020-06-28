@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 
 import java.util.ArrayList;
 
-public class SongOfPlayList {
+public class MusicOfPlayList {
 
     private Context mContext;
     /* renamed from: db */
@@ -19,14 +19,14 @@ public class SongOfPlayList {
     private ReaderSQL mDatabase;
 
 
-    public SongOfPlayList(Context mContext){
+    public MusicOfPlayList(Context mContext){
         this.mContext = mContext;
         mDatabase = new ReaderSQL(mContext, Database.SONGS_OF_PLAY_LIST.DATABASE_NAME, null, 1);
         mDatabase.queryData(Database.SONGS_OF_PLAY_LIST.CREATE_TABLE);
         mDatabase.close();
     }
 
-    public SongOfPlayList closeDatabase() {
+    public MusicOfPlayList closeDatabase() {
         this.mDatabase.close();
         return this;
     }
@@ -45,7 +45,7 @@ public class SongOfPlayList {
         return false;
     }
 
-    public void addSong(SongModel song) {
+    public void addSong(MusicModel song) {
         String SQL_INSERT = "INSERT INTO " + Database.SONGS_OF_PLAY_LIST.TABLE_NAME +
                 "VALUES" +
                 "(" + "null"                   + "," +
@@ -74,7 +74,7 @@ public class SongOfPlayList {
                 "DROP TABLE IF EXISTS "+ Database.SONGS_OF_PLAY_LIST.TABLE_NAME+" WHERE name_play_list= '"+namePlayList+ "' ";
     }
 
-    public boolean deleteSong(SongModel song){
+    public boolean deleteSong(MusicModel song){
         String SQL_DELETE =
                 "DROP TABLE IF EXISTS "+ Database.SONGS_OF_PLAY_LIST.TABLE_NAME+" WHERE " +
                         "name_song= '"+song.getSongName()+ "' ";
@@ -92,7 +92,7 @@ public class SongOfPlayList {
     }
 
 
-    public boolean searchSong(SongModel song){
+    public boolean searchSong(MusicModel song){
         Cursor data = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
         try {
             if (isSelect(data)){
@@ -114,7 +114,7 @@ public class SongOfPlayList {
         return false;
     }
 
-    public void updateSong(String name,SongModel song){
+    public void updateSong(String name, MusicModel song){
         String SQL_UPDATE = "UPDATE "+ Database.SONGS_OF_PLAY_LIST.TABLE_NAME+ " SET "+
                 Database.SONGS_OF_PLAY_LIST.NAME_SONG + " = " + "'"+ song.getSongName()+"'" + "," +
                 Database.SONGS_OF_PLAY_LIST.PATH      + " = " + "'"+ song.getPath()+"'"     + "," +
@@ -136,13 +136,13 @@ public class SongOfPlayList {
         closeDatabase();
     }
 
-    public ArrayList<SongModel> getAllSong(int id) {
+    public ArrayList<MusicModel> getAllSong(int id) {
         Cursor data = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
-        ArrayList<SongModel> mSongs = new ArrayList<>();
+        ArrayList<MusicModel> mSongs = new ArrayList<>();
         if (isSelect(data)){
             while (data.moveToNext()){
                 if (data.getInt(0)== id ) {
-                    SongModel.Builder builder = new SongModel.Builder();
+                    MusicModel.Builder builder = new MusicModel.Builder();
                     builder.setSongName(data.getString(1));
                     builder.setPath(data.getString(2));
                     builder.setArtist(data.getString(3));
@@ -151,8 +151,8 @@ public class SongOfPlayList {
                     builder.setFileName(data.getString(6));
                     builder.setTime(data.getInt(7));
 
-                    SongModel songModel = builder.generate();
-                    mSongs.add(songModel);
+                    MusicModel musicModel = builder.generate();
+                    mSongs.add(musicModel);
                 }
             }
         }
@@ -160,14 +160,14 @@ public class SongOfPlayList {
         return mSongs;
     }
 
-    public SongModel getSong(String nameSong) {
+    public MusicModel getSong(String nameSong) {
         Cursor data = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
-        SongModel songModel = null;
+        MusicModel musicModel = null;
         try {
             if (isSelect(data)){
                 while (data.moveToNext()){
                     if (data.getString(1).equals(nameSong)){
-                        SongModel.Builder builder = new SongModel.Builder();
+                        MusicModel.Builder builder = new MusicModel.Builder();
                         builder.setSongName(data.getString(1));
                         builder.setPath(data.getString(2));
                         builder.setArtist(data.getString(3));
@@ -176,8 +176,8 @@ public class SongOfPlayList {
                         builder.setFileName(data.getString(6));
                         builder.setTime(data.getInt(7));
 
-                        songModel = builder.generate();
-                        return songModel;
+                        musicModel = builder.generate();
+                        return musicModel;
                     }
                 }
             }
@@ -189,12 +189,12 @@ public class SongOfPlayList {
         return null;
     }
 
-    public String getSongName(SongModel songModel){
+    public String getSongName(MusicModel musicModel){
         Cursor cursor = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
         try {
             if (isSelect(cursor)) {
                 do {
-                    if (cursor.getString(1).equals(songModel.getSongName())) {
+                    if (cursor.getString(1).equals(musicModel.getSongName())) {
                         return cursor.getString(1);
                     }
                 }

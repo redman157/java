@@ -1,4 +1,4 @@
-package com.android.music_player;
+package com.android.music_player.models;
 
 public class OptionItem {
     private int icon;

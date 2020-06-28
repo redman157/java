@@ -1,4 +1,4 @@
-package com.android.music_player;
+package com.android.music_player.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+
+import com.android.music_player.R;
 
 public class PlayPauseView extends FrameLayout {
 

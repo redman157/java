@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,32 +16,40 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.R;
-import com.android.music_player.models.SongModel;
+import com.android.music_player.interfaces.OnMediaItem;
+import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogHelper;
 import com.android.music_player.utils.ImageHelper;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.ViewHolder> {
     private Context mContext;
-    private SongModel mSongModel;
-    private ArrayList<SongModel> songs;
+    private MediaSessionCompat.QueueItem item;
+    private MediaManager mMediaManager;
+    private List<MediaSessionCompat.QueueItem> queueItems;
     private ImageHelper mImageUtils;
     private int mPossitionMusic;
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
     private int mOptionMusic;
     private Dialog dialog;
-    public MusicDialogAdapter(Context context, Dialog dialog, ArrayList<SongModel> songs) {
-        this.songs = songs;
+    public MusicDialogAdapter(Context context, Dialog dialog, List<MediaSessionCompat.QueueItem> queueItems) {
+        this.queueItems = queueItems;
         mContext = context;
         this.dialog = dialog;
         mImageUtils = ImageHelper.getInstance(context);
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(context);
     }
 
+    public List<MediaSessionCompat.QueueItem> getQueueItems() {
+        return queueItems;
+    }
 
     public void setPosition(int position){
         mOptionMusic = position;
@@ -47,31 +57,23 @@ public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.
     public int getPosition(){
         return mOptionMusic;
     }
-    public ArrayList<SongModel> getListMusic() {
-        return songs;
-    }
 
-    public void setListMusic(ArrayList<SongModel> songs) {
-        this.songs = songs;
-    }
+    private OnMediaItem onMediaItem;
 
-    private OnClickItemListener onClickItemListener;
-
-    public void setOnClick(OnClickItemListener onClickItemListener){
-        this.onClickItemListener = onClickItemListener;
+    public void setOnClickItemListener(OnMediaItem onMediaItem){
+        this.onMediaItem = onMediaItem;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_music, null);
-
         return new ViewHolder(view);
     }
 
     @Override
     public int getItemCount() {
-        return songs.size();
+        return queueItems.size();
     }
 
     @Override
@@ -82,19 +84,18 @@ public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
-        mSongModel = getListMusic().get(position);
+        item = queueItems.get(position);
         holder.setData(position);
         holder.ll_option_music.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickItemListener.onClickPosition(position);
+                onMediaItem.onChooseMedia(item.getDescription().getMediaId());
                 // lúc hiện dialog nếu hiển thị thì sẽ ẩn đi
                 DialogHelper.cancelDialog();
             }
         });
 
     }
-
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
@@ -111,8 +112,8 @@ public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.
         }
 
         public void setData(int pos){
-            SongModel songModel = getListMusic().get(pos);
-            if (mOptionMusic == pos){
+            MediaSessionCompat.QueueItem item = queueItems.get(pos);
+            if (mMediaManager.getCurrentMusic().equals(item.getDescription().getMediaId())){
 //                Log.d("KKK", "setData: "+getListMusic().getData(pos).getSongName());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     textTitle.setTextColor(mContext.getColor(R.color.red));
@@ -127,10 +128,13 @@ public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.
                 }
             }
 
-            mImageUtils.getSmallImageByPicasso(songModel.getAlbumID(), imageView);
-            textTime.setText(format.format(songModel.getTime()));
-            textArtist.setText(songModel.getArtist());
-            textTitle.setText(songModel.getSongName());
+            MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(mContext,
+                    item.getDescription().getMediaId());
+
+            mImageUtils.getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes((String) metadataCompat.getText(Constants.METADATA.Title))), imageView);
+            textTime.setText(format.format(metadataCompat.getLong(Constants.METADATA.Duration)));
+            textArtist.setText(metadataCompat.getText(Constants.METADATA.Artist));
+            textTitle.setText(metadataCompat.getText(Constants.METADATA.Title));
         }
     }
 }

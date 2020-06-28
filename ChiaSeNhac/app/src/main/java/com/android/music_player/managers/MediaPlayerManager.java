@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.media.PlaybackInfoListener;
 import com.android.music_player.media.PlayerAdapter;
+import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.Utils;
 
 import java.io.File;
 import java.util.concurrent.Executors;
@@ -176,6 +178,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
             mCurrentMediaPlayedToCompletion = false;
         }
         if (!mediaChanged){
+
             if (!isPlaying()){
                 play();
             }
@@ -222,7 +225,9 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         } finally {
             // start được save bài hiện đang play và tăng điểm play lên
             setNewState(PlaybackStateCompat.STATE_PLAYING);
-            mMediaManager.setCurrentMusic(mFilename);
+            String mediaID = Utils.getKeyByValue(MusicLibrary.fileName, mFilename);
+            mMediaManager.setCurrentMusic(mediaID);
+            mMediaManager.increase(Constants.VALUE.MOST_MUSIC,mediaID);
         }
     }
 

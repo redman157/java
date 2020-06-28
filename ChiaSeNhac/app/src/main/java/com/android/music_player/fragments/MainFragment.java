@@ -19,11 +19,11 @@ import com.android.music_player.R;
 import com.android.music_player.adapters.BrowseAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
 import com.android.music_player.interfaces.OnChangeListener;
-import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.interfaces.OnMediaItem;
 import com.google.android.material.tabs.TabLayout;
 
 public class MainFragment extends Fragment implements TabLayout.OnTabSelectedListener,
-        OnClickItemListener {
+        OnMediaItem {
     private View view;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
@@ -137,21 +137,21 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
 
     }
 
-    private void setupViewPager(ViewPager viewPager){
+    private void setupViewPager(ViewPager mViewPager){
         mViewPagerAdapter = new ViewPagerAdapter(getContext() ,
                 getChildFragmentManager());
 
-        HomeFragment homeFragment = new HomeFragment();
-        homeFragment.setOnChangeListener(onChangeListener);
-        LibraryFragment libraryFragment = new LibraryFragment();
+        HomeFragment mHomeFragment = new HomeFragment();
+        mHomeFragment.setOnChangeListener(onChangeListener);
+        SettingsFragment mSettingsFragment = new SettingsFragment();
 
-        mViewPagerAdapter.addFragment(homeFragment);
-        mViewPagerAdapter.addFragment(libraryFragment);
+        mViewPagerAdapter.addFragment(mHomeFragment);
+        mViewPagerAdapter.addFragment(mSettingsFragment);
 
-        viewPager.setAdapter(mViewPagerAdapter);
-        viewPager.setCurrentItem(0);
+        mViewPager.setAdapter(mViewPagerAdapter);
+        mViewPager.setCurrentItem(0);
 
-        mTabLayout.setupWithViewPager(viewPager);
+        mTabLayout.setupWithViewPager(mViewPager);
 
         for (int i = 0; i < mTabLayout.getTabCount(); i++) {
             mTabLayout.getTabAt(i).setCustomView(mViewPagerAdapter.getTabHome(i));
@@ -159,15 +159,8 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
         mTabLayout.addOnTabSelectedListener(this);
     }
 
-
     @Override
-    public void onClickPosition(int pos) {
-
-    }
-
-
-    @Override
-    public void onClickMusic(String nameChoose) {
-        Log.d("CCC","MainFragment --- onClickMusic: "+nameChoose);
+    public void onChooseMedia(String mediaID) {
+        Log.d("CCC","MainFragment --- onChooseMedia: "+ mediaID);
     }
 }

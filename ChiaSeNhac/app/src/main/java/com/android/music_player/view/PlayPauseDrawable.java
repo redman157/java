@@ -1,4 +1,4 @@
-package com.android.music_player;
+package com.android.music_player.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

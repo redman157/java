@@ -22,7 +22,8 @@ import com.android.music_player.adapters.MusicDialogAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.adapters.SelectMusicAdapter;
 import com.android.music_player.managers.MediaManager;
-import com.android.music_player.models.SongModel;
+import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.models.MusicModel;
 
 import java.util.ArrayList;
 
@@ -123,7 +124,7 @@ public class DialogHelper {
         dialog.show();
     }
 
-    public static void showAddSongs(final Context context, final SongModel songModel,
+    public static void showAddSongs(final Context context, final MusicModel musicModel,
                                     final String title){
         MediaManager.getInstance().setContext(context);
         dialog = new Dialog(context);
@@ -135,9 +136,9 @@ public class DialogHelper {
         ImageButton btnAddMusic = dialog.findViewById(R.id.imgb_add_music);
         final Button btnAdd = dialog.findViewById(R.id.btnAddMusic);
         btnAdd.setText(title);
-        ImageHelper.getInstance(context).getSmallImageByPicasso(songModel.getAlbumID(), imageView);
+        ImageHelper.getInstance(context).getSmallImageByPicasso(musicModel.getAlbumID(), imageView);
 
-        textTitle.setText(songModel.getSongName());
+        textTitle.setText(musicModel.getSongName());
 
         btnAddMusic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,12 +154,12 @@ public class DialogHelper {
                 // Add music cần search playlist rồi mới add music
 
                 // add bài hát
-                if (MediaManager.getInstance().addSongToPlayList(title, songModel)){
+                if (MediaManager.getInstance().addMusicToPlayList(title, musicModel)){
 
-                    Utils.ToastShort(context,"Đã Add Bài: "+songModel.getSongName());
+                    Utils.ToastShort(context,"Đã Add Bài: "+ musicModel.getSongName());
                 }else {
                     Utils.ToastShort(
-                            context,"Add Bài: "+songModel.getSongName());
+                            context,"Add Bài: "+ musicModel.getSongName());
                 }
 
                 dialog.dismiss();
@@ -168,7 +169,7 @@ public class DialogHelper {
     }
 
     @SuppressLint("SetTextI18n")
-    public static void showSongsInfo(Context context, SongModel songModel){
+    public static void showSongsInfo(Context context, MusicModel musicModel){
         dialog = new Dialog(context);
 
         dialog.setContentView(R.layout.dialog_info_music);
@@ -182,13 +183,13 @@ public class DialogHelper {
         TextView textLocation = dialog.findViewById(R.id.dialog_about_music_location);
         Button btnDone = dialog.findViewById(R.id.dialog_about_close);
 
-        textName.setText(songModel.getSongName());
-        textFileName.setText("File Name: " + songModel.getFileName());
-        textSong.setText("Song Title: " + songModel.getSongName());
-        textAlbum.setText("Album: " + songModel.getAlbum());
-        textArtist.setText("Artist: " + songModel.getArtist());
-        textTime.setText("Time Song: "+Utils.formatTime(songModel.getTime()));
-        textLocation.setText("File Location: "+songModel.getPath());
+        textName.setText(musicModel.getSongName());
+        textFileName.setText("File Name: " + musicModel.getFileName());
+        textSong.setText("Song Title: " + musicModel.getSongName());
+        textAlbum.setText("Album: " + musicModel.getAlbum());
+        textArtist.setText("Artist: " + musicModel.getArtist());
+        textTime.setText("Time Song: "+Utils.formatTime(musicModel.getTime()));
+        textLocation.setText("File Location: "+ musicModel.getPath());
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -200,15 +201,20 @@ public class DialogHelper {
     }
 
     public static void showSelectSong(final Context context,
-                                      MusicDialogAdapter musicDialogAdapter, int pos){
+                                      MusicDialogAdapter musicDialogAdapter){
         dialog = new Dialog(context);
         dialog.setContentView(R.layout.dialog_option_music);
+        MediaManager.getInstance().setContext(context);
         RecyclerView mRcOptionMusic = dialog.findViewById(R.id.rc_OptionMusic);
 
         mRcOptionMusic.setAdapter(musicDialogAdapter);
         mRcOptionMusic.setLayoutManager(new LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL, false));
-        mRcOptionMusic.getLayoutManager().scrollToPosition(pos);
+
+
+        mRcOptionMusic.getLayoutManager().scrollToPosition(
+                MusicLibrary.getPosition(musicDialogAdapter.getQueueItems(),
+                MediaManager.getInstance().getCurrentMusic()));
         dialog.show();
     }
 

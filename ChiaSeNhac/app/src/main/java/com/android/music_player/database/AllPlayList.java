@@ -13,23 +13,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @SuppressWarnings("unchecked")
-public class AllPlaylist {
+public class AllPlayList {
 
     private Context mContext;
     private String TAG = "AllPlaylistLog";
     /* renamed from: db */
-    private RelationSongs mRelationSongs;
+    private RelationMusic mRelationMusic;
     private ReaderSQL mDatabase;
 
-    public AllPlaylist(Context context){
+    public AllPlayList(Context context){
         this.mContext = context;
         this.mDatabase = new ReaderSQL(context, Database.ALL_PLAY_LISTS.DATABASE_NAME, null, 1);
-        mRelationSongs = new RelationSongs(context);
+        mRelationMusic = new RelationMusic(context);
         mDatabase.queryData(Database.ALL_PLAY_LISTS.CREATE_TABLE);
         mDatabase.close();
     }
 
-    public AllPlaylist closeDatabase() {
+    public AllPlayList closeDatabase() {
 
         mDatabase.close();
 
@@ -51,11 +51,11 @@ public class AllPlaylist {
         return false;
     }
 
-    public void addPlayList(String title) {
+    public void addPlayList(String mediaID) {
         String SQL_INSERT =
                 "INSERT INTO "+ Database.ALL_PLAY_LISTS.TABLE_NAME
                         +" VALUES(null"  + ","+
-                        "'" + title +"'" + ")";
+                        "'" + mediaID +"'" + ")";
 
         mDatabase.queryData(SQL_INSERT);
         closeDatabase();
@@ -68,16 +68,16 @@ public class AllPlaylist {
         closeDatabase();
     }
 
-    public boolean deletePlayList(String name_play_list) {
+    public boolean deletePlayList(String namePlayList) {
         String SQL_DELETE =  "DELETE FROM " +Database.ALL_PLAY_LISTS.TABLE_NAME
-                + " WHERE "+Database.ALL_PLAY_LISTS.NAME_PLAY_LIST+ " = "+"'"+name_play_list+"'";
+                + " WHERE "+Database.ALL_PLAY_LISTS.NAME_PLAY_LIST+ " = "+"'"+namePlayList+"'";
 
         /*String SQL_DELETE =
                 "DROP TABLE IF EXISTS "+ Database.ALL_PLAY_LISTS.TABLE_NAME+" WHERE " +
                         "name_play_list = "+name_play_list+ "";*/
-        if (searchPlayList(name_play_list) && getSize() > 0){
+        if (searchPlayList(namePlayList) && getSize() > 0){
             mDatabase.queryData(SQL_DELETE);
-            mRelationSongs.deletePlayList(name_play_list);
+            mRelationMusic.deletePlayList(namePlayList);
             closeDatabase();
             return true;
         }else {

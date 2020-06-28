@@ -24,8 +24,8 @@ import java.util.Map;
  * Helper class for a MediaBrowser that handles connecting, disconnecting,
  * and basic browsing with simplified callbacks.
  */
-public abstract class MediaBrowserHelper {
-//    private static final String TAG = MediaBrowserHelper.class.getSimpleName();
+public abstract class BrowserHelper {
+//    private static final String TAG = BrowserHelper.class.getSimpleName();
     private static final String TAG = "JJJ";
     private Context mContext;
     private final Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass;
@@ -38,8 +38,8 @@ public abstract class MediaBrowserHelper {
     private final MediaControllerCallback mMediaControllerCallback;
 
     private MediaBrowserCompat mMediaBrowser;
-    public MediaBrowserHelper(Context mContext,
-                              Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass) {
+    public BrowserHelper(Context mContext,
+                         Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass) {
         // thực hiện công việc kết nối từ activity tới service
         this.mContext = mContext;
         this.mMediaBrowserServiceClass = mMediaBrowserServiceClass;
@@ -65,9 +65,9 @@ public abstract class MediaBrowserHelper {
                             null);
             mMediaBrowser.connect();
 
-            Log.d(TAG, "MediaBrowserHelper --- onStart: Creating MediaBrowser, and connecting");
+            Log.d(TAG, "BrowserHelper --- onStart: Creating MediaBrowser, and connecting");
         } else {
-            Log.d(TAG, "MediaBrowserHelper --- mMediaBrowser: khác null");
+            Log.d(TAG, "BrowserHelper --- mMediaBrowser: khác null");
         }
     }
 
@@ -75,16 +75,16 @@ public abstract class MediaBrowserHelper {
         if (mMediaController != null){
             mMediaController.unregisterCallback(mMediaControllerCallback);
             mMediaController = null;
-            Log.d(TAG, "MediaBrowserHelper --- mMediaController enter");
+            Log.d(TAG, "BrowserHelper --- mMediaController enter");
         }
         if (mMediaBrowser != null && mMediaBrowser.isConnected()) {
 //            mMediaBrowser.unsubscribe(mMediaBrowser.getRoot(), mMediaBrowserSubscriptionCallback);
             mMediaBrowser.disconnect();
             mMediaBrowser = null;
-            Log.d(TAG, "MediaBrowserHelper --- mMediaBrowser enter");
+            Log.d(TAG, "BrowserHelper --- mMediaBrowser enter");
         }
         resetState();
-        Log.d(TAG, "MediaBrowserHelper --- onStop: Releasing MediaController, Disconnecting from " +
+        Log.d(TAG, "BrowserHelper --- onStop: Releasing MediaController, Disconnecting from " +
                 "MediaBrowser");
     }
 
@@ -139,8 +139,8 @@ public abstract class MediaBrowserHelper {
     @NonNull
     public final MediaControllerCompat getMediaController() {
         if (mMediaController == null) {
-            Log.d(TAG,"MediaBrowserHelper --- MediaController is null!" );
-            throw new IllegalStateException("MediaBrowserHelper --- MediaController is null!");
+            Log.d(TAG,"BrowserHelper --- MediaController is null!" );
+            throw new IllegalStateException("BrowserHelper --- MediaController is null!");
         }
         return mMediaController;
     }
@@ -156,12 +156,12 @@ public abstract class MediaBrowserHelper {
                 callback.onPlaybackStateChanged(null);
             }
         });
-        Log.d(TAG, "MediaBrowserHelper --- resetState: Enter");
+        Log.d(TAG, "BrowserHelper --- resetState: Enter");
     }
 
     public MediaControllerCompat.TransportControls getTransportControls() {
         if (mMediaController == null) {
-            Log.d(TAG, "MediaBrowserHelper --- getTransportControls: MediaController is null!");
+            Log.d(TAG, "BrowserHelper --- getTransportControls: MediaController is null!");
             throw new IllegalStateException("MediaController is null!");
         }
         return mMediaController.getTransportControls();
@@ -169,7 +169,7 @@ public abstract class MediaBrowserHelper {
 
     public MediaMetadataCompat getMetadata(){
         if (mMediaController == null) {
-            Log.d(TAG, "MediaBrowserHelper --- getTransportControls: MediaController is null!");
+            Log.d(TAG, "BrowserHelper --- getTransportControls: MediaController is null!");
             throw new IllegalStateException("MediaController is null!");
         }
         return mMediaController.getMetadata();
@@ -185,9 +185,9 @@ public abstract class MediaBrowserHelper {
 
                 if (metadata != null) {
                     Log.d("CCC",
-                            "MediaBrowserHelper --- registerCallback --- musicID: " + metadata.getDescription().getMediaId());
+                            "BrowserHelper --- registerCallback --- musicID: " + metadata.getDescription().getMediaId());
                     Log.d("JJJ",
-                            "MediaBrowserHelper --- registerCallback --- musicID: " + metadata.getDescription().getMediaId());
+                            "BrowserHelper --- registerCallback --- musicID: " + metadata.getDescription().getMediaId());
                     callback.onMetadataChanged(metadata);
                 }
 
@@ -195,12 +195,12 @@ public abstract class MediaBrowserHelper {
 
                 if (playbackState != null) {
                     Log.d("JJJ",
-                            "MediaBrowserHelper --- registerCallback --- state:" + playbackState.getState());
+                            "BrowserHelper --- registerCallback --- state:" + playbackState.getState());
                     callback.onPlaybackStateChanged(playbackState);
                 }
             }else {
                 Log.d("JJJ",
-                        "MediaBrowserHelper --- registerCallback --- mMediaController: null");
+                        "BrowserHelper --- registerCallback --- mMediaController: null");
             }
         }
     }
@@ -213,13 +213,13 @@ public abstract class MediaBrowserHelper {
         @Override
         public void onConnectionSuspended() {
             super.onConnectionSuspended();
-            Log.d("JJJ","MediaBrowserHelper --- onConnectionSuspended: enter");
+            Log.d("JJJ","BrowserHelper --- onConnectionSuspended: enter");
         }
 
         @Override
         public void onConnectionFailed() {
             super.onConnectionFailed();
-            Log.d("JJJ","MediaBrowserHelper --- onConnectionFailed: enter");
+            Log.d("JJJ","BrowserHelper --- onConnectionFailed: enter");
         }
 
         @Override
@@ -236,7 +236,7 @@ public abstract class MediaBrowserHelper {
                     mMediaControllerCallback.onPlaybackStateChanged(mMediaController.getPlaybackState());
                 }
                 Log.d(TAG, "MediaBrowserConnectionCallback --- onConnected: enter");
-                MediaBrowserHelper.this.onConnected(mMediaController, mMediaBrowser);
+                BrowserHelper.this.onConnected(mMediaController, mMediaBrowser);
             }catch (AndroidException e) {
                 Log.d(TAG, String.format("onConnected: Problem: %s", e.toString()));
                 Log.d("BBB", "MediaBrowserConnectionCallback --- exception: "+e.getMessage());
@@ -256,13 +256,13 @@ public abstract class MediaBrowserHelper {
                                      @NonNull List<MediaBrowserCompat.MediaItem> children) {
             Log.d("WWW","MediaBrowserSubscriptionCallback --- onChildrenLoaded: "+parentId);
 
-            MediaBrowserHelper.this.onChildrenLoaded(parentId, children);
+            BrowserHelper.this.onChildrenLoaded(parentId, children);
 
         }
 
         @Override
         public void onError(@NonNull String parentId) {
-            Log.d("JJJ", "MediaBrowserHelper --- MediaBrowserSubscriptionCallback: "+parentId);
+            Log.d("JJJ", "BrowserHelper --- MediaBrowserSubscriptionCallback: "+parentId);
         }
     }
 
@@ -298,7 +298,7 @@ public abstract class MediaBrowserHelper {
         public void onSessionDestroyed() {
             resetState();
             onPlaybackStateChanged(null);
-            MediaBrowserHelper.this.onDisconnected();
+            BrowserHelper.this.onDisconnected();
         }
     }
 

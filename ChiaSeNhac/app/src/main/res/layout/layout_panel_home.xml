@@ -100,7 +100,7 @@
                 </RelativeLayout>
             </LinearLayout>
 
-            <com.android.music_player.PlayPauseView
+            <com.android.music_player.view.PlayPauseView
                 android:id="@+id/imbt_Play_media"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"

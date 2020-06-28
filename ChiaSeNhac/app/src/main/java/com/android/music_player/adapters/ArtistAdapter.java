@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 
@@ -24,10 +24,10 @@ import java.util.Map;
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHolder> {
     private final Activity mActivity;
-    private Map<String, ArrayList<SongModel>> mArtists;
+    private Map<String, ArrayList<MusicModel>> mArtists;
     private SharedPrefsUtils mSharedPrefsUtils;
     private List<String> keys;
-    public ArtistAdapter(Activity activity, Map<String, ArrayList<SongModel>> artists) {
+    public ArtistAdapter(Activity activity, Map<String, ArrayList<MusicModel>> artists) {
         this.mArtists = artists;
         mActivity = activity;
         keys = new ArrayList<>(mArtists.keySet());
@@ -46,13 +46,13 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         String item = keys.get(position);
-        ArrayList<SongModel> music = mArtists.get(item);
+        ArrayList<MusicModel> music = mArtists.get(item);
 
         holder.assignData(item, music);
         holder.mLinearArtist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                onClickItemListener.onClickMusic(mArtists.get(position).getSongName());
+//                onClickItemListener.onChooseMedia(mArtists.get(position).getSongName());
 //                mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mArtists.get(position).getAlbumID());
             }
         });
@@ -76,7 +76,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
         }
 
         @SuppressLint("SetTextI18n")
-        public void assignData(String artist, ArrayList<SongModel> models) {
+        public void assignData(String artist, ArrayList<MusicModel> models) {
             //UI setting code
             mTextArtist.setText(artist);
             mTextInfoArtist.setText(models.size() +" bài hát");

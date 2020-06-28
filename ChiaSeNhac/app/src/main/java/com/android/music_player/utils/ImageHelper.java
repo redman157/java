@@ -17,7 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.android.music_player.R;
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -47,12 +47,12 @@ public class ImageHelper {
 
         /*
          * @params: imageView is the ImageView where image should go
-         * @params: arrayList is list of SongModel object with each having getAlbumID()
+         * @params: arrayList is list of MusicModel object with each having getAlbumID()
          * @params: albumIds is List<String> of album ids
          *
          * Three ways to grab album art -
          * 1. getImageByPicasso(String albumId, ImageView imageView)
-         * 2. getImageByPicasso(ArrayList<SongModel> arrayList, ImageView imageView)
+         * 2. getImageByPicasso(ArrayList<MusicModel> arrayList, ImageView imageView)
          * 3. getImageByPicasso(final List albumIds, final ImageView imageView)
          *
          * Also grab Bitmap with - getAlbumArt(Long albumId) where albumId is a long variable
@@ -71,7 +71,7 @@ public class ImageHelper {
         catch (Exception ignored) {}
     }
 
-    public void getImageByPicasso(ArrayList<SongModel> songs, ImageView image) {
+    public void getImageByPicasso(ArrayList<MusicModel> songs, ImageView image) {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < songs.size(); i++) {
             list.add(songs.get(i).getAlbumID());
@@ -334,10 +334,8 @@ public class ImageHelper {
             Uri uri = ContentUris.withAppendedId(Uri
                     .parse("content://media/external/audio/albumart"), albumId);
             bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver() , uri);
-
         }
         catch (IOException e) {
-            e.printStackTrace();
             //handle exception
             if (e instanceof FileNotFoundException){
                 Log.d("GGG","FileNotFoundException Enter: "+albumId);

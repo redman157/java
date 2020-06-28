@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.music_player;
+package com.android.music_player.activities;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -39,13 +39,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
-import com.android.music_player.activities.EqualizerActivity;
-import com.android.music_player.activities.SearchActivity;
-import com.android.music_player.activities.SettingsActivity;
-import com.android.music_player.activities.SplashActivity;
-import com.android.music_player.activities.TimerActivity;
+import com.android.music_player.R;
 import com.android.music_player.fragments.HomeFragment;
-import com.android.music_player.fragments.LibraryFragment;
+import com.android.music_player.fragments.SettingsFragment;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.navigation.NavigationView;
@@ -80,6 +76,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
         OPEN, CLOSE, DONE, PROCESS, CONTROL, DRAWING
     }
 
+    public ActionBarDrawerToggle getDrawerToggle() {
+        return mDrawerToggle;
+    }
+
     private final DrawerLayout.DrawerListener mDrawerListener = new DrawerLayout.DrawerListener() {
         @Override
         public void onDrawerClosed(View drawerView) {
@@ -96,7 +96,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                 Class activityClass = null;
                 switch (mItemToOpenWhenDrawerCloses) {
                     case R.id.navigation_library:
-                        activityClass = LibraryFragment.class;
+                        activityClass = SettingsFragment.class;
                         break;
                     case R.id.navigation_home:
                         activityClass = HomeFragment.class;

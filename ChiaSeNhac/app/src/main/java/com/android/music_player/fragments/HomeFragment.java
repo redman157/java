@@ -18,14 +18,14 @@ import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.BrowseAdapter;
 import com.android.music_player.adapters.HomeFragmentAdapter;
 import com.android.music_player.interfaces.OnChangeListener;
-import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.interfaces.OnMediaItem;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 public class HomeFragment extends Fragment implements
-        SwipeRefreshLayout.OnRefreshListener, OnClickItemListener {
+        SwipeRefreshLayout.OnRefreshListener, OnMediaItem {
     private View view;
     private String type;
     private FastScrollRecyclerView mRcHome;
@@ -48,14 +48,9 @@ public class HomeFragment extends Fragment implements
     public void setOnChangeListener(OnChangeListener onChangeListener){
         this.onChangeListener = onChangeListener;
     }
-
     @Override
-    public void onClickPosition(int pos) {
-
-    }
-    @Override
-    public void onClickMusic(String musicID) {
-        onChangeListener.onMusicID(musicID);
+    public void onChooseMedia(String mediaID) {
+        onChangeListener.onMusicID(mediaID);
     }
 
     @Override
@@ -73,7 +68,7 @@ public class HomeFragment extends Fragment implements
         mSongsAdapter = new BrowseAdapter(getActivity(), MusicLibrary.music,
                 false);
         mSongsAdapter.notifyDataSetChanged();
-        mSongsAdapter.setOnClickItemListener(this);
+        mSongsAdapter.setOnMediaItem(this);
     }
 
     @Nullable

@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.android.music_player.R;
 import com.android.music_player.fragments.HomeFragment;
-import com.android.music_player.fragments.LibraryFragment;
+import com.android.music_player.fragments.SettingsFragment;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -29,7 +29,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public ImageView icon;
     private FragmentManager fragmentManager;
     private HomeFragment homeFragment;
-    private LibraryFragment libraryFragment;
+    private SettingsFragment settingsFragment;
     private Map<Integer, String> mFragmentTags;
     public ViewPagerAdapter(Context context,@NonNull FragmentManager manager) {
         super(manager);

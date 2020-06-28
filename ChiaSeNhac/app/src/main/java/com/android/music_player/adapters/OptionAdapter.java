@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.music_player.OptionItem;
+import com.android.music_player.models.OptionItem;
 import com.android.music_player.R;
 
 import java.util.ArrayList;

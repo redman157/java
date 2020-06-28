@@ -19,11 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.R;
 import com.android.music_player.adapters.MusicDialogAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
-import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.interfaces.OnMediaItem;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.models.SongModel;
-import com.android.music_player.utils.Constants;
+import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.DialogHelper;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -33,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class ChangeSongFragment extends Fragment implements View.OnClickListener, PlayListAdapter.OnClickItem {
-    private SongModel mSongModel;
+    private MusicModel mMusicModel;
     private ImageView mImgAlbumArt, mImgShowList, mImgAddPlayList;
     private TextView text_leftTime, text_rightTime;
     private SeekBar sb_leftTime;
@@ -44,26 +43,26 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
 
     private MusicDialogAdapter mMusicDialogAdapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<SongModel> musicMain;
+    private ArrayList<MusicModel> musicMain;
     private MediaBrowserCompat.MediaItem mediaItem;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private static ArrayList<SongModel> mSongModels;
-    public static void newInstance(ArrayList<SongModel> songModels) {
-        mSongModels = songModels;
+    private static ArrayList<MusicModel> mMusicModels;
+    public static void newInstance(ArrayList<MusicModel> musicModels) {
+        mMusicModels = musicModels;
     }
 
-    public ArrayList<SongModel> getMusicMain() {
+    public ArrayList<MusicModel> getMusicMain() {
         return musicMain;
     }
-    private OnClickItemListener onClickItemListener;
+    private OnMediaItem onMediaItem;
 
     private MediaMetadataCompat mMediaMetadataCompat;
-    public ChangeSongFragment(OnClickItemListener onClickItemListener) {
-        this.onClickItemListener = onClickItemListener;
+    public ChangeSongFragment(OnMediaItem onMediaItem) {
+        this.onMediaItem = onMediaItem;
 
     }
     private Dialog mDlAddPlayList, mDlAddMusic, mDlAllPlayList;
-    public void setMusicMain(ArrayList<SongModel> musicMain) {
+    public void setMusicMain(ArrayList<MusicModel> musicMain) {
         this.musicMain = musicMain;
     }
 
@@ -121,27 +120,27 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
         mImgAddPlayList.setOnClickListener(this);
     }
 
-    public void setSongModel(SongModel songModel) {
-        mSongModel = songModel;
+    public void setSongModel(MusicModel musicModel) {
+        mMusicModel = musicModel;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.item_img_viewQueue:
-                if (mSongModels == null){
-                    mSongModels = musicMain;
+                if (mMusicModels == null){
+                    mMusicModels = musicMain;
                 }
-                mMusicDialogAdapter = new MusicDialogAdapter(getContext(), mDlOptionMusic, mSongModels);
-                mMusicDialogAdapter.notifyDataSetChanged();
-                int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, -1);
-                for (int i = 0; i < mSongModels.size(); i++) {
-                    if (mSongModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
-                        mMusicDialogAdapter.setPosition(i);
-                        mMusicDialogAdapter.setOnClick(onClickItemListener);
-                        DialogHelper.showSelectSong(getContext(), mMusicDialogAdapter, i);
-                    }
-                }
+//                mMusicDialogAdapter = new MusicDialogAdapter(getContext(), mDlOptionMusic, mMusicModels);
+//                mMusicDialogAdapter.notifyDataSetChanged();
+//                int pos = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.POSITION, -1);
+//                for (int i = 0; i < mMusicModels.size(); i++) {
+//                    if (mMusicModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
+//                        mMusicDialogAdapter.setPosition(i);
+//                        mMusicDialogAdapter.setOnClickItemListener(onMediaItem);
+//                        DialogHelper.showSelectSong(getContext(), mMusicDialogAdapter, i);
+//                    }
+//                }
 
                 break;
             case R.id.item_img_addToPlayListImageView:
@@ -154,7 +153,7 @@ public class ChangeSongFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(String title) {
         DialogHelper.cancelDialog();
-        DialogHelper.showAddSongs(getContext(),mSongModel ,title);
+        DialogHelper.showAddSongs(getContext(), mMusicModel,title);
 
     }
 }

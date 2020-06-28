@@ -19,7 +19,6 @@ import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MediaPlayerManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.NotificationManager;
-import com.android.music_player.managers.QueueManager;
 import com.android.music_player.media.PlaybackInfoListener;
 import com.android.music_player.media.PlayerAdapter;
 import com.android.music_player.utils.Constants;
@@ -39,7 +38,7 @@ public class MediaService extends MediaBrowserServiceCompat {
     private MediaManager mMediaManager;
     private boolean mServiceStarted;
     private boolean isAutoPlay = false;
-    private QueueManager queueManager;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY ;
@@ -157,31 +156,34 @@ public class MediaService extends MediaBrowserServiceCompat {
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
             super.onPlayFromMediaId(mediaId, extras);
             Log.d("JJJ","MediaService ---onPlayFromMediaId: "+mediaId);
-
-            if (!isReadyToPlay()) {
-                // Nothing to play.
-                return;
-            }
             if (mPreparedMedia == null) {
+                // công đoan chuẩn bị từ media session
                 onPrepareFromMediaId(mediaId, extras);
+            }else {
+                // khởi động app play liền
+                mPlayback.playFromMedia(mMediaManager.getMetadata(MediaService.this, mediaId));
             }
-            mPlayback.playFromMedia(MusicLibrary.getMetadata(MediaService.this,mediaId));
             Log.d(TAG, "onPlayFromMediaId: MediaSession active");
         }
 
         @Override
-        public void onPrepareFromMediaId(String mediaId, Bundle extras) {
+        public void onPrepareFromMediaId(String mediaId, Bundle bundle) {
             setupMediaList();
-            mPreparedMedia = MusicLibrary.getMetadata(MediaService.this,
+            // set media current để chạy
+            mPreparedMedia = mMediaManager.getMetadata(MediaService.this,
                    mediaId);
             mSessionCompat.setMetadata(mPreparedMedia);
             Log.d("JJJ", "MediaService --- onPrepareFromMediaId: "+mediaId);
-            if (extras != null) {
-                isAutoPlay = extras.getBoolean(Constants.INTENT.AUTO_PLAY);
-                if (isAutoPlay){
-                    onPlayFromMediaId(mediaId, null);
-                }
-            }
+//            if (bundle != null) {
+//                Log.d("JJJ", "MediaService --- auto play true: "+mediaId);
+//                isAutoPlay = bundle.getBoolean(Constants.INTENT.AUTO_PLAY);
+//                if (isAutoPlay){
+//
+//                }
+//            }else {
+//                Log.d("JJJ", "MediaService --- auto play false: "+mediaId);
+//            }
+            onPlayFromMediaId(mediaId, null);
             isActive();
         }
 
@@ -238,22 +240,27 @@ public class MediaService extends MediaBrowserServiceCompat {
             currentPos = (currentPos + 1) % mMainList.size();
             String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
             // bundle update trạng thái auto play và position của nó
+
+            // khi next muốn tự động phát hay k ?
             mPreparedMedia = null;
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
-            onPlayFromMediaId(mediaId, bundle);
+//            Bundle bundle = new Bundle();
+//            bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
+            onPlayFromMediaId(mediaId, null);
             Log.d("JJJ", "MediaService --- onSkipToNext: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
         }
+
         @Override
         public void onSkipToPrevious() {
             setupMediaList();
             int currentPos = MusicLibrary.getPosition(mMainList ,mMediaManager.getCurrentMusic());
             currentPos = currentPos > 0 ? currentPos - 1 : mPlayList.size() - 1;
+            String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
+
+            // khi next muốn tự động phát hay k ?
             mPreparedMedia = null;
-            String mediaId = mPlayList.get(currentPos).getDescription().getMediaId();
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
-            onPlayFromMediaId(mediaId, bundle );
+//            Bundle bundle = new Bundle();
+//            bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
+            onPlayFromMediaId(mediaId, null );
             Log.d("JJJ", "MediaService --- onSkipToPrevious: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
         }
 
@@ -261,7 +268,7 @@ public class MediaService extends MediaBrowserServiceCompat {
             if (mSessionCompat.getController().getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_NONE) {
                 mSessionCompat.setQueue(mPlayList);
             } else if (mSessionCompat.getController().getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
-                mShuffleList = MusicLibrary.getRandomQueue(MusicLibrary.getMetadata(
+                mShuffleList = mMediaManager.getShuffleQueue(mMediaManager.getMetadata(
                         MediaService.this, mMediaManager.getCurrentMusic()), mPlayList);
                 mSessionCompat.setQueue(mShuffleList);
             }
@@ -271,10 +278,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onSeekTo(long pos) {
             mPlayback.seekTo(pos);
-        }
-
-        private boolean isReadyToPlay() {
-            return (!mPlayList.isEmpty());
         }
 
     }

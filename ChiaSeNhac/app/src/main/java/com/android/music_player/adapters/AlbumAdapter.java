@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 
@@ -23,10 +23,10 @@ import java.util.Map;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHolder>  {
     private final Activity mActivity;
-    private Map<String, ArrayList<SongModel>> mAlbums;
+    private Map<String, ArrayList<MusicModel>> mAlbums;
     private SharedPrefsUtils mSharedPrefsUtils;
     private List<String> keys;
-    public AlbumAdapter(Activity activity,  Map<String, ArrayList<SongModel>> albums) {
+    public AlbumAdapter(Activity activity,  Map<String, ArrayList<MusicModel>> albums) {
         this.mAlbums = albums;
         keys = new ArrayList<>(mAlbums.keySet());
         Collections.sort(keys);
@@ -44,14 +44,14 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         String album = keys.get(position);
-        ArrayList<SongModel> music = mAlbums.get(album);
+        ArrayList<MusicModel> music = mAlbums.get(album);
         holder.assignData(album, music);
 
 
         holder.mLinearAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                onClickItemListener.onClickMusic(mMusics.get(position).getSongName());
+//                onClickItemListener.onChooseMedia(mMusics.get(position).getSongName());
 //                mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mMusics.get(position).getAlbumID());
             }
         });
@@ -75,7 +75,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
             mTextAlbum = itemView.findViewById(R.id.item_text_title_album);
         }
 
-        public void assignData(final String album, ArrayList<SongModel> models) {
+        public void assignData(final String album, ArrayList<MusicModel> models) {
             //UI setting code
             mTextAlbum.setText(album);
             mTextInfoAlbum.setText(models.size() + " bài hát");

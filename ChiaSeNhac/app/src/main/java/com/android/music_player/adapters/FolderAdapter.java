@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
@@ -21,10 +21,10 @@ import java.util.Map;
 
 public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ItemViewHolder> {
     private final Activity mActivity;
-    private Map<String, ArrayList<SongModel>> mFolders;
+    private Map<String, ArrayList<MusicModel>> mFolders;
     private SharedPrefsUtils mSharedPrefsUtils;
     private List<String> keys;
-    public FolderAdapter(Activity activity, Map<String, ArrayList<SongModel>> folders) {
+    public FolderAdapter(Activity activity, Map<String, ArrayList<MusicModel>> folders) {
         this.mFolders = folders;
         keys = new ArrayList<>(mFolders.keySet());
         Collections.sort(keys);
@@ -43,12 +43,12 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ItemViewHo
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         String folder = keys.get(position).split("/")[keys.get(position).split("/").length - 2];
 
-        ArrayList<SongModel> music = mFolders.get(keys.get(position));
+        ArrayList<MusicModel> music = mFolders.get(keys.get(position));
         holder.assignData(folder, music);
         holder.mLinearFolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                onClickItemListener.onClickMusic(mMusics.get(position).getSongName());
+//                onClickItemListener.onChooseMedia(mMusics.get(position).getSongName());
 //                mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mMusics.get(position).getAlbumID());
             }
         });
@@ -70,7 +70,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ItemViewHo
             mTextNameFolder = itemView.findViewById(R.id.item_text_title_folder);
         }
 
-        public void assignData(final String folder, ArrayList<SongModel> models) {
+        public void assignData(final String folder, ArrayList<MusicModel> models) {
             //UI setting code
             mTextNameFolder.setText(folder);
             mTextInfoFolder.setText(models.size()+ " bài hát");

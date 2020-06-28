@@ -10,24 +10,24 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
-import android.text.SpannableString;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
-import android.view.MenuItem;
-import android.widget.PopupMenu;
 
-import com.android.music_player.R;
-import com.android.music_player.database.AllPlaylist;
-import com.android.music_player.database.CategorySongs;
-import com.android.music_player.database.RelationSongs;
-import com.android.music_player.database.SongOfPlayList;
+import com.android.music_player.database.AllPlayList;
+import com.android.music_player.database.CategoryMusic;
+import com.android.music_player.database.RelationMusic;
+import com.android.music_player.database.MusicOfPlayList;
 import com.android.music_player.database.Statistic;
-import com.android.music_player.media.MediaBrowserConnection;
-import com.android.music_player.models.SongModel;
+import com.android.music_player.media.BrowserConnectionListener;
+import com.android.music_player.models.MusicModel;
 import com.android.music_player.tasks.RenamePlayListTask;
 import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
 import com.google.gson.Gson;
@@ -36,7 +36,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,35 +43,22 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class MediaManager {
-    private MediaBrowserConnection mMediaBrowserConnection;
+    private BrowserConnectionListener mBrowserConnectionListener;
     private ArrayList<MediaBrowserCompat.MediaItem> queue = new ArrayList<>();
-    private ArrayList<SongModel> shuffleSongs = new ArrayList<>();
+    private ArrayList<MusicModel> shuffleSongs = new ArrayList<>();
     private String TAG = "SongsManagerConsole";
     /* access modifiers changed from: private */
     private Context mContext;
     /* access modifiers changed from: private */
     private SharedPrefsUtils mSharedPrefsUtils;
     private int mTotalSong;
-    private AllPlaylist mAllPlaylist;
-    private SongOfPlayList mSongOfPlayList;
-    private CategorySongs mCategorySongs;
+    private AllPlayList mAllPlayList;
+    private MusicOfPlayList mMusicOfPlayList;
+    private CategoryMusic mCategoryMusic;
     private Statistic mStatistic;
-    private RelationSongs mRelationSongs;
+    private RelationMusic mRelationMusic;
     @SuppressLint("StaticFieldLeak")
     private static MediaManager instance;
-    private String type;
-    private String mediaId;
-
-    public String getMediaId() {
-        return mediaId;
-    }
-
-    public void setMediaId(String mediaId) {
-        Log.d("VVV", "setMediaId " + mediaId);
-//        Log.d("VVV", Log.getStackTraceString(new Exception()));
-
-        this.mediaId = mediaId;
-    }
 
     public static MediaManager getInstance() {
         if (instance == null){
@@ -95,11 +81,11 @@ public class MediaManager {
     }
 
     public void initDatabase(){
-        mAllPlaylist = new AllPlaylist(mContext);
-        mSongOfPlayList = new SongOfPlayList(mContext);
-        mCategorySongs = new CategorySongs(mContext);
+        mAllPlayList = new AllPlayList(mContext);
+        mMusicOfPlayList = new MusicOfPlayList(mContext);
+        mCategoryMusic = new CategoryMusic(mContext);
         mStatistic = new Statistic(mContext);
-        mRelationSongs = new RelationSongs(mContext);
+        mRelationMusic = new RelationMusic(mContext);
         mSharedPrefsUtils = new SharedPrefsUtils(mContext);
 
         mTotalSong = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1);
@@ -129,14 +115,12 @@ public class MediaManager {
             }
         }
     }
-    public MediaBrowserConnection getMediaBrowserConnection() {
-        if (mMediaBrowserConnection == null && mContext != null) {
-            mMediaBrowserConnection = new MediaBrowserConnection(mContext);
+    public BrowserConnectionListener getMediaBrowserConnection() {
+        if (mBrowserConnectionListener == null && mContext != null) {
+            mBrowserConnectionListener = new BrowserConnectionListener(mContext);
         }
-        return mMediaBrowserConnection;
+        return mBrowserConnectionListener;
     }
-
-
 
     public void setType(String type){
         mSharedPrefsUtils.setString(Constants.PREFERENCES.TYPE, type);
@@ -159,56 +143,6 @@ public class MediaManager {
         mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, musicName);
     }
 
-    public List<MediaBrowserCompat.MediaItem> queue() {
-        if (queue.isEmpty()){
-            List<MediaBrowserCompat.MediaItem> list =
-                    new ArrayList<>(MusicLibrary.getMediaItems());
-            Collections.reverse(list);
-            replaceQueue(list);
-        }
-        return queue;
-    }
-
-    public ArrayList<MediaBrowserCompat.MediaItem> allSortSongs() {
-        grabIfEmpty(); // If no song in list
-        // Sorted list of 0-9 A-Z
-        ArrayList<MediaBrowserCompat.MediaItem> songs = new ArrayList<>(newSongs());
-        Collections.sort(songs, new Comparator<MediaBrowserCompat.MediaItem>() {
-            @Override
-            public int compare(MediaBrowserCompat.MediaItem mediaItem1,
-                               MediaBrowserCompat.MediaItem mediaItem2) {
-                return mediaItem1.getMediaId().compareTo(mediaItem2.getMediaId());
-            }
-        });
-        return songs;
-    }
-
-    public ArrayList<MediaBrowserCompat.MediaItem> newSongs() {
-        grabIfEmpty(); // If no song in list (new songs)
-
-        ArrayList<MediaBrowserCompat.MediaItem> newSongs = new ArrayList<>(MusicLibrary.getMediaItems());
-        Collections.reverse(newSongs);
-        return newSongs;
-    }
-
-    public ArrayList<SongModel> shuffleSongs(ArrayList<SongModel> songs){
-        grabIfEmpty(); // If no song in list (shuffle songs)
-        ArrayList<SongModel> shuffleSongs = new ArrayList<>(songs);
-        Collections.shuffle(shuffleSongs);
-        return shuffleSongs;
-    }
-
-    public ArrayList<SongModel> albumSongs(String album) {
-        ArrayList<SongModel> songs = new ArrayList<>();
-        ArrayList<SongModel> list = new ArrayList<>(MusicLibrary.info);
-        Collections.reverse(list);
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getAlbum().equals(album)) {
-                songs.add(list.get(i));
-            }
-        }
-        return songs;
-    }
 
     public List<String> getAlbumIds(String rawAlbumIds) {
         String SPLIT_EXPRESSION = ";,,;,;;";
@@ -219,9 +153,9 @@ public class MediaManager {
     }
 
 
-    public ArrayList<SongModel> artistSongs(String artist) {
-        ArrayList<SongModel> songs = new ArrayList<>();
-        ArrayList<SongModel> list = new ArrayList<>(MusicLibrary.info);
+    public ArrayList<MusicModel> artistSongs(String artist) {
+        ArrayList<MusicModel> songs = new ArrayList<>();
+        ArrayList<MusicModel> list = new ArrayList<>(MusicLibrary.info);
         Collections.reverse(list);
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getArtist().contains(artist)) {
@@ -233,44 +167,34 @@ public class MediaManager {
     /**
     * Database
     * */
-    public void addDatabaseMusic(String path){
-        setCurrentMusic(path);
-        getStatistic().increase(
-                Constants.VALUE.MOST_SONG, Utils.getKeyByValue(MusicLibrary.fileName,
-                        path));
-    }
-
-    public void addDatabasePlayList(String namePlayList, String songName){
-        // add play list
-        getAllPlaylistDB().addPlayList(namePlayList);
-        if (songName != null) {
-            getRelationSongs().addRow(namePlayList, songName);
+    public void addDatabaseMusic(String mediaID){
+        if (!mStatistic.search(Constants.VALUE.MOST_MUSIC, mediaID)) {
+            getStatistic().addRow(
+                    Constants.VALUE.MOST_MUSIC, Utils.getKeyByValue(MusicLibrary.fileName,
+                            mediaID));
         }
     }
 
+    public void addDatabasePlayList(String namePlayList, String mediaID){
+        // add play list
 
-
+        getAllPlaylistDB().addPlayList(namePlayList);
+        if (mediaID != null) {
+            getRelationSongs().addRow(namePlayList, mediaID);
+        }
+    }
 
     /*
      * Actions
      */
 
-    public SongModel getSong(String title){
-        for (SongModel model: MusicLibrary.info) {
+    public MusicModel getSong(String title){
+        for (MusicModel model: MusicLibrary.info) {
             if (model.getSongName().equals(title)){
                 return model;
             }
         }
         return null;
-    }
-
-    public void setShuffleSongs(ArrayList<SongModel> shuffleSongs){
-        this.shuffleSongs = shuffleSongs;
-
-    }
-
-    public ArrayList<SongModel> getShuffleSongs(){
-        return shuffleSongs;
     }
 
     public void isSync(boolean sync) {
@@ -302,57 +226,20 @@ public class MediaManager {
         }
     }
 
-    public void generateMenu(PopupMenu popupMenus, int[] options) {
-        int i = 0;
-        while (i < options.length) {
-            String name = "INVALID";
-            if (options[i] == R.id.play_musicUtils) {
-                name = "Play";
-            } else if (options[i] == R.id.play_next_musicUtils) {
-                name = "Play NEXT";
-            } else if (options[i] == R.id.add_to_queue_musicUtils) {
-                name = "Add to Queue";
-            } else if (options[i] == R.id.add_to_playlist_musicUtils) {
-                name = "Add to AllPlaylist";
-            } else if (options[i] == R.id.shuffle_play_musicUtils) {
-                name = "Shuffle Play";
-            } else if (options[i] == R.id.use_as_ringtone_musicUtils) {
-                name = "Use as Ringtone";
-            } else if (options[i] == R.id.remove_musicUtils) {
-                name = "Remove";
-            } else if (options[i] == R.id.info_musicUtils) {
-                name = "Track Info";
-            } else if (options[i] == R.id.goto_album_musicUtils) {
-                name = "Go to Album";
-            } else if (options[i] == R.id.goto_artist_musicUtils) {
-                name = "Go to Artist";
-            }
-            popupMenus.getMenu().add(0, options[i], 1, name);
-            MenuItem menuItem = popupMenus.getMenu().getItem(i);
-            CharSequence menuTitle = menuItem.getTitle();
-            SpannableString styledMenuTitle = new SpannableString(menuTitle);
-            //styledMenuTitle.setSpan(new ForegroundColorSpan(Color.parseColor("#333333")), 0, menuTitle.length(), 0);
-            menuItem.setTitle(styledMenuTitle);
-            i++;
-        }
-    }
-
-    public AlertDialog info(SongModel songModel) {
+    public AlertDialog info(MusicModel musicModel) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle(songModel.getSongName());
-        builder.setMessage("\nFile Name: " + songModel.getFileName() + "\n\n" +
-                "Song Title: " + songModel.getSongName() + "\n\n" +
-                "Album: " + songModel.getAlbum() + "\n\n" +
-                "Artist: " + songModel.getArtist() + "\n\n" +
-                "File location: " + songModel.getPath());
+        builder.setTitle(musicModel.getSongName());
+        builder.setMessage("\nFile Name: " + musicModel.getFileName() + "\n\n" +
+                "Song Title: " + musicModel.getSongName() + "\n\n" +
+                "Album: " + musicModel.getAlbum() + "\n\n" +
+                "Artist: " + musicModel.getArtist() + "\n\n" +
+                "File location: " + musicModel.getPath());
         builder.setPositiveButton("DONE", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
             }
         });
-
-
         return builder.create();
     }
 
@@ -410,6 +297,26 @@ public class MediaManager {
         return -1;
     }
 
+    /**
+     * Database RelationMusic & MusicOfPlayList
+     * */
+    public boolean addMusicToPlayList(String title, MusicModel song){
+        if (mMusicOfPlayList.searchSong(song)){
+            return true;
+        }else {
+            mMusicOfPlayList.addSong(song);
+            mRelationMusic.addRow(title, mMusicOfPlayList.getSongName(song));
+            return false;
+        }
+    }
+
+    /**
+     * Database Statistic
+     * */
+    public void increase(String type,String title){
+        mStatistic.increase(type,title);
+    }
+
     public boolean isPlayListMost(){
         if (!mStatistic.getMusicMost(Constants.VALUE.MOST_PLAY_LIST).equals("")){
 
@@ -427,10 +334,14 @@ public class MediaManager {
         }
     }
 
-    public ArrayList<SongModel> getAllSongToPlayList(String playListName){
-        ArrayList<SongModel> songs = new ArrayList<>();
-        if (mAllPlaylist.searchPlayList(playListName)){
-            ArrayList<String> allSongName = mRelationSongs.getAllSongName(playListName);
+    /**
+     * Database AllPlayList
+     * */
+
+    public ArrayList<MusicModel> getAllSongToPlayList(String playListName){
+        ArrayList<MusicModel> songs = new ArrayList<>();
+        if (mAllPlayList.searchPlayList(playListName)){
+            ArrayList<String> allSongName = mRelationMusic.getAllSongName(playListName);
             if (allSongName != null && allSongName.size() > 0 ){
                 for (String songName : allSongName){
                     songs.add(getSong(songName));
@@ -448,57 +359,35 @@ public class MediaManager {
     }
 
     public void addPlayListFirst(){
-        if (mAllPlaylist.getSize() == 0) {
-            mAllPlaylist.addPlayList("Play List 1");
-            mAllPlaylist.addPlayList("Play List 2");
+        if (mAllPlayList.getSize() == 0) {
+            mAllPlayList.addPlayList("Play List 1");
+            mAllPlayList.addPlayList("Play List 2");
 
         }else {
             Log.d(TAG, "MediaManager --- addPlayListFirst size > 0");
         }
     }
 
-    public boolean addSongToPlayList(String title, SongModel song){
-
-        if (mSongOfPlayList.searchSong(song)){
-
-            return true;
-        }else {
-            mSongOfPlayList.addSong(song);
-            mRelationSongs.addRow(title, mSongOfPlayList.getSongName(song));
-            return false;
-        }
-    }
-
-    public void increase(SongModel songModel){
-        mStatistic.increase(Constants.VALUE.MOST_SONG,songModel.getSongName());
-
-    }
-    public void increase(String title){
-        mStatistic.increase(Constants.VALUE.MOST_PLAY_LIST,title);
-
-    }
-
     public boolean addPlayList(String namePlayList){
-        if (mAllPlaylist.searchPlayList(namePlayList)){
-
+        if (mAllPlayList.searchPlayList(namePlayList)){
             return false;
         }else {
-            mAllPlaylist.addPlayList(namePlayList);
+            mAllPlayList.addPlayList(namePlayList);
             return true;
         }
     }
 
     public ArrayList<String> getAllPlayList(){
-        if (mAllPlaylist.getAllPlayList() == null){
+        if (mAllPlayList.getAllPlayList() == null){
             addPlayListFirst();
         }
-        return mAllPlaylist.getAllPlayList();
+        return mAllPlayList.getAllPlayList();
     }
 
-    public boolean delete(String namePlayList, SongModel song){
+    public boolean delete(String namePlayList, MusicModel song){
         if (namePlayList.equals("")){
-            if (mSongOfPlayList.searchSong(song)){
-                mSongOfPlayList.deleteSong(song);
+            if (mMusicOfPlayList.searchSong(song)){
+                mMusicOfPlayList.deleteSong(song);
                 Utils.ToastShort(mContext, "Đã xóa bài hát thành công: "+song.getSongName());
                 return true;
             }else {
@@ -506,8 +395,8 @@ public class MediaManager {
                 return false;
             }
         }else {
-            if (mAllPlaylist.searchPlayList(namePlayList) && mSongOfPlayList.searchSong(song)){
-                mSongOfPlayList.deleteSong(song);
+            if (mAllPlayList.searchPlayList(namePlayList) && mMusicOfPlayList.searchSong(song)){
+                mMusicOfPlayList.deleteSong(song);
                 Utils.ToastShort(mContext,
                         "Xóa bài hát trong NAME: "+namePlayList+" thành công: "+song.getSongName());
                 return true;
@@ -529,7 +418,7 @@ public class MediaManager {
             Utils.ToastShort(mContext, "Vui lòng nhập tên không được trùng với NAME " +
                     "ban đầu");
         }else if (!main.equals("") && !change.equals("")) {
-            if (mAllPlaylist.searchPlayList(main)) {
+            if (mAllPlayList.searchPlayList(main)) {
                 try {
                     temp = new RenamePlayListTask(mContext, main, change).execute().get();
                     Utils.ToastShort(mContext, "Đã đổi tên NAME thành công ");
@@ -544,11 +433,11 @@ public class MediaManager {
         return temp;
     }
 
-    public void changeMusic(String namePlayList, SongModel song){
+    public void changeMusic(String namePlayList, MusicModel song){
         if (song == null){
 
         }else {
-            if (mSongOfPlayList.searchSong(song)){
+            if (mMusicOfPlayList.searchSong(song)){
 
             }else {
                 Utils.ToastShort(mContext,"Không tìm thấy NAME: "+namePlayList);
@@ -586,7 +475,7 @@ public class MediaManager {
 
             if (cursor.moveToFirst()) {
                 do {
-                    SongModel.Builder builder = null;
+                    MusicModel.Builder builder = null;
                     String duration = cursor
                             .getString(cursor
                                     .getColumnIndex(MediaStore.Audio.Media.DURATION));
@@ -635,7 +524,7 @@ public class MediaManager {
 
 
                             // Adding song to list
-                            builder = new SongModel.Builder();
+                            builder = new MusicModel.Builder();
                             builder.setFileName(songName);
                             builder.setSongName(title);
                             builder.setArtist(artistName);
@@ -664,9 +553,9 @@ public class MediaManager {
     /*
      * Albums Data && Artist Data && folder Data
      */
-    private void filterData(Set<SongModel> mains){
+    private void filterData(Set<MusicModel> mains){
 
-        ArrayList<SongModel> allSongList = new ArrayList<>(MusicLibrary.info);
+        ArrayList<MusicModel> allSongList = new ArrayList<>(MusicLibrary.info);
 
         for (int song = 0; song < allSongList.size(); song++) {
             String artist = allSongList.get(song).getArtist();
@@ -678,7 +567,7 @@ public class MediaManager {
                     MusicLibrary.artist.get(artist).add(allSongList.get(song));
                     break;
                 } else {
-                    MusicLibrary.artist.put(artist, new ArrayList<SongModel>());
+                    MusicLibrary.artist.put(artist, new ArrayList<MusicModel>());
                 }
             }
 
@@ -687,7 +576,7 @@ public class MediaManager {
                     MusicLibrary.album.get(album).add(allSongList.get(song));
                     break;
                 } else {
-                    MusicLibrary.album.put(album, new ArrayList<SongModel>());
+                    MusicLibrary.album.put(album, new ArrayList<MusicModel>());
                 }
             }
 
@@ -696,50 +585,91 @@ public class MediaManager {
                     MusicLibrary.folder.get(folder).add(allSongList.get(song));
                     break;
                 } else {
-                    MusicLibrary.folder.put(folder, new ArrayList<SongModel>());
+                    MusicLibrary.folder.put(folder, new ArrayList<MusicModel>());
                 }
             }
         }
     }
 
-    public Map<String, ArrayList<SongModel>> getAlbum() {
+    public MediaMetadataCompat getMetadata(Context context, String songName) {
+        MediaMetadataCompat metadataWithoutBitmap = MusicLibrary.music.get(songName);
+        Bitmap albumArt = ImageHelper.getAlbumArt(context,
+                Long.valueOf(MusicLibrary.albumID.get(songName)));
+
+        // Since MediaMetadataCompat is immutable, we need to create a copy to assignData the album art.
+        // We don't assignData it initially on all items so that they don't take unnecessary memory.
+        MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
+        for (String key :
+                new String[]{
+                        MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
+                        MediaMetadataCompat.METADATA_KEY_ALBUM,
+                        MediaMetadataCompat.METADATA_KEY_ARTIST,
+                        MediaMetadataCompat.METADATA_KEY_GENRE,
+                        MediaMetadataCompat.METADATA_KEY_TITLE
+                }) {
+            builder.putString(key, metadataWithoutBitmap.getString(key));
+        }
+        builder.putLong(
+                MediaMetadataCompat.METADATA_KEY_DURATION,
+                metadataWithoutBitmap.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
+        builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt);
+        return builder.build();
+    }
+
+    public List<MediaSessionCompat.QueueItem> getShuffleQueue(MediaMetadataCompat currentMedia,
+                                                                     List<MediaSessionCompat.QueueItem> playList) {
+        List<MediaSessionCompat.QueueItem> result = new ArrayList<>();
+        for (MediaSessionCompat.QueueItem tracks : playList){
+            result.add(tracks);
+        }
+        Collections.shuffle(result);
+        MediaSessionCompat.QueueItem mCurrentQueue =
+                new MediaSessionCompat.QueueItem(currentMedia.getDescription(),
+                        currentMedia.getDescription().hashCode());
+        result.remove(currentMedia);
+        result.add(0, mCurrentQueue);
+
+        return result;
+    }
+
+    public Map<String, ArrayList<MusicModel>> getAlbum() {
         grabIfEmpty();
         return MusicLibrary.album;
     }
 
-    public Map<String, ArrayList<SongModel>> getArtist() {
+    public Map<String, ArrayList<MusicModel>> getArtist() {
         grabIfEmpty();
         return MusicLibrary.artist;
     }
 
-    public Map<String, ArrayList<SongModel>> getFolder() {
+    public Map<String, ArrayList<MusicModel>> getFolder() {
         grabIfEmpty();
         return MusicLibrary.folder;
     }
 
 
-    public AllPlaylist getAllPlaylistDB() {
-        return mAllPlaylist;
+    public AllPlayList getAllPlaylistDB() {
+        return mAllPlayList;
     }
 
-    public void setAllPlaylistDB(AllPlaylist allPlaylistDB) {
-        this.mAllPlaylist = allPlaylistDB;
+    public void setAllPlaylistDB(AllPlayList allPlayListDB) {
+        this.mAllPlayList = allPlayListDB;
     }
 
-    public SongOfPlayList getSongOfPlayListDB() {
-        return mSongOfPlayList;
+    public MusicOfPlayList getSongOfPlayListDB() {
+        return mMusicOfPlayList;
     }
 
-    public void setSongOfPlayListDB(SongOfPlayList songOfPlayListDB) {
-        this.mSongOfPlayList = songOfPlayListDB;
+    public void setSongOfPlayListDB(MusicOfPlayList musicOfPlayListDB) {
+        this.mMusicOfPlayList = musicOfPlayListDB;
     }
 
-    public CategorySongs getCategorySongsDB() {
-        return mCategorySongs;
+    public CategoryMusic getCategorySongsDB() {
+        return mCategoryMusic;
     }
 
-    public void setCategorySongsDB(CategorySongs categorySongsDB) {
-        this.mCategorySongs = categorySongsDB;
+    public void setCategorySongsDB(CategoryMusic categoryMusicDB) {
+        this.mCategoryMusic = categoryMusicDB;
     }
 
     public Statistic getStatistic() {
@@ -750,11 +680,11 @@ public class MediaManager {
         this.mStatistic = mStatistic;
     }
 
-    public RelationSongs getRelationSongs() {
-        return mRelationSongs;
+    public RelationMusic getRelationSongs() {
+        return mRelationMusic;
     }
 
-    public void setRelationSongs(RelationSongs mRelationSongs) {
-        this.mRelationSongs = mRelationSongs;
+    public void setRelationSongs(RelationMusic mRelationMusic) {
+        this.mRelationMusic = mRelationMusic;
     }
 }

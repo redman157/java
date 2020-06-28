@@ -6,11 +6,11 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 
 import java.util.ArrayList;
 
-public class CategorySongs {
+public class CategoryMusic {
 
     private Context context;
     private String TAG = "CategorySongsLog";
@@ -18,7 +18,7 @@ public class CategorySongs {
     private ReaderSQL mDatabase;
 
 
-    public CategorySongs(Context context){
+    public CategoryMusic(Context context){
         this.context = context;
         mDatabase = new ReaderSQL(context, Database.CATEGORY.DATABASE_NAME, null, 1 );
         mDatabase.queryData(Database.CATEGORY.CREATE_TABLE);
@@ -26,7 +26,7 @@ public class CategorySongs {
     }
 
 
-    public CategorySongs closeDatabase() {
+    public CategoryMusic closeDatabase() {
         this.mDatabase.close();
         return this;
     }
@@ -51,7 +51,7 @@ public class CategorySongs {
     }
 
     // add Data
-    public void addCategory(SongModel song) {
+    public void addCategory(MusicModel song) {
         String SQL_INSERT = "INSERT INTO "+ Database.CATEGORY.TABLE_NAME+
                 " Value(null, " +
 
@@ -72,14 +72,14 @@ public class CategorySongs {
     }
 
     // lấy hết toàn bộ data
-    public ArrayList<SongModel> getAllCategory() {
+    public ArrayList<MusicModel> getAllCategory() {
         Cursor data = mDatabase.getData(Database.CATEGORY.QUERY);
 
-        ArrayList<SongModel> mSongs = new ArrayList<>();
+        ArrayList<MusicModel> mSongs = new ArrayList<>();
 
         if (isSelect(data)){
             while (!data.isAfterLast()){
-                SongModel.Builder builder = new SongModel.Builder();
+                MusicModel.Builder builder = new MusicModel.Builder();
                 builder.setSongName(data.getString(3));
                 builder.setPath(data.getString(4));
                 builder.setArtist(data.getString(5));
@@ -88,8 +88,8 @@ public class CategorySongs {
                 builder.setFileName(data.getString(9));
                 builder.setTime(data.getInt(8));
 
-                SongModel songModel = builder.generate();
-                mSongs.add(songModel);
+                MusicModel musicModel = builder.generate();
+                mSongs.add(musicModel);
             }
         }
         closeDatabase();
@@ -179,7 +179,7 @@ public class CategorySongs {
         return count;
     }
 
-    public void updateCategory(String fake_path, SongModel song){
+    public void updateCategory(String fake_path, MusicModel song){
         String SQL_UPDATE = "UPDATE "+ Database.CATEGORY.TABLE_NAME+ " SET "+
                 Database.CATEGORY.NAME_CATEGORY + "='"+ song.getSongName()+"'" + "," +
                 Database.CATEGORY.PATH          + "='"+ song.getPath()+"'"     + "," +

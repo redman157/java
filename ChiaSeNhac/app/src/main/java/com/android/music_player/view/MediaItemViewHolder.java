@@ -1,4 +1,4 @@
-package com.android.music_player.viewholder;
+package com.android.music_player.view;
 
 import android.app.Activity;
 import android.support.v4.media.MediaMetadataCompat;
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 
@@ -48,7 +48,7 @@ public class MediaItemViewHolder extends RecyclerView.ViewHolder  {
         ImageHelper.getInstance(mActivity).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(song.getString(Constants.METADATA.Title))), mImageView);
     }
 
-    public void assignData(final SongModel song) {
+    public void assignData(final MusicModel song) {
         //UI setting code
         mTextNameMusic.setText(song.getSongName());
         mTextArtistMusic.setText(song.getArtist());

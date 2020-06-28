@@ -1,13 +1,13 @@
 package com.android.music_player.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
@@ -27,21 +27,22 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.android.music_player.BaseActivity;
-import com.android.music_player.PlayPauseView;
 import com.android.music_player.R;
-import com.android.music_player.fragments.AllMusicFragment;
+import com.android.music_player.adapters.MusicDialogAdapter;
+import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.interfaces.OnChangeListener;
+import com.android.music_player.interfaces.OnMediaItem;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.media.MediaBrowserConnection;
-import com.android.music_player.media.MediaBrowserHelper;
+import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
 import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.DialogHelper;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
+import com.android.music_player.view.PlayPauseView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -53,7 +54,7 @@ import java.util.concurrent.TimeUnit;
 import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 
-public class HomeActivity extends BaseActivity implements MediaBrowserConnection.OnMediaController,View.OnClickListener,
+public class HomeActivity extends BaseActivity implements View.OnClickListener, OnMediaItem,
         MediaBrowserListener.OnChangeMusicListener, SlidingUpPanelLayout.PanelSlideListener, OnChangeListener {
     private RelativeLayout mViewControlMedia, mViewMusic;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
@@ -77,20 +78,25 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     private DrawerLayout mDrawerLayout;
     private boolean isPlaying = false , isReplay = false, isShuffle = false;
     public String type;
-    public MediaBrowserHelper mMediaBrowserHelper;
+    public BrowserHelper mBrowserHelper;
     private SharedPrefsUtils mSharedPrefsUtils;
     private int step = 0;
     private float alpha = 0 ;
     private boolean isMore;
     private String nameChoose;
     private STATE state;
+    private MusicDialogAdapter mMusicDialogAdapter;
     public final String FRAGMENT_TAG = "fragment_tag";
+
+    @Override
+    public void getMediaManager(MediaManager mediaManager) {
+        mMediaManager = mediaManager;
+    }
 
     @Override
     public void initManager() {
         mSharedPrefsUtils = new SharedPrefsUtils(this);
-        mMediaManager = MediaManager.getInstance();
-        mMediaManager.setContext(this);
+
         ImageHelper.getInstance(this);
     }
 
@@ -146,7 +152,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
 
     
     public void setPlayMedia(String songName){
-        MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
+        MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(this,
                 songName);
         ImageHelper.getInstance(this).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(songName)),
                 mImgChangeMedia);
@@ -162,7 +168,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
             songName = (String) MusicLibrary.music.keySet().toArray()[0];
         }
         this.nameChoose = songName;
-        MediaMetadataCompat metadataCompat = MusicLibrary.getMetadata(this,
+        MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(this,
                 songName);
         mTextArtistMedia.setText(metadataCompat.getString(Constants.METADATA.Artist));
         mTextTitleMedia.setText(metadataCompat.getString(Constants.METADATA.Title));
@@ -228,13 +234,15 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         // linear button state
         mLayoutState= mLayoutMedia.findViewById(R.id.layout_panel_home);
         mLinearTop = findViewById(R.id.ll_top);
-        mBtnHome = mLayoutMedia.findViewById(R.id.btn_home);
+
         if (Build.VERSION.SDK_INT > 23) {
             mBtnHome.setTextColor(R.color.red);
         }else {
             mBtnHome.setTextColor(getResources().getColor(R.color.red));
         }
         mViewMusic = mLayoutState.findViewById(R.id.rl_info_music);
+
+        mBtnHome = mLayoutMedia.findViewById(R.id.btn_home);
         mBtnLibrary = mLayoutMedia.findViewById(R.id.btn_library);
     }
 
@@ -263,7 +271,8 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         mBtnPlayPauseMedia.Pause();
         mBtnPlayPausePanel.Pause();
 
-//        Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlaying);
+        mImgViewQueue.setOnClickListener(this);
+        mImgAddToPlayList.setOnClickListener(this);
 
         mSeekBarAudio.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -280,7 +289,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-                getController().getTransportControls().seekTo(seekBar.getProgress());
+                getControllerActivity().getTransportControls().seekTo(seekBar.getProgress());
             }
         });
     }
@@ -310,7 +319,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
 
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fl_placeholder ,
-                                AllMusicFragment.newInstance(),
+                                LibraryFragment.newInstance(),
                                 FRAGMENT_TAG)
                         .commit();
                 break;
@@ -326,27 +335,27 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
             case R.id.icon_shuffle:
                 if (isShuffle) {
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_white);
-                    this.getController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
+                    getControllerActivity().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
                     isShuffle = false;
                 } else{
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_black);
-                    this.getController().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                    getControllerActivity().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
                     isShuffle = true;
                 }
                 break;
             case R.id.icon_replay:
                 if (isReplay){
                     mBtnRepeat.setImageResource(R.drawable.app_repeat_active);
-                    this.getController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE);
+                    getControllerActivity().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE);
                     isReplay = false;
                 }else {
                     mBtnRepeat.setImageResource(R.drawable.app_repeat);
-                    this.getController().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE);
+                    getControllerActivity().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE);
                     isReplay = true;
                 }
                 break;
             case R.id.icon_prev:
-                this.getController().getTransportControls().skipToPrevious();
+                getControllerActivity().getTransportControls().skipToPrevious();
 
                 break;
             case R.id.icon_play:
@@ -355,17 +364,17 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
                 if (isPlaying){
                     mBtnPlayPauseMedia.Pause();
                     mBtnPlayPausePanel.Pause();
-                    this.getController().getTransportControls().pause();
+                    getControllerActivity().getTransportControls().pause();
                     stopSeekBarUpdate();
                 }else {
                     mBtnPlayPauseMedia.Play();
                     mBtnPlayPausePanel.Play();
 
-                    this.getController().getTransportControls().playFromMediaId(nameChoose, null);
+                    getControllerActivity().getTransportControls().playFromMediaId(nameChoose, null);
                 }
                 break;
             case R.id.icon_next:
-                this.getController().getTransportControls().skipToNext();
+                getControllerActivity().getTransportControls().skipToNext();
 
                 break;
             case R.id.icon_image_More:
@@ -387,6 +396,23 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
                         }
                     });
                 }
+                break;
+            case R.id.item_img_viewQueue:
+                Dialog mDlOptionMusic = new Dialog(this);
+                mMusicDialogAdapter = new MusicDialogAdapter(this, mDlOptionMusic,
+                        getControllerActivity().getQueue());
+                mMusicDialogAdapter.setOnClickItemListener(this);
+                mMusicDialogAdapter.notifyDataSetChanged();
+              /*  for (int i = 0; i < mSongModels.size(); i++) {
+                    if (mSongModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
+                        mMusicDialogAdapter.setPosition(i);
+                        mMusicDialogAdapter.setOnClickItemListener(onClickItemListener);
+                        DialogHelper.showSelectSong(this, mMusicDialogAdapter, i);
+                    }
+                }*/
+              DialogHelper.showSelectSong(this, mMusicDialogAdapter);
+                break;
+            case R.id.item_img_addToPlayListImageView:
                 break;
             case R.id.rl_info_music:
                 if (mSlidingUpPanelLayout != null &&
@@ -421,8 +447,6 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
                 mBtnPlayPauseMedia.Pause();
                 mBtnPlayPausePanel.Pause();
             }
-          /*  Utils.UpdateButtonPlay(mBtnPlayPauseMedia, isPlay);
-            Utils.UpdateButtonPlay(mBtnPlayPausePanel, isPlay);*/
         }
 
         this.isPlaying = isPlay;
@@ -446,10 +470,9 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     @Override
     public void onComplete(boolean isComplete) {
         if (isComplete){
-            onMediaMetadata(mMediaBrowserHelper.getMetadata());
+            onMediaMetadata(mBrowserHelper.getMetadata());
         }
     }
-
 
     @Override
     public void OnStateChange(STATE state) {
@@ -510,6 +533,7 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
             case EXPANDED:
                 mLayoutState.setAlpha(0);
                 mLayoutState.setVisibility(View.GONE);
+//                getDrawerToggle().onDrawerClosed();
                 break;
             case COLLAPSED:
                 mLayoutState.setAlpha(1);
@@ -528,12 +552,12 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
     }
 
 
-    @Override
-    public void onController(MediaControllerCompat mediaController) {
-        if (mMediaBrowserHelper.isConnect()){
-            Log.d("ZZZ", mediaController == null ? "null" : "khac null" );
-        }
-    }
+//    @Override
+//    public void onController(MediaControllerCompat mediaController) {
+//        if (mBrowserHelper.isConnect()){
+//            Log.d("ZZZ", mediaController == null ? "null" : "khac null" );
+//        }
+//    }
 
     /**
      * Setup seekbar for mediaplayer controler
@@ -605,4 +629,11 @@ public class HomeActivity extends BaseActivity implements MediaBrowserConnection
         mSeekBarAudio.setMax(duration);
         mTextRightTime.setText(Utils.formatTime(duration));
     }
+
+    @Override
+    public void onChooseMedia(String mediaID) {
+        Log.d("VVV","onChooseMedia: "+mediaID);
+        setViewMusic(mediaID ,PanelState.EXPANDED );
+    }
+
 }

@@ -13,18 +13,18 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.fragments.ChangeSongFragment;
-import com.android.music_player.interfaces.OnClickItemListener;
+import com.android.music_player.interfaces.OnMediaItem;
 import com.android.music_player.managers.MediaManager;
-import com.android.music_player.models.SongModel;
+import com.android.music_player.models.MusicModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements OnClickItemListener {
+public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements OnMediaItem {
     private Context context;
     private ArrayList<Fragment> fragments=  new ArrayList<>();
-    private ArrayList<SongModel> mSongModels;
+    private ArrayList<MusicModel> mMusicModels;
     private List<MediaBrowserCompat.MediaItem> items;
     private MediaManager mMediaManager;
     private String songName;
@@ -37,8 +37,8 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
         mMediaManager.setContext(context);
     }
 
-    public void addData(ArrayList<SongModel> songModels) {
-        mSongModels = songModels;
+    public void addData(ArrayList<MusicModel> musicModels) {
+        mMusicModels = musicModels;
     }
     public void addData(List<MediaBrowserCompat.MediaItem> items) {
         this.items = items;
@@ -63,7 +63,7 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     @Override
     public Fragment getItem(int position) {
 
-//        fChangeSongFragment.setSongModel(mSongModels.get(position));
+//        fChangeSongFragment.setSongModel(mMusicModels.get(position));
         return fragments.get(position);
     }
 
@@ -79,12 +79,7 @@ public class ChangeSongPagerAdapter extends FragmentStatePagerAdapter implements
     }
 
     @Override
-    public void onClickPosition(int pos) {
-
-    }
-
-    @Override
-    public void onClickMusic(String nameChoose) {
+    public void onChooseMedia(String mediaID) {
 
     }
 

@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 import java.io.Serializable;
 
-public class SongModel implements Serializable {
+public class MusicModel implements Serializable {
     private String mAlbum;
     private String mAlbumID;
     private String mArtist;
@@ -71,8 +71,8 @@ public class SongModel implements Serializable {
             this.time = time;
             return this;
         }
-        public SongModel generate(){
-            return new SongModel(mSongName,mPath,mArtist,mAlbum,mAlbumID, mGenres,mFileName ,
+        public MusicModel generate(){
+            return new MusicModel(mSongName,mPath,mArtist,mAlbum,mAlbumID, mGenres,mFileName ,
                     time);
         }
 
@@ -80,19 +80,19 @@ public class SongModel implements Serializable {
 
     public boolean equals(Object obj) {
         boolean matches = false;
-        if (!(obj instanceof SongModel)) {
+        if (!(obj instanceof MusicModel)) {
             return false;
         }
-        SongModel songModel = (SongModel) obj;
-        if (getAlbum().equals(songModel.getAlbum()) && getAlbumID().equals(songModel.getAlbumID()) && getArtist().equals(songModel.getArtist()) && getTime() == (songModel.getTime()) && getFileName().equals(songModel.getFileName()) && getPath().equals(songModel.getPath()) && getSongName().equals(songModel.getSongName())) {
+        MusicModel musicModel = (MusicModel) obj;
+        if (getAlbum().equals(musicModel.getAlbum()) && getAlbumID().equals(musicModel.getAlbumID()) && getArtist().equals(musicModel.getArtist()) && getTime() == (musicModel.getTime()) && getFileName().equals(musicModel.getFileName()) && getPath().equals(musicModel.getPath()) && getSongName().equals(musicModel.getSongName())) {
             matches = true;
         }
         return matches;
     }
 
-    public SongModel(String songName, String path, String artist,
-                     String album, String albumID, String genres,
-                     String fileName, int time) {
+    public MusicModel(String songName, String path, String artist,
+                      String album, String albumID, String genres,
+                      String fileName, int time) {
         mAlbum = album;
         mAlbumID = albumID;
         mArtist = artist;

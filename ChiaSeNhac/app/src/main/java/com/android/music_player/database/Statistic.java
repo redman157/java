@@ -34,6 +34,11 @@ public class Statistic {
     }
 
     public void addRow(String type,String row){
+        /**
+         * type : playlist or music
+         * row : 1 row in database
+         * update số lần nghe
+         * */
         String SQL_ADD = "INSERT INTO "+
                 Database.STATISTIC.TABLE_NAME+
                 " VALUES(" +
@@ -183,11 +188,10 @@ public class Statistic {
         return count;
     }
 
-    public boolean increase(String type, String name){
+    public void increase(String type, String name){
         if (!search(type ,name) ){
             Log.d(TAG, name +" --- search: true ");
             addRow(type ,name);
-            return false;
         }else {
             int most = (getNumber(type, name)) + 1;
             Log.d(TAG, most +" --- search: false ");
@@ -198,17 +202,16 @@ public class Statistic {
             Log.d(TAG, SQL_UPDATE);
             mDatabase.queryData(SQL_UPDATE);
             closeDatabase();
-            return true;
         }
     }
 
-    public boolean search(String type, String namePlayList){
+    public boolean search(String type, String title){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
         try {
             if (isSelect(cursor)){
                 do  {
                     if (cursor.getString(1).equals(type)) {
-                        if (cursor.getString(2).equals(namePlayList)) {
+                        if (cursor.getString(2).equals(title)) {
                             return true;
                         }
                     }

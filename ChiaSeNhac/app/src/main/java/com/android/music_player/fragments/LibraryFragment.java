@@ -1,95 +1,239 @@
 package com.android.music_player.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.media.MediaMetadataCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
-import com.android.music_player.OptionItem;
 import com.android.music_player.R;
-import com.android.music_player.adapters.OptionAdapter;
+import com.android.music_player.adapters.AlbumAdapter;
+import com.android.music_player.adapters.ArtistAdapter;
+import com.android.music_player.adapters.BrowseAdapter;
+import com.android.music_player.adapters.FolderAdapter;
+import com.android.music_player.adapters.ViewPagerAdapter;
+import com.android.music_player.interfaces.OnMediaItem;
+import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.ImageHelper;
+import com.android.music_player.utils.SharedPrefsUtils;
+import com.google.android.material.tabs.TabLayout;
 
-import java.util.ArrayList;
+public class LibraryFragment extends Fragment implements View.OnClickListener,
+        ViewPager.OnPageChangeListener,
+        TabLayout.OnTabSelectedListener, BrowseAdapter.OnClickListener, OnMediaItem {
+    private MediaManager mMediaManager;
 
-public class LibraryFragment extends Fragment implements OptionAdapter.OnClickListener{
+//    private Toolbar mToolBar;
+    private SharedPrefsUtils mSharedPrefsUtils;
+    public ImageView mProfile, mBackGround;
+    public TextView TextProfileTitle, TextProfileArtist, TextProfileAlbum;
+    private TabLayout mTabLayoutSong;
+    private ViewPagerAdapter mViewPagerAdapter;
+    private ViewPager mViewPagerSong;
+    private View collapsingProfileHeaderView;
+    private String songName;
     private View view;
-    private RecyclerView mRcLibrary, mRcSettings;
-    private LinearLayout mLinearUser;
-    private TextView mTextNameUser;
-    private ImageView mImageUser;
-    private ArrayList<OptionItem> mLibrary, mSettings;
-    private OptionAdapter mLibraryAdapter, mSettingAdapter;
-    private RecyclerView mRcSetting, mRcLirary;
-    @Nullable
+    private BrowseAdapter mBrowseAdapter;
+    private FolderAdapter mFolderAdapter;
+    private AlbumAdapter mAlbumAdapter;
+    private ArtistAdapter mArtistAdapter;
+    private ImageView mImgBack;
+    private static LibraryFragment fragment = null;
+    public static LibraryFragment newInstance() {
+        if (fragment == null){
+            fragment = new LibraryFragment();
+        }
+        return fragment;
+    }
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Log.d("AAA","LibraryFragment: context: "+context.getClass().getSimpleName());
+        //is called when a fragment is connected to an activity.
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(getContext());
+        mSharedPrefsUtils = new SharedPrefsUtils(getContext());
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // Defines the xml file for the fragment
         if (view == null) {
-            view = inflater.inflate(R.layout.fragment_library, null);
-            initView(view);
+            view = inflater.inflate(R.layout.fragment_all_music, container, false);
+
         }
-        assignView();
         return view;
     }
 
-    public void initView(View view){
-        mTextNameUser = view.findViewById(R.id.text_name_user);
-        mImageUser = view.findViewById(R.id.img_user);
-        mLinearUser = view.findViewById(R.id.line_info_login);
-        mRcLibrary = view.findViewById(R.id.rc_info_library);
-        mRcSettings = view.findViewById(R.id.rc_settings);
-    }
 
-    private void assignView(){
-        initData();
-        mLibraryAdapter = new OptionAdapter(getContext(), mLibrary);
-        mLibraryAdapter.setOnClickListener(this);
-
-        mSettingAdapter = new OptionAdapter(getContext(), mSettings);
-        mSettingAdapter.setOnClickListener(this);
-
-        mRcSettings.setAdapter(mSettingAdapter);
-        mRcSettings.setNestedScrollingEnabled(false);
-        mRcSettings.setLayoutManager(new LinearLayoutManager(getContext(),
-                LinearLayoutManager.VERTICAL, false));
-
-        mRcLibrary.setAdapter(mLibraryAdapter);
-        mRcLibrary.setNestedScrollingEnabled(false);
-        mRcLibrary.setLayoutManager(new LinearLayoutManager(getContext(),
-                LinearLayoutManager.VERTICAL, false));
-
-    }
-    private void initData(){
-        mLibrary = new ArrayList<>();
-        mLibrary.add(new OptionItem(R.drawable.ic_music_note_white_24dp, "All The Songs"));
-        mLibrary.add(new OptionItem(R.drawable.ic_music_note_white_24dp, "DownLoading"));
-        mLibrary.add(new OptionItem(R.drawable.app_add_playlist, "All PlayList"));
-        mLibrary.add(new OptionItem(R.drawable.app_heart, "Favorites"));
-        mLibrary.add(new OptionItem(R.drawable.ic_access_time_black_48dp, "Recently played"));
-
-
-        mSettings = new ArrayList<>();
-        mSettings.add(new OptionItem(R.drawable.ic_music_note_white_24dp, "Settings"));
-        mSettings.add(new OptionItem(R.drawable.ic_info_outline_black_24dp, "Introduce"));
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        // is called after onCreateView()
+        // and ensures that the fragment's root view is non-null. Any view setup should happen here. E.g., view lookups, attaching listeners.
+        // Setup any handles to view objects here
+        initView(view);
     }
 
     @Override
-    public void onClick(int position) {
-        switch (position){
-            case 0:
-                /*Intent iViewAll = new Intent(getContext(), SongActivity.class);
-                iViewAll.putExtra(Constants.INTENT.TYPE_MUSIC, Constants.VALUE.ALL_SONGS);
-                getActivity().finish();
-                getActivity().startActivity(iViewAll);*/
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // is called when host activity has completed its onCreate() method.
+//        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolBar);
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setupViewPager(mViewPagerSong);
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    private void setAllAdapter(){
+        mBrowseAdapter = new BrowseAdapter(getActivity(), MusicLibrary.music, true);
+        mBrowseAdapter.notifyDataSetChanged();
+        mBrowseAdapter.setOnMediaItem(this);
+
+        mArtistAdapter = new ArtistAdapter(getActivity(), mMediaManager.getArtist());
+        /*mArtistAdapter.notifyDataSetChanged();
+        mArtistAdapter.setLimit(false);
+        mBrowseAdapter.setOnMediaItem(this);*/
+
+        mAlbumAdapter = new AlbumAdapter(getActivity(), mMediaManager.getAlbum());
+      /*  mBrowseAdapter.notifyDataSetChanged();
+        mBrowseAdapter.setLimit(false);
+        mBrowseAdapter.setOnMediaItem(this);*/
+
+        mFolderAdapter = new FolderAdapter(getActivity(), mMediaManager.getFolder() );
+        /*mBrowseAdapter.notifyDataSetChanged();
+        mBrowseAdapter.setLimit(false);
+        mBrowseAdapter.setOnMediaItem(this);*/
+    }
+
+    private void setupViewPager(ViewPager viewPager){
+        setAllAdapter();
+        if (mViewPagerAdapter == null) {
+            mViewPagerAdapter = new ViewPagerAdapter(getContext(), getActivity().getSupportFragmentManager());
+            mViewPagerAdapter.addFragment(new ListMusicFragment(mBrowseAdapter));
+            mViewPagerAdapter.addFragment(new ListArtistFragment(mArtistAdapter));
+            mViewPagerAdapter.addFragment(new ListAlbumFragment(mAlbumAdapter));
+            mViewPagerAdapter.addFragment(new ListFolderFragment(mFolderAdapter));
+
+            viewPager.setAdapter(mViewPagerAdapter);
+            viewPager.setCurrentItem(0);
+            viewPager.addOnPageChangeListener(this);
+            viewPager.setOnClickListener(this);
+            mTabLayoutSong.setupWithViewPager(viewPager);
+            for (int i = 0; i < mTabLayoutSong.getTabCount(); i++) {
+                mTabLayoutSong.getTabAt(i).setCustomView(mViewPagerAdapter.getTabSong(i));
+            }
+            mTabLayoutSong.addOnTabSelectedListener(this);
+        }
+    }
+
+    private void initView(View view) {
+        collapsingProfileHeaderView = view.findViewById(R.id.collapseActionView);
+        mViewPagerSong = view.findViewById(R.id.vp_AllMusic);
+        mTabLayoutSong = view.findViewById(R.id.tab_AllMusic);
+        TextProfileAlbum = collapsingProfileHeaderView.findViewById(R.id.profileMisc);
+        mProfile = collapsingProfileHeaderView.findViewById(R.id.profileImage);
+        TextProfileTitle = collapsingProfileHeaderView.findViewById(R.id.profileName);
+        TextProfileArtist = collapsingProfileHeaderView.findViewById(R.id.profileSubtitle);
+        mBackGround = view.findViewById(R.id.img_AlbumId);
+        setTitle(mMediaManager.getCurrentMusic());
+    }
+
+    public void setTitle(String songName){
+        if (songName.equals("")){
+            songName = (String) MusicLibrary.music.keySet().toArray()[0];
+        }
+        MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(getContext(), songName);
+        TextProfileAlbum.setText(metadataCompat.getString(Constants.METADATA.Album));
+        TextProfileTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
+        TextProfileArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
+
+        ImageHelper.getInstance(getContext()).getSmallImageByPicasso(
+                String.valueOf(MusicLibrary.getAlbumRes(songName)), mProfile);
+        ImageHelper.getInstance(getContext()).getSmallImageByPicasso(
+                String.valueOf(MusicLibrary.getAlbumRes(songName)), mBackGround);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.img_back:
+                getActivity().getSupportFragmentManager().popBackStack();
+                break;
+            case R.id.rl_info_music:
+                break;
+            case R.id.imbt_Play_media:
+//                Utils.isPlayMediaService(this, mMediaManager.getType(), mMediaManager.getPosition());
                 break;
         }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        for (int i = 0; i < mTabLayoutSong.getTabCount(); i ++){
+            View view = mTabLayoutSong.getTabAt(i).getCustomView();
+            TextView title = view.findViewById(R.id.item_tl_text_home);
+            int color = (i == tab.getPosition()) ? getResources().getColor(R.color.red) :
+                    getResources().getColor(R.color.white);
+            title.setTextColor(color);
+        }
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onChooseMedia(String mediaID) {
+        setTitle(mediaID);
+        Log.d("AAA","LibraryFragment --- onChooseMedia: "+ mediaID);
+    }
+
+    @Override
+    public void onClick(String type, int position) {
+
     }
 }

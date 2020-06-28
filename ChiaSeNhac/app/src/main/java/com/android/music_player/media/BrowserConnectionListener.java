@@ -21,7 +21,7 @@ import java.util.List;
  * Customize the connection to our {@link MediaBrowserServiceCompat}
  * and implement our app specific desires.
  */
-public class MediaBrowserConnection extends MediaBrowserHelper {
+public class BrowserConnectionListener extends BrowserHelper {
     private MediaSeekBar mSeekBarAudio;
     private String TAG = "JJJ";
     private String mediaId;
@@ -37,7 +37,11 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
         void onController(MediaControllerCompat mediaController);
     }
 
-    public MediaBrowserConnection(Context context) {
+    public void setOnMediaController(OnMediaController onMediaController) {
+        this.onMediaController = onMediaController;
+    }
+
+    public BrowserConnectionListener(Context context) {
         super(context, MediaService.class);
         this.context = context;
         mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
@@ -77,7 +81,6 @@ public class MediaBrowserConnection extends MediaBrowserHelper {
     }
 
     public void setAutoPlay(String mediaID, boolean autoPlay){
-        Log.d("VVV", "SetAutoPlay: "+mediaID);
         if (mMediaController != null) {
             BundleHelper.Builder builder = new BundleHelper.Builder();
             builder.putBoolean(Constants.INTENT.AUTO_PLAY, autoPlay);

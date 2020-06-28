@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.media.session.MediaControllerCompat;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.media.BrowserConnectionListener;
@@ -22,10 +21,15 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     public BrowserHelper mBrowserHelper;
     private MediaBrowserListener mMediaBrowserListener;
     public abstract void initManager();
-    public abstract void switchFragment(Fragment fragment);
     private static final String TAG = BaseActivity.class.getSimpleName();
 
-    public abstract void getMediaManager(MediaManager mediaManager);
+    public SharedPrefsUtils getSharedPrefsUtils(){
+        return mSharedPrefsUtils;
+    }
+
+    public MediaManager getMediaManager(){
+        return mMediaManager;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,9 +37,9 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(this);
 
+        mSharedPrefsUtils = new SharedPrefsUtils(this);
         mBrowserHelper = mMediaManager.getMediaBrowserConnection();
         mMediaManager.getMediaBrowserConnection().setOnMediaController(this);
-        getMediaManager(mMediaManager);
     }
 
     @Override

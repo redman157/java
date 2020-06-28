@@ -18,7 +18,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.android.music_player.R;
 import com.android.music_player.adapters.AlbumAdapter;
 import com.android.music_player.adapters.ArtistAdapter;
-import com.android.music_player.adapters.BrowseAdapter;
+import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.FolderAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
 import com.android.music_player.interfaces.OnMediaItem;
@@ -31,7 +31,7 @@ import com.google.android.material.tabs.TabLayout;
 
 public class LibraryFragment extends Fragment implements View.OnClickListener,
         ViewPager.OnPageChangeListener,
-        TabLayout.OnTabSelectedListener, BrowseAdapter.OnClickListener, OnMediaItem {
+        TabLayout.OnTabSelectedListener, MusicAdapter.OnClickListener, OnMediaItem {
     private MediaManager mMediaManager;
 
 //    private Toolbar mToolBar;
@@ -44,7 +44,7 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     private View collapsingProfileHeaderView;
     private String songName;
     private View view;
-    private BrowseAdapter mBrowseAdapter;
+    private MusicAdapter mMusicAdapter;
     private FolderAdapter mFolderAdapter;
     private AlbumAdapter mAlbumAdapter;
     private ArtistAdapter mArtistAdapter;
@@ -108,31 +108,31 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     }
 
     private void setAllAdapter(){
-        mBrowseAdapter = new BrowseAdapter(getActivity(), MusicLibrary.music, true);
-        mBrowseAdapter.notifyDataSetChanged();
-        mBrowseAdapter.setOnMediaItem(this);
+        mMusicAdapter = new MusicAdapter(getActivity(), MusicLibrary.music, true);
+        mMusicAdapter.notifyDataSetChanged();
+        mMusicAdapter.setOnMediaItem(this);
 
         mArtistAdapter = new ArtistAdapter(getActivity(), mMediaManager.getArtist());
         /*mArtistAdapter.notifyDataSetChanged();
         mArtistAdapter.setLimit(false);
-        mBrowseAdapter.setOnMediaItem(this);*/
+        mMusicAdapter.setOnMediaItem(this);*/
 
         mAlbumAdapter = new AlbumAdapter(getActivity(), mMediaManager.getAlbum());
-      /*  mBrowseAdapter.notifyDataSetChanged();
-        mBrowseAdapter.setLimit(false);
-        mBrowseAdapter.setOnMediaItem(this);*/
+      /*  mMusicAdapter.notifyDataSetChanged();
+        mMusicAdapter.setLimit(false);
+        mMusicAdapter.setOnMediaItem(this);*/
 
         mFolderAdapter = new FolderAdapter(getActivity(), mMediaManager.getFolder() );
-        /*mBrowseAdapter.notifyDataSetChanged();
-        mBrowseAdapter.setLimit(false);
-        mBrowseAdapter.setOnMediaItem(this);*/
+        /*mMusicAdapter.notifyDataSetChanged();
+        mMusicAdapter.setLimit(false);
+        mMusicAdapter.setOnMediaItem(this);*/
     }
 
     private void setupViewPager(ViewPager viewPager){
         setAllAdapter();
         if (mViewPagerAdapter == null) {
             mViewPagerAdapter = new ViewPagerAdapter(getContext(), getActivity().getSupportFragmentManager());
-            mViewPagerAdapter.addFragment(new ListMusicFragment(mBrowseAdapter));
+            mViewPagerAdapter.addFragment(new ListMusicFragment(mMusicAdapter));
             mViewPagerAdapter.addFragment(new ListArtistFragment(mArtistAdapter));
             mViewPagerAdapter.addFragment(new ListAlbumFragment(mAlbumAdapter));
             mViewPagerAdapter.addFragment(new ListFolderFragment(mFolderAdapter));

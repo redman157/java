@@ -28,11 +28,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
     private HomeActivity mHomeActivity;
     private MediaManager mMediaManager;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private BrowseAdapter mBrowseAdapter;
+    private MusicAdapter mMusicAdapter;
 
-    public HomeFragmentAdapter(HomeActivity activity, BrowseAdapter browseAdapter){
+    public HomeFragmentAdapter(HomeActivity activity, MusicAdapter musicAdapter){
         mHomeActivity = activity;
-        mBrowseAdapter = browseAdapter;
+        mMusicAdapter = musicAdapter;
         mSharedPrefsUtils = new SharedPrefsUtils(activity);
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(activity);
@@ -47,8 +47,8 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
     @Override
     public void onBindViewHolder(@NonNull HomeHolder holder, int position) {
         holder.initView();
-        mBrowseAdapter.notifyDataSetChanged();
-        holder.assignView(mBrowseAdapter);
+        mMusicAdapter.notifyDataSetChanged();
+        holder.assignView(mMusicAdapter);
     }
 
     @Override
@@ -58,9 +58,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
     public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView mTextPlayer_1, mTextPlayer_2, mTextPlayerSongs;
-        private RecyclerView mRc_Recently_Add;
-        private ImageView mImg_Player_2, mImg_Player_Songs, mImg_Player_1,
-                mImg_Most_Player, mImg_Shuffle_All, mImg_Recently_Add;
+        private RecyclerView mRelativeRecentlyAdd;
+        private ImageView mImgPlayer_2, mImgPlayerMusic, mImgPlayer_1,
+                mImgMostPlayer, mImgShuffleAll, mImgRecentlyAdd;
         private ArrayList<String> mMostPlayList;
         private MediaManager mMediaManager;
         private String mMostMusic;
@@ -70,13 +70,13 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             mMediaManager = MediaManager.getInstance();
             mMediaManager.setContext(mHomeActivity);
             mTextPlayerSongs = view.findViewById(R.id.text_Player_Songs);
-            mRc_Recently_Add = view.findViewById(R.id.rc_recently_add);
-            mImg_Player_Songs = view.findViewById(R.id.img_Player_Songs);
-            mImg_Player_1 = view.findViewById(R.id.img_player_1);
-            mImg_Player_2 = view.findViewById(R.id.img_player_2);
-            mImg_Most_Player = view.findViewById(R.id.img_most_player);
-            mImg_Recently_Add = view.findViewById(R.id.img_Recently_Add);
-            mImg_Shuffle_All = view.findViewById(R.id.img_Shuffle_All);
+            mRelativeRecentlyAdd = view.findViewById(R.id.rc_recently_add);
+            mImgPlayerMusic = view.findViewById(R.id.img_Player_Songs);
+            mImgPlayer_1 = view.findViewById(R.id.img_player_1);
+            mImgPlayer_2 = view.findViewById(R.id.img_player_2);
+            mImgMostPlayer = view.findViewById(R.id.img_most_player);
+            mImgRecentlyAdd = view.findViewById(R.id.img_Recently_Add);
+            mImgShuffleAll = view.findViewById(R.id.img_Shuffle_All);
             mTextPlayer_1 = view.findViewById(R.id.text_Player_1);
             mTextPlayer_2 = view.findViewById(R.id.text_Player_2);
         }
@@ -85,12 +85,12 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
             if (mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).equals("")) {
                 mTextPlayerSongs.setText("");
-                mImg_Player_Songs.setImageResource(R.drawable.ic_music_notes_padded);
+                mImgPlayerMusic.setImageResource(R.drawable.ic_music_notes_padded);
             }else {
                 mMostMusic = mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC);
                 mTextPlayerSongs.setText(mMostMusic);
                 ImageHelper.getInstance(mHomeActivity).getSmallImageByPicasso(mMediaManager.getSong(mMostMusic).getAlbumID(),
-                        mImg_Player_Songs);
+                        mImgPlayerMusic);
             }
 
             mMostPlayList = mMediaManager.getPlayListMost();
@@ -104,14 +104,14 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             }
         }
 
-        public void assignView(BrowseAdapter mSongsAdapter){
-            mImg_Player_Songs.setOnClickListener(this);
-            mImg_Player_1.setOnClickListener(this);
-            mImg_Player_2.setOnClickListener(this);
-            mImg_Shuffle_All.setOnClickListener(this);
-            mRc_Recently_Add.setAdapter(mSongsAdapter);
-            mRc_Recently_Add.setNestedScrollingEnabled(false);
-            mRc_Recently_Add.setLayoutManager(new LinearLayoutManager(mHomeActivity,
+        public void assignView(MusicAdapter mSongsAdapter){
+            mImgPlayerMusic.setOnClickListener(this);
+            mImgPlayer_1.setOnClickListener(this);
+            mImgPlayer_2.setOnClickListener(this);
+            mImgShuffleAll.setOnClickListener(this);
+            mRelativeRecentlyAdd.setAdapter(mSongsAdapter);
+            mRelativeRecentlyAdd.setNestedScrollingEnabled(false);
+            mRelativeRecentlyAdd.setLayoutManager(new LinearLayoutManager(mHomeActivity,
                     LinearLayoutManager.VERTICAL, false));
         }
 

@@ -61,7 +61,7 @@
                     </androidx.cardview.widget.CardView>
                     <TextView
                         android:layout_weight="3"
-                        android:text="Shuffle All"
+                        android:text="Shuffle Music"
                         android:textSize="15dp"
                         android:textColor="@color/blackGrey"
                         android:layout_marginTop="5dp"
@@ -97,7 +97,7 @@
                     </androidx.cardview.widget.CardView>
                     <TextView
                         android:layout_weight="3"
-                        android:text="Most Player"
+                        android:text="Most Music"
                         android:textSize="15dp"
                         android:textColor="@color/blackGrey"
                         android:layout_marginTop="5dp"

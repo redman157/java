@@ -15,7 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
-import com.android.music_player.adapters.BrowseAdapter;
+import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.HomeFragmentAdapter;
 import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnMediaItem;
@@ -33,7 +33,7 @@ public class HomeFragment extends Fragment implements
     private MediaManager mMediaManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private HomeFragmentAdapter mHomeAdapter;
-    private BrowseAdapter mSongsAdapter;
+    private MusicAdapter mMusicAdapter;
 
     private OnChangeListener onChangeListener;
     private static HomeFragment fragment = null;
@@ -65,10 +65,10 @@ public class HomeFragment extends Fragment implements
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(getContext());
-        mSongsAdapter = new BrowseAdapter(getActivity(), MusicLibrary.music,
+        mMusicAdapter = new MusicAdapter(getActivity(), MusicLibrary.music,
                 false);
-        mSongsAdapter.notifyDataSetChanged();
-        mSongsAdapter.setOnMediaItem(this);
+        mMusicAdapter.notifyDataSetChanged();
+        mMusicAdapter.setOnMediaItem(this);
     }
 
     @Nullable
@@ -77,7 +77,7 @@ public class HomeFragment extends Fragment implements
         view = inflater.inflate(R.layout.fragment_home, container, false);
         initView();
         mSwipeRefreshLayout.setRefreshing(false);
-        mHomeAdapter = new HomeFragmentAdapter((HomeActivity)getActivity(),mSongsAdapter);
+        mHomeAdapter = new HomeFragmentAdapter((HomeActivity)getActivity(), mMusicAdapter);
         mHomeAdapter.notifyDataSetChanged();
         mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
         mRcHome.setAdapter(mHomeAdapter);

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
-import com.android.music_player.adapters.BrowseAdapter;
+import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.utils.SharedPrefsUtils;
 
@@ -23,9 +23,9 @@ public class ListMusicFragment extends Fragment  {
     private MediaManager mMediaManager;
     private HomeActivity mHomeActivity;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private BrowseAdapter mBrowseAdapter;
-    public ListMusicFragment(BrowseAdapter browseAdapter){
-        mBrowseAdapter = browseAdapter;
+    private MusicAdapter mMusicAdapter;
+    public ListMusicFragment(MusicAdapter musicAdapter){
+        mMusicAdapter = musicAdapter;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ListMusicFragment extends Fragment  {
         mRcMusic.setLayoutManager(new LinearLayoutManager(
                 getContext(),
                 LinearLayoutManager.VERTICAL, false));
-        mRcMusic.setAdapter(mBrowseAdapter);
+        mRcMusic.setAdapter(mMusicAdapter);
     }
 
 

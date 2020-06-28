@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.R;
-import com.android.music_player.adapters.BrowseAdapter;
+import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
 import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnMediaItem;
@@ -31,7 +31,7 @@ public class MainFragment extends Fragment implements TabLayout.OnTabSelectedLis
     private OnChangeListener onChangeListener;
     private Context mContext;
     private FragmentActivity listener;
-    private BrowseAdapter mSongsAdapter;
+    private MusicAdapter mSongsAdapter;
 
     public static MainFragment newInstance(OnChangeListener onChangeListener) {
         MainFragment fragmentDemo = new MainFragment(onChangeListener);

@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.R;
 import com.android.music_player.interfaces.OnMediaItem;
 import com.android.music_player.managers.MediaManager;
-import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -22,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class BrowseAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
+public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
     private final Activity mActivity;
     private Map<String, MediaMetadataCompat> mMusics;
     private SharedPrefsUtils mSharedPrefsUtils;
@@ -33,8 +32,8 @@ public class BrowseAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
         this.isSort = isLimit;
     }
     private List<String> keys;
-    public BrowseAdapter(Activity activity, Map<String, MediaMetadataCompat> musics,
-                         boolean isSort) {
+    public MusicAdapter(Activity activity, Map<String, MediaMetadataCompat> musics,
+                        boolean isSort) {
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(activity);
         this.mMusics = musics;

@@ -24,13 +24,11 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.android.music_player.R;
 import com.android.music_player.adapters.MusicDialogAdapter;
-import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.fragments.HomeFragment;
+import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.interfaces.OnChangeListener;
 import com.android.music_player.interfaces.OnMediaItem;
 import com.android.music_player.managers.MediaManager;
@@ -88,15 +86,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private MusicDialogAdapter mMusicDialogAdapter;
     public final String FRAGMENT_TAG = "fragment_tag";
 
-    @Override
-    public void getMediaManager(MediaManager mediaManager) {
-        mMediaManager = mediaManager;
-    }
 
     @Override
     public void initManager() {
-        mSharedPrefsUtils = new SharedPrefsUtils(this);
-
+        mSharedPrefsUtils = getSharedPrefsUtils();
+        mMediaManager = getMediaManager();
         ImageHelper.getInstance(this);
     }
 
@@ -107,14 +101,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }else {
             baseBackPressed();
         }
-    }
-
-    @Override
-    public void switchFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fl_placeholder, fragment);
-        fragmentTransaction.addToBackStack(fragment.getTag());
-        fragmentTransaction.commit();
     }
 
     @Override
@@ -235,15 +221,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mLayoutState= mLayoutMedia.findViewById(R.id.layout_panel_home);
         mLinearTop = findViewById(R.id.ll_top);
 
+
+        mBtnHome = mLayoutMedia.findViewById(R.id.btn_home);
+        mBtnLibrary = mLayoutMedia.findViewById(R.id.btn_library);
         if (Build.VERSION.SDK_INT > 23) {
             mBtnHome.setTextColor(R.color.red);
         }else {
             mBtnHome.setTextColor(getResources().getColor(R.color.red));
         }
         mViewMusic = mLayoutState.findViewById(R.id.rl_info_music);
-
-        mBtnHome = mLayoutMedia.findViewById(R.id.btn_home);
-        mBtnLibrary = mLayoutMedia.findViewById(R.id.btn_library);
     }
 
     private void assignView(){

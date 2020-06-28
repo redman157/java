@@ -396,6 +396,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
 
     protected void initializeToolbar() {
         mToolbar = findViewById(R.id.toolbar);
+        mToolbar.setPopupTheme(R.style.AppThemeToolbar);
         if (mToolbar == null) {
             throw new IllegalStateException("Layout is required to include a Toolbar with id " +
                 "'toolbar'");

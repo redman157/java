@@ -18,7 +18,6 @@
                 android:text="Quick Play"
                 android:textSize="20sp"
                 android:layout_marginLeft="@dimen/_7sdp"
-                android:textColor="@color/blackGrey"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:ignore="HardcodedText" />
@@ -63,7 +62,7 @@
                         android:layout_weight="3"
                         android:text="Shuffle Music"
                         android:textSize="15dp"
-                        android:textColor="@color/blackGrey"
+
                         android:layout_marginTop="5dp"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
@@ -99,7 +98,6 @@
                         android:layout_weight="3"
                         android:text="Most Music"
                         android:textSize="15dp"
-                        android:textColor="@color/blackGrey"
                         android:layout_marginTop="5dp"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
@@ -136,7 +134,6 @@
                         android:layout_gravity="center"
                         android:layout_weight="3"
                         android:text="Recently Added"
-                        android:textColor="@color/blackGrey"
                         android:textSize="15dp"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"/>
@@ -280,7 +277,6 @@
                     android:layout_weight="7"
                     android:id="@+id/text_Recently_Added"
                     android:layout_width="0dp"
-                    android:textColor="@color/blackGrey"
                     android:textSize="20dp"
                     android:gravity="center"
 

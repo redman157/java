@@ -45,14 +45,12 @@
                     android:layout_weight="1"
                     android:textSize="14sp"
                     android:gravity="left|center"
-                    android:textColor="@color/black"
                     android:id="@+id/item_text_title_music"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"/>
                 <TextView
                     android:textSize="12sp"
                     android:gravity="left|center"
-                    android:textColor="@color/black"
                     android:layout_weight="1"
                     android:maxLines="1"
                     android:ellipsize="end"
@@ -70,7 +68,6 @@
                 android:id="@+id/item_text_time_music"
                 android:textSize="@dimen/_12sdp"
                 android:gravity="center"
-                android:textColor="@color/black"
                 android:layout_weight="1.5"
                 android:layout_width="0dp"
 
@@ -82,6 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_menu_dot_black"
+                android:tint="@color/primaryDark"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_height="match_parent"/>
 

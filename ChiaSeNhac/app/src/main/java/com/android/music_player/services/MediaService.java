@@ -16,9 +16,9 @@ import androidx.core.content.ContextCompat;
 import androidx.media.MediaBrowserServiceCompat;
 
 import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MediaNotificationManager;
 import com.android.music_player.managers.MediaPlayerManager;
 import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.managers.NotificationManager;
 import com.android.music_player.media.PlaybackInfoListener;
 import com.android.music_player.media.PlayerAdapter;
 import com.android.music_player.utils.Constants;
@@ -32,7 +32,7 @@ public class MediaService extends MediaBrowserServiceCompat {
     private static final String TAG ="JJJ";
     private MediaSessionCompat mSessionCompat;
     private PlayerAdapter mPlayback;
-    private NotificationManager mNotificationManager;
+    private MediaNotificationManager mMediaNotificationManager;
     private MediaSessionCallback mCallback;
     private boolean mServiceInStartedState;
     private MediaManager mMediaManager;
@@ -58,14 +58,14 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         if (mPlayback == null){
             mPlayback = new MediaPlayerManager(this, new MediaPlayerListener());
-            mNotificationManager = new NotificationManager(this);
+            mMediaNotificationManager = new MediaNotificationManager(this);
         }
-        Log.d(TAG, "onCreate: MusicService creating MediaSession, and NotificationManager");
+        Log.d(TAG, "onCreate: MusicService creating MediaSession, and MediaNotificationManager");
     }
 
     @Override
     public void onDestroy() {
-        mNotificationManager.onDestroy();
+        mMediaNotificationManager.onDestroy();
         mPlayback.stop();
         mSessionCompat.release();
         Log.d(TAG, "onDestroy: MediaPlayerManager stopped, and MediaSession released");
@@ -326,7 +326,7 @@ public class MediaService extends MediaBrowserServiceCompat {
         class ServiceManager{
             private void moveServiceToStartedState(PlaybackStateCompat state) {
                 Notification notification =
-                        mNotificationManager.getNotification(
+                        mMediaNotificationManager.getNotification(
 
                                 mPlayback.getCurrentMedia(), state, getSessionToken());
 
@@ -337,7 +337,7 @@ public class MediaService extends MediaBrowserServiceCompat {
                     mServiceInStartedState = true;
                 }
 
-                startForeground(NotificationManager.NOTIFICATION_ID, notification);
+                startForeground(MediaNotificationManager.NOTIFICATION_ID, notification);
             }
 
 
@@ -345,10 +345,10 @@ public class MediaService extends MediaBrowserServiceCompat {
             private void updateNotificationForPause(PlaybackStateCompat state) {
                 stopForeground(false);
                 Notification notification =
-                        mNotificationManager.getNotification(
+                        mMediaNotificationManager.getNotification(
                                 mPlayback.getCurrentMedia(), state, getSessionToken());
-                mNotificationManager.getNotificationManager()
-                        .notify(NotificationManager.NOTIFICATION_ID, notification);
+                mMediaNotificationManager.getNotificationManager()
+                        .notify(MediaNotificationManager.NOTIFICATION_ID, notification);
             }
 
             private void moveServiceOutOfStartedState(PlaybackStateCompat state) {

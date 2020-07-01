@@ -2,6 +2,7 @@ package com.android.music_player.managers;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -24,9 +25,9 @@ import com.android.music_player.services.MediaService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 
-public class NotificationManager {
+public class MediaNotificationManager {
     public static final int NOTIFICATION_ID = 412;
-    private static final String TAG = NotificationManager.class.getSimpleName();
+    private static final String TAG = MediaNotificationManager.class.getSimpleName();
     private static final String CHANNEL_ID = "com.android.music_player.channel";
     private static final int REQUEST_CODE = 501;
     private final MediaService mService;
@@ -36,28 +37,28 @@ public class NotificationManager {
     private final NotificationCompat.Action mNextAction;
     private final NotificationCompat.Action mPrevAction;
     private final NotificationCompat.Action mStopAction;
-    private final android.app.NotificationManager mNotificationManager;
+    private final NotificationManager mNotificationManager;
 
-    public NotificationManager(MediaService service) {
+    public MediaNotificationManager(MediaService service) {
         mService = service;
         mNotificationManager =
-                (android.app.NotificationManager) mService.getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) mService.getSystemService(Context.NOTIFICATION_SERVICE);
 
         mPlayAction = new NotificationCompat.Action(
                 R.drawable.app_play,
-                Constants.ACTION.PLAY,
+                mService.getString(R.string.label_play),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_PLAY));
 
         mPauseAction = new NotificationCompat.Action(
                 R.drawable.app_pause,
-                Constants.ACTION.PAUSE,
+                mService.getString(R.string.label_pause),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_PAUSE));
 
         mNextAction = new NotificationCompat.Action(
                 R.drawable.app_next,
-                Constants.ACTION.NEXT,
+                mService.getString(R.string.label_next),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
 
@@ -114,7 +115,7 @@ public class NotificationManager {
 
                     // For backwards compatibility with Android L and earlier.
                     .setShowWhen(false)
-                    .setColorized(true).setColor(mService.getResources().getColor(R.color.white))
+                    .setColorized(true).setColor(mService.getResources().getColor(R.color.accentColor))
 
                     .setSmallIcon(R.drawable.ic_music_note_white_24dp)
                     .setLargeIcon(ImageHelper.getAlbumArt(mService,
@@ -140,7 +141,12 @@ public class NotificationManager {
                                     MediaButtonReceiver.buildMediaButtonPendingIntent(
                                             mService,
                                             PlaybackStateCompat.ACTION_STOP))
-                            .setMediaSession(token));
+                            .setMediaSession(token))
+                    .addAction(mPrevAction)
+                    .addAction(isPlaying ? mPauseAction:mPlayAction)
+                    .addAction(mNextAction)
+                    .addAction(mStopAction);
+
         }else {
             builder = new NotificationCompat.Builder(mService, CHANNEL_ID);
             builder.setStyle( new androidx.media.app.NotificationCompat.MediaStyle()
@@ -167,11 +173,15 @@ public class NotificationManager {
                     .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
                             mService, PlaybackStateCompat.ACTION_STOP))
                     // Show controls on lock screen even when user hides sensitive content.
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .addAction(mPrevAction)
+                    .addAction(isPlaying ? mPauseAction:mPlayAction)
+                    .addAction(mNextAction)
+                    .addAction(mStopAction);;
         }
 
         // If skip to next action is enabled.
-        if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) != 0) {
+       /* if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) != 0) {
             builder.addAction(mPrevAction);
         }
 
@@ -184,7 +194,7 @@ public class NotificationManager {
 
 
         builder.addAction(mStopAction);
-
+*/
 
         return builder;
     }

@@ -245,7 +245,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     @Override
     protected void onStop() {
         // Regardless of whether or not the MediaPlayer has been created / started, the state must
-        // be updated, so that NotificationManager can take down the notification.
+        // be updated, so that MediaNotificationManager can take down the notification.
         try {
             release();
         }finally {

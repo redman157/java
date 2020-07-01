@@ -90,7 +90,11 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
     @Override
     public int getItemCount() {
         if (!isSort){
-            return limit;
+            if (mMusics.size() < limit){
+                return mMusics.size();
+            }else {
+                return limit;
+            }
         }else {
             return mMusics.size();
         }

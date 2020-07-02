@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.android.music_player.R;
+import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.AlbumAdapter;
 import com.android.music_player.adapters.ArtistAdapter;
 import com.android.music_player.adapters.MusicAdapter;
@@ -76,7 +77,7 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Defines the xml file for the fragment
         if (view == null) {
-            view = inflater.inflate(R.layout.fragment_all_music, container, false);
+            view = inflater.inflate(R.layout.fragment_library, container, false);
 
         }
         return view;
@@ -161,19 +162,25 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
         setTitle(mMediaManager.getCurrentMusic());
     }
 
-    public void setTitle(String songName){
-        if (songName.equals("")){
-            songName = (String) MusicLibrary.music.keySet().toArray()[0];
+    public void setTitle(String mediaID){
+        if (mediaID.equals("")){
+            mediaID = (String) MusicLibrary.music.keySet().toArray()[0];
         }
-        MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(getContext(), songName);
+        MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(getContext(), mediaID);
         TextProfileAlbum.setText(metadataCompat.getString(Constants.METADATA.Album));
         TextProfileTitle.setText(metadataCompat.getString(Constants.METADATA.Title));
         TextProfileArtist.setText(metadataCompat.getString(Constants.METADATA.Artist));
 
         ImageHelper.getInstance(getContext()).getSmallImageByPicasso(
-                String.valueOf(MusicLibrary.getAlbumRes(songName)), mProfile);
+                String.valueOf(MusicLibrary.getAlbumRes(mediaID)), mProfile);
         ImageHelper.getInstance(getContext()).getSmallImageByPicasso(
-                String.valueOf(MusicLibrary.getAlbumRes(songName)), mBackGround);
+                String.valueOf(MusicLibrary.getAlbumRes(mediaID)), mBackGround);
+        if (getActivity() instanceof HomeActivity) {
+            ((HomeActivity)getActivity()).mTextTitleMedia.setText(metadataCompat.getString(Constants.METADATA.Title));
+            ((HomeActivity)getActivity()).mTextArtistMedia.setText(metadataCompat.getString(Constants.METADATA.Artist));
+            ImageHelper.getInstance(getContext()).getSmallImageByPicasso(
+                    String.valueOf(MusicLibrary.getAlbumRes(mediaID)), ((HomeActivity)getActivity()).mImgAlbumArt);
+        }
     }
 
     @Override
@@ -182,9 +189,9 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
             case R.id.img_back:
                 getActivity().getSupportFragmentManager().popBackStack();
                 break;
-            case R.id.rl_info_music:
+            case R.id.relative_info_music:
                 break;
-            case R.id.imbt_Play_media:
+            case R.id.imbt_play_media:
 //                Utils.isPlayMediaService(this, mMediaManager.getType(), mMediaManager.getPosition());
                 break;
         }

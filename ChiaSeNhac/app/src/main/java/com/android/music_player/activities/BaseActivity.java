@@ -10,6 +10,8 @@ import com.android.music_player.media.BrowserConnectionListener;
 import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
 import com.android.music_player.services.MediaService;
+import com.android.music_player.utils.BundleHelper;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 public abstract class BaseActivity extends ActionBarCastActivity implements BrowserConnectionListener.OnMediaController {
@@ -67,14 +69,28 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         return mMediaControllerCompat;
     }
 
-    public void setControllerActivity(MediaControllerCompat mMediaControllerCompat) {
-        this.mMediaControllerCompat = mMediaControllerCompat;
+    public void setControllerActivity(MediaControllerCompat controllerCompat) {
+        this.mMediaControllerCompat = controllerCompat;
+
     }
 
     @Override
     public void onController(MediaControllerCompat mediaController) {
         // khi connect thành công của media browser
         // thì mới có controller chuyển cho activity sử dụng
+
         setControllerActivity(mediaController);
+    }
+
+    public void setAutoPlay(String mediaID, boolean autoPlay){
+        if (mMediaControllerCompat != null) {
+            BundleHelper.Builder builder = new BundleHelper.Builder();
+            builder.putBoolean(Constants.INTENT.AUTO_PLAY, autoPlay);
+            if (mediaID.equals(mMediaManager.getCurrentMusic())) {
+                mMediaControllerCompat.getTransportControls().stop();
+            }
+            mMediaControllerCompat.getTransportControls().prepareFromMediaId(mediaID,
+                    builder.generate().getBundle());
+        }
     }
 }

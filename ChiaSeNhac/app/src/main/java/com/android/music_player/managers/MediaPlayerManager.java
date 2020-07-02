@@ -47,6 +47,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         mPlaybackInfoListener = listener;
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(context);
+
     }
     /**
      * Once the {@link MediaPlayer} is released, it can't be used again, and another one has to be
@@ -169,8 +170,6 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         return mCurrentMedia;
     }
 
-
-
     private void playFile(String filename){
         boolean mediaChanged = (mFilename == null || !filename.equals(mFilename));
         if (mCurrentMediaPlayedToCompletion){
@@ -207,6 +206,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
             mMediaPlayer.prepare();
         } catch (Exception e) {
             throw new RuntimeException("Failed to open file: " + mFilename, e);
+
         }
 
         play();
@@ -274,6 +274,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
 
     @Override
     public void seekTo(long position) {
+
         if (mMediaPlayer != null) {
             if (!mMediaPlayer.isPlaying()) {
                 mSeekWhileNotPlaying = (int) position;

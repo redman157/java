@@ -47,7 +47,6 @@
                         android:layout_weight="7"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
-
                         app:cardCornerRadius="10dp"
                         app:cardPreventCornerOverlap = "false"
                         app:cardElevation="6dp" >
@@ -55,7 +54,7 @@
                             android:layout_gravity="center"
                             android:layout_margin="5dp"
                             android:src="@drawable/app_shuffle_inactive"
-                            android:id="@+id/img_Shuffle_All"
+                            android:id="@+id/image_shuffle_all"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"/>
                     </androidx.cardview.widget.CardView>
@@ -81,7 +80,6 @@
                     <androidx.cardview.widget.CardView
                         android:layout_gravity="center"
                         android:layout_weight="7"
-
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         app:cardCornerRadius="10dp"
@@ -91,7 +89,7 @@
                             android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:src="@drawable/app_shuffle_inactive"
-                            android:id="@+id/img_most_player"
+                            android:id="@+id/image_most_player"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"/>
                     </androidx.cardview.widget.CardView>
@@ -143,7 +141,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_Player_Songs"
+                android:id="@+id/linear_player_music"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentLeft="true"
                 android:layout_marginTop="10dp"
@@ -167,7 +165,7 @@
                         app:cardPreventCornerOverlap = "false"
                         app:cardElevation="6dp">
                         <ImageView
-                            android:id="@+id/img_Player_Songs"
+                            android:id="@+id/image_player_music"
                             android:layout_width="match_parent"
                             android:src="@drawable/ic_music_notes_padded"
                             android:scaleType="fitXY"
@@ -176,7 +174,7 @@
 
                         <TextView
 
-                            android:id="@+id/text_Player_Songs"
+                            android:id="@+id/text_player_music"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
@@ -205,10 +203,9 @@
                         app:cardPreventCornerOverlap = "false"
                         app:cardElevation="6dp">
                         <ImageView
-                            android:id="@+id/img_player_1"
+                            android:id="@+id/image_player_1"
                             android:layout_width="match_parent"
                             android:src="@drawable/ic_music_notes_padded"
-
                             android:scaleType="fitXY"
                             android:adjustViewBounds="true"
                             android:layout_height="wrap_content"/>
@@ -222,7 +219,7 @@
                             android:textSize="12dp"
                             android:textColor="@color/primaryDark"
                             android:gravity="center|left"
-                            android:id="@+id/text_Player_1"
+                            android:id="@+id/text_player_1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
                     </androidx.cardview.widget.CardView>
@@ -236,11 +233,10 @@
                         app:cardPreventCornerOverlap = "false"
                         app:cardElevation="6dp">
                         <ImageView
-                            android:id="@+id/img_player_2"
+                            android:id="@+id/image_player_2"
                             android:layout_width="match_parent"
                             android:src="@drawable/ic_music_notes_padded"
                             android:scaleType="fitXY"
-
                             android:adjustViewBounds="true"
                             android:layout_height="wrap_content"/>
                         <TextView
@@ -264,7 +260,7 @@
 
 
             <LinearLayout
-                android:id="@+id/ll_Recently_Add"
+                android:id="@+id/linear_recently_add"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_width="wrap_content"
@@ -273,7 +269,7 @@
                 android:layout_alignParentLeft="true"
                 android:weightSum="10"
                 android:orientation="horizontal"
-                android:layout_below="@id/ll_Player_Songs">
+                android:layout_below="@id/linear_player_music">
                 <TextView
                     android:padding="7dp"
                     android:layout_weight="7"
@@ -287,8 +283,8 @@
 
             </LinearLayout>
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rc_recently_add"
-                android:layout_below="@id/ll_Recently_Add"
+                android:id="@+id/recycler_recently_add"
+                android:layout_below="@id/linear_recently_add"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 

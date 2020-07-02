@@ -3,12 +3,10 @@ package com.android.music_player.utils;
 import android.content.ContentUris;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
@@ -22,7 +20,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -119,37 +116,6 @@ public class ImageHelper {
         catch (Exception ignored) {}
     }
 
-    public void getImageByPicassoAnimation(final String albumID, final ImageView imageView) {
-        try {
-            imageView.setAlpha(0f);
-            Picasso.get().load(getSongUri(Long.parseLong(albumID)))
-                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_black_24dp)))
-                    .resize(400,400)
-                    .onlyScaleDown()
-                    .into(imageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            if (imageView.getAlpha() == 0f) {
-                                /*Picasso.get().load(getSongUri(Long.parseLong(albumID)))
-                                        .into(imageView);*/
-                                imageView.animate().setDuration(700).alpha(0.7f).start();
-                            }
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Log.d("EEE", e.getMessage());
-                            imageView.setAlpha(0f);
-//                            imageView.setImageResource(R.drawable.ic_music_note_black_24dp);
-                            imageView.animate().setDuration(500).alpha(0.7f).start();
-                        }
-                    });
-        }
-        catch (Exception ignored) {
-
-        }
-    }
-
     public Bitmap getBitmapIntoPicasso(String albumID){
         final Bitmap[] mBitmap = new Bitmap[1];
         try {
@@ -177,119 +143,6 @@ public class ImageHelper {
         return mBitmap[0];
     }
 
-    public void getFullImageByPicasso(String albumID, ImageView imageView) {
-        try {
-            Picasso.get().load(getSongUri(Long.parseLong(albumID)))
-                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_white_24dp)))
-                    .into(imageView);}
-        catch (Exception ignored) {}
-    }
-
-    public void setImageBitmap(String albumId, ImageView imageView){
-
-        Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
-        Uri albumArtUri = ContentUris.withAppendedId(sArtworkUri,  Long.valueOf(albumId));
-        Bitmap bitmap = null;
-        try {
-            bitmap = MediaStore.Images.Media.getBitmap(
-                    mContext.getContentResolver(), albumArtUri);
-            bitmap = Bitmap.createScaledBitmap(bitmap, 40, 40, true);
-
-        } catch (FileNotFoundException exception) {
-            exception.printStackTrace();
-            bitmap = BitmapFactory.decodeResource(mContext.getResources(),
-                    R.drawable.ic_music_note_white_24dp);
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-        }finally {
-            if (bitmap != null) {
-                imageView.setImageBitmap(bitmap);
-            }else {
-                imageView.setImageResource(R.drawable.ic_music_note_white_24dp);
-
-            }
-        }
-    }
-
-    public void getFullImageByPicasso(final List albumIds, final ImageView imageView) {
-        try {
-            final int i = 0;
-            final int max = albumIds.size()-1;
-            if (i < max) {
-                Picasso.get().load(getSongUri(Long.parseLong(albumIds.get(i).toString())))
-                        .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_white_24dp)))
-                        .into(imageView, new Callback() {
-                            @Override
-                            public void onSuccess() {
-
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                getImageByPicasso(albumIds, imageView, i + 1, max);
-                            }
-                        });
-            }
-            else {
-                Picasso.get().load(getSongUri(Long.parseLong(albumIds.get(i).toString())))
-                        .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_white_24dp))).into(imageView);
-            }}
-        catch (Exception ignored) {}
-    }
-
-    public Bitmap getAlbumArt(Long albumId) {
-        Bitmap albumArtBitMap = null;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        try {
-
-            final Uri sArtworkUri = Uri
-                    .parse("content://media/external/audio/albumart");
-
-            Uri uri = ContentUris.withAppendedId(sArtworkUri, albumId);
-
-            ParcelFileDescriptor pfd = mContext.getContentResolver()
-                    .openFileDescriptor(uri, "r");
-
-            if (pfd != null) {
-                FileDescriptor fd = pfd.getFileDescriptor();
-                albumArtBitMap = BitmapFactory.decodeFileDescriptor(fd, null,
-                        options);
-            }
-        } catch (Error ee) {
-            ee.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (null != albumArtBitMap) {
-            return albumArtBitMap;
-        }
-        return getDefaultAlbumArtEfficiently();
-    }
-
-    public  void getFullImageByPicasso(final List albumSongs, final ImageView imageView, final int i, final int max) {
-        try {
-            if (i < max) Picasso.get().load(getSongUri(Long.parseLong(albumSongs.get(i).toString())))
-                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_white_24dp)))
-                    .into(imageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            getFullImageByPicasso(albumSongs, imageView, i + 1, max);
-                        }
-                    });
-            else if (i == max) {
-                Picasso.get().load(getSongUri(Long.parseLong(albumSongs.get(i).toString())))
-                        .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_white_24dp))).into(imageView);
-            }}
-        catch (Exception ignored) {}
-    }
 
     public  void getImageByPicasso(final List albumSongs, final ImageView imageView, final int i, final int max) {
         try {
@@ -313,12 +166,6 @@ public class ImageHelper {
                         .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_white_24dp))).into(imageView);
             }}
         catch (Exception ignored) {}
-    }
-
-    public  Bitmap getDefaultAlbumArtEfficiently() {
-
-        return BitmapFactory.decodeResource(mContext.getResources(),
-                R.drawable.ic_music_notes_padded);
     }
 
     public static Uri getSongUri(Long albumID) {

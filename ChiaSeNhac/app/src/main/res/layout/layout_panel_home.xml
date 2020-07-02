@@ -30,7 +30,7 @@
             android:layout_height="?attr/actionBarSize">
 
             <LinearLayout
-                android:layout_toStartOf="@+id/imbt_Play_media"
+                android:layout_toStartOf="@+id/imbt_play_media"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:weightSum="10"
@@ -62,7 +62,7 @@
 
 
                 <RelativeLayout
-                    android:id="@+id/rl_info_music"
+                    android:id="@+id/relative_info_music"
                     android:layout_weight="8"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -111,7 +111,7 @@
             </LinearLayout>
 
             <com.android.music_player.view.PlayPauseView
-                android:id="@+id/imbt_Play_media"
+                android:id="@+id/imbt_play_media"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentRight="true"

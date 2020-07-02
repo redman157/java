@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,9 +30,11 @@ import java.util.ArrayList;
 
 public class DialogHelper {
     private static Dialog dialog;
+    public static void initDialog(final Context context, int layout){
+        dialog = new Dialog(context, R.style.DialogTheme);
+        dialog.setContentView(layout);
 
-    public DialogHelper(@NonNull Context context) {
-
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     }
 
     public static void cancelDialog(){
@@ -42,14 +43,11 @@ public class DialogHelper {
                 dialog.dismiss();
             }
         }
-
     }
 
     public static void showSetMusic(final Context context, String title){
         SelectMusicAdapter selectMusicAdapter = new SelectMusicAdapter(context);
-        dialog = new Dialog(context,R.style.DialogTheme);
-        dialog.setContentView(R.layout.dialog_selection_music);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        initDialog(context, R.layout.dialog_selection_music);
 
         RecyclerView options = dialog.findViewById(R.id.rc_selection_music);
         TextView textTitle = dialog.findViewById(R.id.text_title);
@@ -71,8 +69,7 @@ public class DialogHelper {
 
     public static void showAllPlayList(final Context context, PlayListAdapter.OnClickItem onClickItem){
         MediaManager.getInstance().setContext(context);
-        dialog = new Dialog(context);
-        dialog.setContentView(R.layout.dialog_show_all_play_list);
+        initDialog(context,R.layout.dialog_show_all_play_list);
 
         ArrayList<String> allPlayList = MediaManager.getInstance().getAllPlayList();
         if (allPlayList != null && allPlayList.size() > 0) {
@@ -88,10 +85,7 @@ public class DialogHelper {
 
     private static void showCreatePlayList(final Context context){
         MediaManager.getInstance().setContext(context);
-        dialog = new Dialog(context);
-        dialog.setContentView(R.layout.dialog_add_playlist);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
+        initDialog(context, R.layout.dialog_add_playlist);
 
         TextView textTitle = dialog.findViewById(R.id.text_title);
         final EditText editTitle = dialog.findViewById(R.id.edit_title);
@@ -130,10 +124,7 @@ public class DialogHelper {
     public static void showAddSongs(final Context context, final MusicModel musicModel,
                                     final String title){
         MediaManager.getInstance().setContext(context);
-        dialog = new Dialog(context);
-        dialog.setContentView(R.layout.dialog_add_music);
-
-
+        initDialog(context,R.layout.dialog_add_music);
         ImageView imageView = dialog.findViewById(R.id.img_add_music);
         TextView textTitle = dialog.findViewById(R.id.text_title_music);
         ImageButton btnAddMusic = dialog.findViewById(R.id.imgb_add_music);
@@ -172,10 +163,9 @@ public class DialogHelper {
     }
 
     @SuppressLint("SetTextI18n")
-    public static void showSongsInfo(Context context, MusicModel musicModel){
-        dialog = new Dialog(context);
+    public static void showAboutMusic(Context context, MusicModel musicModel){
 
-        dialog.setContentView(R.layout.dialog_info_music);
+        initDialog(context,R.layout.dialog_info_music);
 
         TextView textName = dialog.findViewById(R.id.dialog_about_music_name);
         TextView textFileName = dialog.findViewById(R.id.dialog_about_music_file_name);
@@ -205,8 +195,7 @@ public class DialogHelper {
 
     public static void showSelectSong(final Context context,
                                       MusicDialogAdapter musicDialogAdapter){
-        dialog = new Dialog(context);
-        dialog.setContentView(R.layout.dialog_option_music);
+        initDialog(context,R.layout.dialog_option_music);
         MediaManager.getInstance().setContext(context);
         RecyclerView mRcOptionMusic = dialog.findViewById(R.id.rc_OptionMusic);
 

@@ -54,7 +54,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private RelativeLayout mViewControlMedia, mViewMusic;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
     private View mLayoutMedia, mLayoutState;
-
+    public TextView mTextArtistMedia, mTextTitleMedia;
     public ImageView mImgAlbumArt, mImgChangeMusic, mImgBack;
     private LinearLayout mLinearTop, mBtnHome,mBtnLibrary;
     private MediaManager mMediaManager;
@@ -62,8 +62,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private ImageView mBtnPrev, mBtnRepeat, mBtnNext, mBtnSetTime,
             mBtnSeeMore, mBtnAbout, mBtnEqualizer, mBtnFavorite, mBtnShuffle;
     public SeekBar mSeekBarAudio;
-    private TextView mTextLeftTime, mTextRightTime, mTextTitleMedia, mTextArtistMedia
-            , mTextTitleMusic, mTextArtistMusic , mTextAlbumMusic, mTextHome, mTextLibrary;
+    private TextView mTextLeftTime, mTextRightTime, mTextTitleMusic, mTextArtistMusic , mTextAlbumMusic, mTextHome, mTextLibrary;
     private ImageView mImgViewQueue, mImgAddToPlayList, mImgChangeMedia;
     public SlidingUpPanelLayout mSlidingUpPanelLayout;
     public Toolbar mToolBar;
@@ -172,50 +171,50 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mLayoutMedia = findViewById(R.id.layout_main_media);
 
         // view group mLayoutMedia
-        mLayoutSeeMore = mLayoutMedia.findViewById(R.id.ll_see_more);
-        mLlChangeMusic = mLayoutMedia.findViewById(R.id.ll_change_music);
-        mViewControlMedia = mLayoutMedia.findViewById(R.id.rl_change_state);
+        mLayoutSeeMore = mLayoutMedia.findViewById(R.id.linear_see_more);
+        mLlChangeMusic = mLayoutMedia.findViewById(R.id.linear_change_music);
+        mViewControlMedia = mLayoutMedia.findViewById(R.id.relative_change_state);
         mViewPanelMedia = mLayoutMedia.findViewById(R.id.ll_play_media);
-        mLayoutControlSong = mLayoutMedia.findViewById(R.id.ll_control_song);
+        mLayoutControlSong = mLayoutMedia.findViewById(R.id.linear_control_song);
 
         // status play media
         mImgAlbumArt = mLayoutMedia.findViewById(R.id.img_albumArt_media);
         mTextTitleMedia = mLayoutMedia.findViewById(R.id.text_title_media);
         mTextArtistMedia = mLayoutMedia.findViewById(R.id.text_artists_media);
-        mBtnPlayPauseMedia = mLayoutMedia.findViewById(R.id.imbt_Play_media);
+        mBtnPlayPauseMedia = mLayoutMedia.findViewById(R.id.imbt_play_media);
 
         // thông tin bài hát
-        mImgBack = mLayoutMedia.findViewById(R.id.img_close_panel);
+        mImgBack = mLayoutMedia.findViewById(R.id.image_close_panel);
         mTextTitleMusic = mLayoutMedia.findViewById(R.id.text_title);
         mTextArtistMusic = mLayoutMedia.findViewById(R.id.text_artist);
         mTextAlbumMusic = mLayoutMedia.findViewById(R.id.text_album);
-        mImgViewQueue = mLayoutMedia.findViewById(R.id.item_img_viewQueue);
-        mImgAddToPlayList = mLayoutMedia.findViewById(R.id.item_img_addToPlayListImageView);
-        mImgChangeMedia = mLayoutMedia.findViewById(R.id.img_album_art);
+        mImgViewQueue = mLayoutMedia.findViewById(R.id.image_view_queue);
+        mImgAddToPlayList = mLayoutMedia.findViewById(R.id.image_add_to_playlist);
+        mImgChangeMedia = mLayoutMedia.findViewById(R.id.image_album_art);
 
         // linear control song
-        mBtnAbout = mLayoutMedia.findViewById(R.id.icon_about);
-        mBtnSetTime = mLayoutMedia.findViewById(R.id.icon_set_time);
-        mBtnEqualizer = mLayoutMedia.findViewById(R.id.icon_equalizer);
-        mBtnFavorite = mLayoutMedia.findViewById(R.id.icon_favorite);
-        mImgBack = mLayoutMedia.findViewById(R.id.img_close_panel);
+        mBtnAbout = mLayoutMedia.findViewById(R.id.image_about);
+        mBtnSetTime = mLayoutMedia.findViewById(R.id.image_set_time);
+        mBtnEqualizer = mLayoutMedia.findViewById(R.id.image_equalizer);
+        mBtnFavorite = mLayoutMedia.findViewById(R.id.image_favorite);
+        mImgBack = mLayoutMedia.findViewById(R.id.image_close_panel);
 
         // linear seekbar time
-        mTextLeftTime = mLayoutMedia.findViewById(R.id.text_leftTime);
-        mSeekBarAudio = mLayoutMedia.findViewById(R.id.sb_Time);
-        mTextRightTime = mLayoutMedia.findViewById(R.id.text_rightTime);
+        mTextLeftTime = mLayoutMedia.findViewById(R.id.text_start);
+        mSeekBarAudio = mLayoutMedia.findViewById(R.id.seekbar_timer);
+        mTextRightTime = mLayoutMedia.findViewById(R.id.text_end);
 
         // linear play media
-        mBtnRepeat = mLayoutMedia.findViewById(R.id.icon_replay);
-        mBtnPrev = mLayoutMedia.findViewById(R.id.icon_prev);
-        mBtnPlayPausePanel = mLayoutMedia.findViewById(R.id.icon_play);
-        mBtnNext = mLayoutMedia.findViewById(R.id.icon_next);
-        mBtnSeeMore = mLayoutMedia.findViewById(R.id.icon_image_More);
-        mBtnShuffle = mLayoutMedia.findViewById(R.id.icon_shuffle);
+        mBtnRepeat = mLayoutMedia.findViewById(R.id.image_replay);
+        mBtnPrev = mLayoutMedia.findViewById(R.id.image_prev);
+        mBtnPlayPausePanel = mLayoutMedia.findViewById(R.id.image_play_pause);
+        mBtnNext = mLayoutMedia.findViewById(R.id.image_next);
+        mBtnSeeMore = mLayoutMedia.findViewById(R.id.image_more);
+        mBtnShuffle = mLayoutMedia.findViewById(R.id.image_shuffle);
 
         // linear button state
         mLayoutState= mLayoutMedia.findViewById(R.id.layout_panel_home);
-        mLinearTop = findViewById(R.id.ll_top);
+//        mLinearTop = findViewById(R.id.linear_top);
 
         mBtnHome = mLayoutMedia.findViewById(R.id.btn_home);
         mTextHome = mLayoutMedia.findViewById(R.id.text_home);
@@ -224,11 +223,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         mBtnHome.setEnabled(false);
         mTextHome.setTextColor(getColor(R.color.red));
-        mViewMusic = mLayoutState.findViewById(R.id.rl_info_music);
+        mViewMusic = mLayoutState.findViewById(R.id.relative_info_music);
     }
 
     private void assignView(){
         mSlidingUpPanelLayout.addPanelSlideListener(this);
+        mSlidingUpPanelLayout.setFadeOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            }
+        });
         mLayoutSeeMore.setOnClickListener(this);
 
         mBtnFavorite.setOnClickListener(this);
@@ -263,14 +268,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
                 getControllerActivity().getTransportControls().seekTo(seekBar.getProgress());
+
             }
         });
     }
@@ -303,16 +307,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                                 FRAGMENT_TAG)
                         .commit();
                 break;
-            case R.id.icon_about:
+            case R.id.image_about:
+                DialogHelper.showAboutMusic(this,
+                        MusicLibrary.model.get(getControllerActivity().getMetadata().getString(Constants.METADATA.Title)));
                 break;
-            case R.id.icon_set_time:
+            case R.id.image_set_time:
                 break;
-            case R.id.icon_equalizer:
+            case R.id.image_equalizer:
                 startActivity(new Intent(this, EqualizerActivity.class));
                 break;
-            case R.id.icon_favorite:
+            case R.id.image_favorite:
                 break;
-            case R.id.icon_shuffle:
+            case R.id.image_shuffle:
                 if (isShuffle) {
                     mBtnShuffle.setImageResource(R.drawable.app_shuffle_white);
                     getControllerActivity().getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
@@ -323,7 +329,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     isShuffle = true;
                 }
                 break;
-            case R.id.icon_replay:
+            case R.id.image_replay:
                 if (isReplay){
                     mBtnRepeat.setImageResource(R.drawable.app_repeat_active);
                     getControllerActivity().getTransportControls().setRepeatMode(PlaybackStateCompat.REPEAT_MODE_NONE);
@@ -334,13 +340,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     isReplay = true;
                 }
                 break;
-            case R.id.icon_prev:
+            case R.id.image_prev:
                 getControllerActivity().getTransportControls().skipToPrevious();
 
                 break;
-            case R.id.icon_play:
-
-            case R.id.imbt_Play_media:
+            case R.id.image_play_pause:
+            case R.id.imbt_play_media:
                 if (isPlaying){
                     mBtnPlayPauseMedia.Pause();
                     mBtnPlayPausePanel.Pause();
@@ -349,25 +354,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 }else {
                     mBtnPlayPauseMedia.Play();
                     mBtnPlayPausePanel.Play();
-
                     getControllerActivity().getTransportControls().playFromMediaId(nameChoose, null);
+
                 }
                 break;
-            case R.id.icon_next:
+            case R.id.image_next:
                 getControllerActivity().getTransportControls().skipToNext();
 
                 break;
-            case R.id.icon_image_More:
+            case R.id.image_more:
                 if (!isMore){
                     mLayoutSeeMore.setAlpha(1);
-                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_black);
+                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_white);
                     isMore = true;
                     Animation fadeIn = AnimationUtils.loadAnimation(HomeActivity.this,R.anim.fadein);
                     mLayoutSeeMore.setAnimation(fadeIn);
                     mLayoutSeeMore.setVisibility(View.VISIBLE);
                 }else {
-                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_white);
-
+                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_black);
                     isMore = false;
                     mLayoutSeeMore.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
                         @Override
@@ -377,30 +381,24 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     });
                 }
                 break;
-            case R.id.item_img_viewQueue:
+            case R.id.image_view_queue:
                 Dialog mDlOptionMusic = new Dialog(this);
                 mMusicDialogAdapter = new MusicDialogAdapter(this, mDlOptionMusic,
                         getControllerActivity().getQueue());
                 mMusicDialogAdapter.setOnClickItemListener(this);
                 mMusicDialogAdapter.notifyDataSetChanged();
-              /*  for (int i = 0; i < mSongModels.size(); i++) {
-                    if (mSongModels.get(i).getSongName().equals(musicMain.get(pos).getSongName())) {
-                        mMusicDialogAdapter.setPosition(i);
-                        mMusicDialogAdapter.setOnClickItemListener(onClickItemListener);
-                        DialogHelper.showSelectSong(this, mMusicDialogAdapter, i);
-                    }
-                }*/
-              DialogHelper.showSelectSong(this, mMusicDialogAdapter);
+                DialogHelper.showSelectSong(this, mMusicDialogAdapter);
                 break;
-            case R.id.item_img_addToPlayListImageView:
+            case R.id.image_add_to_playlist:
                 break;
-            case R.id.rl_info_music:
+            case R.id.relative_info_music:
                 if (mSlidingUpPanelLayout != null &&
                         (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED)){
                     mSlidingUpPanelLayout.setPanelState(PanelState.EXPANDED);
                 }
+
                 break;
-            case R.id.img_close_panel:
+            case R.id.image_close_panel:
                 if (mSlidingUpPanelLayout != null &&
                         (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED || mSlidingUpPanelLayout.getPanelState() == PanelState.ANCHORED)) {
                     mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
@@ -408,10 +406,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.menu_search:
                 Intent iSearch = new Intent(this, SearchActivity.class);
-
                 startActivity(iSearch);
-                break;
-            case R.id.vp_Home:
                 break;
         }
     }
@@ -493,7 +488,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void onPanelSlide(View panel, float slideOffset) {
         Log.d("UUU", "onPanelSlide : "+slideOffset);
         alpha = slideOffset;
-        mLayoutState.setAlpha(alpha);
+//        mLayoutState.setAlpha(alpha);
+        if (slideOffset < 0.3f){
+            mLayoutState.setVisibility(View.VISIBLE);
+        }else {
+            mLayoutState.setVisibility(View.GONE);
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -511,16 +511,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
         switch (newState) {
             case EXPANDED:
-                mLayoutState.setAlpha(0);
-                mLayoutState.setVisibility(View.GONE);
-//                getDrawerToggle().onDrawerClosed();
+
                 break;
             case COLLAPSED:
                 mLayoutState.setAlpha(1);
-                mLayoutState.setVisibility(View.VISIBLE);
+
                 break;
             case DRAGGING:
-                mLayoutState.setVisibility(View.GONE);
+                if (previousState == PanelState.COLLAPSED){
+                    mLayoutState.setAlpha(0);
+                    mLayoutState.setVisibility(View.GONE);
+                } else if (previousState == PanelState.EXPANDED) {
+                    mLayoutState.setAlpha(0);
+                    mLayoutState.setVisibility(View.VISIBLE);
+                }
                 break;
         }
     }
@@ -528,16 +532,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     @Override
     public void onMusicID(String nameMusic) {
         setViewMusic(nameMusic, PanelState.EXPANDED);
-        mMediaManager.getMediaBrowserConnection().setAutoPlay(nameMusic, true);
+        mMediaManager.getMediaBrowserConnection().getTransportControls().prepareFromMediaId(nameMusic, null);
+//        mMediaManager.getMediaBrowserConnection().setAutoPlay(nameMusic, true);
     }
-
-
-//    @Override
-//    public void onController(MediaControllerCompat mediaController) {
-//        if (mBrowserHelper.isConnect()){
-//            Log.d("ZZZ", mediaController == null ? "null" : "khac null" );
-//        }
-//    }
 
     /**
      * Setup seekbar for mediaplayer controler

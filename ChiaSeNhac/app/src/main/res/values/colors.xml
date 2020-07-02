@@ -30,6 +30,7 @@
 
     <!-- App Theme -->
     <color name="line">#ABAFAF</color>
+    <color name="fade_sliding_panel">#80000000</color>
     <color name="primaryColor">@color/white</color>
     <color name="primaryDark">@color/light_grey</color>
     <color name="accentColor">@color/black</color>

@@ -21,7 +21,6 @@ import com.android.music_player.managers.MediaPlayerManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.media.PlaybackInfoListener;
 import com.android.music_player.media.PlayerAdapter;
-import com.android.music_player.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +50,11 @@ public class MediaService extends MediaBrowserServiceCompat {
     public void onCreate() {
         super.onCreate();
         // Create a new MediaSession.
-        initMediaSession();
+
 
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(this);
-
+        initMediaSession();
         if (mPlayback == null){
             mPlayback = new MediaPlayerManager(this, new MediaPlayerListener());
             mMediaNotificationManager = new MediaNotificationManager(this);
@@ -74,6 +73,7 @@ public class MediaService extends MediaBrowserServiceCompat {
 
     private void initMediaSession() {
         mSessionCompat = new MediaSessionCompat(this,getClass().getSimpleName());
+        mSessionCompat.setMetadata(MusicLibrary.music.get(mMediaManager.getCurrentMusic()));
         mCallback = new MediaSessionCallback();
 
         mSessionCompat.setCallback(mCallback);
@@ -138,10 +138,12 @@ public class MediaService extends MediaBrowserServiceCompat {
             mMediaManager.setContext(MediaService.this);
         }
 
+
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
             queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
             mPlayList.add(queueItem);
+
             mSessionCompat.setQueue(mPlayList);
         }
 
@@ -156,12 +158,14 @@ public class MediaService extends MediaBrowserServiceCompat {
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
             super.onPlayFromMediaId(mediaId, extras);
             Log.d("JJJ","MediaService ---onPlayFromMediaId: "+mediaId);
+
             if (mPreparedMedia == null) {
                 // công đoan chuẩn bị từ media session
-                onPrepareFromMediaId(mediaId, extras);
+                onPrepareFromMediaId(mediaId, null);
             }else {
                 // khởi động app play liền
                 mPlayback.playFromMedia(mMediaManager.getMetadata(MediaService.this, mediaId));
+                mPreparedMedia = null;
             }
             Log.d(TAG, "onPlayFromMediaId: MediaSession active");
         }
@@ -169,13 +173,15 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onPlay() {
             super.onPlay();
-
+            onPlayFromMediaId(mMediaManager.getCurrentMusic(), null);
         }
+
 
         @Override
         public void onPrepareFromMediaId(String mediaId, Bundle bundle) {
             setupMediaList();
             // set media current để chạy
+
             mPreparedMedia = mMediaManager.getMetadata(MediaService.this,
                    mediaId);
             mSessionCompat.setMetadata(mPreparedMedia);
@@ -241,7 +247,6 @@ public class MediaService extends MediaBrowserServiceCompat {
 
             mPreparedMedia = null;
             onPlayFromMediaId(mediaId, null);
-            Log.d("JJJ", "MediaService --- onSkipToNext: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
         }
 
         @Override
@@ -254,7 +259,6 @@ public class MediaService extends MediaBrowserServiceCompat {
             // khi next muốn tự động phát hay k ?
             mPreparedMedia = null;
             onPlayFromMediaId(mediaId, null );
-            Log.d("JJJ", "MediaService --- onSkipToPrevious: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
         }
 
         private void setupMediaList() {
@@ -287,8 +291,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         public void onPlaybackStateChange(PlaybackStateCompat state) {
             // Report the state to the MediaSession.
             mSessionCompat.setPlaybackState(state);
-
-            Log.d("SSS", "MediaService --- onPlaybackStateChange: " + state.getState());
             // Manage the started state of this service.
             switch (state.getState()){
                 case PlaybackStateCompat.STATE_PLAYING:
@@ -309,9 +311,7 @@ public class MediaService extends MediaBrowserServiceCompat {
             if (isCompleted){
                 mCallback.onSkipToNext();
             }else {
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
-                mCallback.onPrepareFromMediaId(mMediaManager.getCurrentMusic(),  bundle);
+                mCallback.onPrepareFromMediaId(mMediaManager.getCurrentMusic(),  null);
             }
         }
 
@@ -331,8 +331,6 @@ public class MediaService extends MediaBrowserServiceCompat {
 
                 startForeground(MediaNotificationManager.NOTIFICATION_ID, notification);
             }
-
-
 
             private void updateNotificationForPause(PlaybackStateCompat state) {
                 stopForeground(false);

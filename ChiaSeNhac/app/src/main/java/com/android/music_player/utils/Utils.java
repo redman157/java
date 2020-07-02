@@ -5,12 +5,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.drawable.AnimatedVectorDrawable;
-import android.graphics.drawable.Drawable;
-import android.widget.ImageButton;
+import android.support.v4.media.session.MediaControllerCompat;
 import android.widget.Toast;
-
-import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
 import com.android.music_player.R;
 import com.android.music_player.managers.MusicLibrary;
@@ -94,30 +90,13 @@ public class Utils {
         return rd.nextInt(MusicLibrary.music.size());
     }
 
-
-    private static AnimatedVectorDrawableCompat vectorDrawableCompat;
-    private static AnimatedVectorDrawable vectorDrawable;
-    public static void UpdateButtonPlay(ImageButton button, boolean isPlay){
-        if (isPlay){
-            button.setImageResource(R.drawable.avd_play_to_pause);
-            Drawable drawable = button.getDrawable();
-            if (drawable instanceof AnimatedVectorDrawableCompat) {
-                vectorDrawableCompat = (AnimatedVectorDrawableCompat) drawable;
-                vectorDrawableCompat.start();
-            }else if (drawable instanceof AnimatedVectorDrawable){
-                vectorDrawable = (AnimatedVectorDrawable) drawable;
-                vectorDrawable.start();
-            }
-        }else {
-            button.setImageResource(R.drawable.avd_pause_to_play);
-            Drawable drawable = button.getDrawable();
-            if (drawable instanceof AnimatedVectorDrawableCompat) {
-                vectorDrawableCompat = (AnimatedVectorDrawableCompat) drawable;
-                vectorDrawableCompat.start();
-            }else if (drawable instanceof AnimatedVectorDrawable){
-                vectorDrawable = (AnimatedVectorDrawable) drawable;
-                vectorDrawable.start();
-            }
+    public static void AutoPlay(MediaControllerCompat controllerCompat, String MediaID,
+                           boolean isAutoPlay){
+        if (controllerCompat != null) {
+            BundleHelper.Builder builder = new BundleHelper.Builder();
+            builder.putBoolean(Constants.INTENT.AUTO_PLAY, isAutoPlay);
+            controllerCompat.getTransportControls().prepareFromMediaId(MediaID,
+                    builder.generate().getBundle());
         }
     }
 

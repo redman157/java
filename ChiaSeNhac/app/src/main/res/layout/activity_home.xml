@@ -10,11 +10,13 @@
         android:gravity="bottom"
         android:id="@+id/activity_main"
         app:umanoFlingVelocity="1000"
-        app:umanoOverlay= "false"
-        app:umanoFadeColor="@color/accentColor"
+        app:umanoOverlay= "true"
+        app:umanoFadeColor="@color/fade_sliding_panel"
         app:umanoPanelHeight="@dimen/_80sdp"
         app:umanoShadowHeight="4dp"
-        app:umanoParallaxOffset="100dp"
+        app:umanoParallaxOffset="200dp"
+        app:umanoInitialState="collapsed"
+        app:umanoDragView="@id/dragView"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
             <!-- MAIN CONTENT -->
@@ -60,7 +62,7 @@
                 android:clickable="true"
                 android:focusable="false"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
                 <include layout="@layout/layout_main_media"
                     android:id="@+id/layout_main_media"/>
             </LinearLayout>

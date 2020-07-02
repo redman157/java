@@ -33,7 +33,7 @@ public class SettingsFragment extends Fragment implements OptionAdapter.OnClickL
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (view == null) {
-            view = inflater.inflate(R.layout.fragment_library, container, false);
+            view = inflater.inflate(R.layout.fragment_library_1, container, false);
             initView(view);
         }
         assignView();
@@ -73,7 +73,7 @@ public class SettingsFragment extends Fragment implements OptionAdapter.OnClickL
         mLibrary.add(new OptionItem(R.drawable.ic_music_note_white_24dp, "DownLoading"));
         mLibrary.add(new OptionItem(R.drawable.app_add_playlist, "All PlayList"));
         mLibrary.add(new OptionItem(R.drawable.app_heart, "Favorites"));
-        mLibrary.add(new OptionItem(R.drawable.ic_access_time_black_48dp, "Recently played"));
+        mLibrary.add(new OptionItem(R.drawable.ic_time_black_24dp, "Recently played"));
 
 
         mSettings = new ArrayList<>();

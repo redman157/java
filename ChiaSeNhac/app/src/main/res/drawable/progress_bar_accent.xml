@@ -4,6 +4,7 @@
     <item android:id="@android:id/background"
         android:gravity="center_vertical">
         <shape android:shape="rectangle">
+            <corners android:radius="@dimen/_5sdp"/>
             <size android:height="4dp"/>
             <solid android:color="@color/light_grey" />
         </shape>
@@ -13,6 +14,7 @@
         <clip>
             <shape android:shape="rectangle">
                 <size android:height="4dp"/>
+                <corners android:radius="@dimen/_5sdp"/>
                 <solid android:color="@color/accentColor" />
             </shape>
         </clip>

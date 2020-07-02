@@ -47,13 +47,13 @@ public class MediaNotificationManager {
                 (NotificationManager) mService.getSystemService(Context.NOTIFICATION_SERVICE);
 
         mPlayAction = new NotificationCompat.Action(
-                R.drawable.app_play,
+                R.drawable.avd_play_to_pause,
                 mService.getString(R.string.label_play),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_PLAY));
 
         mPauseAction = new NotificationCompat.Action(
-                R.drawable.ic_pause_button_black,
+                R.drawable.avd_pause_to_play,
                 mService.getString(R.string.label_pause),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_PAUSE));
@@ -94,6 +94,7 @@ public class MediaNotificationManager {
                                         @NonNull PlaybackStateCompat state,
                                         MediaSessionCompat.Token token) {
         boolean isPlaying = state.getState() == PlaybackStateCompat.STATE_PLAYING;
+        Log.d("SSS","getNotification: "+isPlaying );
         MediaDescriptionCompat description = metadata.getDescription();
         NotificationCompat.Builder builder = buildNotification(state, token, isPlaying, description);
         return builder.build();
@@ -145,7 +146,7 @@ public class MediaNotificationManager {
                                             PlaybackStateCompat.ACTION_STOP))
                             .setMediaSession(token))
                     .addAction(mPrevAction)
-                    .addAction(isPlaying ? mPauseAction:mPlayAction)
+                    .addAction(isPlaying ? mPauseAction : mPlayAction)
                     .addAction(mNextAction)
                     .addAction(mStopAction);
 

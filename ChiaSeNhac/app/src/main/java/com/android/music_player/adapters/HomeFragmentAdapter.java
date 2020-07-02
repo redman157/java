@@ -69,15 +69,15 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             super(view);
             mMediaManager = MediaManager.getInstance();
             mMediaManager.setContext(mHomeActivity);
-            mTextPlayerSongs = view.findViewById(R.id.text_Player_Songs);
-            mRelativeRecentlyAdd = view.findViewById(R.id.rc_recently_add);
-            mImgPlayerMusic = view.findViewById(R.id.img_Player_Songs);
-            mImgPlayer_1 = view.findViewById(R.id.img_player_1);
-            mImgPlayer_2 = view.findViewById(R.id.img_player_2);
-            mImgMostPlayer = view.findViewById(R.id.img_most_player);
+            mTextPlayerSongs = view.findViewById(R.id.text_player_music);
+            mRelativeRecentlyAdd = view.findViewById(R.id.recycler_recently_add);
+            mImgPlayerMusic = view.findViewById(R.id.image_player_music);
+            mImgPlayer_1 = view.findViewById(R.id.image_player_1);
+            mImgPlayer_2 = view.findViewById(R.id.image_player_2);
+            mImgMostPlayer = view.findViewById(R.id.image_most_player);
             mImgRecentlyAdd = view.findViewById(R.id.img_Recently_Add);
-            mImgShuffleAll = view.findViewById(R.id.img_Shuffle_All);
-            mTextPlayer_1 = view.findViewById(R.id.text_Player_1);
+            mImgShuffleAll = view.findViewById(R.id.image_shuffle_all);
+            mTextPlayer_1 = view.findViewById(R.id.text_player_1);
             mTextPlayer_2 = view.findViewById(R.id.text_Player_2);
         }
 
@@ -119,30 +119,31 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
         @Override
         public void onClick(View v) {
             switch (v.getId()){
-                case R.id.img_Shuffle_All:
+                case R.id.image_shuffle_all:
                     Random random = new Random();
                     List<String> keys = new ArrayList<>(MusicLibrary.music.keySet());
                     int index = random.nextInt(keys.size());
                     mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(
-                            keys.get(index), null
-                    );
+                            keys.get(index), null);
                     Log.d("CCC",
                             "Check thử: "+keys.get(index));
                     break;
-                case R.id.img_player_2:
+                case R.id.image_player_2:
 
                     break;
 
-                case R.id.img_player_1:
+                case R.id.image_player_1:
 
                     break;
-                case R.id.img_most_player:
+                case R.id.image_most_player:
                     if (!mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).equals("")) {
                         (mHomeActivity).setViewMusic(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), SlidingUpPanelLayout.PanelState.EXPANDED);
-                        (mHomeActivity).mBrowserHelper.getTransportControls().playFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), null);
+
+                        (mHomeActivity).mBrowserHelper.getTransportControls().prepareFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), null);
                     }
                     break;
             }
         }
     }
+
 }

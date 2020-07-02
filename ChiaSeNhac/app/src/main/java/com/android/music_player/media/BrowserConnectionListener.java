@@ -77,7 +77,6 @@ public class BrowserConnectionListener extends BrowserHelper {
         for (final MediaBrowserCompat.MediaItem mediaItem : children) {
             mMediaController.addQueueItem(mediaItem.getDescription());
         }
-
     }
 
     public void setAutoPlay(String mediaID, boolean autoPlay){
@@ -91,5 +90,4 @@ public class BrowserConnectionListener extends BrowserHelper {
                     builder.generate().getBundle());
         }
     }
-
 }

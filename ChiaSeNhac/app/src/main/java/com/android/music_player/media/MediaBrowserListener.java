@@ -86,9 +86,6 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
 
     @Override
     public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
-
         super.onQueueChanged(queue);
-        Log.d("SSS","onQueueChanged: "+queue.get(0));
-
     }
 }

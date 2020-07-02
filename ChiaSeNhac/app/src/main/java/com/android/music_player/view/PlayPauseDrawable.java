@@ -6,7 +6,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -15,6 +14,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.Property;
+
+import com.android.music_player.R;
 
 public class PlayPauseDrawable extends Drawable {
 
@@ -52,7 +53,7 @@ public class PlayPauseDrawable extends Drawable {
         final Resources res = context.getResources();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(Color.WHITE);
+        mPaint.setColor(context.getColor(R.color.accentColor));
     }
 
     @Override

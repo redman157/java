@@ -46,17 +46,14 @@ public class SplashActivity extends AppCompatActivity {
             finish();
             return;
         }
-        mProgressBar = findViewById(R.id.progressBar1);
-        mTextSync = findViewById(R.id.textView10);
+        mProgressBar = findViewById(R.id.progressBar);
+        mTextSync = findViewById(R.id.text_status);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
-
         setTextStatus();
-
         checkPermission();
     }
 
     private void checkPermission() {
-
         if (Build.VERSION.SDK_INT > 22) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {

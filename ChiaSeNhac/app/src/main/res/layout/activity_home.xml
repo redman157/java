@@ -11,7 +11,7 @@
         android:id="@+id/activity_main"
         app:umanoFlingVelocity="1000"
         app:umanoOverlay= "false"
-        app:umanoFadeColor="@color/blackGrey"
+        app:umanoFadeColor="@color/accentColor"
         app:umanoPanelHeight="@dimen/_80sdp"
         app:umanoShadowHeight="4dp"
         app:umanoParallaxOffset="100dp"
@@ -23,11 +23,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true">
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                     <include layout="@layout/include_toolbar"
                         android:id="@+id/toolbar_container"/>
                     <FrameLayout

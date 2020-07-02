@@ -81,6 +81,7 @@
 
     <!-- TimerActivity & IntentPlayActivity -->
     <style name="DialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="android:background">@color/primaryColor</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

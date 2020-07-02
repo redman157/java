@@ -94,7 +94,6 @@
                         android:textSize="15sp" />
 
                     <TextView
-
                         android:layout_below="@id/text_title_media"
                         android:id="@+id/text_artists_media"
                         android:layout_width="match_parent"
@@ -136,26 +135,42 @@
         android:layout_weight="4"
         android:background="@color/whiteOpaqueX4"
         android:layout_height="0dp">
-        <Button
+        <LinearLayout
             android:id="@+id/btn_home"
-            android:text="Home"
-            android:enabled="false"
-            android:textAllCaps="false"
             android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground">
+            <TextView
+                android:id="@+id/text_home"
+                android:text="Home"
+                android:textSize="@dimen/_13sdp"
+                android:textColor="@color/accentColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
         <View
             android:background="@color/black"
             android:layout_width="1dp"
             android:layout_height="wrap_content"/>
-        <Button
+
+        <LinearLayout
             android:id="@+id/btn_library"
-            android:text="Library"
-            android:background="?attr/selectableItemBackground"
-            android:textAllCaps="false"
             android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:background="?attr/selectableItemBackground"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/text_library"
+                android:textSize="@dimen/_13sdp"
+                android:textColor="@color/accentColor"
+                android:text="Library"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

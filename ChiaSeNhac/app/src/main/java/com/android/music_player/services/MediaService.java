@@ -167,6 +167,12 @@ public class MediaService extends MediaBrowserServiceCompat {
         }
 
         @Override
+        public void onPlay() {
+            super.onPlay();
+
+        }
+
+        @Override
         public void onPrepareFromMediaId(String mediaId, Bundle bundle) {
             setupMediaList();
             // set media current để chạy
@@ -174,15 +180,6 @@ public class MediaService extends MediaBrowserServiceCompat {
                    mediaId);
             mSessionCompat.setMetadata(mPreparedMedia);
             Log.d("JJJ", "MediaService --- onPrepareFromMediaId: "+mediaId);
-//            if (bundle != null) {
-//                Log.d("JJJ", "MediaService --- auto play true: "+mediaId);
-//                isAutoPlay = bundle.getBoolean(Constants.INTENT.AUTO_PLAY);
-//                if (isAutoPlay){
-//
-//                }
-//            }else {
-//                Log.d("JJJ", "MediaService --- auto play false: "+mediaId);
-//            }
             onPlayFromMediaId(mediaId, null);
             isActive();
         }
@@ -236,15 +233,13 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onSkipToNext() {
             setupMediaList();
+
             int currentPos = MusicLibrary.getPosition(mMainList ,mMediaManager.getCurrentMusic());
             currentPos = (currentPos + 1) % mMainList.size();
             String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
-            // bundle update trạng thái auto play và position của nó
-
             // khi next muốn tự động phát hay k ?
+
             mPreparedMedia = null;
-//            Bundle bundle = new Bundle();
-//            bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
             onPlayFromMediaId(mediaId, null);
             Log.d("JJJ", "MediaService --- onSkipToNext: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
         }
@@ -258,8 +253,6 @@ public class MediaService extends MediaBrowserServiceCompat {
 
             // khi next muốn tự động phát hay k ?
             mPreparedMedia = null;
-//            Bundle bundle = new Bundle();
-//            bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
             onPlayFromMediaId(mediaId, null );
             Log.d("JJJ", "MediaService --- onSkipToPrevious: "+(mPreparedMedia.getString(MediaMetadataCompat.METADATA_KEY_TITLE)));
         }
@@ -314,7 +307,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onPlaybackCompleted(boolean isCompleted) {
             if (isCompleted){
-
                 mCallback.onSkipToNext();
             }else {
                 Bundle bundle = new Bundle();

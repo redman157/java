@@ -30,9 +30,9 @@
 
     <!-- App Theme -->
     <color name="line">#ABAFAF</color>
-    <color name="primaryColor">@color/black</color>
-    <color name="primaryDark">@color/white</color>
-    <color name="accentColor">@color/whiteOpaqueX6</color>
+    <color name="primaryColor">@color/white</color>
+    <color name="primaryDark">@color/light_grey</color>
+    <color name="accentColor">@color/black</color>
     <color name="imageColorAlpha">#66000000</color>
     <color name="background">#000000</color>
     <color name="dialogBackground">#252525</color>

@@ -3,7 +3,6 @@ package com.android.music_player.activities;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -13,9 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -59,15 +56,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private View mLayoutMedia, mLayoutState;
 
     public ImageView mImgAlbumArt, mImgChangeMusic, mImgBack;
-    private LinearLayout mLinearTop;
-    public Button mBtnHome, mBtnLibrary;
+    private LinearLayout mLinearTop, mBtnHome,mBtnLibrary;
     private MediaManager mMediaManager;
     public PlayPauseView mBtnPlayPauseMedia , mBtnPlayPausePanel;
-    private ImageButton mBtnPrev, mBtnRepeat, mBtnNext, mBtnSetTime,
+    private ImageView mBtnPrev, mBtnRepeat, mBtnNext, mBtnSetTime,
             mBtnSeeMore, mBtnAbout, mBtnEqualizer, mBtnFavorite, mBtnShuffle;
     public SeekBar mSeekBarAudio;
     private TextView mTextLeftTime, mTextRightTime, mTextTitleMedia, mTextArtistMedia
-            , mTextTitleMusic, mTextArtistMusic , mTextAlbumMusic;
+            , mTextTitleMusic, mTextArtistMusic , mTextAlbumMusic, mTextHome, mTextLibrary;
     private ImageView mImgViewQueue, mImgAddToPlayList, mImgChangeMedia;
     public SlidingUpPanelLayout mSlidingUpPanelLayout;
     public Toolbar mToolBar;
@@ -221,14 +217,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mLayoutState= mLayoutMedia.findViewById(R.id.layout_panel_home);
         mLinearTop = findViewById(R.id.ll_top);
 
-
         mBtnHome = mLayoutMedia.findViewById(R.id.btn_home);
+        mTextHome = mLayoutMedia.findViewById(R.id.text_home);
         mBtnLibrary = mLayoutMedia.findViewById(R.id.btn_library);
-        if (Build.VERSION.SDK_INT > 23) {
-            mBtnHome.setTextColor(R.color.red);
-        }else {
-            mBtnHome.setTextColor(getResources().getColor(R.color.red));
-        }
+        mTextLibrary = mLayoutMedia.findViewById(R.id.text_library);
+
+        mBtnHome.setEnabled(false);
+        mTextHome.setTextColor(getColor(R.color.red));
         mViewMusic = mLayoutState.findViewById(R.id.rl_info_music);
     }
 
@@ -285,8 +280,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_home:
-                mBtnLibrary.setTextColor(R.color.black);
-                mBtnHome.setTextColor(R.color.red);
+                mTextHome.setTextColor(getColor(R.color.red));
+                mTextLibrary.setTextColor(getColor(R.color.accentColor));
                 mBtnHome.setEnabled(false);
                 mBtnLibrary.setEnabled(true);
 
@@ -300,9 +295,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.btn_library:
                 mBtnHome.setEnabled(true);
                 mBtnLibrary.setEnabled(false);
-                mBtnHome.setTextColor(R.color.black);
-                mBtnLibrary.setTextColor(R.color.red);
-
+                mTextHome.setTextColor(getColor(R.color.accentColor));
+                mTextLibrary.setTextColor(getColor(R.color.red));
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fl_placeholder ,
                                 LibraryFragment.newInstance(),

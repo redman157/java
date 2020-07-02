@@ -106,8 +106,8 @@ public class TestSwitchToHomeActivity {
 
     	/* @NOTE: chờ 3s để chắc chắn sẽ chuyển qua HomeActivity */
 
-        onView(withId(R.id.textView10)).check(matches(isDisplayed()));
-        String name = getText(withId(R.id.textView10));
+        onView(withId(R.id.text_status)).check(matches(isDisplayed()));
+        String name = getText(withId(R.id.text_status));
         if(name.equals("Initiating..")){
             onView(isRoot()).perform(waitFor(3000));
 
@@ -118,7 +118,7 @@ public class TestSwitchToHomeActivity {
         }else if (name.equals("Syncing..")){
 
             onView(isRoot()).perform(waitFor(5000));
-            onView(withId(R.id.textView10)).check(matches(withText("Done")));
+            onView(withId(R.id.text_status)).check(matches(withText("Done")));
         }
 
     }

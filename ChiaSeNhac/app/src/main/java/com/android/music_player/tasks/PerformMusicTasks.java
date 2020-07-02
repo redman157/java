@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.CountDownTimer;
 import android.util.Log;
 
+import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.activities.SplashActivity;
 import com.android.music_player.managers.MediaManager;
@@ -43,9 +44,10 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
 
     }
 
+    @SuppressLint("WrongThread")
     @Override
     protected Long doInBackground(String... strings) {
-
+        ((SplashActivity) mActivity).mTextSync.setText(R.string.updating_songs);
         Map<String, ArrayList<MusicModel>> artists = mMediaManager.getArtist();
         Map<String, ArrayList<MusicModel>> albums = mMediaManager.getAlbum();
         Map<String, ArrayList<MusicModel>> folders = mMediaManager.getFolder();

@@ -13,7 +13,7 @@
         android:layout_width="0dp"
         android:scaleType="fitCenter"
         android:layout_margin="5dp"
-        android:tint="@color/grey"
+        android:tint="@color/accentColor"
         android:layout_height="match_parent"/>
     <LinearLayout
         android:layout_weight="9"
@@ -30,7 +30,7 @@
                 android:id="@+id/text_choose_music"
                 android:layout_width="0dp"
                 android:textSize="@dimen/_12sdp"
-                android:textColor="@color/black"
+                android:textColor="@color/accentColor"
                 android:gravity="center|left"
                 android:paddingLeft="8dp"
                 android:layout_height="match_parent"/>
@@ -38,7 +38,7 @@
         </LinearLayout>
         <View
             android:layout_width="match_parent"
-            android:background="@color/line"
+            android:background="@color/accentColor"
             android:layout_height="1dp"/>
     </LinearLayout>
 </LinearLayout>

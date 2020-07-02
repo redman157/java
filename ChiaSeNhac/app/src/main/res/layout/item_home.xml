@@ -17,6 +17,7 @@
                 android:id="@+id/text_QuickPlay"
                 android:text="Quick Play"
                 android:textSize="20sp"
+                android:textColor="@color/accentColor"
                 android:layout_marginLeft="@dimen/_7sdp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,7 +63,7 @@
                         android:layout_weight="3"
                         android:text="Shuffle Music"
                         android:textSize="15dp"
-
+                        android:textColor="@color/accentColor"
                         android:layout_marginTop="5dp"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
@@ -101,7 +102,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
-
+                        android:textColor="@color/accentColor"
                         android:layout_height="0dp"/>
                 </LinearLayout>
 
@@ -135,6 +136,7 @@
                         android:layout_weight="3"
                         android:text="Recently Added"
                         android:textSize="15dp"
+                        android:textColor="@color/accentColor"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"/>
                 </LinearLayout>
@@ -179,11 +181,11 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
                             android:drawableLeft="@drawable/ic_artists_black_24dp"
-                            android:drawableTint="@color/red"
+                            android:drawableTint="@color/primaryDark"
                             android:drawablePadding="6dp"
                             android:paddingBottom="7dp"
                             android:paddingLeft="12dp"
-                            android:textColor="@color/red"
+                            android:textColor="@color/primaryDark"
                             android:textSize="12dp" />
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
@@ -215,10 +217,10 @@
                             android:paddingBottom="7dp"
                             android:paddingLeft="12dp"
                             android:layout_gravity="bottom"
-                            android:drawableTint="@color/red"
+                            android:drawableTint="@color/primaryDark"
                             android:drawableLeft="@drawable/app_playlist"
                             android:textSize="12dp"
-                            android:textColor="@color/red"
+                            android:textColor="@color/primaryDark"
                             android:gravity="center|left"
                             android:id="@+id/text_Player_1"
                             android:layout_width="match_parent"
@@ -247,10 +249,10 @@
                             android:paddingLeft="12dp"
                             android:layout_gravity="bottom"
                             android:drawableLeft="@drawable/app_playlist"
-                            android:drawableTint="@color/red"
+                            android:drawableTint="@color/primaryDark"
                             android:textSize="12dp"
                             android:gravity="center|left"
-                            android:textColor="@color/red"
+                            android:textColor="@color/primaryDark"
                             android:id="@+id/text_Player_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
@@ -279,11 +281,9 @@
                     android:layout_width="0dp"
                     android:textSize="20dp"
                     android:gravity="center"
-
+                    android:textColor="@color/accentColor"
                     android:text="Recently Added To Library"
                     android:layout_height="match_parent"/>
-
-
 
             </LinearLayout>
             <androidx.recyclerview.widget.RecyclerView

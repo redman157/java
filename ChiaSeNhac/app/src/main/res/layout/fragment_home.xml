@@ -13,14 +13,13 @@
             android:layout_height="match_parent"
             android:id="@+id/swipe_container">
             <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
-
                 android:id="@+id/rc_home_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-                <!--app:fastScrollPopupBgColor="?attr/accent_color"
-                app:fastScrollPopupTextColor="?attr/popup_text_color"
-                app:fastScrollThumbColor="?attr/accent_color"
-                app:fastScrollThumbInactiveColor="?attr/accent_color"-->/>
+                android:layout_height="match_parent"
+                app:fastScrollPopupBgColor="@color/primaryColor"
+                app:fastScrollPopupTextColor="@color/primaryColor"
+                app:fastScrollThumbColor="@color/primaryColor"
+                app:fastScrollThumbInactiveColor="@color/primaryColor"/>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </RelativeLayout>

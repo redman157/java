@@ -136,10 +136,10 @@ public class MediaManager {
         return nameSong;
     }
 
-    public void setCurrentMusic(String path){
-        Log.d("CCC","setCurrentSong: " + path);
+    public void setCurrentMusic(String musicName){
+        Log.d("CCC","setCurrentSong: " + musicName);
         // convert path --> music name
-        String musicName = Utils.getKeyByValue(MusicLibrary.fileName, path);
+//        String musicName = Utils.getKeyByValue(MusicLibrary.fileName, path);
         mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, musicName);
     }
 

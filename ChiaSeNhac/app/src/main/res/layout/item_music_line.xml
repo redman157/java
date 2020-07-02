@@ -43,17 +43,19 @@
                 android:layout_height="match_parent">
                 <TextView
                     android:layout_weight="1"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/_13sdp"
                     android:gravity="left|center"
+                    android:textColor="@color/accentColor"
                     android:id="@+id/item_text_title_music"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"/>
                 <TextView
-                    android:textSize="12sp"
+                    android:textSize="@dimen/_11sdp"
                     android:gravity="left|center"
                     android:layout_weight="1"
                     android:maxLines="1"
                     android:ellipsize="end"
+                    android:textColor="@color/accentColor"
                     android:layout_width="match_parent"
                     android:id="@+id/item_text_artist_music"
                     android:layout_height="0dp"/>
@@ -61,16 +63,16 @@
                 <View
                     android:paddingTop="10dp"
                     android:layout_width="match_parent"
-                    android:background="#ABAFAF"
+                    android:background="@color/accentColor"
                     android:layout_height="1dp"/>
             </LinearLayout>
             <TextView
                 android:id="@+id/item_text_time_music"
-                android:textSize="@dimen/_12sdp"
+                android:textSize="@dimen/_13sdp"
                 android:gravity="center"
                 android:layout_weight="1.5"
                 android:layout_width="0dp"
-
+                android:textColor="@color/accentColor"
                 android:layout_height="match_parent"/>
             <ImageButton
                 android:id="@+id/item_btn_music"
@@ -79,9 +81,9 @@
                 android:layout_width="0dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_menu_dot_black"
-                android:tint="@color/primaryDark"
+                android:padding="@dimen/_5sdp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:layout_height="match_parent"/>
+                android:layout_height="wrap_content"/>
 
 
         </LinearLayout>

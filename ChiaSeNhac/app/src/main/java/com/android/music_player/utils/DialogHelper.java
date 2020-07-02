@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,8 +47,9 @@ public class DialogHelper {
 
     public static void showSetMusic(final Context context, String title){
         SelectMusicAdapter selectMusicAdapter = new SelectMusicAdapter(context);
-        dialog = new Dialog(context);
+        dialog = new Dialog(context,R.style.DialogTheme);
         dialog.setContentView(R.layout.dialog_selection_music);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         RecyclerView options = dialog.findViewById(R.id.rc_selection_music);
         TextView textTitle = dialog.findViewById(R.id.text_title);

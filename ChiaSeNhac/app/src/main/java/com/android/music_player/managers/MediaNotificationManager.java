@@ -1,5 +1,6 @@
 package com.android.music_player.managers;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -39,6 +40,7 @@ public class MediaNotificationManager {
     private final NotificationCompat.Action mStopAction;
     private final NotificationManager mNotificationManager;
 
+    @SuppressLint("WrongConstant")
     public MediaNotificationManager(MediaService service) {
         mService = service;
         mNotificationManager =
@@ -51,13 +53,13 @@ public class MediaNotificationManager {
                         PlaybackStateCompat.ACTION_PLAY));
 
         mPauseAction = new NotificationCompat.Action(
-                R.drawable.app_pause,
+                R.drawable.ic_pause_button_black,
                 mService.getString(R.string.label_pause),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_PAUSE));
 
         mNextAction = new NotificationCompat.Action(
-                R.drawable.app_next,
+                R.drawable.ic_next_white,
                 mService.getString(R.string.label_next),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
@@ -69,7 +71,7 @@ public class MediaNotificationManager {
                         PlaybackStateCompat.ACTION_STOP));
 
         mPrevAction = new NotificationCompat.Action(
-                R.drawable.app_previous,
+                R.drawable.ic_previous_white,
                 Constants.ACTION.PREVIOUS,
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
@@ -177,25 +179,8 @@ public class MediaNotificationManager {
                     .addAction(mPrevAction)
                     .addAction(isPlaying ? mPauseAction:mPlayAction)
                     .addAction(mNextAction)
-                    .addAction(mStopAction);;
+                    .addAction(mStopAction);
         }
-
-        // If skip to next action is enabled.
-       /* if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS) != 0) {
-            builder.addAction(mPrevAction);
-        }
-
-        builder.addAction(isPlaying ? mPauseAction : mPlayAction);
-
-        // If skip to prev action is enabled.
-        if ((state.getActions() & PlaybackStateCompat.ACTION_SKIP_TO_NEXT) != 0) {
-            builder.addAction(mNextAction);
-        }
-
-
-        builder.addAction(mStopAction);
-*/
-
         return builder;
     }
     // Does nothing on versions of Android earlier than O.

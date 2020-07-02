@@ -128,6 +128,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
                 PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH |
                 PlaybackStateCompat.ACTION_SET_REPEAT_MODE|
                 PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE|
+                    PlaybackStateCompat.ACTION_SKIP_TO_NEXT|
                 PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS;
         switch (mState){
             // rơi vào state bất kỳ thì sẽ chuyển sang trạng thái tương ứng
@@ -142,6 +143,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
                         PlaybackStateCompat.ACTION_SEEK_TO;
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
+
                 actions |= PlaybackStateCompat.ACTION_PLAY
                         | PlaybackStateCompat.ACTION_STOP;
                 break;

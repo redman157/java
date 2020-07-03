@@ -231,9 +231,8 @@
                     android:padding="@dimen/_5sdp"
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content"
-                    android:tint="@color/primaryColor"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/app_shuffle_white" />
+                    android:src="@drawable/app_shuffle_unactive" />
             </RelativeLayout>
 
             <RelativeLayout

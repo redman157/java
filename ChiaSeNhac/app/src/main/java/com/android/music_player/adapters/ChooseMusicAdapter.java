@@ -1,6 +1,5 @@
 package com.android.music_player.adapters;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -17,38 +16,36 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.interfaces.OnMediaItem;
+import com.android.music_player.interfaces.OnMediaID;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.DialogHelper;
 import com.android.music_player.utils.ImageHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.ViewHolder> {
+public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.ViewHolder> {
     private Context mContext;
     private MediaSessionCompat.QueueItem item;
     private MediaManager mMediaManager;
-    private List<MediaSessionCompat.QueueItem> queueItems;
+    private List<MediaSessionCompat.QueueItem> mQueueItems;
     private ImageHelper mImageUtils;
     private int mPossitionMusic;
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
     private int mOptionMusic;
-    private Dialog dialog;
-    public MusicDialogAdapter(Context context, Dialog dialog, List<MediaSessionCompat.QueueItem> queueItems) {
-        this.queueItems = queueItems;
+    public ChooseMusicAdapter(Context context, List<MediaSessionCompat.QueueItem> queueItems) {
+        this.mQueueItems = queueItems;
         mContext = context;
-        this.dialog = dialog;
+
         mImageUtils = ImageHelper.getInstance(context);
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(context);
     }
 
     public List<MediaSessionCompat.QueueItem> getQueueItems() {
-        return queueItems;
+        return mQueueItems;
     }
 
     public void setPosition(int position){
@@ -58,22 +55,22 @@ public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.
         return mOptionMusic;
     }
 
-    private OnMediaItem onMediaItem;
+    private OnMediaID onMediaID;
 
-    public void setOnClickItemListener(OnMediaItem onMediaItem){
-        this.onMediaItem = onMediaItem;
+    public void setOnClickItemListener(OnMediaID onMediaID){
+        this.onMediaID = onMediaID;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_music, null);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_music, parent,false);
         return new ViewHolder(view);
     }
 
     @Override
     public int getItemCount() {
-        return queueItems.size();
+        return mQueueItems.size();
     }
 
     @Override
@@ -83,15 +80,12 @@ public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-
-        item = queueItems.get(position);
+        item = mQueueItems.get(position);
         holder.setData(position);
         holder.ll_option_music.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onMediaItem.onChooseMedia(item.getDescription().getMediaId());
-                // lúc hiện dialog nếu hiển thị thì sẽ ẩn đi
-                DialogHelper.cancelDialog();
+                onMediaID.onChooseMedia(mQueueItems.get(position).getDescription().getMediaId());
             }
         });
 
@@ -112,7 +106,7 @@ public class MusicDialogAdapter extends RecyclerView.Adapter<MusicDialogAdapter.
         }
 
         public void setData(int pos){
-            MediaSessionCompat.QueueItem item = queueItems.get(pos);
+            MediaSessionCompat.QueueItem item = mQueueItems.get(pos);
             if (mMediaManager.getCurrentMusic().equals(item.getDescription().getMediaId())){
 //                Log.d("KKK", "setData: "+getListMusic().getData(pos).getSongName());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

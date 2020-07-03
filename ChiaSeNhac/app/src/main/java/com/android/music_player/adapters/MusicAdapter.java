@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.interfaces.OnMediaItem;
+import com.android.music_player.interfaces.OnMediaID;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogHelper;
@@ -47,9 +47,13 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
         }
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
     }
-    private OnMediaItem onMediaItem;
-    public void setOnMediaItem(OnMediaItem onMediaItem) {
-        this.onMediaItem = onMediaItem;
+
+    public List<String> getMusicList(){
+        return keys;
+    }
+    private OnMediaID onMediaID;
+    public void setOnMediaID(OnMediaID onMediaID) {
+        this.onMediaID = onMediaID;
     }
     public interface OnClickListener {
         void onClick(String type, int position);
@@ -72,7 +76,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
         holder.mLinearMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onMediaItem.onChooseMedia(keys.get(position));
+                onMediaID.onChooseMedia(keys.get(position));
                 mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID,
                         description.getString(Constants.METADATA.AlbumID));
             }
@@ -81,7 +85,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
         holder.mBtnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogHelper.showSetMusic(mActivity,keys.get(position));
+                DialogHelper.showChangeMusic(mActivity,keys.get(position));
             }
         });
 

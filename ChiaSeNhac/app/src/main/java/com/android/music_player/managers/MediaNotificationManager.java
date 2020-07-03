@@ -23,7 +23,6 @@ import androidx.media.session.MediaButtonReceiver;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.services.MediaService;
-import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 
 public class MediaNotificationManager {
@@ -66,13 +65,13 @@ public class MediaNotificationManager {
 
         mStopAction = new NotificationCompat.Action(
                 R.drawable.ic_close_black_24dp,
-                "Stop",
+                mService.getString(R.string.label_stop),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_STOP));
 
         mPrevAction = new NotificationCompat.Action(
                 R.drawable.ic_previous_white,
-                Constants.ACTION.PREVIOUS,
+                mService.getString(R.string.label_previous),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
 
@@ -80,12 +79,6 @@ public class MediaNotificationManager {
         // restarted by the system.
         mNotificationManager.cancelAll();
     }
-    private PendingIntent closeNotification() {
-        Intent dismissIntent = new Intent(Constants.ACTION.CLOSE_NOTIFICATION);
-        return PendingIntent.getBroadcast(mService, 0, dismissIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-    }
-
     public android.app.NotificationManager getNotificationManager() {
         return mNotificationManager;
     }
@@ -94,7 +87,6 @@ public class MediaNotificationManager {
                                         @NonNull PlaybackStateCompat state,
                                         MediaSessionCompat.Token token) {
         boolean isPlaying = state.getState() == PlaybackStateCompat.STATE_PLAYING;
-        Log.d("SSS","getNotification: "+isPlaying );
         MediaDescriptionCompat description = metadata.getDescription();
         NotificationCompat.Builder builder = buildNotification(state, token, isPlaying, description);
         return builder.build();

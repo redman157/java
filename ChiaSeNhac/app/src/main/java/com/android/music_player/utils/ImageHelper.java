@@ -108,7 +108,8 @@ public class ImageHelper {
     public void getSmallImageByPicasso(String albumID, ImageView image) {
         try {
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))
-                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_black_24dp)))
+                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext,
+                            R.drawable.ic_music_notes_padded)))
                     .resize(400,400)
                     .onlyScaleDown()
                     .into(image);
@@ -120,7 +121,7 @@ public class ImageHelper {
         final Bitmap[] mBitmap = new Bitmap[1];
         try {
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))
-                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_note_white_24dp)))
+                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext, R.drawable.ic_music_notes_padded)))
                     .resize(400,400)
                     .onlyScaleDown()
                     .into(new Target() {

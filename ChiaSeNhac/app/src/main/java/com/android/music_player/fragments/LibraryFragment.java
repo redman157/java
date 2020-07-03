@@ -22,7 +22,7 @@ import com.android.music_player.adapters.ArtistAdapter;
 import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.FolderAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
-import com.android.music_player.interfaces.OnMediaItem;
+import com.android.music_player.interfaces.OnMediaID;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.Constants;
@@ -32,7 +32,7 @@ import com.google.android.material.tabs.TabLayout;
 
 public class LibraryFragment extends Fragment implements View.OnClickListener,
         ViewPager.OnPageChangeListener,
-        TabLayout.OnTabSelectedListener, MusicAdapter.OnClickListener, OnMediaItem {
+        TabLayout.OnTabSelectedListener, MusicAdapter.OnClickListener, OnMediaID {
     private MediaManager mMediaManager;
 
 //    private Toolbar mToolBar;
@@ -111,22 +111,22 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     private void setAllAdapter(){
         mMusicAdapter = new MusicAdapter(getActivity(), MusicLibrary.music, true);
         mMusicAdapter.notifyDataSetChanged();
-        mMusicAdapter.setOnMediaItem(this);
+        mMusicAdapter.setOnMediaID(this);
 
         mArtistAdapter = new ArtistAdapter(getActivity(), mMediaManager.getArtist());
         /*mArtistAdapter.notifyDataSetChanged();
         mArtistAdapter.setLimit(false);
-        mMusicAdapter.setOnMediaItem(this);*/
+        mMusicAdapter.setOnMediaID(this);*/
 
         mAlbumAdapter = new AlbumAdapter(getActivity(), mMediaManager.getAlbum());
       /*  mMusicAdapter.notifyDataSetChanged();
         mMusicAdapter.setLimit(false);
-        mMusicAdapter.setOnMediaItem(this);*/
+        mMusicAdapter.setOnMediaID(this);*/
 
         mFolderAdapter = new FolderAdapter(getActivity(), mMediaManager.getFolder() );
         /*mMusicAdapter.notifyDataSetChanged();
         mMusicAdapter.setLimit(false);
-        mMusicAdapter.setOnMediaItem(this);*/
+        mMusicAdapter.setOnMediaID(this);*/
     }
 
     private void setupViewPager(ViewPager viewPager){

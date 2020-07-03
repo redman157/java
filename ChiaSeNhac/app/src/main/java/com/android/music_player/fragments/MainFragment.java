@@ -19,11 +19,11 @@ import com.android.music_player.R;
 import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
 import com.android.music_player.interfaces.OnChangeListener;
-import com.android.music_player.interfaces.OnMediaItem;
+import com.android.music_player.interfaces.OnMediaID;
 import com.google.android.material.tabs.TabLayout;
 
 public class MainFragment extends Fragment implements TabLayout.OnTabSelectedListener,
-        OnMediaItem {
+        OnMediaID {
     private View view;
     private ViewPager mViewPager;
     private TabLayout mTabLayout;

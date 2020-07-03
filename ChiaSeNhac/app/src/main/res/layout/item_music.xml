@@ -1,48 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     android:orientation="vertical"
-    android:layout_width="@dimen/_300sdp"
-    android:layout_height="@dimen/_100sdp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <androidx.cardview.widget.CardView
+        app:contentPadding="@dimen/_4sdp"
         android:layout_height="match_parent"
-        app:cardCornerRadius="@dimen/_7sdp"
-        app:cardElevation="@dimen/_4sdp"
-        android:layout_marginTop="@dimen/_15sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:paddingLeft="@dimen/_5sdp"
-        android:paddingRight="@dimen/_5sdp"
-        android:clickable="true"
-        android:focusable="true"
+        app:cardBackgroundColor="@color/white"
         android:layout_width="match_parent">
         <LinearLayout
             android:id="@+id/ll_item_option_music"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:weightSum="10"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="@drawable/selection_item"
             android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/item_music_img_music"
-                android:layout_weight="1"
-                android:layout_width="@dimen/_50sdp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-
-                android:layout_height="match_parent"
-
-                android:src="@drawable/ic_music_note_white_24dp"/>
             <LinearLayout
-                android:layout_weight="7"
-                android:layout_width="@dimen/_200sdp"
-                android:paddingLeft="@dimen/_4sdp"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/item_music_img_music"
+                    android:layout_width="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:padding="@dimen/_7sdp"
+                    android:layout_height="@dimen/_36sdp"
+                    android:src="@drawable/tinh_dep"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="6"
+                android:layout_width="0dp"
                 android:orientation="vertical"
                 android:weightSum="10"
+
                 android:layout_height="match_parent">
                 <TextView
-                    android:layout_marginTop="@dimen/_4sdp"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:id="@+id/item_music_text_title"
@@ -50,9 +49,8 @@
                     android:layout_weight="5"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:paddingBottom="2dp"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_11sdp"
+                    android:textColor="@color/accentColor"
+                    android:textSize="15sp"
                     tools:ignore="NestedWeights" />
                 <TextView
 
@@ -62,23 +60,21 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textColor="@color/black"
-                    android:paddingBottom="2dp"
+                    android:textColor="@color/accentColor"
                     android:ellipsize="end"
                     android:maxLines="1"
-
-                    android:textSize="@dimen/_9sdp"/>
+                    android:textSize="12sp"/>
             </LinearLayout>
             <TextView
                 android:id="@+id/item_music_text_time"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_weight="2"
-                android:layout_width="@dimen/_50sdp"
+                android:layout_width="0dp"
                 android:text="01:00"
-                android:textSize="@dimen/_11sdp"
-                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textColor="@color/accentColor"
                 android:layout_height="match_parent"/>
-    </LinearLayout>
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

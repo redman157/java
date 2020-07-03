@@ -1,10 +1,12 @@
 package com.android.music_player.adapters;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,7 +20,6 @@ import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
         private ArrayList<String> mMostPlayList;
         private MediaManager mMediaManager;
         private String mMostMusic;
+        private LinearLayout linear_recently_music, linear_most_music, linear_shuffle_music;
 
         public HomeHolder(@NonNull View view) {
             super(view);
@@ -79,6 +81,9 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
             mImgShuffleAll = view.findViewById(R.id.image_shuffle_all);
             mTextPlayer_1 = view.findViewById(R.id.text_player_1);
             mTextPlayer_2 = view.findViewById(R.id.text_Player_2);
+            linear_most_music = view.findViewById(R.id.linear_most_music);
+            linear_recently_music = view.findViewById(R.id.linear_recently_music);
+            linear_shuffle_music = view.findViewById(R.id.linear_shuffle_music);
         }
 
         public void initView(){
@@ -106,20 +111,23 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
 
         public void assignView(MusicAdapter mSongsAdapter){
             mImgPlayerMusic.setOnClickListener(this);
+            linear_most_music.setOnClickListener(this);
+            linear_recently_music.setOnClickListener(this);
             mImgPlayer_1.setOnClickListener(this);
             mImgPlayer_2.setOnClickListener(this);
-            mImgShuffleAll.setOnClickListener(this);
+            linear_shuffle_music.setOnClickListener(this);
             mRelativeRecentlyAdd.setAdapter(mSongsAdapter);
             mRelativeRecentlyAdd.setNestedScrollingEnabled(false);
             mRelativeRecentlyAdd.setLayoutManager(new LinearLayoutManager(mHomeActivity,
                     LinearLayoutManager.VERTICAL, false));
         }
 
-
         @Override
         public void onClick(View v) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
             switch (v.getId()){
-                case R.id.image_shuffle_all:
+                case R.id.linear_shuffle_music:
                     Random random = new Random();
                     List<String> keys = new ArrayList<>(MusicLibrary.music.keySet());
                     int index = random.nextInt(keys.size());
@@ -135,12 +143,17 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeFragmentAdapte
                 case R.id.image_player_1:
 
                     break;
-                case R.id.image_most_player:
-                    if (!mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).equals("")) {
+                case R.id.linear_recently_music:
+                    (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMusicAdapter.getMusicList().get(0), bundle);
+                    break;
+                case R.id.linear_most_music:
+
+                    (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMostMusic, bundle);
+                  /*  if (!mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).equals("")) {
                         (mHomeActivity).setViewMusic(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), SlidingUpPanelLayout.PanelState.EXPANDED);
 
                         (mHomeActivity).mBrowserHelper.getTransportControls().prepareFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), null);
-                    }
+                    }*/
                     break;
             }
         }

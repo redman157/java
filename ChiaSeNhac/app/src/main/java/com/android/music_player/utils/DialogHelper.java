@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.adapters.MusicDialogAdapter;
+import com.android.music_player.adapters.ChooseMusicAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.adapters.SelectMusicAdapter;
 import com.android.music_player.managers.MediaManager;
@@ -45,9 +45,9 @@ public class DialogHelper {
         }
     }
 
-    public static void showSetMusic(final Context context, String title){
+    public static void showChangeMusic(final Context context, String title){
         SelectMusicAdapter selectMusicAdapter = new SelectMusicAdapter(context);
-        initDialog(context, R.layout.dialog_selection_music);
+        initDialog(context, R.layout.dialog_change_music);
 
         RecyclerView options = dialog.findViewById(R.id.rc_selection_music);
         TextView textTitle = dialog.findViewById(R.id.text_title);
@@ -85,7 +85,7 @@ public class DialogHelper {
 
     private static void showCreatePlayList(final Context context){
         MediaManager.getInstance().setContext(context);
-        initDialog(context, R.layout.dialog_add_playlist);
+        initDialog(context, R.layout.dialog_create_playlist);
 
         TextView textTitle = dialog.findViewById(R.id.text_title);
         final EditText editTitle = dialog.findViewById(R.id.edit_title);
@@ -165,7 +165,7 @@ public class DialogHelper {
     @SuppressLint("SetTextI18n")
     public static void showAboutMusic(Context context, MusicModel musicModel){
 
-        initDialog(context,R.layout.dialog_info_music);
+        initDialog(context,R.layout.dialog_about_music);
 
         TextView textName = dialog.findViewById(R.id.dialog_about_music_name);
         TextView textFileName = dialog.findViewById(R.id.dialog_about_music_file_name);
@@ -193,19 +193,18 @@ public class DialogHelper {
         dialog.show();
     }
 
-    public static void showSelectSong(final Context context,
-                                      MusicDialogAdapter musicDialogAdapter){
-        initDialog(context,R.layout.dialog_option_music);
+    public static void showChooseMusic(final Context context,
+                                       ChooseMusicAdapter chooseMusicAdapter){
+        initDialog(context,R.layout.dialog_choose_music);
         MediaManager.getInstance().setContext(context);
-        RecyclerView mRcOptionMusic = dialog.findViewById(R.id.rc_OptionMusic);
+        RecyclerView mRcOptionMusic = dialog.findViewById(R.id.rc_choose_music);
 
-        mRcOptionMusic.setAdapter(musicDialogAdapter);
+        mRcOptionMusic.setAdapter(chooseMusicAdapter);
         mRcOptionMusic.setLayoutManager(new LinearLayoutManager(context,
                 LinearLayoutManager.VERTICAL, false));
 
-
         mRcOptionMusic.getLayoutManager().scrollToPosition(
-                MusicLibrary.getPosition(musicDialogAdapter.getQueueItems(),
+                MusicLibrary.getPosition(chooseMusicAdapter.getQueueItems(),
                 MediaManager.getInstance().getCurrentMusic()));
         dialog.show();
     }

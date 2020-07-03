@@ -33,14 +33,18 @@
                 android:layout_below="@id/text_QuickPlay"
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
+
                 android:layout_height="wrap_content">
                 <LinearLayout
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:background="?attr/selectableItemBackground"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
+                    android:clickable="true"
+                    android:id="@+id/linear_shuffle_music"
                     android:weightSum="10">
                     <androidx.cardview.widget.CardView
                         android:layout_gravity="center"
@@ -70,10 +74,12 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/linear_most_music"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:background="?attr/selectableItemBackground"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:weightSum="10">
@@ -105,10 +111,12 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/linear_recently_music"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:layout_weight="1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:background="?attr/selectableItemBackground"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:weightSum="10">

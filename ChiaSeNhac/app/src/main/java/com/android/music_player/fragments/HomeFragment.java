@@ -18,14 +18,14 @@ import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.HomeFragmentAdapter;
 import com.android.music_player.interfaces.OnChangeListener;
-import com.android.music_player.interfaces.OnMediaItem;
+import com.android.music_player.interfaces.OnMediaID;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 public class HomeFragment extends Fragment implements
-        SwipeRefreshLayout.OnRefreshListener, OnMediaItem {
+        SwipeRefreshLayout.OnRefreshListener, OnMediaID {
     private View view;
     private String type;
     private FastScrollRecyclerView mRcHome;
@@ -68,7 +68,7 @@ public class HomeFragment extends Fragment implements
         mMusicAdapter = new MusicAdapter(getActivity(), MusicLibrary.music,
                 false);
         mMusicAdapter.notifyDataSetChanged();
-        mMusicAdapter.setOnMediaItem(this);
+        mMusicAdapter.setOnMediaID(this);
     }
 
     @Nullable

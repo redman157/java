@@ -10,7 +10,7 @@
         android:gravity="bottom"
         android:id="@+id/activity_main"
         app:umanoFlingVelocity="1000"
-        app:umanoOverlay= "true"
+        app:umanoOverlay= "false"
         app:umanoFadeColor="@color/fade_sliding_panel"
         app:umanoPanelHeight="@dimen/_80sdp"
         app:umanoShadowHeight="4dp"

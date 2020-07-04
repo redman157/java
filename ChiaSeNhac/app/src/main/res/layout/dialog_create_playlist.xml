@@ -23,6 +23,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/edit_title"
         android:maxLines="1"
+        android:textColor="@color/accentColor"
         android:inputType="textCapWords"
         android:fontFamily="sans-serif"
         android:theme="@style/MyCustomEditText"

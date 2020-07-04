@@ -178,6 +178,5 @@
     <style name="MyCustomDialog" parent="Theme.AppCompat.Dialog">
         <item name="android:background">@drawable/custom_corner_dialog</item>
         <item name="buttonStyle">@style/MyCustomButton</item>
-        <item name="editTextStyle">@style/MyCustomEditText</item>
     </style>
 </resources>

@@ -4,10 +4,9 @@
     android:layout_width="wrap_content"
     android:weightSum="10"
     android:minWidth="@dimen/_250sdp"
-    android:padding="@dimen/_10sdp"
     android:layout_height="wrap_content">
     <LinearLayout
-        android:layout_weight="8"
+        android:layout_weight="9"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp">
@@ -74,12 +73,8 @@
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginRight="@dimen/_10sdp"
         android:layout_gravity="right"
-        android:textStyle="bold"
-        android:textAllCaps="false"
-        android:textSize="@dimen/_12sdp"
-        android:textColor="@color/accentColor"
         android:id="@+id/dialog_about_close"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="0dp"/>
 </LinearLayout>

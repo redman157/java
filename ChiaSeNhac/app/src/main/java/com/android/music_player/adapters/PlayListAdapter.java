@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,17 +23,17 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.ViewHo
         mContext = context;
         mPlayLists = playLists;
     }
-    private OnClickItem onClickItem;
-    public void OnClickItem(OnClickItem onClickItem) {
-        this.onClickItem = onClickItem;
+    private OnClickItemListener onClickItemListener;
+    public void OnClickItem(OnClickItemListener onClickItemListener) {
+        this.onClickItemListener = onClickItemListener;
     }
-    public interface OnClickItem {
-        void onClick(String title);
+    public interface OnClickItemListener {
+        void onClickAddMusic(String mediaID);
     }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_play_list_music, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_add_to_play_list, parent, false);
         return new ViewHolder(view);
     }
 
@@ -43,35 +44,36 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String title = mPlayLists.get(position);
-        holder.addData(title);
-        holder.setOnClick(title);
-        holder.setOnLongClick(title);
+        holder.addData(mPlayLists.get(position));
+        holder.setOnClick(mPlayLists.get(position));
+        holder.setOnLongClick(mPlayLists.get(position));
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView textView;
+        TextView mTextMediaID;
+        LinearLayout mLinearAddPlayList;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.text_item_play_list);
+            mTextMediaID = itemView.findViewById(R.id.text_play_list);
+            mLinearAddPlayList = itemView.findViewById(R.id.linear_add_play_list);
         }
-        public void addData(String title){
-            textView.setText(title);
+        public void addData(String mediaID){
+            mTextMediaID.setText(mediaID);
         }
-        public void setOnClick(final String title){
-            textView.setOnClickListener(new View.OnClickListener() {
+        public void setOnClick(final String mediaID){
+            mLinearAddPlayList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onClickItem.onClick(title);
+                    onClickItemListener.onClickAddMusic(mediaID);
                 }
             });
         }
 
-        public void setOnLongClick(final String title){
-            textView.setOnLongClickListener(new View.OnLongClickListener() {
+        public void setOnLongClick(final String mediaID){
+            mLinearAddPlayList.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    DialogHelper.showDeletePlayList(mContext, title);
+                    DialogHelper.showDeletePlayList(mContext, mediaID);
                     return false;
                 }
             });

@@ -1,58 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="@dimen/_300sdp"
-    android:layout_height="@dimen/_130sdp"
-    android:background="@color/dialogBackground">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Type Playlist Name"
-        android:textColor="@color/textColorTitle"
+        android:textColor="@color/accentColor"
         android:layout_marginBottom="16dp"
-        android:textSize="@dimen/_18sdp"
-        android:paddingLeft="@dimen/_5sdp"
-        android:paddingTop="@dimen/_5sdp"
+        android:textSize="@dimen/_20sdp"
+        android:padding="@dimen/_7sdp"
         android:ellipsize="marquee"
         android:fontFamily="sans-serif-condensed"
         android:id="@+id/text_title" />
 
     <EditText
-        android:layout_width="@dimen/_300sdp"
-
+        android:layout_width="wrap_content"
+        android:minWidth="@dimen/_300sdp"
         android:layout_height="wrap_content"
         android:id="@+id/edit_title"
         android:maxLines="1"
         android:inputType="textCapWords"
-        android:textSize="16sp"
         android:fontFamily="sans-serif"
+        android:theme="@style/MyCustomEditText"
         android:layout_below="@+id/text_title"
-        android:textColor="@color/textColorTitle"
-        />
+        android:hint="Input Name PlayList"
+        android:paddingLeft="@dimen/_7sdp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CANCEL"
-        android:id="@+id/btnCancel"
-        android:background="?attr/selectableItemBackground"
-        android:textColor="@color/accentColor"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginRight="@dimen/_10sdp"
-        android:layout_below="@id/edit_title"
-        android:layout_toLeftOf="@id/btnCreate"/>
-
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CREATE"
-        android:background="?attr/selectableItemBackground"
-        android:id="@+id/btnCreate"
-        android:textColor="@color/accentColor"
-        android:layout_gravity="right"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
         android:layout_below="@+id/edit_title"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Playlist"
+            android:id="@+id/btnCreate"
+            android:maxLines="1"
+            android:layout_margin="@dimen/_10sdp" />
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:maxLines="1"
+
+            android:id="@+id/btnCancel"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_below="@id/edit_title"
+            android:layout_toLeftOf="@id/btnCreate"/>
+
+    </LinearLayout>
+
 </RelativeLayout>

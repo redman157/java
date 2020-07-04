@@ -23,8 +23,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.android.music_player.R;
 import com.android.music_player.adapters.ChooseMusicAdapter;
-import com.android.music_player.fragments.BottomSheetHelper;
-import com.android.music_player.fragments.FragmentDialogEqualizer;
+import com.android.music_player.adapters.PlayListAdapter;
+import com.android.music_player.fragments.EqualizerFragment;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.interfaces.OnChangeListener;
@@ -33,6 +33,7 @@ import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
+import com.android.music_player.utils.BottomSheetHelper;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogHelper;
 import com.android.music_player.utils.ImageHelper;
@@ -51,7 +52,8 @@ import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener, OnMediaID,
-        MediaBrowserListener.OnChangeMusicListener, SlidingUpPanelLayout.PanelSlideListener, OnChangeListener {
+        MediaBrowserListener.OnChangeMusicListener, SlidingUpPanelLayout.PanelSlideListener,
+        OnChangeListener, PlayListAdapter.OnClickItemListener {
     private RelativeLayout mViewControlMedia, mViewMusic;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
     private View mLayoutMedia, mLayoutState;
@@ -81,7 +83,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private STATE state;
     private ChooseMusicAdapter mChooseMusicAdapter;
     public final String FRAGMENT_TAG = "fragment_tag";
-
+    public BottomSheetHelper bottomSheetHelper;
 
     @Override
     public void initManager() {
@@ -279,7 +281,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             }
         });
     }
-    private BottomSheetHelper bottomSheetHelper;
+
     @SuppressLint("ResourceAsColor")
     @Override
     public void onClick(View view) {
@@ -313,9 +315,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
             case R.id.image_set_time:
                 break;
             case R.id.image_equalizer:
-                FragmentDialogEqualizer fragment = FragmentDialogEqualizer.newInstance();
+                EqualizerFragment fragment = EqualizerFragment.newInstance();
                 fragment.show(getSupportFragmentManager(), FRAGMENT_TAG);
-//                startActivity(new Intent(this, EqualizerActivity.class));
                 break;
             case R.id.image_favorite:
                 bottomSheetHelper =
@@ -397,6 +398,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 bottomSheetHelper.show(getSupportFragmentManager(), FRAGMENT_TAG);
                 break;
             case R.id.image_add_to_playlist:
+                bottomSheetHelper = new BottomSheetHelper(BottomSheetHelper.DIALOG.ADD_PLAY_LIST,
+                        this);
+                bottomSheetHelper.show(getSupportFragmentManager(), FRAGMENT_TAG);
                 break;
             case R.id.relative_info_music:
                 if (mSlidingUpPanelLayout != null &&
@@ -624,4 +628,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 //        mMediaManager.getMediaBrowserConnection().setAutoPlay(nameMusic, true);
     }
 
+    @Override
+    public void onClickAddMusic(String mediaID) {
+        /*bottomSheetHelper.dismiss();
+        mMediaManager.getAllPlaylistDB().addPlayList(mediaID);*/
+        Log.d("SSS", "PlayListAdapter.OnClickItemListener: "+ mediaID);
+    }
 }

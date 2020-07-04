@@ -26,8 +26,8 @@
     <color name="yellow">#ffca28</color>
     <color name="purple">#ba68c8</color>
     <color name="red">#CC3C3C</color>
-    <color name="grey">#607d8b</color>
-
+    <color name="grey">#757575</color>
+    <color name="light_green">#ABE4C7</color>
     <!-- App Theme -->
     <color name="line">#ABAFAF</color>
     <color name="fade_sliding_panel">#80000000</color>

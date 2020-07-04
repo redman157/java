@@ -36,7 +36,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
 
-public class FragmentDialogEqualizer extends BottomSheetDialogFragment implements View.OnClickListener,
+public class EqualizerFragment extends BottomSheetDialogFragment implements View.OnClickListener,
         EqualizerAdapter.OnClickItemListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
     private Context context;
     private View view;
@@ -60,11 +60,11 @@ public class FragmentDialogEqualizer extends BottomSheetDialogFragment implement
     private int maxEQLevel = 100;
     private BottomSheetDialog bottomSheet;
     private BottomSheetBehavior behavior;
-    public static FragmentDialogEqualizer newInstance() {
+    public static EqualizerFragment newInstance() {
         
         Bundle args = new Bundle();
 
-        FragmentDialogEqualizer fragment = new FragmentDialogEqualizer();
+        EqualizerFragment fragment = new EqualizerFragment();
         fragment.setArguments(args);
         return fragment;
     }

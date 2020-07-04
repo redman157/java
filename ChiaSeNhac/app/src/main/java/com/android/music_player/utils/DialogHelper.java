@@ -7,7 +7,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -19,11 +22,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.adapters.ChooseMusicAdapter;
+import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.adapters.SelectMusicAdapter;
 import com.android.music_player.managers.MediaManager;
-import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.models.MusicModel;
 
 import java.util.ArrayList;
@@ -31,7 +33,8 @@ import java.util.ArrayList;
 public class DialogHelper {
     private static Dialog dialog;
     public static void initDialog(final Context context, int layout){
-        dialog = new Dialog(context, R.style.DialogTheme);
+        dialog = new Dialog(context, R.style.MyCustomDialog);
+        dialog.setTitle(null);
         dialog.setContentView(layout);
 
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -67,15 +70,15 @@ public class DialogHelper {
         dialog.show();
     }
 
-    public static void showAllPlayList(final Context context, PlayListAdapter.OnClickItem onClickItem){
+    public static void showAllPlayList(final Context context, PlayListAdapter.OnClickItemListener onClickItemListener){
         MediaManager.getInstance().setContext(context);
         initDialog(context,R.layout.dialog_show_all_play_list);
 
         ArrayList<String> allPlayList = MediaManager.getInstance().getAllPlayList();
         if (allPlayList != null && allPlayList.size() > 0) {
-            RecyclerView recyclerView = dialog.findViewById(R.id.rc_All_Play_List);
+            RecyclerView recyclerView = dialog.findViewById(R.id.rc_all_playlist);
             PlayListAdapter playListAdapter = new PlayListAdapter(context, allPlayList);
-            playListAdapter.OnClickItem(onClickItem);
+            playListAdapter.OnClickItem(onClickItemListener);
             recyclerView.setLayoutManager(new LinearLayoutManager(context,
                     LinearLayoutManager.VERTICAL, false));
             recyclerView.setAdapter(playListAdapter);
@@ -83,31 +86,45 @@ public class DialogHelper {
         dialog.show();
     }
 
-    private static void showCreatePlayList(final Context context){
+    public static void showCreatePlayList(final Context context){
         MediaManager.getInstance().setContext(context);
         initDialog(context, R.layout.dialog_create_playlist);
 
         TextView textTitle = dialog.findViewById(R.id.text_title);
-        final EditText editTitle = dialog.findViewById(R.id.edit_title);
-        Button btnCreate = dialog.findViewById(R.id.btnCreate);
-        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        final EditText mEditTitle = dialog.findViewById(R.id.edit_title);
+        Button mBtnCreate = dialog.findViewById(R.id.btnCreate);
+        Button mBtnCancel = dialog.findViewById(R.id.btnCancel);
 
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
+        mBtnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("SSS", context instanceof HomeActivity? "true":"false");
+
                 dialog.cancel();
             }
         });
 
-        btnCreate.setOnClickListener(new View.OnClickListener() {
+        mBtnCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String namePlayList = editTitle.getText().toString();
+                String namePlayList = mEditTitle.getText().toString();
                 if (!namePlayList.isEmpty()){
                     if (MediaManager.getInstance().addPlayList(namePlayList)) {
+                        if (context instanceof HomeActivity){
+                            ((HomeActivity)context).bottomSheetHelper.dismiss();
+                            ((HomeActivity)context).bottomSheetHelper = new BottomSheetHelper(BottomSheetHelper.DIALOG.ADD_PLAY_LIST,
+                                    new PlayListAdapter.OnClickItemListener() {
+                                        @Override
+                                        public void onClickAddMusic(String mediaID) {
+                                            Log.d("SSS", "dialog OnClickItemListener: "+ mediaID);
+                                        }
+                                    });
+                            ((HomeActivity)context).bottomSheetHelper.show(
+                                    ((HomeActivity)context).getSupportFragmentManager(),
+                                    ((HomeActivity)context).FRAGMENT_TAG);
+                        }
                         Utils.ToastShort(context, "Create NAME Name: "+namePlayList);
+
                     }
                     else {
                         Utils.ToastShort(context, "Bài hát đã add vào playlist: "+namePlayList);
@@ -166,7 +183,8 @@ public class DialogHelper {
     public static void showAboutMusic(Context context, MusicModel musicModel){
 
         initDialog(context,R.layout.dialog_about_music);
-
+        Window window = dialog.getWindow();
+        window.setLayout(WindowManager.LayoutParams.WRAP_CONTENT,WindowManager.LayoutParams.WRAP_CONTENT);
         TextView textName = dialog.findViewById(R.id.dialog_about_music_name);
         TextView textFileName = dialog.findViewById(R.id.dialog_about_music_file_name);
         TextView textSong = dialog.findViewById(R.id.dialog_about_music_title);
@@ -193,29 +211,27 @@ public class DialogHelper {
         dialog.show();
     }
 
-    public static void showChooseMusic(final Context context,
-                                       ChooseMusicAdapter chooseMusicAdapter){
-        initDialog(context,R.layout.dialog_choose_music);
-        MediaManager.getInstance().setContext(context);
-        RecyclerView mRcOptionMusic = dialog.findViewById(R.id.rc_choose_music);
-
-        mRcOptionMusic.setAdapter(chooseMusicAdapter);
-        mRcOptionMusic.setLayoutManager(new LinearLayoutManager(context,
-                LinearLayoutManager.VERTICAL, false));
-
-        mRcOptionMusic.getLayoutManager().scrollToPosition(
-                MusicLibrary.getPosition(chooseMusicAdapter.getQueueItems(),
-                MediaManager.getInstance().getCurrentMusic()));
-        dialog.show();
-    }
-
     public static void showDeletePlayList(final Context context, final String title){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Bạn có muốn xóa PlayList: "+title);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 MediaManager.getInstance().setContext(context);
                 if (MediaManager.getInstance().getAllPlaylistDB().deletePlayList(title)){
+                    if (context instanceof HomeActivity){
+                        ((HomeActivity)context).bottomSheetHelper.dismiss();
+                        ((HomeActivity)context).bottomSheetHelper = new BottomSheetHelper(BottomSheetHelper.DIALOG.ADD_PLAY_LIST,
+                                new PlayListAdapter.OnClickItemListener() {
+                                    @Override
+                                    public void onClickAddMusic(String mediaID) {
+                                        Log.d("SSS", "dialog OnClickItemListener: "+ mediaID);
+                                    }
+                                });
+                        ((HomeActivity)context).bottomSheetHelper.show(
+                                ((HomeActivity)context).getSupportFragmentManager(),
+                                ((HomeActivity)context).FRAGMENT_TAG);
+                    }
                     cancelDialog();
                     Toast.makeText(context, "Đã xóa Play List: "+ title, Toast.LENGTH_SHORT).show();
                 }else {

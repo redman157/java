@@ -8,7 +8,6 @@
     android:layout_height="@dimen/_500sdp"
     android:orientation="vertical">
     <include
-
         android:layout_alignParentTop="true"
         android:id="@+id/layout_panel_home"
         layout="@layout/layout_panel_home"

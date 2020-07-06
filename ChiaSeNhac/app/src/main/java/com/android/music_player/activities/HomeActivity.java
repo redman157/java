@@ -27,8 +27,8 @@ import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.fragments.EqualizerFragment;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.LibraryFragment;
-import com.android.music_player.interfaces.OnChangeListener;
-import com.android.music_player.interfaces.OnMediaID;
+import com.android.music_player.interfaces.DialogType;
+import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.media.BrowserHelper;
@@ -51,15 +51,15 @@ import java.util.concurrent.TimeUnit;
 import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 
-public class HomeActivity extends BaseActivity implements View.OnClickListener, OnMediaID,
+public class HomeActivity extends BaseActivity implements View.OnClickListener,
         MediaBrowserListener.OnChangeMusicListener, SlidingUpPanelLayout.PanelSlideListener,
-        OnChangeListener, PlayListAdapter.OnClickItemListener {
+        OnConnectMediaId, PlayListAdapter.OnClickItemListener {
     private RelativeLayout mViewControlMedia, mViewMusic;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
     private View mLayoutMedia, mLayoutState;
     public TextView mTextArtistMedia, mTextTitleMedia;
     public ImageView mImgAlbumArt, mImgChangeMusic, mImgBack;
-    private LinearLayout mLinearTop, mBtnHome,mBtnLibrary;
+    private LinearLayout mLinearTop, mBtnHome,mBtnLibrary, mLinearNext;
     private MediaManager mMediaManager;
     public PlayPauseView mBtnPlayPauseMedia , mBtnPlayPausePanel;
     private ImageView mBtnPrev, mBtnRepeat, mBtnNext, mBtnSetTime,
@@ -82,7 +82,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     private String nameChoose;
     private STATE state;
     private ChooseMusicAdapter mChooseMusicAdapter;
-    public final String FRAGMENT_TAG = "fragment_tag";
+    public final static String FRAGMENT_TAG = "fragment_tag";
     public BottomSheetHelper bottomSheetHelper;
 
     @Override
@@ -148,9 +148,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     public void setViewMusic(String mediaID, PanelState state){
-        if (mediaID.equals("")){
-            mediaID = (String) MusicLibrary.music.keySet().toArray()[0];
-        }
+
         this.nameChoose = mediaID;
         MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(this,
                 mediaID);
@@ -196,6 +194,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mImgChangeMedia = mLayoutMedia.findViewById(R.id.image_album_art);
 
         // linear control song
+
+        mLinearNext = mLayoutMedia.findViewById(R.id.linear_next);
         mBtnAbout = mLayoutMedia.findViewById(R.id.image_about);
         mBtnSetTime = mLayoutMedia.findViewById(R.id.image_set_time);
         mBtnEqualizer = mLayoutMedia.findViewById(R.id.image_equalizer);
@@ -247,12 +247,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         mBtnRepeat.setOnClickListener(this);
         mBtnPrev.setOnClickListener(this);
 
+        mLinearNext.setOnClickListener(this);
         mBtnNext.setOnClickListener(this);
         mBtnSeeMore.setOnClickListener(this);
         mBtnAbout.setOnClickListener(this);
         mBtnHome.setOnClickListener(this);
         mBtnLibrary.setOnClickListener(this);
         mBtnShuffle.setOnClickListener(this);
+
 
         mBtnPlayPauseMedia.setOnClickListener(this);
         mBtnPlayPausePanel.setOnClickListener(this);
@@ -280,6 +282,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
 
             }
         });
+
+        if (mChooseMusicAdapter == null) {
+            mChooseMusicAdapter = new ChooseMusicAdapter(this, getControllerActivity().getQueue());
+            mChooseMusicAdapter.setOnConnectMediaIdListener(this);
+            mChooseMusicAdapter.notifyDataSetChanged();
+        }
     }
 
     @SuppressLint("ResourceAsColor")
@@ -320,7 +328,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.image_favorite:
                 bottomSheetHelper =
-                        new BottomSheetHelper(BottomSheetHelper.DIALOG.CHANGE_MUSIC);
+                        new BottomSheetHelper(DialogType.CHANGE_MUSIC);
 //                dialog.changeMusic(mMediaManager.getCurrentMusic());
                 bottomSheetHelper.show(getSupportFragmentManager(), FRAGMENT_TAG);
                 break;
@@ -361,12 +369,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                     mBtnPlayPauseMedia.Play();
                     mBtnPlayPausePanel.Play();
                     getControllerActivity().getTransportControls().playFromMediaId(nameChoose, null);
-
                 }
                 break;
             case R.id.image_next:
-                getControllerActivity().getTransportControls().skipToNext();
 
+            case R.id.linear_next:
+                getControllerActivity().getTransportControls().skipToNext();
                 break;
             case R.id.image_more:
                 if (!isMore){
@@ -388,17 +396,14 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
                 }
                 break;
             case R.id.image_view_queue:
-                mChooseMusicAdapter = new ChooseMusicAdapter(this, getControllerActivity().getQueue());
-                mChooseMusicAdapter.setOnClickItemListener(this);
-                mChooseMusicAdapter.notifyDataSetChanged();
 
                 bottomSheetHelper =
-                        new BottomSheetHelper(BottomSheetHelper.DIALOG.CHOOSE_MUSIC,
+                        new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
                                 mChooseMusicAdapter);
                 bottomSheetHelper.show(getSupportFragmentManager(), FRAGMENT_TAG);
                 break;
             case R.id.image_add_to_playlist:
-                bottomSheetHelper = new BottomSheetHelper(BottomSheetHelper.DIALOG.ADD_PLAY_LIST,
+                bottomSheetHelper = new BottomSheetHelper(DialogType.ADD_MUSIC_TO_PLAYLIST,
                         this);
                 bottomSheetHelper.show(getSupportFragmentManager(), FRAGMENT_TAG);
                 break;
@@ -540,8 +545,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
     }
 
- 
-
     /**
      * Setup seekbar for mediaplayer controler
      * */
@@ -586,7 +589,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
         }
 
         long currentPosition = mLastPlaybackState.getPosition();
-        Log.d("ZZZ","updateProgress: "+currentPosition);
         if (currentPosition > mSeekBarAudio.getMax()) {
             return;
         }
@@ -614,24 +616,25 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    public void onChooseMedia(String mediaID) {
-        Log.d("VVV","onChooseMedia: "+mediaID);
+    public void onChangeMediaId(String mediaID) {
         setViewMusic(mediaID ,PanelState.EXPANDED );
         mMediaManager.getMediaBrowserConnection().getTransportControls().prepareFromMediaId(mediaID, null);
+        if (bottomSheetHelper!= null && bottomSheetHelper.getShowsDialog()) {
+            bottomSheetHelper.dismiss();
+        }
+     /*   setViewMusic(mediaID, PanelState.EXPANDED);
+        mMediaManager.getMediaBrowserConnection().getTransportControls().prepareFromMediaId(mediaID, null);*/
+        Log.d("XXX","dialog --- onChangeMediaId: "+mediaID);
+    }
+
+    @Override
+    public void onAddMusicToPlayList(String namePlayList) {
         bottomSheetHelper.dismiss();
-    }
-
-    @Override
-    public void onMusicID(String nameMusic) {
-        setViewMusic(nameMusic, PanelState.EXPANDED);
-        mMediaManager.getMediaBrowserConnection().getTransportControls().prepareFromMediaId(nameMusic, null);
-//        mMediaManager.getMediaBrowserConnection().setAutoPlay(nameMusic, true);
-    }
-
-    @Override
-    public void onClickAddMusic(String mediaID) {
-        /*bottomSheetHelper.dismiss();
-        mMediaManager.getAllPlaylistDB().addPlayList(mediaID);*/
-        Log.d("SSS", "PlayListAdapter.OnClickItemListener: "+ mediaID);
+        if (mMediaManager.addMusicToPlayList(namePlayList, mMediaManager.getCurrentMusic())){
+            Utils.ToastShort(this,"Đã Add Bài: "+ mMediaManager.getCurrentMusic());
+        }else {
+            Utils.ToastShort(this,"Add Bài: "+ mMediaManager.getCurrentMusic());
+        }
+        Log.d("SSS", "PlayListAdapter.OnClickItemListener: "+ namePlayList);
     }
 }

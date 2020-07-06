@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.media.MediaMetadataCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -24,11 +25,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.PlayListAdapter;
-import com.android.music_player.adapters.SelectMusicAdapter;
+import com.android.music_player.adapters.SelectOptionsAdapter;
+import com.android.music_player.interfaces.DialogType;
 import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.models.MusicModel;
 
 import java.util.ArrayList;
+
+import static com.android.music_player.activities.HomeActivity.FRAGMENT_TAG;
 
 public class DialogHelper {
     private static Dialog dialog;
@@ -48,18 +53,76 @@ public class DialogHelper {
         }
     }
 
-    public static void showChangeMusic(final Context context, String title){
-        SelectMusicAdapter selectMusicAdapter = new SelectMusicAdapter(context);
+    public static void showDialogChangeMusic(final Context context, final String mediaID){
+        // fragment home -- > show dialog add music vào play list
+        final MediaManager manager = MediaManager.getInstance();
+        manager.setContext(context);
+        SelectOptionsAdapter selectOptionsAdapter = new SelectOptionsAdapter(context, SelectOptionsAdapter.initData());
+        if (context instanceof HomeActivity) {
+            final HomeActivity activity = (HomeActivity)context;
+            selectOptionsAdapter.setOnClickItemListener(new SelectOptionsAdapter.OnClickItemListener() {
+                @Override
+                public void onClick(int position) {
+                    switch (position) {
+                        case 0:
+                            Utils.ToastShort(context, position + "");
+                            break;
+                        case 1:
+                            activity.bottomSheetHelper =
+                                    new BottomSheetHelper(DialogType.ADD_MUSIC_TO_PLAYLIST, new PlayListAdapter.OnClickItemListener() {
+                                        @Override
+                                        public void onAddMusicToPlayList(String namePlayList) {
+                                            Log.d("ZZZ","showDialogChangeMusic --- " +
+                                                    "onAddMusicToPlayList: playlist: "+ "--- " +
+                                                    "musicID: "+mediaID);
+                                            activity.bottomSheetHelper.dismiss();
+                                            if (manager.addMusicToPlayList(namePlayList, mediaID)){
+                                                Utils.ToastShort(context,"Đã Add Bài: "+ mediaID);
+                                            }else {
+                                                Utils.ToastShort(context,"Add Bài: "+ mediaID);
+                                            }
+                                        }
+                                    });
+                            activity.bottomSheetHelper.show(activity.getSupportFragmentManager(),
+                                    FRAGMENT_TAG);
+                            break;
+                        case 2:
+                            Utils.ToastShort(context, position + "");
+                            break;
+                        case 3:
+                            Utils.ToastShort(context, position + "");
+                            break;
+                        case 4:
+                            Utils.ToastShort(context, position + "");
+                            break;
+                        case 5:
+                            Utils.ToastShort(context, position + "");
+                            break;
+                        case 6:
+                            Utils.ToastShort(context, position + "");
+                            break;
+                        case 7:
+                            Utils.ToastShort(context, position + "");
+                            break;
+                        case 8:
+                            Utils.ToastShort(context, position + "");
+                            break;
+                    }
+                }
+
+                ;
+            });
+        }
         initDialog(context, R.layout.dialog_change_music);
 
         RecyclerView options = dialog.findViewById(R.id.rc_selection_music);
         TextView textTitle = dialog.findViewById(R.id.text_title);
         Button btnCancel = dialog.findViewById(R.id.btn_cancel);
 
-        textTitle.setText(title);
+        textTitle.setText(mediaID);
         options.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
         options.hasFixedSize();
-        options.setAdapter(selectMusicAdapter);
+        options.setAdapter(selectOptionsAdapter);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +141,7 @@ public class DialogHelper {
         if (allPlayList != null && allPlayList.size() > 0) {
             RecyclerView recyclerView = dialog.findViewById(R.id.rc_all_playlist);
             PlayListAdapter playListAdapter = new PlayListAdapter(context, allPlayList);
-            playListAdapter.OnClickItem(onClickItemListener);
+            playListAdapter.setOnClickItemListener(onClickItemListener);
             recyclerView.setLayoutManager(new LinearLayoutManager(context,
                     LinearLayoutManager.VERTICAL, false));
             recyclerView.setAdapter(playListAdapter);
@@ -111,12 +174,15 @@ public class DialogHelper {
                 if (!namePlayList.isEmpty()){
                     if (MediaManager.getInstance().addPlayList(namePlayList)) {
                         if (context instanceof HomeActivity){
-                            ((HomeActivity)context).bottomSheetHelper.dismiss();
-                            ((HomeActivity)context).bottomSheetHelper = new BottomSheetHelper(BottomSheetHelper.DIALOG.ADD_PLAY_LIST,
+                            if (((HomeActivity)context).bottomSheetHelper != null && ((HomeActivity)context).bottomSheetHelper.getShowsDialog()) {
+                                ((HomeActivity) context).bottomSheetHelper.dismiss();
+                            }
+                            ((HomeActivity)context).bottomSheetHelper = new BottomSheetHelper(DialogType.ADD_MUSIC_TO_PLAYLIST,
                                     new PlayListAdapter.OnClickItemListener() {
                                         @Override
-                                        public void onClickAddMusic(String mediaID) {
-                                            Log.d("SSS", "dialog OnClickItemListener: "+ mediaID);
+                                        public void onAddMusicToPlayList(String mediaID) {
+                                            ((HomeActivity)context).bottomSheetHelper.dismiss();
+                                            MediaManager.getInstance().getAllPlaylistDB().addPlayList(mediaID);
                                         }
                                     });
                             ((HomeActivity)context).bottomSheetHelper.show(
@@ -138,18 +204,21 @@ public class DialogHelper {
         dialog.show();
     }
 
-    public static void showAddSongs(final Context context, final MusicModel musicModel,
-                                    final String title){
+    public static void showAddSongs(final Context context, final String mediaID,
+                                    final String namePlayList){
         MediaManager.getInstance().setContext(context);
         initDialog(context,R.layout.dialog_add_music);
+
         ImageView imageView = dialog.findViewById(R.id.img_add_music);
         TextView textTitle = dialog.findViewById(R.id.text_title_music);
         ImageButton btnAddMusic = dialog.findViewById(R.id.imgb_add_music);
         final Button btnAdd = dialog.findViewById(R.id.btnAddMusic);
-        btnAdd.setText(title);
-        ImageHelper.getInstance(context).getSmallImageByPicasso(musicModel.getAlbumID(), imageView);
+        btnAdd.setText(namePlayList);
+        MediaMetadataCompat mediaMetadata = MediaManager.getInstance().getMetadata(context, mediaID);
+        ImageHelper.getInstance(context).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(mediaID))
+                , imageView);
 
-        textTitle.setText(musicModel.getSongName());
+        textTitle.setText(mediaID);
 
         btnAddMusic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,12 +234,11 @@ public class DialogHelper {
                 // Add music cần search playlist rồi mới add music
 
                 // add bài hát
-                if (MediaManager.getInstance().addMusicToPlayList(title, musicModel)){
-
-                    Utils.ToastShort(context,"Đã Add Bài: "+ musicModel.getSongName());
+                if (MediaManager.getInstance().addMusicToPlayList(namePlayList, mediaID)){
+                    Utils.ToastShort(context,"Đã Add Bài: "+ mediaID);
                 }else {
                     Utils.ToastShort(
-                            context,"Add Bài: "+ musicModel.getSongName());
+                            context,"Add Bài: "+ mediaID);
                 }
 
                 dialog.dismiss();
@@ -220,12 +288,18 @@ public class DialogHelper {
                 MediaManager.getInstance().setContext(context);
                 if (MediaManager.getInstance().getAllPlaylistDB().deletePlayList(title)){
                     if (context instanceof HomeActivity){
-                        ((HomeActivity)context).bottomSheetHelper.dismiss();
-                        ((HomeActivity)context).bottomSheetHelper = new BottomSheetHelper(BottomSheetHelper.DIALOG.ADD_PLAY_LIST,
+                        if (((HomeActivity)context).bottomSheetHelper!= null && ((HomeActivity)context).bottomSheetHelper.getShowsDialog()) {
+                            ((HomeActivity) context).bottomSheetHelper.dismiss();
+                        }
+                        ((HomeActivity)context).bottomSheetHelper = new BottomSheetHelper(DialogType.ADD_MUSIC_TO_PLAYLIST,
                                 new PlayListAdapter.OnClickItemListener() {
                                     @Override
-                                    public void onClickAddMusic(String mediaID) {
-                                        Log.d("SSS", "dialog OnClickItemListener: "+ mediaID);
+                                    public void onAddMusicToPlayList(String namePlayList) {
+                                        if (MediaManager.getInstance().addMusicToPlayList(namePlayList, MediaManager.getInstance().getCurrentMusic())){
+                                            Utils.ToastShort(context,"Đã Add Bài: "+ MediaManager.getInstance().getCurrentMusic());
+                                        }else {
+                                            Utils.ToastShort(context,"Add Bài: "+ MediaManager.getInstance().getCurrentMusic());
+                                        }
                                     }
                                 });
                         ((HomeActivity)context).bottomSheetHelper.show(

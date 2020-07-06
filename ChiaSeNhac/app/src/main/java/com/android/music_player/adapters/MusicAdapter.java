@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.interfaces.OnMediaID;
+import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogHelper;
@@ -51,10 +51,13 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
     public List<String> getMusicList(){
         return keys;
     }
-    private OnMediaID onMediaID;
-    public void setOnMediaID(OnMediaID onMediaID) {
-        this.onMediaID = onMediaID;
+    private OnConnectMediaId onConnectMediaId;
+
+    public void setOnConnectMediaIdListener(OnConnectMediaId onConnectMediaId) {
+        this.onConnectMediaId = onConnectMediaId;
     }
+
+
     public interface OnClickListener {
         void onClick(String type, int position);
     }
@@ -76,7 +79,8 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
         holder.mLinearMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onMediaID.onChooseMedia(keys.get(position));
+                /* bắt sự kiện click để bật nhạc*/
+                onConnectMediaId.onChangeMediaId(description.getDescription().getMediaId());
                 mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID,
                         description.getString(Constants.METADATA.AlbumID));
             }
@@ -85,7 +89,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
         holder.mBtnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogHelper.showChangeMusic(mActivity,keys.get(position));
+                DialogHelper.showDialogChangeMusic(mActivity,description.getDescription().getMediaId());
             }
         });
 

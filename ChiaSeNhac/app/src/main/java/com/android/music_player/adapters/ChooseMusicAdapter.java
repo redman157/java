@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
-import com.android.music_player.interfaces.OnMediaID;
+import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.Constants;
@@ -34,7 +34,6 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
     private ImageHelper mImageUtils;
     private int mPossitionMusic;
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
-    private int mOptionMusic;
     public ChooseMusicAdapter(Context context, List<MediaSessionCompat.QueueItem> queueItems) {
         this.mQueueItems = queueItems;
         mContext = context;
@@ -48,17 +47,9 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
         return mQueueItems;
     }
 
-    public void setPosition(int position){
-        mOptionMusic = position;
-    }
-    public int getPosition(){
-        return mOptionMusic;
-    }
-
-    private OnMediaID onMediaID;
-
-    public void setOnClickItemListener(OnMediaID onMediaID){
-        this.onMediaID = onMediaID;
+    private OnConnectMediaId onConnectMediaId;
+    public void setOnConnectMediaIdListener(OnConnectMediaId onConnectMediaId) {
+        this.onConnectMediaId = onConnectMediaId;
     }
 
     @NonNull
@@ -85,7 +76,7 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
         holder.ll_option_music.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onMediaID.onChooseMedia(mQueueItems.get(position).getDescription().getMediaId());
+                onConnectMediaId.onChangeMediaId(mQueueItems.get(position).getDescription().getMediaId());
             }
         });
 

@@ -1,8 +1,6 @@
 package com.android.music_player.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +13,16 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
-import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.HomeFragmentAdapter;
-import com.android.music_player.interfaces.OnChangeListener;
-import com.android.music_player.interfaces.OnMediaID;
+import com.android.music_player.adapters.MusicAdapter;
+import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 public class HomeFragment extends Fragment implements
-        SwipeRefreshLayout.OnRefreshListener, OnMediaID {
+        SwipeRefreshLayout.OnRefreshListener {
     private View view;
     private String type;
     private FastScrollRecyclerView mRcHome;
@@ -35,28 +32,19 @@ public class HomeFragment extends Fragment implements
     private HomeFragmentAdapter mHomeAdapter;
     private MusicAdapter mMusicAdapter;
 
-    private OnChangeListener onChangeListener;
     private static HomeFragment fragment = null;
-    public static HomeFragment newInstance(OnChangeListener onChangeListener) {
+
+    public static HomeFragment newInstance(OnConnectMediaId onConnectMediaId) {
         if (fragment == null){
             fragment = new HomeFragment();
         }
-        fragment.setOnChangeListener(onChangeListener);
+        fragment.setOnConnectMediaIdListener(onConnectMediaId);
         return fragment;
     }
 
-    public void setOnChangeListener(OnChangeListener onChangeListener){
-        this.onChangeListener = onChangeListener;
-    }
-    @Override
-    public void onChooseMedia(String mediaID) {
-        onChangeListener.onMusicID(mediaID);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        Log.d("FFF", context.getClass().getSimpleName());
+    private OnConnectMediaId onConnectMediaId;
+    public void setOnConnectMediaIdListener(OnConnectMediaId onConnectMediaId){
+        this.onConnectMediaId = onConnectMediaId;
     }
 
     @Override
@@ -65,10 +53,9 @@ public class HomeFragment extends Fragment implements
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(getContext());
-        mMusicAdapter = new MusicAdapter(getActivity(), MusicLibrary.music,
-                false);
+        mMusicAdapter = new MusicAdapter(getActivity(), MusicLibrary.music, false);
         mMusicAdapter.notifyDataSetChanged();
-        mMusicAdapter.setOnMediaID(this);
+        mMusicAdapter.setOnConnectMediaIdListener(onConnectMediaId);
     }
 
     @Nullable
@@ -111,15 +98,10 @@ public class HomeFragment extends Fragment implements
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-
                 mSwipeRefreshLayout.setRefreshing(true);
-
                 // Fetching data from server
                 loadRecyclerViewData();
             }
         });
-
     }
-
-
 }

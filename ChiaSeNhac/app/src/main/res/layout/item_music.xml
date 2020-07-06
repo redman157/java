@@ -53,7 +53,6 @@
                     android:textSize="15sp"
                     tools:ignore="NestedWeights" />
                 <TextView
-
                     android:id="@+id/item_music_text_artists"
                     android:gravity="left|center"
                     android:layout_weight="5"
@@ -66,12 +65,12 @@
                     android:textSize="12sp"/>
             </LinearLayout>
             <TextView
+
                 android:id="@+id/item_music_text_time"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_weight="2"
                 android:layout_width="0dp"
-                android:text="01:00"
                 android:textSize="12sp"
                 android:textColor="@color/accentColor"
                 android:layout_height="match_parent"/>

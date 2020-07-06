@@ -14,9 +14,7 @@ public class Database {
         String FILE_NAME = "NAME";
         String ALBUM_ID = "album_id";
         String FAKE_PATH = "fake_path";
-
         String TIME = "time";
-
         String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                         COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + "," +
@@ -41,17 +39,14 @@ public class Database {
         String NAME = "name";
         String MOST = "most";
         String TYPE = "type_name";
-
         String CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + "," +
                     TYPE            + " TEXT "    + "," +
                     NAME            + " TEXT "    + "," +
                     MOST            + " INTEGER " + ");";
-
         String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
         String QUERY = "SELECT * FROM " + TABLE_NAME;
-
     }
 
     public @interface ALL_PLAY_LISTS {
@@ -71,7 +66,6 @@ public class Database {
         String DATABASE_NAME = "song_of_play_list.db";
         String TABLE_NAME = "song_of_play_list ";
         String COL_NAME_ID = "id ";
-
         String NAME_SONG = "name_song";
         String PATH = "path";
         String ARTIST = "artist";
@@ -88,14 +82,7 @@ public class Database {
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" +
                         COL_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +
                         NAME_SONG     + " TEXT "    + "," +
-                        PATH          + " TEXT "    + "," +
-                        ARTIST        + " TEXT "    + "," +
-                        ALBUM         + " TEXT "    + "," +
-                        ALBUM_ID      + " TEXT "    + "," +
-                        FILE_NAME     + " TEXT "    + "," +
-                        ID_SONG       + " TEXT "    + "," +
-                        FAVORITE      + " INTEGER " + "," +
-                        TIME          + " INTEGER " + ");";
+                        FAVORITE      + " INTEGER " + ");";
     }
 
     public @interface RELATION_SONGS{
@@ -104,7 +91,6 @@ public class Database {
         String ID = "id";
         String DATABASE_NAME = "relation_songs.db";
         String TABLE_NAME = "relation_songs";
-
         String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" +
                         ID             + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +

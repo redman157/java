@@ -87,7 +87,6 @@ public class MediaManager {
         mStatistic = new Statistic(mContext);
         mRelationMusic = new RelationMusic(mContext);
         mSharedPrefsUtils = new SharedPrefsUtils(mContext);
-
         mTotalSong = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1);
     }
     public void installData(){
@@ -133,6 +132,9 @@ public class MediaManager {
     public String getCurrentMusic(){
         String nameSong = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"");
         Log.d("CCC","getCurrentMusic: " + nameSong);
+        if (nameSong.equals("")){
+            nameSong = (String) MusicLibrary.music.keySet().toArray()[0];
+        }
         return nameSong;
     }
 
@@ -300,12 +302,12 @@ public class MediaManager {
     /**
      * Database RelationMusic & MusicOfPlayList
      * */
-    public boolean addMusicToPlayList(String title, MusicModel song){
-        if (mMusicOfPlayList.searchSong(song)){
+    public boolean addMusicToPlayList(String title, String mediaID){
+        if (mMusicOfPlayList.searchSong(mediaID)){
             return true;
         }else {
-            mMusicOfPlayList.addSong(song);
-            mRelationMusic.addRow(title, mMusicOfPlayList.getSongName(song));
+            mMusicOfPlayList.addSong(mediaID);
+            mRelationMusic.addRow(title, mMusicOfPlayList.getSongName(mediaID));
             return false;
         }
     }
@@ -338,7 +340,7 @@ public class MediaManager {
      * Database AllPlayList
      * */
 
-    public ArrayList<MusicModel> getAllSongToPlayList(String playListName){
+    public ArrayList<MusicModel> getAllMusicInPlayList(String playListName){
         ArrayList<MusicModel> songs = new ArrayList<>();
         if (mAllPlayList.searchPlayList(playListName)){
             ArrayList<String> allSongName = mRelationMusic.getAllSongName(playListName);
@@ -349,7 +351,7 @@ public class MediaManager {
                 return songs;
             }else {
 
-                Log.d(TAG, "MediaManager --- getAllSongToPlayList: error getAllSongToPlayList");
+                Log.d(TAG, "MediaManager --- getAllMusicInPlayList: error getAllMusicInPlayList");
                 return null;
 
             }
@@ -384,25 +386,25 @@ public class MediaManager {
         return mAllPlayList.getAllPlayList();
     }
 
-    public boolean delete(String namePlayList, MusicModel song){
+    public boolean delete(String namePlayList, String mediaID){
         if (namePlayList.equals("")){
-            if (mMusicOfPlayList.searchSong(song)){
-                mMusicOfPlayList.deleteSong(song);
-                Utils.ToastShort(mContext, "Đã xóa bài hát thành công: "+song.getSongName());
+            if (mMusicOfPlayList.searchSong(mediaID)){
+                mMusicOfPlayList.deleteSong(mediaID);
+                Utils.ToastShort(mContext, "Đã xóa bài hát thành công: "+mediaID);
                 return true;
             }else {
-                Utils.ToastShort(mContext, "Xóa bài hát không thành công: "+song.getSongName());
+                Utils.ToastShort(mContext, "Xóa bài hát không thành công: "+mediaID);
                 return false;
             }
         }else {
-            if (mAllPlayList.searchPlayList(namePlayList) && mMusicOfPlayList.searchSong(song)){
-                mMusicOfPlayList.deleteSong(song);
+            if (mAllPlayList.searchPlayList(namePlayList) && mMusicOfPlayList.searchSong(mediaID)){
+                mMusicOfPlayList.deleteSong(mediaID);
                 Utils.ToastShort(mContext,
-                        "Xóa bài hát trong NAME: "+namePlayList+" thành công: "+song.getSongName());
+                        "Xóa bài hát trong NAME: "+namePlayList+" thành công: "+mediaID);
                 return true;
             }else {
                 Utils.ToastShort(mContext,
-                        "Xóa bài hát trong NAME: "+namePlayList+" không thành công: "+song.getSongName());
+                        "Xóa bài hát trong NAME: "+namePlayList+" không thành công: "+mediaID);
                 return false;
             }
         }
@@ -433,11 +435,11 @@ public class MediaManager {
         return temp;
     }
 
-    public void changeMusic(String namePlayList, MusicModel song){
-        if (song == null){
-
+    public void changeMusic(String namePlayList, String mediaID){
+        if (mediaID == null){
+            return;
         }else {
-            if (mMusicOfPlayList.searchSong(song)){
+            if (mMusicOfPlayList.searchSong(mediaID)){
 
             }else {
                 Utils.ToastShort(mContext,"Không tìm thấy NAME: "+namePlayList);
@@ -656,7 +658,7 @@ public class MediaManager {
         this.mAllPlayList = allPlayListDB;
     }
 
-    public MusicOfPlayList getSongOfPlayListDB() {
+    public MusicOfPlayList getMusicOfPlayListDB() {
         return mMusicOfPlayList;
     }
 

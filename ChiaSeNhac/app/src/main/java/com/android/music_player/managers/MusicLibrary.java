@@ -82,6 +82,8 @@ public class MusicLibrary {
         return  -1;
     }
 
+
+
     // khi change album sẽ có 1 list mới thì mình sẽ edit ở đây
     public static List<MediaBrowserCompat.MediaItem> getMediaItems() {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();

@@ -33,7 +33,7 @@ public class Statistic {
         return this;
     }
 
-    public void addRow(String type,String row){
+    public void addRow(String type ,String mediaID){
         /**
          * type : playlist or music
          * row : 1 row in database
@@ -44,14 +44,13 @@ public class Statistic {
                 " VALUES(" +
                 " null, " +
                 "'" + type+ "'"+ ","+
-                "'" + row + "'"+ ","+
+                "'" + mediaID + "'"+ ","+
                 ""  + 1  + ""  + ")";
         mDatabase.queryData(SQL_ADD);
         closeDatabase();
     }
 
-
-    public boolean isSelect(Cursor cursor){
+    public boolean isExistData(Cursor cursor){
         try {
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -65,12 +64,10 @@ public class Statistic {
         return false;
     }
 
-
     public int getNumber(String type,String name){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
-
         try {
-            if (isSelect(cursor)){
+            if (isExistData(cursor)){
                 do {
                     if (cursor.getString(1).equals(type) && cursor.getString(2).equals(name) ){
                         return cursor.getInt(3);
@@ -85,6 +82,7 @@ public class Statistic {
         }
         return -2;
     }
+
     public ArrayList<String> getPlayListMost(){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
         String first = "";
@@ -93,7 +91,7 @@ public class Statistic {
         Map<Integer, List<String>> playListMost = new HashMap<>();
         ArrayList<String> most = new ArrayList<>();
         try {
-            if (isSelect(cursor)){
+            if (isExistData(cursor)){
                 if (cursor.getString(1).equals(Constants.VALUE.MOST_PLAY_LIST)) {
                     List<Integer> sorted;
                     Log.d(TAG, cursor.getCount() + " kích thước");
@@ -151,7 +149,7 @@ public class Statistic {
         int max = 0;
         String name = "";
         try {
-            if (isSelect(cursor)){
+            if (isExistData(cursor)){
                 do {
                     if (cursor.getString(1).equals(type)) {
                         if (cursor.getInt(3) >= max) {
@@ -177,7 +175,7 @@ public class Statistic {
         Cursor data = mDatabase.getData(Database.STATISTIC.QUERY);
         int count = 0;
         try {
-            if (isSelect(data)) {
+            if (isExistData(data)) {
                 count = data.getCount();
             }
         } catch (SQLiteException e) {
@@ -208,7 +206,7 @@ public class Statistic {
     public boolean search(String type, String title){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
         try {
-            if (isSelect(cursor)){
+            if (isExistData(cursor)){
                 do  {
                     if (cursor.getString(1).equals(type)) {
                         if (cursor.getString(2).equals(title)) {

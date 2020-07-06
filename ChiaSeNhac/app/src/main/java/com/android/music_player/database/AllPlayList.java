@@ -172,13 +172,13 @@ public class AllPlayList {
         return count;
     }
 
-    public HashMap<String, String> getPlayList(String title) {
+    public HashMap<String, String> getPlayList(String namePlayList) {
         Cursor playListData = mDatabase.getData(Database.ALL_PLAY_LISTS.QUERY);
         String name = "";
         try {
             if (isSelect(playListData)) {
                 do {
-                    if (playListData.getString(1).equals (title)) {
+                    if (playListData.getString(1).equals (namePlayList)) {
                         name = playListData.getString(1);
                     }
                 } while (!playListData.isAfterLast());

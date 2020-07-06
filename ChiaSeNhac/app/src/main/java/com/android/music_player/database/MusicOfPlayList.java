@@ -45,19 +45,12 @@ public class MusicOfPlayList {
         return false;
     }
 
-    public void addSong(MusicModel song) {
+    public void addSong(String mediaID) {
         String SQL_INSERT = "INSERT INTO " + Database.SONGS_OF_PLAY_LIST.TABLE_NAME +
                 "VALUES" +
-                "(" + "null"                   + "," +
-                "'" + song.getSongName() + "'" + "," +
-                "'" + song.getPath() + "'"     + "," +
-                "'" + song.getArtist() + "'"   + "," +
-                "'" + song.getAlbum() + "'"    + "," +
-                "'" + song.getAlbumID() + "'"  + "," +
-                "'" + song.getFileName() + "'" + "," +
-                "" + 0 + ""                    + "," +
-                "" + song.getTime() + ""       + ")";
-
+                "(" + "null"         + "," +
+                "'" + mediaID+ "'"   + "," +
+                "" + 0 + ""          + ")";
         mDatabase.queryData(SQL_INSERT);
         closeDatabase();
     }
@@ -74,31 +67,30 @@ public class MusicOfPlayList {
                 "DROP TABLE IF EXISTS "+ Database.SONGS_OF_PLAY_LIST.TABLE_NAME+" WHERE name_play_list= '"+namePlayList+ "' ";
     }
 
-    public boolean deleteSong(MusicModel song){
+    public boolean deleteSong(String mediaID){
         String SQL_DELETE =
                 "DROP TABLE IF EXISTS "+ Database.SONGS_OF_PLAY_LIST.TABLE_NAME+" WHERE " +
-                        "name_song= '"+song.getSongName()+ "' ";
+                        "name_song= '"+mediaID+ "' ";
 
-        if (searchSong(song)){
+        if (searchSong(mediaID)){
             mDatabase.queryData(SQL_DELETE);
-            Toast.makeText(mContext, "Xóa Thành Công Bài Hát: "+song.getSongName(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Xóa Thành Công Bài Hát: "+mediaID, Toast.LENGTH_SHORT).show();
             closeDatabase();
             return true;
         }else {
-            Toast.makeText(mContext, "Xóa Không thành công Bài Hát: "+song.getSongName(),
+            Toast.makeText(mContext, "Xóa Không thành công Bài Hát: "+mediaID,
                     Toast.LENGTH_SHORT).show();
             return false;
         }
     }
 
 
-    public boolean searchSong(MusicModel song){
+    public boolean searchSong(String mediaID){
         Cursor data = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
         try {
             if (isSelect(data)){
                 do {
-                    if (data.getString(1).equals(song.getSongName())){
-
+                    if (data.getString(1).equals(mediaID)){
                         return true;
                     }
                 }
@@ -189,12 +181,12 @@ public class MusicOfPlayList {
         return null;
     }
 
-    public String getSongName(MusicModel musicModel){
+    public String getSongName(String mediaId){
         Cursor cursor = mDatabase.getData(Database.SONGS_OF_PLAY_LIST.QUERY);
         try {
             if (isSelect(cursor)) {
                 do {
-                    if (cursor.getString(1).equals(musicModel.getSongName())) {
+                    if (cursor.getString(1).equals(mediaId)) {
                         return cursor.getString(1);
                     }
                 }

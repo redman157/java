@@ -6,8 +6,6 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import com.android.music_player.models.MusicModel;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,19 +56,17 @@ public class RelationMusic {
         try {
             if (isSelect(cursor)){
                 List<Integer> sorted;
-                Log.d(TAG, cursor.getCount()+" kích thước");
 
                 do {
-                    Log.d(TAG, "Enter0");
                     int counter = cursor.getInt(1);
                     String playlist = cursor.getString(2);
-                    Log.d(TAG, playlist);
                     if (playListMost.get(counter) == null) {
                         playListMost.put(counter, new ArrayList<String>());
                     }
 
                     playListMost.get(counter).add(playlist);
                 } while (cursor.moveToNext());
+
                 sorted = new ArrayList<>(playListMost.keySet());
                 Log.d(TAG, "Enter1");
                 if (sorted.size() > 0) {
@@ -108,7 +104,6 @@ public class RelationMusic {
         return null;
     }
 
-
     public void addRow(String namePlayList, String nameSong){
         String SQL_ADD = "INSERT INTO "+
                 Database.RELATION_SONGS.TABLE_NAME+
@@ -121,11 +116,11 @@ public class RelationMusic {
         closeDatabase();
     }
 
-    public boolean compareIdSong(MusicModel musicModel){
+    public boolean compareMediaID(String mediaID){
         Cursor cursor = mDatabase.getData(Database.RELATION_SONGS.QUERY);
         if (isSelect(cursor)){
             do {
-                if (cursor.getString(2).equals(mMusicOfPlayList.getSongName(musicModel))){
+                if (cursor.getString(2).equals(mMusicOfPlayList.getSongName(mediaID))){
                     return true;
                 }
             }

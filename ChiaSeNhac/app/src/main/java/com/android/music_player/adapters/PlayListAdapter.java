@@ -24,11 +24,11 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.ViewHo
         mPlayLists = playLists;
     }
     private OnClickItemListener onClickItemListener;
-    public void OnClickItem(OnClickItemListener onClickItemListener) {
+    public void setOnClickItemListener(OnClickItemListener onClickItemListener) {
         this.onClickItemListener = onClickItemListener;
     }
     public interface OnClickItemListener {
-        void onClickAddMusic(String mediaID);
+        void onAddMusicToPlayList(String namePlayList);
     }
     @NonNull
     @Override
@@ -57,23 +57,23 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.ViewHo
             mTextMediaID = itemView.findViewById(R.id.text_play_list);
             mLinearAddPlayList = itemView.findViewById(R.id.linear_add_play_list);
         }
-        public void addData(String mediaID){
-            mTextMediaID.setText(mediaID);
+        public void addData(String namePlayList){
+            mTextMediaID.setText(namePlayList);
         }
-        public void setOnClick(final String mediaID){
+        public void setOnClick(final String namePlayList){
             mLinearAddPlayList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onClickItemListener.onClickAddMusic(mediaID);
+                    onClickItemListener.onAddMusicToPlayList(namePlayList);
                 }
             });
         }
 
-        public void setOnLongClick(final String mediaID){
+        public void setOnLongClick(final String namePlayList){
             mLinearAddPlayList.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    DialogHelper.showDeletePlayList(mContext, mediaID);
+                    DialogHelper.showDeletePlayList(mContext, namePlayList);
                     return false;
                 }
             });

@@ -6,11 +6,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import com.android.music_player.managers.MediaManager;
-import com.android.music_player.utils.Constants;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @SuppressWarnings("unchecked")
 public class AllPlayList {
@@ -18,13 +14,13 @@ public class AllPlayList {
     private Context mContext;
     private String TAG = "AllPlaylistLog";
     /* renamed from: db */
-    private RelationMusic mRelationMusic;
+    private MusicOfPlayList mMusicOfPlayList;
     private ReaderSQL mDatabase;
 
     public AllPlayList(Context context){
         this.mContext = context;
         this.mDatabase = new ReaderSQL(context, Database.ALL_PLAY_LISTS.DATABASE_NAME, null, 1);
-        mRelationMusic = new RelationMusic(context);
+        mMusicOfPlayList = new MusicOfPlayList(context);
         mDatabase.queryData(Database.ALL_PLAY_LISTS.CREATE_TABLE);
         mDatabase.close();
     }
@@ -36,7 +32,7 @@ public class AllPlayList {
         return this;
     }
 
-    public boolean isSelect(Cursor cursor){
+    public boolean isExistData(Cursor cursor){
         try {
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -51,20 +47,13 @@ public class AllPlayList {
         return false;
     }
 
-    public void addPlayList(String mediaID) {
+    public void addRow(String namePlayList) {
         String SQL_INSERT =
                 "INSERT INTO "+ Database.ALL_PLAY_LISTS.TABLE_NAME
                         +" VALUES(null"  + ","+
-                        "'" + mediaID +"'" + ")";
+                        "'" + namePlayList +"'" + ")";
 
         mDatabase.queryData(SQL_INSERT);
-        closeDatabase();
-    }
-
-    public void deletePlayList(int id) {
-        String SQL_DELETE =
-                "DROP TABLE IF EXISTS "+ Database.ALL_PLAY_LISTS.TABLE_NAME+" WHERE id= '"+id+ "' ";
-        mDatabase.queryData(SQL_DELETE);
         closeDatabase();
     }
 
@@ -72,23 +61,19 @@ public class AllPlayList {
         String SQL_DELETE =  "DELETE FROM " +Database.ALL_PLAY_LISTS.TABLE_NAME
                 + " WHERE "+Database.ALL_PLAY_LISTS.NAME_PLAY_LIST+ " = "+"'"+namePlayList+"'";
 
-        /*String SQL_DELETE =
-                "DROP TABLE IF EXISTS "+ Database.ALL_PLAY_LISTS.TABLE_NAME+" WHERE " +
-                        "name_play_list = "+name_play_list+ "";*/
-        if (searchPlayList(namePlayList) && getSize() > 0){
+        if (search(namePlayList) && getSize() > 0){
             mDatabase.queryData(SQL_DELETE);
-            mRelationMusic.deletePlayList(namePlayList);
+            mMusicOfPlayList.deletePlayList(namePlayList);
             closeDatabase();
             return true;
         }else {
-
             return false;
         }
     }
 
     public void deleteAllPlayList() {
         try {
-            mDatabase.queryData(Database.SONGS_OF_PLAY_LIST.DELETE);
+            mDatabase.queryData(Database.ALL_MUSIC.DELETE);
 
         } catch (SQLiteException e) {
             Log.d(TAG, e.getMessage());
@@ -97,20 +82,20 @@ public class AllPlayList {
         }
     }
 
-    public void updatePlayList(String main,String change){
+    public void updatePlayList(String namePlayListOri,String namePlayListChange){
         String SQL_UPDATE =
                 "UPDATE "+
                         Database.ALL_PLAY_LISTS.TABLE_NAME+ " SET " +
-                        Database.ALL_PLAY_LISTS.NAME_PLAY_LIST + "= '"+ change +"'" +
-                        " WHERE "+ Database.ALL_PLAY_LISTS.NAME_PLAY_LIST + "= '"+ main+ "' ";
+                        Database.ALL_PLAY_LISTS.NAME_PLAY_LIST + "= '"+ namePlayListChange +"'" +
+                        " WHERE "+ Database.ALL_PLAY_LISTS.NAME_PLAY_LIST + "= '"+ namePlayListOri+ "' ";
         mDatabase.queryData(SQL_UPDATE);
         closeDatabase();
     }
 
-    public boolean searchPlayList(String namePlayList){
+    public boolean search(String namePlayList){
         Cursor playListData = mDatabase.getData(Database.ALL_PLAY_LISTS.QUERY);
         try {
-            if (isSelect(playListData)) {
+            if (isExistData(playListData)) {
                 do {
                     if (playListData.getString(1).equals(namePlayList)) {
 
@@ -123,13 +108,12 @@ public class AllPlayList {
             Log.d(TAG, e.getMessage());
         }catch (CursorIndexOutOfBoundsException e) {
             // play list không có thì sẽ mặc định tạo
-            MediaManager.getInstance().setContext(mContext);
-            MediaManager.getInstance().addPlayListFirst();
+         /*   MediaManager.getInstance().setContext(mContext);
+            MediaManager.getInstance().buildDataTheFirst();*/
             return  false;
         } finally {
             closeDatabase();
         }
-
         return false;
     }
 
@@ -138,12 +122,11 @@ public class AllPlayList {
         Cursor query = mDatabase.getData(Database.ALL_PLAY_LISTS.QUERY);
         ArrayList<String> allPlayList = new ArrayList<>();
         try {
-            if (isSelect(query)) {
+            if (isExistData(query)) {
                 do {
                     allPlayList.add(query.getString(1));
                 } while (query.moveToNext());
             }
-
             return allPlayList;
         }catch (SQLiteException e){
             Log.d(TAG, e.getMessage());
@@ -160,7 +143,7 @@ public class AllPlayList {
         Cursor cursor = mDatabase.getData(Database.ALL_PLAY_LISTS.QUERY);
         int count = 0;
         try {
-            if (isSelect(cursor)) {
+            if (isExistData(cursor)) {
                 count = cursor.getCount();
             }
             return count;
@@ -172,27 +155,4 @@ public class AllPlayList {
         return count;
     }
 
-    public HashMap<String, String> getPlayList(String namePlayList) {
-        Cursor playListData = mDatabase.getData(Database.ALL_PLAY_LISTS.QUERY);
-        String name = "";
-        try {
-            if (isSelect(playListData)) {
-                do {
-                    if (playListData.getString(1).equals (namePlayList)) {
-                        name = playListData.getString(1);
-                    }
-                } while (!playListData.isAfterLast());
-
-            }
-            HashMap<String, String> hashMap = new HashMap<>();
-            hashMap.put(Constants.VALUE.NAME_PLAYLIST, name);
-            return hashMap;
-        }catch (SQLiteException e){
-            Log.d(TAG, e.getMessage());
-        }finally {
-            closeDatabase();
-        }
-
-        return null;
-    }
 }

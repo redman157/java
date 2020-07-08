@@ -60,7 +60,6 @@ public class MusicLibrary {
         return music.size();
     }
 
-
     public static String getAlbumArtUri(String albumArtResName) {
         return ImageHelper.getSongUri(Long.valueOf(albumArtResName)).getPath();
     }
@@ -82,14 +81,23 @@ public class MusicLibrary {
         return  -1;
     }
 
-
-
     // khi change album sẽ có 1 list mới thì mình sẽ edit ở đây
     public static List<MediaBrowserCompat.MediaItem> getMediaItems() {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
         for (MediaMetadataCompat metadata : music.values()) {
             MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(
                     metadata.getDescription(),
+                    MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
+            result.add(mediaItem);
+        }
+        return result;
+    }
+
+    public static List<MediaBrowserCompat.MediaItem> getAlbumItems(ArrayList<String> albums) {
+        List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
+        for (int i = 0 ; i < albums.size();i ++){
+            MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(
+                    music.get(albums.get(i)).getDescription(),
                     MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
             result.add(mediaItem);
         }

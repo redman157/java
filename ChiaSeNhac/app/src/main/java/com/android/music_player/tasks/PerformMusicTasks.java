@@ -65,9 +65,6 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
 
         try {
             // lần đầu tiên cài app
-            if(mMediaManager.isPlayListMost()){
-                mMediaManager.addPlayListFirst();
-            }
             Log.d(tag, "Sync: "+sync);
             if (sync) {
 

@@ -52,7 +52,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
         holder.mLinearArtist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                onClickItemListener.onChooseMedia(mArtists.get(position).getSongName());
+//                onClickItemListener.onChooseMedia(mArtists.get(position).getMusicId());
 //                mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mArtists.get(position).getAlbumID());
             }
         });

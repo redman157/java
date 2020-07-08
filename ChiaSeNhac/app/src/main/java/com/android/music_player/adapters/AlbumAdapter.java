@@ -51,7 +51,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
         holder.mLinearAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                onClickItemListener.onChooseMedia(mMusics.get(position).getSongName());
+//                onClickItemListener.onChooseMedia(mMusics.get(position).getMusicId());
 //                mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mMusics.get(position).getAlbumID());
             }
         });

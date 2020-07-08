@@ -8,19 +8,18 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/swipe_container">
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
             <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
                 android:id="@+id/rc_home_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:fastScrollPopupBgColor="@color/primaryColor"
-                app:fastScrollPopupTextColor="@color/primaryColor"
-                app:fastScrollThumbColor="@color/primaryColor"
-                app:fastScrollThumbInactiveColor="@color/primaryColor"/>
-
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                app:fastScrollPopupBgColor="@color/accentColor"
+                app:fastScrollPopupTextColor="@color/accentColor"
+                app:fastScrollThumbColor="@color/accentColor"
+                app:fastScrollThumbInactiveColor="@color/accentColor"/>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

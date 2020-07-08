@@ -72,9 +72,6 @@ public class DialogHelper {
                                     new BottomSheetHelper(DialogType.ADD_MUSIC_TO_PLAYLIST, new PlayListAdapter.OnClickItemListener() {
                                         @Override
                                         public void onAddMusicToPlayList(String namePlayList) {
-                                            Log.d("ZZZ","showDialogChangeMusic --- " +
-                                                    "onAddMusicToPlayList: playlist: "+ "--- " +
-                                                    "musicID: "+mediaID);
                                             activity.bottomSheetHelper.dismiss();
                                             if (manager.addMusicToPlayList(namePlayList, mediaID)){
                                                 Utils.ToastShort(context,"Đã Add Bài: "+ mediaID);
@@ -182,7 +179,7 @@ public class DialogHelper {
                                         @Override
                                         public void onAddMusicToPlayList(String mediaID) {
                                             ((HomeActivity)context).bottomSheetHelper.dismiss();
-                                            MediaManager.getInstance().getAllPlaylistDB().addPlayList(mediaID);
+                                            MediaManager.getInstance().getAllPlaylistDB().addRow(mediaID);
                                         }
                                     });
                             ((HomeActivity)context).bottomSheetHelper.show(

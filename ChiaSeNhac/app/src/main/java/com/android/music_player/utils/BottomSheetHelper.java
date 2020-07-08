@@ -71,6 +71,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mBottomSheet = new BottomSheetDialog(getContext(), getTheme());
         mBottomSheet.setOnShowListener(this);
+
         return mBottomSheet;
     }
 
@@ -113,6 +114,19 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         View bottomSheetInternal =
                 mBottomSheet.findViewById(com.google.android.material.R.id.design_bottom_sheet);
         mBehavior = BottomSheetBehavior.from(bottomSheetInternal);
+        mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View view, int newState) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    dismiss();
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View view, float v) {
+
+            }
+        });
         mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 

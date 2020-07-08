@@ -15,6 +15,7 @@ public class Constants {
         String AUTO_PLAY = "AutoPlay";
         String TYPE = "type";
         String TYPE_DIALOG = "TypeDialog";
+        String OPEN_SLIDING_PANEL = "OpenSlidingPanel";
     }
     public @interface VALUE {
         int MAX_SLIDERS = 5;
@@ -27,6 +28,7 @@ public class Constants {
     public @interface PREFERENCES{
         String CURRENT_MUSIC = "current_music";
         String SAVE_ALBUM_ID = "SaveAlbumId";
+        String IS_ROOT = "IsRoot";
         String KEY = "key";
         String TOTAL_SONGS = "TotalSongs";
         String AUDIO_SESSION_ID = "AudioSessionId";

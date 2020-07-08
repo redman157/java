@@ -257,7 +257,6 @@ public abstract class BrowserHelper {
             Log.d("WWW","MediaBrowserSubscriptionCallback --- onChildrenLoaded: "+parentId);
 
             BrowserHelper.this.onChildrenLoaded(parentId, children);
-
         }
 
         @Override

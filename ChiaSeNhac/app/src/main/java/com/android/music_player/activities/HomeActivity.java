@@ -76,8 +76,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public String type;
     public BrowserHelper mBrowserHelper;
     private SharedPrefsUtils mSharedPrefsUtils;
-    private int step = 0;
-    private float alpha = 0 ;
     private boolean isMore;
     private String nameChoose;
     private STATE state;
@@ -104,12 +102,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onStart() {
         super.onStart();
+
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
             setViewMusic(mMediaManager.getCurrentMusic(),PanelState.EXPANDED );
         }else if (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED){
             setViewMusic(mMediaManager.getCurrentMusic(), PanelState.COLLAPSED);
         }
         setMediaChange(this.getClass().getSimpleName(), this);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     @Override
@@ -217,7 +221,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         // linear button state
         mLayoutState= mLayoutMedia.findViewById(R.id.layout_panel_home);
-//        mLinearTop = findViewById(R.id.linear_top);
 
         mBtnHome = mLayoutMedia.findViewById(R.id.btn_home);
         mTextHome = mLayoutMedia.findViewById(R.id.text_home);
@@ -268,26 +271,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mSeekBarAudio.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
                 getControllerActivity().getTransportControls().seekTo(seekBar.getProgress());
-
             }
         });
-
-        if (mChooseMusicAdapter == null) {
-            mChooseMusicAdapter = new ChooseMusicAdapter(this, getControllerActivity().getQueue());
-            mChooseMusicAdapter.setOnConnectMediaIdListener(this);
-            mChooseMusicAdapter.notifyDataSetChanged();
-        }
     }
 
     @SuppressLint("ResourceAsColor")
@@ -329,7 +321,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case R.id.image_favorite:
                 bottomSheetHelper =
                         new BottomSheetHelper(DialogType.CHANGE_MUSIC);
-//                dialog.changeMusic(mMediaManager.getCurrentMusic());
                 bottomSheetHelper.show(getSupportFragmentManager(), FRAGMENT_TAG);
                 break;
             case R.id.image_shuffle:
@@ -359,6 +350,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
                 break;
             case R.id.image_play_pause:
+
             case R.id.imbt_play_media:
                 if (isPlaying){
                     mBtnPlayPauseMedia.Pause();
@@ -372,7 +364,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.image_next:
-
             case R.id.linear_next:
                 getControllerActivity().getTransportControls().skipToNext();
                 break;
@@ -396,7 +387,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.image_view_queue:
-
+                mMediaManager.getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_ROOT);
+                if (mChooseMusicAdapter == null) {
+                    mChooseMusicAdapter = new ChooseMusicAdapter(this);
+                    mChooseMusicAdapter.setOnConnectMediaIdListener(this);
+                }
+                mChooseMusicAdapter.setQueueItems(getControllerActivity().getQueue());
+                mChooseMusicAdapter.notifyDataSetChanged();
                 bottomSheetHelper =
                         new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
                                 mChooseMusicAdapter);
@@ -502,9 +499,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     // Panel change state
     @Override
     public void onPanelSlide(View panel, float slideOffset) {
-        Log.d("UUU", "onPanelSlide : "+slideOffset);
-        alpha = slideOffset;
-//        mLayoutState.setAlpha(alpha);
         if (slideOffset < 0.3f){
             mLayoutState.setVisibility(View.VISIBLE);
         }else {
@@ -524,14 +518,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
          * **/
         Log.d("III", "onPanelStateChanged previousState: " + previousState.toString() + " " +
                 "---newState: " + newState.toString());
-
         switch (newState) {
             case EXPANDED:
                 break;
             case COLLAPSED:
-
                 mLayoutState.setAlpha(1);
-
                 break;
             case DRAGGING:
                 if (previousState == PanelState.COLLAPSED){
@@ -624,7 +615,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
      /*   setViewMusic(mediaID, PanelState.EXPANDED);
         mMediaManager.getMediaBrowserConnection().getTransportControls().prepareFromMediaId(mediaID, null);*/
-        Log.d("XXX","dialog --- onChangeMediaId: "+mediaID);
+
     }
 
     @Override

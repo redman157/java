@@ -1,28 +1,43 @@
 package com.android.music_player.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
-import com.android.music_player.adapters.HomeFragmentAdapter;
+import com.android.music_player.adapters.ChooseMusicAdapter;
 import com.android.music_player.adapters.MusicAdapter;
+import com.android.music_player.interfaces.DialogType;
 import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.utils.BottomSheetHelper;
+import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
+import com.android.music_player.utils.Utils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-public class HomeFragment extends Fragment implements
-        SwipeRefreshLayout.OnRefreshListener {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private View view;
     private String type;
     private FastScrollRecyclerView mRcHome;
@@ -68,12 +83,8 @@ public class HomeFragment extends Fragment implements
         mHomeAdapter.notifyDataSetChanged();
         mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
         mRcHome.setAdapter(mHomeAdapter);
-
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeResources(
-                android.R.color.holo_green_dark,
-                android.R.color.holo_orange_dark,
-                android.R.color.holo_blue_dark);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primaryDark);
         return view;
     }
 
@@ -88,20 +99,211 @@ public class HomeFragment extends Fragment implements
         mRcHome = view.findViewById(R.id.rc_home_fragment);
     }
 
-    private void loadRecyclerViewData(){
-//        startActivity(getActivity().getIntent());
+    public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder>  {
+        private HomeActivity mHomeActivity;
+        private MediaManager mMediaManager;
+        private SharedPrefsUtils mSharedPrefsUtils;
+        private MusicAdapter mMusicAdapter;
+
+        public HomeFragmentAdapter(HomeActivity activity, MusicAdapter musicAdapter){
+            mHomeActivity = activity;
+            mMusicAdapter = musicAdapter;
+            mSharedPrefsUtils = new SharedPrefsUtils(activity);
+            mMediaManager = MediaManager.getInstance();
+            mMediaManager.setContext(activity);
+        }
+        @NonNull
+        @Override
+        public HomeHolder onCreateViewHolder(@NonNull ViewGroup parent,
+                                                                 int viewType) {
+            View view = LayoutInflater.from(mHomeActivity).inflate(R.layout.item_home, null);
+            return new HomeHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull HomeHolder holder, int position) {
+            holder.initView();
+            mMusicAdapter.notifyDataSetChanged();
+            holder.assignView(mMusicAdapter);
+        }
+
+        @Override
+        public int getItemCount() {
+            return 1;
+        }
     }
 
-
-    @Override
+     @Override
     public void onRefresh() {
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                // Fetching data from server
-                loadRecyclerViewData();
-            }
-        });
+        mMusicAdapter.notifyDataSetChanged();
+        mHomeAdapter.notifyDataSetChanged();
+        mSwipeRefreshLayout.setRefreshing(false);
+
     }
+    public class HomeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private TextView mTextPlayer_1, mTextPlayer_2, mTextPlayerSongs;
+        private RecyclerView mRelativeRecentlyAdd;
+        private ImageView mImgPlayer_2, mImgPlayerMusic, mImgPlayer_1,
+                mImgMostPlayer, mImgShuffleAll, mImgRecentlyAdd;
+        private ArrayList<String> mMostPlayList;
+        private MediaManager mMediaManager;
+        private LinearLayout mLinearRecently, mLinearMost, mLinearShuffle,
+                mLinearMediaMost;
+        private CardView mCardPlayList_1, mCardPlayList_2;
+        private ChooseMusicAdapter mChooseMusicAdapter;
+        private HomeActivity mHomeActivity = (HomeActivity) getContext();
+        public HomeHolder(@NonNull View view) {
+            super(view);
+            mMediaManager = MediaManager.getInstance();
+            mMediaManager.setContext(mHomeActivity);
+
+            mTextPlayerSongs = view.findViewById(R.id.text_player_music);
+            mRelativeRecentlyAdd = view.findViewById(R.id.recycler_recently_add);
+            mImgPlayerMusic = view.findViewById(R.id.image_player_music);
+            mImgPlayer_1 = view.findViewById(R.id.image_player_1);
+            mImgPlayer_2 = view.findViewById(R.id.image_player_2);
+            mImgMostPlayer = view.findViewById(R.id.image_most_player);
+            mImgRecentlyAdd = view.findViewById(R.id.img_Recently_Add);
+            mImgShuffleAll = view.findViewById(R.id.image_shuffle_all);
+            mTextPlayer_1 = view.findViewById(R.id.text_player_1);
+            mTextPlayer_2 = view.findViewById(R.id.text_Player_2);
+            mLinearMost = view.findViewById(R.id.linear_most_music);
+            mLinearRecently = view.findViewById(R.id.linear_recently_music);
+            mLinearShuffle = view.findViewById(R.id.linear_shuffle_music);
+            mLinearMediaMost = view.findViewById(R.id.linear_media_most);
+            mCardPlayList_1 = view.findViewById(R.id.card_playlist_1);
+            mCardPlayList_2 = view.findViewById(R.id.card_playlist_2);
+        }
+
+        public void initView(){
+            if (mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).equals("")) {
+                mTextPlayerSongs.setText("");
+                mImgPlayerMusic.setImageResource(R.drawable.ic_music_notes_padded);
+            }else {
+                mTextPlayerSongs.setText(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC));
+                ImageHelper.getInstance(mHomeActivity).getSmallImageByPicasso(mMediaManager.getSong(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC)).getAlbumID(),
+                        mImgPlayerMusic);
+            }
+
+            mMostPlayList = mMediaManager.getListMost(Constants.VALUE.MOST_PLAY_LIST);
+
+            mTextPlayer_1.setText(mMostPlayList.get(0));
+            mTextPlayer_2.setText(mMostPlayList.size() < 2 ? mMostPlayList.get(0) :
+                    mMostPlayList.get(1));
+        }
+
+        public void assignView(MusicAdapter musicAdapter){
+            mImgPlayerMusic.setOnClickListener(this);
+            mLinearMost.setOnClickListener(this);
+            mLinearRecently.setOnClickListener(this);
+            mImgPlayer_1.setOnClickListener(this);
+            mImgPlayer_2.setOnClickListener(this);
+            mLinearShuffle.setOnClickListener(this);
+            mRelativeRecentlyAdd.setAdapter(musicAdapter);
+            mRelativeRecentlyAdd.setNestedScrollingEnabled(false);
+            mRelativeRecentlyAdd.setLayoutManager(new LinearLayoutManager(mHomeActivity,
+                    LinearLayoutManager.VERTICAL, false));
+            mCardPlayList_2.setOnClickListener(this);
+            mCardPlayList_1.setOnClickListener(this);
+            if (mChooseMusicAdapter == null) {
+                mChooseMusicAdapter = new ChooseMusicAdapter(mHomeActivity);
+            }
+//            mLinearMediaMost.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constants.INTENT.AUTO_PLAY, true);
+            switch (v.getId()){
+                case R.id.linear_shuffle_music:
+                    Random random = new Random();
+                    List<String> keys = new ArrayList<>(MusicLibrary.music.keySet());
+                    int index = random.nextInt(keys.size());
+                    mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(
+                            keys.get(index), null);
+                    Log.d("CCC",
+                            "Check thử: "+keys.get(index));
+                    break;
+                case R.id.image_player_2:
+                    Log.d("ZZZ","image_player_2: set "+mTextPlayer_2.getText().toString() );
+                    mMediaManager.getStateViewModel().setNamePlayList(mTextPlayer_2.getText().toString());
+                    mMediaManager.getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_EMPTY_ROOT);
+
+//                    Log.d("ZZZ", "Player 2: "+mHomeActivity.getControllerActivity().getQueue().size());
+
+                    mChooseMusicAdapter.setOnConnectMediaIdListener(new OnConnectMediaId() {
+                        @Override
+                        public void onChangeMediaId(String mediaID) {
+                            Log.d("ZZZ","image_player_2: "+mediaID);
+                        }
+                    });
+
+                    if (mHomeActivity.getControllerActivity().getQueue().size() > 0) {
+                        mChooseMusicAdapter.setQueueItems(mHomeActivity.getControllerActivity().getQueue());
+                        mChooseMusicAdapter.notifyDataSetChanged();
+                        mHomeActivity.bottomSheetHelper =
+                                new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
+                                        mChooseMusicAdapter);
+                        mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
+                                HomeActivity.FRAGMENT_TAG);
+                    }
+                 /*   try {
+                        mMediaManager.getStateViewModel().setNamePlayList(mTextPlayer_2.getText().toString());
+                        mHomeActivity.getMediaBrowserCompat().unsubscribe(MusicLibrary.MEDIA_ID_ROOT,
+                                mMediaManager.getMediaBrowserConnection().getCallback());
+
+                        mHomeActivity.getMediaBrowserCompat().subscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
+                                mMediaManager.getMediaBrowserConnection().getCallback());
+                        mMediaManager.getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_EMPTY_ROOT);
+                    }catch (Exception e){
+                        Log.d("ZZZ", "Player 2: "+e.getMessage());
+                    }finally {
+                        mChooseMusicAdapter.setOnConnectMediaIdListener(new OnConnectMediaId() {
+                            @Override
+                            public void onChangeMediaId(String mediaID) {
+                                Log.d("ZZZ","image_player_2: "+mediaID);
+                            }
+                        });
+
+                        if (mHomeActivity.getControllerActivity().getQueue().size() > 0) {
+                            mChooseMusicAdapter.setQueueItems(mHomeActivity.getControllerActivity().getQueue());
+                            mChooseMusicAdapter.notifyDataSetChanged();
+                            mHomeActivity.bottomSheetHelper =
+                                    new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
+                                            mChooseMusicAdapter);
+                            mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
+                                    HomeActivity.FRAGMENT_TAG);
+                        }
+                    }*/
+                    break;
+
+                case R.id.image_player_1:
+
+                    break;
+                case R.id.linear_recently_music:
+                    (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMusicAdapter.getMusicList().get(0), bundle);
+                    break;
+                case R.id.linear_most_music:
+                    (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), bundle);
+                    break;
+                case R.id.image_player_music:
+
+                    if (mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).length() > 0) {
+                        (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), bundle);
+                        if (mHomeActivity.mSlidingUpPanelLayout.getPanelState() != SlidingUpPanelLayout.PanelState.EXPANDED) {
+                            mHomeActivity.mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                        }
+                    }else {
+                        Utils.ToastShort(mHomeActivity, "Chưa Có bài hát nghe nhiều");
+                    }
+                    break;
+                case R.id.card_playlist_1:
+                    break;
+                case R.id.card_playlist_2:
+                    break;
+            }
+        }
+    }
+
 }

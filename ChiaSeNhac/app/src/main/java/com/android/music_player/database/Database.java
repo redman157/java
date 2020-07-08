@@ -39,18 +39,20 @@ public class Database {
         String NAME = "name";
         String MOST = "most";
         String TYPE = "type_name";
+        String FAV = "favorite";
         String CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + "," +
                     TYPE            + " TEXT "    + "," +
                     NAME            + " TEXT "    + "," +
-                    MOST            + " INTEGER " + ");";
+                    MOST            + " INTEGER " + "," +
+                    FAV            + " INTEGER " + ");";
         String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
         String QUERY = "SELECT * FROM " + TABLE_NAME;
     }
 
     public @interface ALL_PLAY_LISTS {
-        String DATABASE_NAME = "play_list.db";
+        String DATABASE_NAME = "all_play_list.db";
         String TABLE_NAME = "play_list";
         String NAME_PLAY_LIST = "name_play_list";
         String ID = "id";
@@ -62,40 +64,33 @@ public class Database {
         String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
     }
 
-    public @interface SONGS_OF_PLAY_LIST {
-        String DATABASE_NAME = "song_of_play_list.db";
+    public @interface ALL_MUSIC {
+        String DATABASE_NAME = "all_music.db";
         String TABLE_NAME = "song_of_play_list ";
         String COL_NAME_ID = "id ";
-        String NAME_SONG = "name_song";
-        String PATH = "path";
-        String ARTIST = "artist";
-        String ALBUM = "album";
-        String FILE_NAME = "file_name";
-        String ALBUM_ID = "album_id";
+        String NAME = "media_id";
         String FAVORITE = "favorite";
         String ID_SONG = "id_song";
-        String TIME = "time";
 
         String QUERY = "SELECT * FROM " + TABLE_NAME;
         String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
         String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" +
                         COL_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +
-                        NAME_SONG     + " TEXT "    + "," +
-                        FAVORITE      + " INTEGER " + ");";
+                        NAME        + " TEXT " + ");";
     }
 
-    public @interface RELATION_SONGS{
+    public @interface MUSIC_OF_PLAY_LIST {
         String NAME_PLAY_LISTS = "name_play_list";
         String NAME_SONGS = "id_songs";
         String ID = "id";
-        String DATABASE_NAME = "relation_songs.db";
-        String TABLE_NAME = "relation_songs";
+        String DATABASE_NAME = "music_of_play_list.db";
+        String TABLE_NAME = "music_of_play_list";
         String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(" +
                         ID             + " INTEGER PRIMARY KEY AUTOINCREMENT " + "," +
                         NAME_PLAY_LISTS + " TEXT "  + "," +
-                        NAME_SONGS      + " TEXT " + ");";
+                        NAME_SONGS      + " TEXT "  + ");";
         String QUERY = "SELECT * FROM " + TABLE_NAME;
         String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
     }

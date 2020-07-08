@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class Statistic {
 
@@ -33,7 +34,7 @@ public class Statistic {
         return this;
     }
 
-    public void addRow(String type ,String mediaID){
+    public void addRow(String type ,String name){
         /**
          * type : playlist or music
          * row : 1 row in database
@@ -43,9 +44,10 @@ public class Statistic {
                 Database.STATISTIC.TABLE_NAME+
                 " VALUES(" +
                 " null, " +
-                "'" + type+ "'"+ ","+
-                "'" + mediaID + "'"+ ","+
-                ""  + 1  + ""  + ")";
+                "'" + type    + "'"+ ","+
+                "'" + name + "'"+ ","+
+                "'" + 1       + "'"+ ","+
+                "'" + 0       + "'"+ ")";
         mDatabase.queryData(SQL_ADD);
         closeDatabase();
     }
@@ -137,13 +139,38 @@ public class Statistic {
         } catch (SQLiteException exception) {
             Log.d(TAG, exception.getMessage());
         } catch (CursorIndexOutOfBoundsException e){
-            return null;
+            return most;
         }
         finally {
             closeDatabase();
         }
-        return null;
+        return most;
     }
+
+    public ArrayList<String> getAllMusicMost(){
+        Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
+        Map<Integer, String> allMusicMap = new HashMap<>();
+        ArrayList<String> allMusic = new ArrayList<>();
+        try {
+            if (isExistData(cursor)){
+                do {
+                    if (cursor.getString(1).equals(Constants.VALUE.MOST_MUSIC)){
+                        allMusicMap.put(cursor.getInt(3), cursor.getString(2));
+                    }
+                }while (cursor.moveToNext());
+                Map<Integer, String> reverseSortedMap =
+                        new TreeMap<>(Collections.reverseOrder());
+                reverseSortedMap.putAll(allMusicMap);
+
+
+            }
+        }finally {
+            closeDatabase();
+        }
+        allMusic = (ArrayList<String>) allMusicMap.values();
+        return allMusic;
+    }
+
     public String getMusicMost(String type){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
         int max = 0;
@@ -194,13 +221,20 @@ public class Statistic {
             int most = (getNumber(type, name)) + 1;
             Log.d(TAG, most +" --- search: false ");
             String SQL_UPDATE =
-                    "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET "+Database.STATISTIC.MOST
-                    +" = "  +""+ most +""
-                            +" WHERE "+Database.STATISTIC.NAME + " = "+"'"+name+"'";
+                    "UPDATE "+Database.STATISTIC.TABLE_NAME +" SET " +
+                            Database.STATISTIC.MOST +"="+""+ most +"" +
+                        " WHERE "+Database.STATISTIC.NAME + " = "+"'"+name+"'";
             Log.d(TAG, SQL_UPDATE);
             mDatabase.queryData(SQL_UPDATE);
             closeDatabase();
         }
+    }
+    public void favorite(String name, int fav){
+        String SQL_UPDATE = "UPDATE "+ Database.STATISTIC.TABLE_NAME+ " SET "+
+                Database.STATISTIC.FAV + " = " + "'"+ fav +"'"
+                + " WHERE "+ Database.STATISTIC.NAME + " = "+name;
+        mDatabase.queryData(SQL_UPDATE);
+        closeDatabase();
     }
 
     public boolean search(String type, String title){

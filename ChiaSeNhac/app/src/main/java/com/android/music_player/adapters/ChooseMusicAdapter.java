@@ -34,15 +34,16 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
     private ImageHelper mImageUtils;
     private int mPossitionMusic;
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
-    public ChooseMusicAdapter(Context context, List<MediaSessionCompat.QueueItem> queueItems) {
-        this.mQueueItems = queueItems;
+    public ChooseMusicAdapter(Context context ) {
         mContext = context;
-
         mImageUtils = ImageHelper.getInstance(context);
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(context);
     }
 
+    public void setQueueItems(List<MediaSessionCompat.QueueItem> queueItems){
+        this.mQueueItems = queueItems;
+    }
     public List<MediaSessionCompat.QueueItem> getQueueItems() {
         return mQueueItems;
     }
@@ -92,14 +93,13 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
             imageView = itemView.findViewById(R.id.item_music_img_music);
             textTime = itemView.findViewById(R.id.item_music_text_time);
             textTitle = itemView.findViewById(R.id.item_music_text_title);
-
             textArtist = itemView.findViewById(R.id.item_music_text_artists);
         }
 
         public void setData(int pos){
             MediaSessionCompat.QueueItem item = mQueueItems.get(pos);
             if (mMediaManager.getCurrentMusic().equals(item.getDescription().getMediaId())){
-//                Log.d("KKK", "setData: "+getListMusic().getData(pos).getSongName());
+//                Log.d("KKK", "setData: "+getListMusic().getData(pos).getMusicId());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     textTitle.setTextColor(mContext.getColor(R.color.red));
                 }else {

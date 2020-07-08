@@ -1,11 +1,15 @@
 package com.android.music_player.activities;
 
 import android.os.Bundle;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 
 import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.media.BrowserConnectionListener;
 import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
@@ -14,7 +18,7 @@ import com.android.music_player.utils.BundleHelper;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 
-public abstract class BaseActivity extends ActionBarCastActivity implements BrowserConnectionListener.OnMediaController {
+public abstract class BaseActivity extends ActionBarCastActivity implements BrowserConnectionListener.OnServiceConnect {
     private boolean serviceBound = false;
     private MediaService mediaService;
     private SharedPrefsUtils mSharedPrefsUtils;
@@ -24,7 +28,7 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     private MediaBrowserListener mMediaBrowserListener;
     public abstract void initManager();
     private static final String TAG = BaseActivity.class.getSimpleName();
-
+    private MediaBrowserCompat mMediaBrowserCompat;
     public SharedPrefsUtils getSharedPrefsUtils(){
         return mSharedPrefsUtils;
     }
@@ -41,7 +45,7 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
 
         mSharedPrefsUtils = new SharedPrefsUtils(this);
         mBrowserHelper = mMediaManager.getMediaBrowserConnection();
-        mMediaManager.getMediaBrowserConnection().setOnMediaController(this);
+        mMediaManager.getMediaBrowserConnection().setOnServiceConnectListener(this);
     }
 
     @Override
@@ -71,15 +75,48 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
 
     public void setControllerActivity(MediaControllerCompat controllerCompat) {
         this.mMediaControllerCompat = controllerCompat;
+    }
 
+    public MediaBrowserCompat getMediaBrowserCompat() {
+        return mMediaBrowserCompat;
+    }
+
+    public void setMediaBrowserCompat(MediaBrowserCompat mediaBrowserCompat) {
+        this.mMediaBrowserCompat = mediaBrowserCompat;
     }
 
     @Override
-    public void onController(MediaControllerCompat mediaController) {
+    public void onConnect(final MediaBrowserCompat mediaBrowserCompat,
+                          final MediaControllerCompat mediaController) {
         // khi connect thành công của media browser
         // thì mới có controller chuyển cho activity sử dụng
 
+        setMediaBrowserCompat(mediaBrowserCompat);
         setControllerActivity(mediaController);
+
+        /*VIEW MODEL CHANGE ROOT SERVICE*/
+        mMediaManager.getStateViewModel().getParentId().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String parentId) {
+                Log.d("ZZZ", "onchange: "+parentId);
+                if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)){
+
+                    // GỠ STATE VÀ SET STATE KHÁC
+                    mediaBrowserCompat.unsubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
+                            getMediaManager().getMediaBrowserConnection().getCallback());
+
+                    mediaBrowserCompat.subscribe(MusicLibrary.MEDIA_ID_ROOT,
+                            getMediaManager().getMediaBrowserConnection().getCallback());
+
+                }else if (parentId.equals(MusicLibrary.MEDIA_ID_EMPTY_ROOT)){
+                    mediaBrowserCompat.unsubscribe(MusicLibrary.MEDIA_ID_ROOT,
+                            getMediaManager().getMediaBrowserConnection().getCallback());
+
+                    mediaBrowserCompat.subscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
+                        getMediaManager().getMediaBrowserConnection().getCallback());
+                }
+            }
+        });
     }
 
     public void setAutoPlay(String mediaID, boolean autoPlay){

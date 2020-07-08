@@ -119,7 +119,7 @@ public class MediaService extends MediaBrowserServiceCompat {
         // Assign returned result to temporary variable
         Log.d("WWW", "MediaService --- onLoadChildren: "+parentId);
         if (parentId.equals(MusicLibrary.MEDIA_ID_EMPTY_ROOT)) {
-
+            result.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
         }else if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)) {
             result.sendResult(MusicLibrary.getMediaItems());
         }
@@ -138,20 +138,26 @@ public class MediaService extends MediaBrowserServiceCompat {
             mMediaManager.setContext(MediaService.this);
         }
 
-
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
             queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
+            Log.d("XXX","onAddQueueItem: "+ queueItem.getDescription().getMediaId());
             mPlayList.add(queueItem);
-
             mSessionCompat.setQueue(mPlayList);
+
+            Log.d("XXX","mSessionCompat: "+mPlayList.size());
         }
 
         @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
-            queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
-            mPlayList.remove(queueItem);
-            mSessionCompat.setQueue(mPlayList);
+     /*       queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
+            mPlayList.remove(queueItem);*/
+            mPlayList.clear();
+//            mSessionCompat.setQueue(mPlayList);
+//            mSessionCompat.setQueue(mPlayList);
+
+            Log.d("XXX","onRemoveQueueItem: "+ queueItem.getDescription().getMediaId());
+            Log.d("XXX","mSessionCompat: "+mPlayList.size());
         }
 
         @Override
@@ -278,7 +284,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         }
 
     }
-
 
     // MediaPlayerManager Callback: MediaPlayerManager state -> MediaService.
     public class MediaPlayerListener extends PlaybackInfoListener{

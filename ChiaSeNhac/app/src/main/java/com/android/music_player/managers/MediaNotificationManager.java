@@ -23,6 +23,7 @@ import androidx.media.session.MediaButtonReceiver;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.services.MediaService;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 
 public class MediaNotificationManager {
@@ -209,6 +210,7 @@ public class MediaNotificationManager {
     private PendingIntent createContentIntent() {
         Intent openUI = new Intent(mService, HomeActivity.class);
         openUI.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        openUI.putExtra(Constants.INTENT.OPEN_SLIDING_PANEL, true);
         return PendingIntent.getActivity(
                 mService, REQUEST_CODE, openUI, PendingIntent.FLAG_CANCEL_CURRENT);
     }

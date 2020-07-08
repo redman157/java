@@ -6,7 +6,8 @@
     android:orientation="vertical"
     android:weightSum="10"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_80sdp">
+    android:layout_height="@dimen/_80sdp"
+    app:ignore="NamespaceTypo">
     <LinearLayout
         android:layout_weight="6"
         android:id="@+id/ll_play_media"
@@ -173,6 +174,7 @@
             android:layout_gravity="center"
             android:layout_height="match_parent">
             <TextView
+
                 android:id="@+id/text_library"
                 android:textSize="@dimen/_13sdp"
                 android:textColor="@color/accentColor"

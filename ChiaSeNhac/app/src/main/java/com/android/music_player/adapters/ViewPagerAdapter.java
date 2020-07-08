@@ -2,21 +2,18 @@ package com.android.music_player.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.android.music_player.R;
 import com.android.music_player.fragments.HomeFragment;
-import com.android.music_player.fragments.SettingsFragment;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -29,7 +26,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     public ImageView icon;
     private FragmentManager fragmentManager;
     private HomeFragment homeFragment;
-    private SettingsFragment settingsFragment;
     private Map<Integer, String> mFragmentTags;
     public ViewPagerAdapter(Context context,@NonNull FragmentManager manager) {
         super(manager);
@@ -61,17 +57,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public View getTabHome(int position) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_tablayout_home, null);
-        title =  view.findViewById(R.id.item_tl_text_home);
-        if (position == 0){
-            title.setTextColor(context.getColor(R.color.orange));
-        }
-        title.setText(titleHomeList().get(position));
-
-        return view;
-    }
 
     public View getTabSong(int position) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_tablayout_home, null);

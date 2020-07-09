@@ -97,6 +97,7 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
             textArtist = itemView.findViewById(R.id.item_music_text_artists);
         }
 
+
         public void setData(int pos){
             MediaSessionCompat.QueueItem item = mQueueItems.get(pos);
             if (mMediaManager.getCurrentMusic().equals(item.getDescription().getMediaId())){

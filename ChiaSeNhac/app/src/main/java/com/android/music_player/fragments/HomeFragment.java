@@ -234,29 +234,71 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     mChooseMusicAdapter.setOnConnectMediaIdListener(new OnConnectMediaId() {
                         @Override
                         public void onChangeMediaId(String mediaID) {
-//                            Log.d("ZZZ","image_player_2: "+mediaID);
+                            if (mHomeActivity.bottomSheetHelper.getShowsDialog()){
+                                mHomeActivity.bottomSheetHelper.dismiss();
+                            }
+                            mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(
+                                    mediaID, null);
+                            mHomeActivity.setViewMusic(mediaID, SlidingUpPanelLayout.PanelState.EXPANDED);
                         }
                     });
 
+                    try {
+                        mChooseMusicAdapter.setQueueMediaID(MusicLibrary.getUpdateQueueUI(mMediaManager.getAllMusicOfPlayList(mTextPlayer_2.getText().toString())));
 
-                    mChooseMusicAdapter.setQueueMediaID(mHomeActivity.getControllerActivity().getQueue());
-                    mChooseMusicAdapter.notifyDataSetChanged();
-                    mHomeActivity.bottomSheetHelper =
-                            new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
-                                    mChooseMusicAdapter);
-                    mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
-                            HomeActivity.FRAGMENT_TAG);
+                        mChooseMusicAdapter.notifyDataSetChanged();
+                        mHomeActivity.bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
+                                mChooseMusicAdapter);
+                        mHomeActivity.bottomSheetHelper.setTitle(mTextPlayer_2.getText().toString());
+                        mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
+                                HomeActivity.FRAGMENT_TAG);
+                    }catch (NullPointerException e){
+                        Utils.ToastShort(getContext(), "Play List chưa có bài hát");
+                    }
+
 
                     break;
 
                 case R.id.image_player_1:
+                    mMediaManager.getStateViewModel().setNamePlayList(mTextPlayer_1.getText().toString());
+                    mMediaManager.getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_EMPTY_ROOT);
+
+                    mChooseMusicAdapter.setOnConnectMediaIdListener(new OnConnectMediaId() {
+                        @Override
+                        public void onChangeMediaId(String mediaID) {
+                            if (mHomeActivity.bottomSheetHelper.getShowsDialog()){
+                                mHomeActivity.bottomSheetHelper.dismiss();
+                            }
+                            mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(
+                                    mediaID, null);
+                            mHomeActivity.setViewMusic(mediaID, SlidingUpPanelLayout.PanelState.EXPANDED);
+                        }
+                    });
+
+                    try {
+                        mChooseMusicAdapter.setQueueMediaID(MusicLibrary.getUpdateQueueUI(mMediaManager.getAllMusicOfPlayList(mTextPlayer_1.getText().toString())));
+                        mChooseMusicAdapter.notifyDataSetChanged();
+                        mHomeActivity.bottomSheetHelper =
+                                new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
+                                        mChooseMusicAdapter);
+                        mHomeActivity.bottomSheetHelper.setTitle(mTextPlayer_1.getText().toString());
+                        mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
+                                HomeActivity.FRAGMENT_TAG);
+                    }catch (NullPointerException e){
+                        Utils.ToastShort(getContext(), "Play List chưa có bài hát");
+                    }
 
                     break;
                 case R.id.linear_recently_music:
                     (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMusicAdapter.getMusicList().get(0), bundle);
                     break;
                 case R.id.linear_most_music:
-                    (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), bundle);
+                    try {
+                        (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), bundle);
+                    }catch (IllegalArgumentException e){
+                        Utils.ToastShort(getContext(), "Chưa có bài hát thịnh hành");
+                    }
+
                     break;
                 case R.id.image_player_music:
 

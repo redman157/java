@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;

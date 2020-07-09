@@ -16,6 +16,7 @@ import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.services.MediaService;
 import com.android.music_player.utils.BundleHelper;
 import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.Utils;
 
 import java.util.List;
 
@@ -101,11 +102,14 @@ public class BrowserConnectionListener extends BrowserHelper {
                 @Override
                 public void onChanged(String titlePlayList) {
                     Log.d("ZZZ", "onChildrenLoaded --- enter else if: "+titlePlayList);
-
-                    if (mMediaManager.getAllMusicOfPlayList(titlePlayList) != null) {
-                        mediaItems = MusicLibrary.getAlbumItems(mMediaManager.getAllMusicOfPlayList(titlePlayList));
-                        Log.d("ZZZ",
-                                "onChildrenLoaded --- enter else if size: " + mediaItems.size());
+                    try {
+                        if (mMediaManager.getAllMusicOfPlayList(titlePlayList) != null) {
+                            mediaItems = MusicLibrary.getAlbumService(mMediaManager.getAllMusicOfPlayList(titlePlayList));
+                            Log.d("ZZZ",
+                                    "onChildrenLoaded --- enter else if size: " + mediaItems.size());
+                        }
+                    }catch (NullPointerException e){
+                        Utils.ToastShort(context, "Play List chưa có bài hát");
                     }
 
                 }

@@ -127,7 +127,7 @@ public class MediaService extends MediaBrowserServiceCompat {
         if (parentId.equals(MusicLibrary.MEDIA_ID_EMPTY_ROOT)) {
             result.sendResult(new ArrayList<MediaBrowserCompat.MediaItem>());
         }else if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)) {
-            result.sendResult(MusicLibrary.getMediaItems());
+            result.sendResult(MusicLibrary.getAllMediaService());
         }
     }
 

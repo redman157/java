@@ -64,6 +64,11 @@ public class MusicLibrary {
         return ImageHelper.getSongUri(Long.valueOf(albumArtResName)).getPath();
     }
 
+    public static ArrayList<String> getAllMusic(){
+        ArrayList<String> list = new ArrayList<>(music.keySet());
+        return list;
+    }
+
     public static String getMusicFilename(String mediaId) {
         return fileName.containsKey(mediaId) ? fileName.get(mediaId) : null;
     }
@@ -82,7 +87,7 @@ public class MusicLibrary {
     }
 
     // khi change album sẽ có 1 list mới thì mình sẽ edit ở đây
-    public static List<MediaBrowserCompat.MediaItem> getMediaItems() {
+    public static List<MediaBrowserCompat.MediaItem> getAllMediaService() {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
         for (MediaMetadataCompat metadata : music.values()) {
             MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(
@@ -93,7 +98,7 @@ public class MusicLibrary {
         return result;
     }
 
-    public static List<MediaBrowserCompat.MediaItem> getAlbumItems(ArrayList<String> albums) {
+    public static List<MediaBrowserCompat.MediaItem> getAlbumService(ArrayList<String> albums) {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
         for (int i = 0 ; i < albums.size();i ++){
             MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(
@@ -102,6 +107,18 @@ public class MusicLibrary {
             result.add(mediaItem);
         }
         return result;
+    }
+
+    public static List<MediaSessionCompat.QueueItem> getUpdateQueueUI(ArrayList<String> queueItems){
+        List<MediaSessionCompat.QueueItem> queues = new ArrayList<>();
+        List<MediaBrowserCompat.MediaItem> mediaItems = getAlbumService(queueItems);
+        for (int i = 0 ;i < queueItems.size(); i++){
+            MediaSessionCompat.QueueItem queueItem =
+                    new MediaSessionCompat.QueueItem(mediaItems.get(i).getDescription(),
+                            mediaItems.get(i).getDescription().hashCode());
+            queues.add(queueItem);
+        }
+        return queues;
     }
 
     public static void createMediaMetadataCompat(MusicModel song ) {

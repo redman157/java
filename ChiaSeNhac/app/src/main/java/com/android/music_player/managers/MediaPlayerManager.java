@@ -20,6 +20,8 @@ import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.Utils;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -222,7 +224,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         try {
             if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
                 mMediaPlayer.start();
-
+                this.startFadeIn();
             }
         } finally {
             // start được save bài hiện đang play và tăng điểm play lên
@@ -237,7 +239,9 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     protected void onPause() {
         try {
             if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                startFadeOut();
                 mMediaPlayer.pause();
+
             }
         }finally {
             setNewState(PlaybackStateCompat.STATE_PAUSED);
@@ -249,6 +253,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         // Regardless of whether or not the MediaPlayer has been created / started, the state must
         // be updated, so that MediaNotificationManager can take down the notification.
         try {
+            startFadeOut();
             release();
         }finally {
             setNewState(PlaybackStateCompat.STATE_STOPPED);
@@ -286,7 +291,20 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
             setNewState(PlaybackStateCompat.STATE_BUFFERING);
         }
     }
+    float volume = 1;
+    float speed = 0.05f;
 
+    public void FadeOut(float deltaTime) {
+        mMediaPlayer.setVolume(volume, volume);
+        volume -= speed* deltaTime;
+
+    }
+    public void FadeIn(float deltaTime)
+    {
+        mMediaPlayer.setVolume(volume, volume);
+        volume += speed* deltaTime;
+
+    }
     @Override
     public void setVolume(float volume) {
         if (mMediaPlayer != null) {
@@ -298,7 +316,67 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     public void setRepeat(boolean repeat) {
         isRepeat = repeat;
     }
+    public void startFadeIn(){
+        final int FADE_DURATION = 3000; //The duration of the fade
+        //The amount of time between volume changes. The smaller this is, the smoother the fade
+        final int FADE_INTERVAL = 250;
+        final int MAX_VOLUME = 1; //The volume will increase from 0 to 1
+        int numberOfSteps = FADE_DURATION/FADE_INTERVAL; //Calculate the number of fade steps
+        //Calculate by how much the volume changes each step
+        final float deltaVolume = MAX_VOLUME / (float)numberOfSteps;
 
+        //Create a new Timer and Timer task to run the fading outside the main UI thread
+        final Timer timer = new Timer(true);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                fadeInStep(deltaVolume); //Do a fade step
+                //Cancel and Purge the Timer if the desired volume has been reached
+                if(volume>=1f){
+                    timer.cancel();
+                    timer.purge();
+                }
+            }
+        };
+
+        timer.schedule(timerTask,FADE_INTERVAL,FADE_INTERVAL);
+    }
+
+    public void startFadeOut(){
+        final int FADE_DURATION = 3000; //The duration of the fade
+        //The amount of time between volume changes. The smaller this is, the smoother the fade
+        final int FADE_INTERVAL = 250;
+        final int MAX_VOLUME = 1; //The volume will increase from 0 to 1
+        int numberOfSteps = FADE_DURATION/FADE_INTERVAL; //Calculate the number of fade steps
+        //Calculate by how much the volume changes each step
+        final float deltaVolume = MAX_VOLUME / (float)numberOfSteps;
+
+        //Create a new Timer and Timer task to run the fading outside the main UI thread
+        final Timer timer = new Timer(true);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                fadeOutStep(deltaVolume); //Do a fade step
+                //Cancel and Purge the Timer if the desired volume has been reached
+                if(volume>=1f){
+                    timer.cancel();
+                    timer.purge();
+                }
+            }
+        };
+
+        timer.schedule(timerTask,FADE_INTERVAL,FADE_INTERVAL);
+    }
+
+    public void fadeInStep(float deltaVolume) {
+        mMediaPlayer.setVolume(volume, volume);
+        volume += deltaVolume;
+    }
+
+    public void fadeOutStep(float deltaVolume) {
+        mMediaPlayer.setVolume(volume, volume);
+        volume -= deltaVolume;
+    }
     @Override
     public void onCompletion(MediaPlayer mp) {
         if (isRepeat){

@@ -392,11 +392,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     mChooseMusicAdapter = new ChooseMusicAdapter(this);
                     mChooseMusicAdapter.setOnConnectMediaIdListener(this);
                 }
-                mChooseMusicAdapter.setQueueMediaID(getControllerActivity().getQueue());
+                mChooseMusicAdapter.setQueueMediaID(MusicLibrary.getUpdateQueueUI(MusicLibrary.getAllMusic()));
                 mChooseMusicAdapter.notifyDataSetChanged();
-                bottomSheetHelper =
-                        new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
+                bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
                                 mChooseMusicAdapter);
+                bottomSheetHelper.setTitle("All Music In Device");
                 bottomSheetHelper.show(getSupportFragmentManager(), FRAGMENT_TAG);
                 break;
             case R.id.image_add_to_playlist:

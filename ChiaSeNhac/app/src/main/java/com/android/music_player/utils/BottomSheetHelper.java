@@ -37,7 +37,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
     private DialogType mType;
     private PlayListAdapter.OnClickItemListener onClickItemListener;
     private ChooseMusicAdapter mChooseMusicAdapter;
-
+    private String title = "";
     public void cancelDialgo(){
         dismiss();
     }
@@ -58,6 +58,10 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
     public BottomSheetHelper(DialogType type, ChooseMusicAdapter chooseMusicAdapter){
         mType = type;
         mChooseMusicAdapter = chooseMusicAdapter;
+    }
+
+    public void setTitle(String title){
+        this.title = title;
     }
 
     @Override
@@ -93,7 +97,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         }else if (mType == DialogType.CHOOSE_MUSIC){
             view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_choose_music,
                     container,false);
-            initChooseMusic(view, mChooseMusicAdapter);
+            initChooseMusic(view,title, mChooseMusicAdapter);
         }
         return view;
     }
@@ -130,10 +134,17 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
     }
 
-    private void initChooseMusic(View view,  ChooseMusicAdapter chooseMusicAdapter){
+    private void initChooseMusic(View view,String title,  ChooseMusicAdapter chooseMusicAdapter){
         MediaManager.getInstance().setContext(getContext());
         RecyclerView mRecyclerChooseMusic = view.findViewById(R.id.rc_choose_music);
-
+        TextView textTitle = view.findViewById(R.id.text_title);
+        View line = view.findViewById(R.id.line);
+        if (!title.equals("")){
+            line.setVisibility(View.VISIBLE);
+            textTitle.setText(title);
+        }else {
+            line.setVisibility(View.GONE);
+        }
         mRecyclerChooseMusic.setAdapter(chooseMusicAdapter);
         mRecyclerChooseMusic.setLayoutManager(new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false));

@@ -16,7 +16,7 @@ public abstract class PlayerAdapter {
     private final Context mApplicationContext;
     private final AudioManager mAudioManager;
     private final AudioFocusHelper mAudioFocusHelper;
-
+    private float volume = 0;
     private boolean mPlayOnAudioFocus = false;
 
     private final BroadcastReceiver mAudioNoisyReceiver = new BroadcastReceiver() {
@@ -100,9 +100,14 @@ public abstract class PlayerAdapter {
     public abstract void setVolume(float volume);
 
     public abstract void setRepeat(boolean isRepeat);
+
+
+
     /**
      * Helper class for managing audio focus related tasks.
      */
+
+
     private class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener{
         private boolean requestAudioFocus() {
             final int result = mAudioManager.requestAudioFocus(this,

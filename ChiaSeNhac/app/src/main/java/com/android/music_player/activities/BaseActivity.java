@@ -98,21 +98,22 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         mMediaManager.getStateViewModel().getParentId().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String parentId) {
-                Log.d("ZZZ", "onchange: "+parentId);
-                if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)){
 
+                if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)){
+                    Log.d("DDD", "onchange if: "+parentId);
                     // GỠ STATE VÀ SET STATE KHÁC
-                    mediaBrowserCompat.unsubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
+                    mMediaManager.getMediaBrowserConnection().unSetSubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
                             getMediaManager().getMediaBrowserConnection().getCallback());
 
-                    mediaBrowserCompat.subscribe(MusicLibrary.MEDIA_ID_ROOT,
+                    mMediaManager.getMediaBrowserConnection().setSubscribe(MusicLibrary.MEDIA_ID_ROOT,
                             getMediaManager().getMediaBrowserConnection().getCallback());
 
                 }else if (parentId.equals(MusicLibrary.MEDIA_ID_EMPTY_ROOT)){
-                    mediaBrowserCompat.unsubscribe(MusicLibrary.MEDIA_ID_ROOT,
+                    Log.d("DDD", "onchange else if: "+parentId);
+                    mMediaManager.getMediaBrowserConnection().unSetSubscribe(MusicLibrary.MEDIA_ID_ROOT,
                             getMediaManager().getMediaBrowserConnection().getCallback());
 
-                    mediaBrowserCompat.subscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
+                    mMediaManager.getMediaBrowserConnection().setSubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
                         getMediaManager().getMediaBrowserConnection().getCallback());
                 }
             }

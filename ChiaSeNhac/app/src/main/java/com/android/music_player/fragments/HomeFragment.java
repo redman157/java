@@ -226,56 +226,27 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                             "Check thử: "+keys.get(index));
                     break;
                 case R.id.image_player_2:
-                    Log.d("ZZZ","image_player_2: set "+mTextPlayer_2.getText().toString() );
+
                     mMediaManager.getStateViewModel().setNamePlayList(mTextPlayer_2.getText().toString());
                     mMediaManager.getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_EMPTY_ROOT);
-
-//                    Log.d("ZZZ", "Player 2: "+mHomeActivity.getControllerActivity().getQueue().size());
+                    Log.d("ZZZ", mTextPlayer_2.getText().toString()+": "+mHomeActivity.getControllerActivity().getQueue().size());
 
                     mChooseMusicAdapter.setOnConnectMediaIdListener(new OnConnectMediaId() {
                         @Override
                         public void onChangeMediaId(String mediaID) {
-                            Log.d("ZZZ","image_player_2: "+mediaID);
+//                            Log.d("ZZZ","image_player_2: "+mediaID);
                         }
                     });
 
-                    if (mHomeActivity.getControllerActivity().getQueue().size() > 0) {
-                        mChooseMusicAdapter.setQueueItems(mHomeActivity.getControllerActivity().getQueue());
-                        mChooseMusicAdapter.notifyDataSetChanged();
-                        mHomeActivity.bottomSheetHelper =
-                                new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
-                                        mChooseMusicAdapter);
-                        mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
-                                HomeActivity.FRAGMENT_TAG);
-                    }
-                 /*   try {
-                        mMediaManager.getStateViewModel().setNamePlayList(mTextPlayer_2.getText().toString());
-                        mHomeActivity.getMediaBrowserCompat().unsubscribe(MusicLibrary.MEDIA_ID_ROOT,
-                                mMediaManager.getMediaBrowserConnection().getCallback());
 
-                        mHomeActivity.getMediaBrowserCompat().subscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
-                                mMediaManager.getMediaBrowserConnection().getCallback());
-                        mMediaManager.getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_EMPTY_ROOT);
-                    }catch (Exception e){
-                        Log.d("ZZZ", "Player 2: "+e.getMessage());
-                    }finally {
-                        mChooseMusicAdapter.setOnConnectMediaIdListener(new OnConnectMediaId() {
-                            @Override
-                            public void onChangeMediaId(String mediaID) {
-                                Log.d("ZZZ","image_player_2: "+mediaID);
-                            }
-                        });
+                    mChooseMusicAdapter.setQueueMediaID(mHomeActivity.getControllerActivity().getQueue());
+                    mChooseMusicAdapter.notifyDataSetChanged();
+                    mHomeActivity.bottomSheetHelper =
+                            new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
+                                    mChooseMusicAdapter);
+                    mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
+                            HomeActivity.FRAGMENT_TAG);
 
-                        if (mHomeActivity.getControllerActivity().getQueue().size() > 0) {
-                            mChooseMusicAdapter.setQueueItems(mHomeActivity.getControllerActivity().getQueue());
-                            mChooseMusicAdapter.notifyDataSetChanged();
-                            mHomeActivity.bottomSheetHelper =
-                                    new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
-                                            mChooseMusicAdapter);
-                            mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
-                                    HomeActivity.FRAGMENT_TAG);
-                        }
-                    }*/
                     break;
 
                 case R.id.image_player_1:

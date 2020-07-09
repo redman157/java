@@ -1,6 +1,8 @@
 package com.android.music_player.services;
 
 import android.app.Notification;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
@@ -37,7 +39,13 @@ public class MediaService extends MediaBrowserServiceCompat {
     private MediaManager mMediaManager;
     private boolean mServiceStarted;
     private boolean isAutoPlay = false;
+    
+    private BroadcastReceiver updateQueueItems = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
 
+        }
+    };
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY ;
@@ -50,8 +58,6 @@ public class MediaService extends MediaBrowserServiceCompat {
     public void onCreate() {
         super.onCreate();
         // Create a new MediaSession.
-
-
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(this);
         initMediaSession();
@@ -151,13 +157,15 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
      /*       queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
-            mPlayList.remove(queueItem);*/
+              mPlayList.remove(queueItem);
+              mSessionCompat.setQueue(mPlayList);*/
             mPlayList.clear();
-//            mSessionCompat.setQueue(mPlayList);
+            mSessionCompat.setQueue(mPlayList);
+//
 //            mSessionCompat.setQueue(mPlayList);
 
-            Log.d("XXX","onRemoveQueueItem: "+ queueItem.getDescription().getMediaId());
-            Log.d("XXX","mSessionCompat: "+mPlayList.size());
+//            Log.d("XXX","onRemoveQueueItem: "+ queueItem.getDescription().getMediaId());
+//            Log.d("XXX","mSessionCompat: "+mPlayList.size());
         }
 
         @Override
@@ -246,25 +254,27 @@ public class MediaService extends MediaBrowserServiceCompat {
         public void onSkipToNext() {
             setupMediaList();
 
-            int currentPos = MusicLibrary.getPosition(mMainList ,mMediaManager.getCurrentMusic());
+            int currentPos = MusicLibrary.getPosition(mMainList, mMediaManager.getCurrentMusic());
             currentPos = (currentPos + 1) % mMainList.size();
             String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
             // khi next muốn tự động phát hay k ?
 
             mPreparedMedia = null;
             onPlayFromMediaId(mediaId, null);
+
         }
 
         @Override
         public void onSkipToPrevious() {
             setupMediaList();
-            int currentPos = MusicLibrary.getPosition(mMainList ,mMediaManager.getCurrentMusic());
+            int currentPos = MusicLibrary.getPosition(mMainList, mMediaManager.getCurrentMusic());
             currentPos = currentPos > 0 ? currentPos - 1 : mPlayList.size() - 1;
             String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
 
             // khi next muốn tự động phát hay k ?
             mPreparedMedia = null;
-            onPlayFromMediaId(mediaId, null );
+            onPlayFromMediaId(mediaId, null);
+
         }
 
         private void setupMediaList() {

@@ -115,6 +115,11 @@ public abstract class BrowserHelper {
                                MediaBrowserCompat mediaBrowser) {
     }
 
+    protected void unSetSubscribe(String parentID,
+                                MediaBrowserSubscriptionCallback mediaBrowserSubscriptionCallback){
+        mMediaBrowser.unsubscribe(parentID, mediaBrowserSubscriptionCallback);
+    }
+
     protected void setSubscribe(String parentID, MediaBrowserSubscriptionCallback mediaBrowserSubscriptionCallback){
         mMediaBrowser.subscribe(parentID, mediaBrowserSubscriptionCallback);
     }
@@ -298,6 +303,12 @@ public abstract class BrowserHelper {
             resetState();
             onPlaybackStateChanged(null);
             BrowserHelper.this.onDisconnected();
+        }
+
+        @Override
+        public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue) {
+            super.onQueueChanged(queue);
+            Log.d("DDD", this.getClass().getSimpleName()+"--- "+queue.size());
         }
     }
 

@@ -392,7 +392,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     mChooseMusicAdapter = new ChooseMusicAdapter(this);
                     mChooseMusicAdapter.setOnConnectMediaIdListener(this);
                 }
-                mChooseMusicAdapter.setQueueItems(getControllerActivity().getQueue());
+                mChooseMusicAdapter.setQueueMediaID(getControllerActivity().getQueue());
                 mChooseMusicAdapter.notifyDataSetChanged();
                 bottomSheetHelper =
                         new BottomSheetHelper(DialogType.CHOOSE_MUSIC,

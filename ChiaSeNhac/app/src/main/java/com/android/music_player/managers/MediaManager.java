@@ -287,7 +287,6 @@ public class MediaManager {
         if (existPlayList(titlePlayList)){
             ArrayList<String> allMusic = mMusicOfPlayList.getAllMusicInPlayList(titlePlayList);
             if (allMusic.size() > 0){
-                Log.d("ZZZ","getAllMusicOfPlayList enter ");
                 return allMusic;
             }
         }

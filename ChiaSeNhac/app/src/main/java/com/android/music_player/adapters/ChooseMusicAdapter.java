@@ -41,9 +41,10 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
         mMediaManager.setContext(context);
     }
 
-    public void setQueueItems(List<MediaSessionCompat.QueueItem> queueItems){
+    public void setQueueMediaID(List<MediaSessionCompat.QueueItem> queueItems){
         this.mQueueItems = queueItems;
     }
+
     public List<MediaSessionCompat.QueueItem> getQueueItems() {
         return mQueueItems;
     }

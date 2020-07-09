@@ -59,76 +59,64 @@ public class BrowserConnectionListener extends BrowserHelper {
         }
         Log.d(TAG, "onConnected: "+mediaController.getPlaybackInfo().getPlaybackType());
         // khi connect mình sẽ set bài hát ở đây
-        Log.d("MMM","onConnected: "+mediaBrowserCompat.getRoot() );
-
-//        mediaBrowserCompat.subscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
-//                mMediaBrowserSubscriptionCallback);
     }
 
     public MediaBrowserSubscriptionCallback getCallback() {
         return mMediaBrowserSubscriptionCallback;
     }
 
-
+    @Override
+    public void unSetSubscribe(String parentID,
+                              MediaBrowserSubscriptionCallback mediaBrowserSubscriptionCallback) {
+        super.unSetSubscribe(parentID, mediaBrowserSubscriptionCallback);
+    }
     @Override
     public void setSubscribe(String parentID, MediaBrowserSubscriptionCallback mediaBrowserSubscriptionCallback) {
         super.setSubscribe(parentID, mediaBrowserSubscriptionCallback);
     }
-
+    List<MediaBrowserCompat.MediaItem> mediaItems = null;
     @Override
     protected void onChildrenLoaded(@NonNull String parentId,
                                     @NonNull List<MediaBrowserCompat.MediaItem> children) {
         super.onChildrenLoaded(parentId, children);
 
         mMediaController = getMediaController();
+        for ( MediaBrowserCompat.MediaItem mediaItem : children) {
+            Log.d("ZZZ", "onChildrenLoaded --- for: "+mediaItem.getMediaId() + "");
+        }
+        mMediaController.removeQueueItem(null);
         if (children.size()> 0) {
-            Log.d("ZZZ", "enter if");
+            Log.d("ZZZ", "onChildrenLoaded --- enter if");
             for (final MediaBrowserCompat.MediaItem mediaItem : children) {
                 mMediaController.addQueueItem(mediaItem.getDescription());
 
             }
-            for ( MediaBrowserCompat.MediaItem mediaItem : children) {
-                Log.d("ZZZ", mediaItem.getMediaId() + "");
-                mMediaController.removeQueueItem(mediaItem.getDescription());
-            }
+//            for ( MediaBrowserCompat.MediaItem mediaItem : children) {
+//                Log.d("ZZZ", mediaItem.getMediaId() + "");
+//                mMediaController.removeQueueItem(mediaItem.getDescription());
+//            }
         }else if(children.size() == 0) {
+
             mMediaManager.getStateViewModel().getNamePlayList().observe((LifecycleOwner) context, new Observer<String>() {
                 @Override
                 public void onChanged(String titlePlayList) {
-                    Log.d("ZZZ",
-                            "enter else if: " + titlePlayList);
-                    List<MediaBrowserCompat.MediaItem> mediaItems = null;
+                    Log.d("ZZZ", "onChildrenLoaded --- enter else if: "+titlePlayList);
+
                     if (mMediaManager.getAllMusicOfPlayList(titlePlayList) != null) {
                         mediaItems = MusicLibrary.getAlbumItems(mMediaManager.getAllMusicOfPlayList(titlePlayList));
-                        Log.d("ZZZ", "enter else if: " + mediaItems.size());
+                        Log.d("ZZZ",
+                                "onChildrenLoaded --- enter else if size: " + mediaItems.size());
                     }
-                    if (mediaItems != null) {
-                        for ( MediaBrowserCompat.MediaItem mediaItem : mediaItems) {
-                            Log.d("ZZZ", mediaItem.getMediaId() + "");
-                            mMediaController.addQueueItem(mediaItem.getDescription());
-                        }
-                        for ( MediaBrowserCompat.MediaItem mediaItem : mediaItems) {
-                            Log.d("ZZZ", mediaItem.getMediaId() + "");
-                            mMediaController.removeQueueItem(mediaItem.getDescription());
-                        }
-                    }
+
                 }
             });
+            if (mediaItems != null) {
+                for (int i = 0; i< mediaItems.size(); i++){
+                    Log.d("ZZZ", "Số lần: "+i+ " --- "+mediaItems.get(i).getDescription().getMediaId());
+                    mMediaController.addQueueItem(mediaItems.get(i).getDescription());
+                }
+            }
         }
-       /* try {
-            for (int i = 0; i < mMediaController.getQueue().size(); i++) {
-                Log.d("ZZZ", "enter remove");
-                mMediaController.removeQueueItem(mMediaController.getQueue().get(i).getDescription());
-            }
-        }catch (Exception e){
-            Log.d("ZZZ", this.getClass().getSimpleName() + " --- onChildrenLoaded: "+e.getMessage());
-        }finally {
-            // Queue up all media items for this simple sample.
-
-            }
-        }*/
-
-
     }
 
     public void setAutoPlay(String mediaID, boolean autoPlay){

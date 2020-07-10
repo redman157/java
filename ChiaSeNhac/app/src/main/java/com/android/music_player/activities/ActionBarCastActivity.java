@@ -260,27 +260,27 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                 final Dialog dialog = new Dialog(this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.dialog_choose_accent_color);
-                dialog.findViewById(R.id.orange).setOnClickListener(new View.OnClickListener() {
+                dialog.findViewById(R.id.black).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mSharedPrefsUtils.setString(
-                                Constants.PREFERENCES.ACCENT_COLOR, Constants.COLOR.ORANGE);
+                                Constants.PREFERENCES.ACCENT_COLOR, Constants.COLOR.BLACK);
                         dialog.cancel();
                         finish();
                         startActivity(getIntent());
                     }
                 });
-                dialog.findViewById(R.id.cyan).setOnClickListener(new View.OnClickListener() {
+                dialog.findViewById(R.id.white).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.CYAN);
+                                Constants.COLOR.WHITE);
                         dialog.cancel();
                         finish();
                         startActivity(getIntent());
                     }
                 });
-                dialog.findViewById(R.id.green).setOnClickListener(new View.OnClickListener() {
+              /*  dialog.findViewById(R.id.green).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
@@ -339,7 +339,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         finish();
                         startActivity(getIntent());
                     }
-                });
+                });*/
                 dialog.show();
                 break;
         }

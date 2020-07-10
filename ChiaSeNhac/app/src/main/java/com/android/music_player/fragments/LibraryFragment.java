@@ -247,6 +247,7 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     public void onChangeMediaId(String mediaID) {
         setTitle(mediaID);
         ((HomeActivity)getActivity()).getControllerActivity().getTransportControls().prepareFromMediaId(mediaID, null);
+        ((HomeActivity)getActivity()).getQueueManager().setupAllMusic();
     }
 
     @Override

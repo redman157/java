@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minWidth="300dp"
-    android:background="@color/dialogBackground">
+    android:background="@color/light_grey">
 
     <TextView
         android:layout_width="match_parent"
@@ -23,22 +23,22 @@
         <Button
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@color/orange"
+            android:background="@color/black"
             android:padding="16dp"
-            android:id="@+id/orange"
+            android:id="@+id/black"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"/>
         <Button
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@color/cyan"
+            android:background="@color/white"
             android:padding="16dp"
             android:layout_marginStart="8dp"
-            android:id="@+id/cyan"
+            android:id="@+id/white"
             android:layout_weight="1"/>
     </LinearLayout>
 
-    <LinearLayout
+    <!--<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -115,5 +115,5 @@
             android:id="@+id/yellow"
             android:layout_weight="1"/>
     </LinearLayout>
-
+-->
 </LinearLayout>

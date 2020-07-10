@@ -7,10 +7,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.android.music_player.interfaces.ControllerStyle;
+
 public class StateViewModel extends AndroidViewModel {
     private MutableLiveData<String> mParentId = new MutableLiveData<>();
     private MutableLiveData<String> mNamePlayList = new MutableLiveData<>();
     private MutableLiveData<MediaMetadataCompat> mMediaDataCurrent = new MutableLiveData<>();
+    private MutableLiveData<ControllerStyle> mControllerStyle = new MutableLiveData<>();
     public StateViewModel(@NonNull Application application) {
         super(application);
 
@@ -38,5 +41,13 @@ public class StateViewModel extends AndroidViewModel {
 
     public void setNamePlayList(String mNamePlayList) {
         this.mNamePlayList.setValue(mNamePlayList);
+    }
+
+    public MutableLiveData<ControllerStyle> getControllerStyle() {
+        return mControllerStyle;
+    }
+
+    public void setControllerStyle(ControllerStyle style) {
+        mControllerStyle.setValue(style);
     }
 }

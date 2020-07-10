@@ -278,7 +278,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         public void onSkipToPrevious() {
             setupMediaList();
             int currentPos;
-
             currentPos= MusicLibrary.getPosition(mMainList, mMediaManager.getCurrentMusic());
             currentPos = currentPos > 0 ? currentPos - 1 : mPlayList.size() - 1;
 

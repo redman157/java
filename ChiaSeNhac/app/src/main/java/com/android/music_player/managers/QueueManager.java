@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 
+import com.android.music_player.interfaces.ControllerStyle;
 import com.android.music_player.models.StateViewModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -50,6 +51,8 @@ public class QueueManager {
         }
     }
 
+
+
     public StateViewModel getStateViewModel() {
         return mStateViewModel;
     }
@@ -58,10 +61,32 @@ public class QueueManager {
         this.mStateViewModel = mStateViewModel;
     }
 
+    public List<MediaBrowserCompat.MediaItem> getControllerStyle(){
+        mStateViewModel.getControllerStyle().observe((LifecycleOwner) mContext, new Observer<ControllerStyle>() {
+            @Override
+            public void onChanged(ControllerStyle controllerStyle) {
+                if (controllerStyle == ControllerStyle.ALL_MUSIC) {
+                    ArrayList<String> playLists = new ArrayList<>(MusicLibrary.music.keySet());
+                    mediaItems = MusicLibrary.getAlbumService(playLists);
+                } else if (controllerStyle == ControllerStyle.ARTIST){
+
+                }else if (controllerStyle == ControllerStyle.ALBUM){
+
+                } else if (controllerStyle == ControllerStyle.FOLDER){
+
+                }
+                else if (controllerStyle == ControllerStyle.PLAY_LIST){
+                    mediaItems = getNamePlayList();
+                }
+            }
+        });
+        return mediaItems;
+    }
+
     public void getParentId(){
         mStateViewModel.getParentId().observe((LifecycleOwner) mContext, new Observer<String>() {
-            @Override
-            public void onChanged(String parentId) {
+                @Override
+                public void onChanged(String parentId) {
 
                 if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)){
                     // GỠ STATE VÀ SET STATE KHÁC
@@ -87,28 +112,27 @@ public class QueueManager {
         mStateViewModel.getNamePlayList().observe((LifecycleOwner) mContext, new Observer<String>() {
             @Override
             public void onChanged(String namePlayList) {
-                Log.d("ZZZ", "onChanged: " + namePlayList);
-                if (namePlayList.equals("")) {
-                    ArrayList<String> playLists = new ArrayList<>(MusicLibrary.music.keySet());
-                    mediaItems = MusicLibrary.getAlbumService(playLists);
-                    Log.d("ZZZ", "enter if");
-                } else {
-                    try {
-                        if (mMediaManager.getAllMusicOfPlayList(namePlayList) != null) {
-                            ArrayList<String> playLists = mMediaManager.getAllMusicOfPlayList(namePlayList);
-                            mediaItems = MusicLibrary.getAlbumService(playLists);
-                        }
-                    } catch(NullPointerException e){
-                        Utils.ToastShort(mContext, "Play List chưa có bài hát");
+                try {
+                    if (mMediaManager.getAllMusicOfPlayList(namePlayList) != null) {
+                        ArrayList<String> playLists = mMediaManager.getAllMusicOfPlayList(namePlayList);
+                        mediaItems = MusicLibrary.getAlbumService(playLists);
                     }
+                } catch(NullPointerException e){
+                    Utils.ToastShort(mContext, "Play List chưa có bài hát");
                 }
+            /*if (namePlayList.equals("")) {
+                ArrayList<String> playLists = new ArrayList<>(MusicLibrary.music.keySet());
+                mediaItems = MusicLibrary.getAlbumService(playLists);
+            } else {
+
+
+            }*/
             }
         });
         return mediaItems;
     }
 
     public MediaMetadataCompat getCurrentMediaMetadata(){
-
         getStateViewModel().getMediaDataCurrent().observe((LifecycleOwner) mContext, new Observer<MediaMetadataCompat>() {
             @Override
             public void onChanged(MediaMetadataCompat metadataCompat) {
@@ -120,14 +144,15 @@ public class QueueManager {
         return mediaMetadataCompat;
     }
 
-    public void changePlayList(String namePlayList){
+    public void setupPlayList(String namePlayList){
         getStateViewModel().setNamePlayList(namePlayList);
         getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_EMPTY_ROOT);
     }
 
-    public void changeAllMusic( ){
+    public void setupAllMusic( ){
         getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_ROOT);
-        getStateViewModel().setNamePlayList("");
+        getStateViewModel().setControllerStyle(ControllerStyle.ALL_MUSIC);
+//        getStateViewModel().setNamePlayList("");
     }
 
     public void setCurrentMediaMetadata(MediaMetadataCompat metadataCompat){

@@ -58,8 +58,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
             @Override
             public void onClick(View v) {
                 onConnectMediaId.onChangeFlowType(Constants.VALUE.ARTIST, item);
-//                onClickItemListener.onChooseMedia(mArtists.get(position).getMusicId());
-//                mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mArtists.get(position).getAlbumID());
             }
         });
     }

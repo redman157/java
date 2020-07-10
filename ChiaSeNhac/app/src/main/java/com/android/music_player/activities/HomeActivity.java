@@ -391,16 +391,16 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.image_view_queue:
-                Log.d("ZZZ",
+                /*Log.d("ZZZ",
                         "kích thước: "+((HomeActivity)this).getQueueManager().getNamePlayList().size());
                 Log.d("ZZZ",
-                        "kích thước controller: "+getControllerActivity().getQueue().size());
+                        "kích thước controller: "+getControllerActivity().getQueue().size());*/
                 if (mChooseMusicAdapter == null) {
                     mChooseMusicAdapter = new ChooseMusicAdapter(HomeActivity.this);
                     mChooseMusicAdapter.setOnConnectMediaIdListener(this);
                 }
                 List<MediaBrowserCompat.MediaItem> namePlayList =
-                        ((HomeActivity)this).getQueueManager().getNamePlayList();
+                        ((HomeActivity)this).getQueueManager().getControllerStyle();
                 if (namePlayList != null) {
                     for (int i = 0; i< namePlayList.size(); i++){
                         getControllerActivity().addQueueItem(namePlayList.get(i).getDescription());
@@ -636,9 +636,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     }
 
-    /** OnMediaConnectID **/
+    /** OnConnectMediaId **/
     @Override
     public void onChangeMediaId(String mediaID) {
+        getQueueManager().setupAllMusic();
         setViewMusic(mediaID ,PanelState.EXPANDED );
         mMediaManager.getMediaBrowserConnection().getTransportControls().prepareFromMediaId(mediaID, null);
         if (bottomSheetHelper!= null && bottomSheetHelper.getShowsDialog()) {

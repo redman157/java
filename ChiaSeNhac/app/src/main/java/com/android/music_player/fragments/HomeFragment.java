@@ -1,7 +1,6 @@
 package com.android.music_player.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +44,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private HomeFragmentAdapter mHomeAdapter;
     private MusicAdapter mMusicAdapter;
-
     private static HomeFragment fragment = null;
 
     public static HomeFragment newInstance(OnConnectMediaId onConnectMediaId) {
@@ -248,16 +246,14 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     int index = random.nextInt(keys.size());
                     mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(
                             keys.get(index), null);
-                    Log.d("CCC",
-                            "Check thử: "+keys.get(index));
                     break;
                 case R.id.image_player_2:
-                    ((HomeActivity)getActivity()).getQueueManager().changePlayList(mTextPlayer_2.getText().toString());
+                    ((HomeActivity)getActivity()).getQueueManager().setupPlayList(mTextPlayer_2.getText().toString());
                     setupAdapter(mTextPlayer_2.getText().toString());
                     break;
 
                 case R.id.image_player_1:
-                    ((HomeActivity)getActivity()).getQueueManager().changePlayList(mTextPlayer_1.getText().toString());
+                    ((HomeActivity)getActivity()).getQueueManager().setupPlayList(mTextPlayer_1.getText().toString());
                     setupAdapter(mTextPlayer_1.getText().toString());
 
                     break;
@@ -273,7 +269,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     break;
                 case R.id.image_player_music:
-                    ((HomeActivity)getActivity()).getQueueManager().changeAllMusic();
+                    ((HomeActivity)getActivity()).getQueueManager().setupAllMusic();
                     if (mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).length() > 0) {
                         mHomeActivity.setViewMusic(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), SlidingUpPanelLayout.PanelState.EXPANDED);
                         (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), bundle);

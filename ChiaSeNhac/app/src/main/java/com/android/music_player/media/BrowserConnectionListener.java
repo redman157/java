@@ -81,7 +81,7 @@ public class BrowserConnectionListener extends BrowserHelper {
             }
         }else if(children.size() == 0) {
             List<MediaBrowserCompat.MediaItem> namePlayList =
-                    ((HomeActivity)context).getQueueManager().getNamePlayList();
+                    ((HomeActivity)context).getQueueManager().getControllerStyle();
             if (namePlayList != null) {
                 for (int i = 0; i< namePlayList.size(); i++){
                     mMediaController.addQueueItem(namePlayList.get(i).getDescription());

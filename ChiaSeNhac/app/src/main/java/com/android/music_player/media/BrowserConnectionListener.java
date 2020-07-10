@@ -6,18 +6,12 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
 import androidx.media.MediaBrowserServiceCompat;
 
+import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.managers.MediaManager;
-import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.services.MediaService;
-import com.android.music_player.utils.BundleHelper;
-import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -86,38 +80,13 @@ public class BrowserConnectionListener extends BrowserHelper {
 
             }
         }else if(children.size() == 0) {
-            mMediaManager.getStateViewModel().getNamePlayList().observe((LifecycleOwner) context, new Observer<String>() {
-                @Override
-                public void onChanged(String titlePlayList) {
-                    try {
-                        if (mMediaManager.getAllMusicOfPlayList(titlePlayList) != null) {
-                            ArrayList<String> playLists = mMediaManager.getAllMusicOfPlayList(titlePlayList);
-                            mediaItems = MusicLibrary.getAlbumService(playLists);
-                        }
-                    }catch (NullPointerException e){
-                        Utils.ToastShort(context, "Play List chưa có bài hát");
-                    }
-
-                }
-            });
-            if (mediaItems != null) {
-                for (int i = 0; i< mediaItems.size(); i++){
-                    Log.d("ZZZ", mediaItems.get(i).getDescription().getMediaId());
-                    mMediaController.addQueueItem(mediaItems.get(i).getDescription());
+            List<MediaBrowserCompat.MediaItem> namePlayList =
+                    ((HomeActivity)context).getQueueManager().getNamePlayList();
+            if (namePlayList != null) {
+                for (int i = 0; i< namePlayList.size(); i++){
+                    mMediaController.addQueueItem(namePlayList.get(i).getDescription());
                 }
             }
-        }
-    }
-
-    public void setAutoPlay(String mediaID, boolean autoPlay){
-        if (mMediaController != null) {
-            BundleHelper.Builder builder = new BundleHelper.Builder();
-            builder.putBoolean(Constants.INTENT.AUTO_PLAY, autoPlay);
-            if (mediaID.equals(mMediaManager.getCurrentMusic())) {
-                mMediaController.getTransportControls().stop();
-            }
-            mMediaController.getTransportControls().prepareFromMediaId(mediaID,
-                    builder.generate().getBundle());
         }
     }
 }

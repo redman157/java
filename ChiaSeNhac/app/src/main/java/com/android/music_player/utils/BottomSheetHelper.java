@@ -23,6 +23,7 @@ import com.android.music_player.interfaces.DialogType;
 import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.managers.QueueManager;
 import com.android.music_player.models.MusicModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -40,6 +41,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
     private OnClickItemListener onClickItemListener;
     private ChooseMusicAdapter mChooseMusicAdapter;
     private String title = "";
+    private QueueManager mQueueManager;
     private Map<String, ArrayList<MusicModel>> items;
     public void cancelDialgo(){
         dismiss();
@@ -79,6 +81,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         super.onCreate(savedInstanceState);
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(getContext());
+        mQueueManager = QueueManager.getInstance(getContext());
     }
 
     @Override

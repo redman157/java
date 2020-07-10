@@ -21,6 +21,7 @@ import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MediaNotificationManager;
 import com.android.music_player.managers.MediaPlayerManager;
 import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.managers.QueueManager;
 import com.android.music_player.media.PlaybackInfoListener;
 import com.android.music_player.media.PlayerAdapter;
 
@@ -39,7 +40,7 @@ public class MediaService extends MediaBrowserServiceCompat {
     private MediaManager mMediaManager;
     private boolean mServiceStarted;
     private boolean isAutoPlay = false;
-    
+    private QueueManager mQueueManager;
     private BroadcastReceiver updateQueueItems = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -60,6 +61,7 @@ public class MediaService extends MediaBrowserServiceCompat {
         // Create a new MediaSession.
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(this);
+        mQueueManager = QueueManager.getInstance(this);
         initMediaSession();
         if (mPlayback == null){
             mPlayback = new MediaPlayerManager(this, new MediaPlayerListener());
@@ -256,7 +258,7 @@ public class MediaService extends MediaBrowserServiceCompat {
             int currentPos = 0;
             Log.d("ZZZ","mMainList.size(): "+mMainList.size());
             try {
-                currentPos= MusicLibrary.getPosition(mMainList, mMediaManager.getCurrentMusic());
+                currentPos = MusicLibrary.getPosition(mMainList, mMediaManager.getCurrentMusic());
                 currentPos = (currentPos + 1) % mMainList.size();
                 Log.d("ZZZ",mMainList.get(currentPos).getDescription().getMediaId() + " --- "+currentPos);
 

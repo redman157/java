@@ -19,6 +19,7 @@ import com.android.music_player.R;
 import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.managers.QueueManager;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 
@@ -32,6 +33,7 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
     private MediaManager mMediaManager;
     private List<MediaSessionCompat.QueueItem> mQueueItems;
     private ImageHelper mImageUtils;
+    private QueueManager mQueueManager;
     private int mPossitionMusic;
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss", Locale.getDefault());
     public ChooseMusicAdapter(Context context ) {
@@ -39,6 +41,7 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
         mImageUtils = ImageHelper.getInstance(context);
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(context);
+        mQueueManager = QueueManager.getInstance(context);
     }
 
     public void setQueueMediaID(List<MediaSessionCompat.QueueItem> queueItems){
@@ -100,7 +103,7 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
 
         public void setData(int pos){
             MediaSessionCompat.QueueItem item = mQueueItems.get(pos);
-            if (mMediaManager.getCurrentMusic().equals(item.getDescription().getMediaId())){
+            if ((mMediaManager.getCurrentMusic()).equals(item.getDescription().getMediaId())){
 //                Log.d("KKK", "setData: "+getListMusic().getData(pos).getMusicId());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     textTitle.setTextColor(mContext.getColor(R.color.red));

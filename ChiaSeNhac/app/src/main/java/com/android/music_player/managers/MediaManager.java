@@ -1,7 +1,6 @@
 package com.android.music_player.managers;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
@@ -20,7 +19,6 @@ import com.android.music_player.database.MusicOfPlayList;
 import com.android.music_player.database.Statistic;
 import com.android.music_player.media.BrowserConnectionListener;
 import com.android.music_player.models.MusicModel;
-import com.android.music_player.models.StateViewModel;
 import com.android.music_player.tasks.RenamePlayListTask;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
@@ -51,10 +49,10 @@ public class MediaManager {
     private CategoryMusic mCategoryMusic;
     private Statistic mStatistic;
     private MusicOfPlayList mMusicOfPlayList;
+    private QueueManager mQueueManager;
     @SuppressLint("StaticFieldLeak")
     private String albumChoose;
     private static MediaManager instance;
-    private StateViewModel mStateViewModel;
     public static MediaManager getInstance() {
         if (instance == null){
             instance = new MediaManager();
@@ -66,33 +64,14 @@ public class MediaManager {
 
     }
 
-    public StateViewModel getStateViewModel() {
-        return mStateViewModel;
-    }
-
-    public void setStateViewModel(StateViewModel mStateViewModel) {
-        this.mStateViewModel = mStateViewModel;
-    }
-
     public Context getContext() {
         return mContext;
     }
 
-    public void changePlayList(String namePlayList){
-        getStateViewModel().setNamePlayList(namePlayList);
-        getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_EMPTY_ROOT);
-    }
-
-    public void changeAllMusic( ){
-        getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_ROOT);
-    }
 
     public void setContext(Context mContext) {
         this.mContext = mContext;
         initDatabase();
-        if (mStateViewModel == null) {
-            mStateViewModel = new StateViewModel(((Activity) mContext).getApplication());
-        }
     }
 
     public void initDatabase(){
@@ -102,6 +81,7 @@ public class MediaManager {
         mStatistic = new Statistic(mContext);
         mMusicOfPlayList = new MusicOfPlayList(mContext);
         mSharedPrefsUtils = new SharedPrefsUtils(mContext);
+//        mQueueManager = QueueManager.getInstance(mContext);
         mTotalSong = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1);
     }
     public void installData(){
@@ -145,21 +125,13 @@ public class MediaManager {
     }
 
     public String getCurrentMusic(){
-        String nameSong = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"");
-        Log.d("CCC","getCurrentMusic: " + nameSong);
-        if (nameSong.equals("")){
-            nameSong = (String) MusicLibrary.music.keySet().toArray()[0];
-        }
+        mQueueManager = QueueManager.getInstance(mContext);
+        String nameSong =
+                mQueueManager.getCurrentMediaMetadata() == null ?
+                        MusicLibrary.music.get(MusicLibrary.music.keySet().toArray()[0]).getString(Constants.METADATA.Title):
+                        mQueueManager.getCurrentMediaMetadata().getString(Constants.METADATA.Title);
         return nameSong;
     }
-
-    public void setCurrentMusic(String musicName){
-        Log.d("CCC","setCurrentSong: " + musicName);
-        // convert path --> music name
-//        String musicName = Utils.getKeyByValue(MusicLibrary.fileName, path);
-        mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, musicName);
-    }
-
 
     public List<String> getAlbumIds(String rawAlbumIds) {
         String SPLIT_EXPRESSION = ";,,;,;;";

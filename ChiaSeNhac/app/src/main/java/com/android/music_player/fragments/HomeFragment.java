@@ -252,12 +252,12 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                             "Check thử: "+keys.get(index));
                     break;
                 case R.id.image_player_2:
-                    mMediaManager.changePlayList(mTextPlayer_2.getText().toString());
+                    ((HomeActivity)getActivity()).getQueueManager().changePlayList(mTextPlayer_2.getText().toString());
                     setupAdapter(mTextPlayer_2.getText().toString());
                     break;
 
                 case R.id.image_player_1:
-                    mMediaManager.changePlayList(mTextPlayer_1.getText().toString());
+                    ((HomeActivity)getActivity()).getQueueManager().changePlayList(mTextPlayer_1.getText().toString());
                     setupAdapter(mTextPlayer_1.getText().toString());
 
                     break;
@@ -273,6 +273,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     break;
                 case R.id.image_player_music:
+                    ((HomeActivity)getActivity()).getQueueManager().changeAllMusic();
                     if (mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).length() > 0) {
                         mHomeActivity.setViewMusic(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), SlidingUpPanelLayout.PanelState.EXPANDED);
                         (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), bundle);

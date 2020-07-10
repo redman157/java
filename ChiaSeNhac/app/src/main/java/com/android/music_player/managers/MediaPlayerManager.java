@@ -33,6 +33,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     private String mFilename;
     private PlaybackInfoListener mPlaybackInfoListener;
     private MediaMetadataCompat mCurrentMedia;
+    private QueueManager mQueueManager;
     private MediaManager mMediaManager;
     private int mState;
     private boolean isRepeat= false;
@@ -49,7 +50,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         mPlaybackInfoListener = listener;
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(context);
-
+        mQueueManager = QueueManager.getInstance(context);
     }
     /**
      * Once the {@link MediaPlayer} is released, it can't be used again, and another one has to be
@@ -230,7 +231,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
             // start được save bài hiện đang play và tăng điểm play lên
             setNewState(PlaybackStateCompat.STATE_PLAYING);
             String mediaID = Utils.getKeyByValue(MusicLibrary.fileName, mFilename);
-            mMediaManager.setCurrentMusic(mediaID);
+            mQueueManager.setCurrentMediaMetadata(MusicLibrary.music.get(mediaID));
             mMediaManager.increase(Constants.VALUE.MOST_MUSIC,mediaID);
         }
     }

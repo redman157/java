@@ -159,7 +159,7 @@ public class DialogHelper {
 //        TextView mTextTitle = view.findViewById(R.id.text_title);
 //        Button mBtnCancel = view.findViewById(R.id.btn_cancel);
 //
-//        mTextTitle.setText(mMediaManager.getCurrentMusic());
+//        mTextTitle.setText(mMediaManager.getCurrentMediaMetadata());
 //        mRecyclerOptions.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
 //        mRecyclerOptions.hasFixedSize();
 //        mRecyclerOptions.setAdapter(mSelectOptionsAdapter);
@@ -323,7 +323,8 @@ public class DialogHelper {
                                 new OnClickItemListener() {
                                     @Override
                                     public void onAddMusicToPlayList(String namePlayList) {
-                                        if (MediaManager.getInstance().addMusicToPlayList(namePlayList, MediaManager.getInstance().getCurrentMusic())){
+                                        if (MediaManager.getInstance().addMusicToPlayList(namePlayList,
+                                                MediaManager.getInstance().getCurrentMusic())){
                                             Utils.ToastShort(context,"Đã Add Bài: "+ MediaManager.getInstance().getCurrentMusic());
                                         }else {
                                             Utils.ToastShort(context,"Add Bài: "+ MediaManager.getInstance().getCurrentMusic());

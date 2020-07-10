@@ -5,16 +5,13 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 
 import com.android.music_player.managers.MediaManager;
-import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.managers.QueueManager;
 import com.android.music_player.media.BrowserConnectionListener;
 import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
 import com.android.music_player.services.MediaService;
-import com.android.music_player.utils.BundleHelper;
-import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 public abstract class BaseActivity extends ActionBarCastActivity implements BrowserConnectionListener.OnServiceConnect {
@@ -31,7 +28,7 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     public SharedPrefsUtils getSharedPrefsUtils(){
         return mSharedPrefsUtils;
     }
-
+    private QueueManager mQueueManager;
     public MediaManager getMediaManager(){
         return mMediaManager;
     }
@@ -41,7 +38,7 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         super.onCreate(savedInstanceState);
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(this);
-
+        mQueueManager = QueueManager.getInstance(this);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
         mBrowserHelper = mMediaManager.getMediaBrowserConnection();
         mMediaManager.getMediaBrowserConnection().setOnServiceConnectListener(this);
@@ -84,6 +81,10 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         this.mMediaBrowserCompat = mediaBrowserCompat;
     }
 
+    public QueueManager getQueueManager() {
+        return mQueueManager;
+    }
+
     @Override
     public void onConnect(
             final MediaControllerCompat mediaController) {
@@ -91,37 +92,6 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         // thì mới có controller chuyển cho activity sử dụng
         setControllerActivity(mediaController);
         /*VIEW MODEL CHANGE ROOT SERVICE*/
-        mMediaManager.getStateViewModel().getParentId().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String parentId) {
-                if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)){
-                    // GỠ STATE VÀ SET STATE KHÁC
-                    mMediaManager.getMediaBrowserConnection().unSetSubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
-                            getMediaManager().getMediaBrowserConnection().getCallback());
-
-                    mMediaManager.getMediaBrowserConnection().setSubscribe(MusicLibrary.MEDIA_ID_ROOT,
-                            getMediaManager().getMediaBrowserConnection().getCallback());
-
-                }else if (parentId.equals(MusicLibrary.MEDIA_ID_EMPTY_ROOT)){
-                    mMediaManager.getMediaBrowserConnection().unSetSubscribe(MusicLibrary.MEDIA_ID_ROOT,
-                            getMediaManager().getMediaBrowserConnection().getCallback());
-
-                    mMediaManager.getMediaBrowserConnection().setSubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
-                        getMediaManager().getMediaBrowserConnection().getCallback());
-                }
-            }
-        });
-    }
-
-    public void setAutoPlay(String mediaID, boolean autoPlay){
-        if (mMediaControllerCompat != null) {
-            BundleHelper.Builder builder = new BundleHelper.Builder();
-            builder.putBoolean(Constants.INTENT.AUTO_PLAY, autoPlay);
-            if (mediaID.equals(mMediaManager.getCurrentMusic())) {
-                mMediaControllerCompat.getTransportControls().stop();
-            }
-            mMediaControllerCompat.getTransportControls().prepareFromMediaId(mediaID,
-                    builder.generate().getBundle());
-        }
+       mQueueManager.getParentId();
     }
 }

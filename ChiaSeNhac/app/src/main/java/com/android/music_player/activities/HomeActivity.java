@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.Observer;
 
 import com.android.music_player.R;
 import com.android.music_player.adapters.ChooseMusicAdapter;
@@ -392,31 +391,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.image_view_queue:
-                final List<MediaBrowserCompat.MediaItem>[] mediaItems = new List[]{null};
+                Log.d("ZZZ",
+                        "kích thước: "+((HomeActivity)this).getQueueManager().getNamePlayList().size());
+                Log.d("ZZZ",
+                        "kích thước controller: "+getControllerActivity().getQueue().size());
                 if (mChooseMusicAdapter == null) {
                     mChooseMusicAdapter = new ChooseMusicAdapter(HomeActivity.this);
                     mChooseMusicAdapter.setOnConnectMediaIdListener(this);
                 }
-                mMediaManager.getStateViewModel().getNamePlayList().observe(this, new Observer<String>() {
-                    @Override
-                    public void onChanged(String titlePlayList) {
-                        try {
-                            if (mMediaManager.getAllMusicOfPlayList(titlePlayList) != null) {
-                                ArrayList<String> playLists = mMediaManager.getAllMusicOfPlayList(titlePlayList);
-                                mediaItems[0] = MusicLibrary.getAlbumService(playLists);
-                            }
-                        }catch (NullPointerException e){
-                            Utils.ToastShort(HomeActivity.this, "Play List chưa có bài hát");
-                        }
-                    }
-                });
-                if (mediaItems[0] != null) {
-                    for (int i = 0; i< mediaItems[0].size(); i++){
-                        Log.d("ZZZ", mediaItems[0].get(i).getDescription().getMediaId());
-                        getControllerActivity().addQueueItem(mediaItems[0].get(i).getDescription());
+                List<MediaBrowserCompat.MediaItem> namePlayList =
+                        ((HomeActivity)this).getQueueManager().getNamePlayList();
+                if (namePlayList != null) {
+                    for (int i = 0; i< namePlayList.size(); i++){
+                        getControllerActivity().addQueueItem(namePlayList.get(i).getDescription());
                     }
                 }
-                mChooseMusicAdapter.setQueueMediaID(MusicLibrary.parseListQueueToMedia(mediaItems[0]));
+                mChooseMusicAdapter.setQueueMediaID(MusicLibrary.parseListQueueToMedia(namePlayList));
                 mChooseMusicAdapter.notifyDataSetChanged();
                 bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
                         mChooseMusicAdapter);

@@ -111,8 +111,7 @@ public abstract class BrowserHelper {
      *                        MediaSession.
      */
 
-    protected void onConnected(@NonNull MediaControllerCompat mediaController,
-                               MediaBrowserCompat mediaBrowser) {
+    protected void onConnected(@NonNull MediaControllerCompat mediaController) {
     }
 
     protected void unSetSubscribe(String parentID,
@@ -241,7 +240,7 @@ public abstract class BrowserHelper {
                     mMediaControllerCallback.onPlaybackStateChanged(mMediaController.getPlaybackState());
                 }
                 Log.d(TAG, "MediaBrowserConnectionCallback --- onConnected: enter");
-                BrowserHelper.this.onConnected(mMediaController, mMediaBrowser);
+                BrowserHelper.this.onConnected(mMediaController);
             }catch (AndroidException e) {
                 Log.d(TAG, String.format("onConnected: Problem: %s", e.toString()));
                 Log.d("BBB", "MediaBrowserConnectionCallback --- exception: "+e.getMessage());

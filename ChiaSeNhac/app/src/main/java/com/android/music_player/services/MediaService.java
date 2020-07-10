@@ -253,22 +253,33 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onSkipToNext() {
             setupMediaList();
+            int currentPos = 0;
+            Log.d("ZZZ","mMainList.size(): "+mMainList.size());
+            try {
+                currentPos= MusicLibrary.getPosition(mMainList, mMediaManager.getCurrentMusic());
+                currentPos = (currentPos + 1) % mMainList.size();
+                Log.d("ZZZ",mMainList.get(currentPos).getDescription().getMediaId() + " --- "+currentPos);
 
-            int currentPos = MusicLibrary.getPosition(mMainList, mMediaManager.getCurrentMusic());
-            currentPos = (currentPos + 1) % mMainList.size();
+
+            }catch (ArithmeticException e){
+                Log.d("ZZZ", "onSkipToNext: "+e.getMessage());
+//                currentPos = 0;
+            }
             String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
             // khi next muốn tự động phát hay k ?
 
             mPreparedMedia = null;
             onPlayFromMediaId(mediaId, null);
-
         }
 
         @Override
         public void onSkipToPrevious() {
             setupMediaList();
-            int currentPos = MusicLibrary.getPosition(mMainList, mMediaManager.getCurrentMusic());
+            int currentPos;
+
+            currentPos= MusicLibrary.getPosition(mMainList, mMediaManager.getCurrentMusic());
             currentPos = currentPos > 0 ? currentPos - 1 : mPlayList.size() - 1;
+
             String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
 
             // khi next muốn tự động phát hay k ?

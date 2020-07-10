@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -18,6 +17,7 @@ import com.android.music_player.utils.BundleHelper;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,19 +25,16 @@ import java.util.List;
  * and implement our app specific desires.
  */
 public class BrowserConnectionListener extends BrowserHelper {
-    private MediaSeekBar mSeekBarAudio;
     private String TAG = "JJJ";
-    private String mediaId;
     public MediaControllerCompat mMediaController;
     private Context context;
-    private TextView mTextLeftTime,mTextRightTime;
-    private boolean isPlay;
     public MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
     private MediaManager mMediaManager = MediaManager.getInstance();
+    List<MediaBrowserCompat.MediaItem> mediaItems = null;
 
-    public OnServiceConnect onServiceConnect;
+    private OnServiceConnect onServiceConnect;
     public interface OnServiceConnect {
-        void onConnect(MediaBrowserCompat mediaBrowserCompat, MediaControllerCompat mediaController);
+        void onConnect(MediaControllerCompat mediaController);
     }
 
     public void setOnServiceConnectListener(OnServiceConnect onServiceConnect) {
@@ -53,10 +50,9 @@ public class BrowserConnectionListener extends BrowserHelper {
     }
 
     @Override
-    protected void onConnected(@NonNull MediaControllerCompat mediaController,
-                               MediaBrowserCompat mediaBrowserCompat) {
+    protected void onConnected(@NonNull MediaControllerCompat mediaController){
         if (onServiceConnect != null) {
-            onServiceConnect.onConnect(mediaBrowserCompat ,mediaController);
+            onServiceConnect.onConnect(mediaController);
         }
         Log.d(TAG, "onConnected: "+mediaController.getPlaybackInfo().getPlaybackType());
         // khi connect mình sẽ set bài hát ở đây
@@ -75,38 +71,28 @@ public class BrowserConnectionListener extends BrowserHelper {
     public void setSubscribe(String parentID, MediaBrowserSubscriptionCallback mediaBrowserSubscriptionCallback) {
         super.setSubscribe(parentID, mediaBrowserSubscriptionCallback);
     }
-    List<MediaBrowserCompat.MediaItem> mediaItems = null;
+
     @Override
     protected void onChildrenLoaded(@NonNull String parentId,
                                     @NonNull List<MediaBrowserCompat.MediaItem> children) {
         super.onChildrenLoaded(parentId, children);
 
         mMediaController = getMediaController();
-        for ( MediaBrowserCompat.MediaItem mediaItem : children) {
-            Log.d("ZZZ", "onChildrenLoaded --- for: "+mediaItem.getMediaId() + "");
-        }
         mMediaController.removeQueueItem(null);
         if (children.size()> 0) {
-            Log.d("ZZZ", "onChildrenLoaded --- enter if");
             for (final MediaBrowserCompat.MediaItem mediaItem : children) {
+                Log.d("ZZZ", mediaItem.getDescription().getMediaId());
                 mMediaController.addQueueItem(mediaItem.getDescription());
 
             }
-//            for ( MediaBrowserCompat.MediaItem mediaItem : children) {
-//                Log.d("ZZZ", mediaItem.getMediaId() + "");
-//                mMediaController.removeQueueItem(mediaItem.getDescription());
-//            }
         }else if(children.size() == 0) {
-
             mMediaManager.getStateViewModel().getNamePlayList().observe((LifecycleOwner) context, new Observer<String>() {
                 @Override
                 public void onChanged(String titlePlayList) {
-                    Log.d("ZZZ", "onChildrenLoaded --- enter else if: "+titlePlayList);
                     try {
                         if (mMediaManager.getAllMusicOfPlayList(titlePlayList) != null) {
-                            mediaItems = MusicLibrary.getAlbumService(mMediaManager.getAllMusicOfPlayList(titlePlayList));
-                            Log.d("ZZZ",
-                                    "onChildrenLoaded --- enter else if size: " + mediaItems.size());
+                            ArrayList<String> playLists = mMediaManager.getAllMusicOfPlayList(titlePlayList);
+                            mediaItems = MusicLibrary.getAlbumService(playLists);
                         }
                     }catch (NullPointerException e){
                         Utils.ToastShort(context, "Play List chưa có bài hát");
@@ -116,7 +102,7 @@ public class BrowserConnectionListener extends BrowserHelper {
             });
             if (mediaItems != null) {
                 for (int i = 0; i< mediaItems.size(); i++){
-                    Log.d("ZZZ", "Số lần: "+i+ " --- "+mediaItems.get(i).getDescription().getMediaId());
+                    Log.d("ZZZ", mediaItems.get(i).getDescription().getMediaId());
                     mMediaController.addQueueItem(mediaItems.get(i).getDescription());
                 }
             }

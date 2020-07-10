@@ -13,7 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
+import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.models.MusicModel;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 
@@ -34,7 +36,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
         Collections.sort(keys);
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
     }
-
+    private OnConnectMediaId onConnectMediaId;
+    public void setOnConnectMediaIdListener(OnConnectMediaId onConnectMediaId){
+        this.onConnectMediaId = onConnectMediaId;
+    }
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -45,13 +50,14 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        String item = keys.get(position);
+        final String item = keys.get(position);
         ArrayList<MusicModel> music = mArtists.get(item);
 
         holder.assignData(item, music);
         holder.mLinearArtist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onConnectMediaId.onChangeFlowType(Constants.VALUE.ARTIST, item);
 //                onClickItemListener.onChooseMedia(mArtists.get(position).getMusicId());
 //                mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mArtists.get(position).getAlbumID());
             }

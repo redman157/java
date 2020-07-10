@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.android.music_player.R;
 import com.android.music_player.adapters.ArtistAdapter;
+import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
@@ -33,7 +34,10 @@ public class ListArtistFragment extends Fragment {
         mMediaManager.setContext(getContext());
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
     }
-
+    private OnConnectMediaId onConnectMediaId;
+    public void setOnConnectMediaIdListener(OnConnectMediaId onConnectMediaId){
+        this.onConnectMediaId = onConnectMediaId;
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

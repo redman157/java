@@ -239,7 +239,6 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     protected void onPause() {
         try {
             if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-                startFadeOut();
                 mMediaPlayer.pause();
 
             }
@@ -253,7 +252,6 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         // Regardless of whether or not the MediaPlayer has been created / started, the state must
         // be updated, so that MediaNotificationManager can take down the notification.
         try {
-            startFadeOut();
             release();
         }finally {
             setNewState(PlaybackStateCompat.STATE_STOPPED);
@@ -316,6 +314,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     public void setRepeat(boolean repeat) {
         isRepeat = repeat;
     }
+
     public void startFadeIn(){
         final int FADE_DURATION = 3000; //The duration of the fade
         //The amount of time between volume changes. The smaller this is, the smoother the fade
@@ -337,9 +336,11 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
                     timer.purge();
                 }
             }
+
         };
 
-        timer.schedule(timerTask,FADE_INTERVAL,FADE_INTERVAL);
+        timer.schedule(timerTask, FADE_INTERVAL, FADE_INTERVAL);
+
     }
 
     public void startFadeOut(){
@@ -369,13 +370,21 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     }
 
     public void fadeInStep(float deltaVolume) {
-        mMediaPlayer.setVolume(volume, volume);
-        volume += deltaVolume;
+        try {
+            mMediaPlayer.setVolume(volume, volume);
+            volume += deltaVolume;
+        }catch (IllegalStateException e){
+
+        }
     }
 
     public void fadeOutStep(float deltaVolume) {
-        mMediaPlayer.setVolume(volume, volume);
-        volume -= deltaVolume;
+        try {
+            mMediaPlayer.setVolume(volume, volume);
+            volume -= deltaVolume;
+        }catch (IllegalStateException e){
+
+        }
     }
     @Override
     public void onCompletion(MediaPlayer mp) {

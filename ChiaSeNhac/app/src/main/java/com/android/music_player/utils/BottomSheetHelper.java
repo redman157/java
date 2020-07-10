@@ -20,6 +20,7 @@ import com.android.music_player.adapters.ChooseMusicAdapter;
 import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.adapters.SelectOptionsAdapter;
 import com.android.music_player.interfaces.DialogType;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.models.MusicModel;
@@ -28,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class BottomSheetHelper extends BottomSheetDialogFragment implements BottomSheetDialog.OnShowListener{
     private BottomSheetDialog mBottomSheet;
@@ -35,9 +37,10 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
     private View view;
     private MediaManager mMediaManager;
     private DialogType mType;
-    private PlayListAdapter.OnClickItemListener onClickItemListener;
+    private OnClickItemListener onClickItemListener;
     private ChooseMusicAdapter mChooseMusicAdapter;
     private String title = "";
+    private Map<String, ArrayList<MusicModel>> items;
     public void cancelDialgo(){
         dismiss();
     }
@@ -46,8 +49,15 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         this.mType = type;
     }
 
-    public BottomSheetHelper(DialogType type, PlayListAdapter.OnClickItemListener onClickItemListener){
+    public BottomSheetHelper(DialogType type, OnClickItemListener onClickItemListener){
         mType = type;
+        this.onClickItemListener = onClickItemListener;
+    }
+
+    public BottomSheetHelper(DialogType type, Map<String, ArrayList<MusicModel>> items ,
+                             OnClickItemListener onClickItemListener){
+        mType = type;
+        this.items = items;
         this.onClickItemListener = onClickItemListener;
     }
 
@@ -85,7 +95,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         if (mType == DialogType.CHANGE_MUSIC){
             view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_change_music,
                     container, false);
-            initChangeMusic(view);
+            initSelectOptions(view);
         }else if (mType == DialogType.CREATE_PLAY_LIST) {
             view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_create_playlist,
                     container, false);
@@ -98,6 +108,10 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
             view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_choose_music,
                     container,false);
             initChooseMusic(view,title, mChooseMusicAdapter);
+        }else if (mType == DialogType.CHOOSE_ITEM_LIBRARY){
+            view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_choose_item_library,
+                    container, false);
+            initAllItemLibrary(view, items, onClickItemListener);
         }
         return view;
     }
@@ -154,7 +168,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
                         mMediaManager.getCurrentMusic()));
     }
 
-    private void initChangeMusic(View view){
+    private void initSelectOptions(View view){
         SelectOptionsAdapter mSelectOptionsAdapter = new SelectOptionsAdapter(getContext(), SelectOptionsAdapter.initData());
 
         RecyclerView mRecyclerOptions = view.findViewById(R.id.rc_selection_music);
@@ -174,7 +188,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         });
     }
 
-    private void initAddMusicToPlayList(View view, PlayListAdapter.OnClickItemListener onClickItemListener){
+    private void initAddMusicToPlayList(View view, OnClickItemListener onClickItemListener){
         ArrayList<String> allPlayList = MediaManager.getInstance().getAllPlayList();
         if (allPlayList != null && allPlayList.size() > 0) {
 
@@ -191,6 +205,31 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
                 @Override
                 public void onClick(View v) {
                     DialogHelper.showCreatePlayList(getContext());
+                }
+            });
+        }
+    }
+
+    private void initAllItemLibrary(View view, Map<String, ArrayList<MusicModel>> itemLibrary,
+                                 OnClickItemListener onClickItemListener){
+        if (itemLibrary != null && itemLibrary.size() > 0) {
+            ArrayList<String> items = new ArrayList<>(itemLibrary.keySet());
+            TextView textTittle = view.findViewById(R.id.text_title);
+            textTittle.setText(title);
+
+            Button btnCancel = view.findViewById(R.id.btn_create_playlist);
+            RecyclerView mRcAddPlayList = view.findViewById(R.id.rc_all_item);
+            PlayListAdapter mPlayListAdapter = new PlayListAdapter(getContext(), items);
+            mPlayListAdapter.setOnClickItemListener(onClickItemListener);
+
+            mRcAddPlayList.setLayoutManager(new LinearLayoutManager(getContext(),
+                    LinearLayoutManager.VERTICAL, false));
+            mRcAddPlayList.setAdapter(mPlayListAdapter);
+
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
                 }
             });
         }

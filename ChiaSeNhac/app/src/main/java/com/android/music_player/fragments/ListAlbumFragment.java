@@ -37,6 +37,7 @@ public class ListAlbumFragment extends Fragment {
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
     }
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

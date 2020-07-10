@@ -22,13 +22,19 @@ import com.android.music_player.adapters.ArtistAdapter;
 import com.android.music_player.adapters.FolderAdapter;
 import com.android.music_player.adapters.MusicAdapter;
 import com.android.music_player.adapters.ViewPagerAdapter;
+import com.android.music_player.interfaces.DialogType;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.models.MusicModel;
+import com.android.music_player.utils.BottomSheetHelper;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
 
 public class LibraryFragment extends Fragment implements View.OnClickListener,
         ViewPager.OnPageChangeListener,
@@ -50,10 +56,12 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     private AlbumAdapter mAlbumAdapter;
     private ArtistAdapter mArtistAdapter;
     private ImageView mImgBack;
+    private HomeActivity mHomeActivity;
     private static LibraryFragment fragment = null;
     public static LibraryFragment newInstance() {
         if (fragment == null){
             fragment = new LibraryFragment();
+
         }
         return fragment;
     }
@@ -67,7 +75,7 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mHomeActivity = (HomeActivity) getActivity();
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(getContext());
         mSharedPrefsUtils = new SharedPrefsUtils(getContext());
@@ -78,7 +86,6 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
         // Defines the xml file for the fragment
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_library, container, false);
-
         }
         return view;
     }
@@ -114,19 +121,16 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
         mMusicAdapter.setOnConnectMediaIdListener(this);
 
         mArtistAdapter = new ArtistAdapter(getActivity(), mMediaManager.getArtist());
-        /*mArtistAdapter.notifyDataSetChanged();
-        mArtistAdapter.setLimit(false);
-        mMusicAdapter.setOnChooseMediaIdListener(this);*/
+        mArtistAdapter.notifyDataSetChanged();
+        mArtistAdapter.setOnConnectMediaIdListener(this);
 
         mAlbumAdapter = new AlbumAdapter(getActivity(), mMediaManager.getAlbum());
-      /*  mMusicAdapter.notifyDataSetChanged();
-        mMusicAdapter.setLimit(false);
-        mMusicAdapter.setOnChooseMediaIdListener(this);*/
+        mAlbumAdapter.notifyDataSetChanged();
+        mAlbumAdapter.setOnConnectMediaIdListener(this);
 
         mFolderAdapter = new FolderAdapter(getActivity(), mMediaManager.getFolder() );
-        /*mMusicAdapter.notifyDataSetChanged();
-        mMusicAdapter.setLimit(false);
-        mMusicAdapter.setOnChooseMediaIdListener(this);*/
+        mFolderAdapter.notifyDataSetChanged();
+        mFolderAdapter.setOnConnectMediaIdListener(this);
     }
 
     private void setupViewPager(ViewPager viewPager){
@@ -186,6 +190,7 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+
             case R.id.img_back:
                 getActivity().getSupportFragmentManager().popBackStack();
                 break;
@@ -241,5 +246,32 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onChangeMediaId(String mediaID) {
         setTitle(mediaID);
+        ((HomeActivity)getActivity()).getControllerActivity().getTransportControls().prepareFromMediaId(mediaID, null);
+    }
+
+    @Override
+    public void onChangeFlowType(String type, String title) {
+        if (type.equals(Constants.VALUE.MUSIC)){
+
+        }else if (type.equals(Constants.VALUE.ALBUM)){
+            mHomeActivity.bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_ITEM_LIBRARY,
+                    MusicLibrary.album, new OnClickItemListener() {
+                @Override
+                public void onAddMusicToPlayList(String namePlayList) {
+
+                }
+
+                @Override
+                public void onChooseItemLibrary(ArrayList<MusicModel> models) {
+
+                }
+            });
+            mHomeActivity.bottomSheetHelper.setTitle("All Album In Device");
+            mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),mHomeActivity.FRAGMENT_TAG);
+        }else if (type.equals(Constants.VALUE.ARTIST)){
+
+        }else if (type.equals(Constants.VALUE.FOLDER)){
+
+        }
     }
 }

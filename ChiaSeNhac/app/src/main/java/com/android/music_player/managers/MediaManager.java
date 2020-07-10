@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class MediaManager {
@@ -77,6 +76,15 @@ public class MediaManager {
 
     public Context getContext() {
         return mContext;
+    }
+
+    public void changePlayList(String namePlayList){
+        getStateViewModel().setNamePlayList(namePlayList);
+        getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_EMPTY_ROOT);
+    }
+
+    public void changeAllMusic( ){
+        getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_ROOT);
     }
 
     public void setContext(Context mContext) {
@@ -522,6 +530,7 @@ public class MediaManager {
                             MusicLibrary.createMediaMetadataCompat(builder.generate());
 
                             buildDataTheFirst(songName);
+
                         }
                     }
 
@@ -530,7 +539,7 @@ public class MediaManager {
                 mSharedPrefsUtils.setInteger(Constants.PREFERENCES.TOTAL_SONGS, MusicLibrary.music.size());
                 cursor.close();
             }
-            filterData(MusicLibrary.info);
+            filterData();
             Log.d(TAG, "CrawlData() performed");
         }catch (SQLiteException e){
         }
@@ -539,18 +548,21 @@ public class MediaManager {
     /*
      * Albums Data && Artist Data && folder Data
      */
-    private void filterData(Set<MusicModel> mains){
+    private void filterData(){
 
-        ArrayList<MusicModel> allSongList = new ArrayList<>(MusicLibrary.info);
+        ArrayList<MusicModel> allKeyInfoMusic = new ArrayList<>(MusicLibrary.info);
 
-        for (int song = 0; song < allSongList.size(); song++) {
-            String artist = allSongList.get(song).getArtist();
-            String album = allSongList.get(song).getAlbum();
-            String folder = allSongList.get(song).getPath();
-
+        for (int index = 0; index < allKeyInfoMusic.size(); index++) {
+        /*    String artist =
+                    MusicLibrary.music.get(allKeyInfoMusic.get(index)).getString(Constants.METADATA.Artist);
+            String album = MusicLibrary.music.get(allKeyInfoMusic.get(index)).getString(Constants.METADATA.Album);
+            String folder = MusicLibrary.fileName.get(allKeyInfoMusic.get(index));*/
+            String artist = allKeyInfoMusic.get(index).getArtist();
+            String album = allKeyInfoMusic.get(index).getAlbum();
+            String folder = allKeyInfoMusic.get(index).getFileName();
             while (true) {
                 if (MusicLibrary.artist.get(artist) != null) {
-                    MusicLibrary.artist.get(artist).add(allSongList.get(song));
+                    MusicLibrary.artist.get(artist).add(allKeyInfoMusic.get(index));
                     break;
                 } else {
                     MusicLibrary.artist.put(artist, new ArrayList<MusicModel>());
@@ -559,7 +571,7 @@ public class MediaManager {
 
             while (true) {
                 if (MusicLibrary.album.get(album) != null) {
-                    MusicLibrary.album.get(album).add(allSongList.get(song));
+                    MusicLibrary.album.get(album).add(allKeyInfoMusic.get(index));
                     break;
                 } else {
                     MusicLibrary.album.put(album, new ArrayList<MusicModel>());
@@ -568,7 +580,7 @@ public class MediaManager {
 
             while (true) {
                 if (MusicLibrary.folder.get(folder) != null) {
-                    MusicLibrary.folder.get(folder).add(allSongList.get(song));
+                    MusicLibrary.folder.get(folder).add(allKeyInfoMusic.get(index));
                     break;
                 } else {
                     MusicLibrary.folder.put(folder, new ArrayList<MusicModel>());

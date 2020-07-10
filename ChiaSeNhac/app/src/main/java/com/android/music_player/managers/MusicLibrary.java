@@ -19,19 +19,6 @@ import java.util.TreeMap;
 public class MusicLibrary {
     public static MusicLibrary instance;
 
-    public static MusicLibrary getInstance() {
-        if (instance == null){
-            instance = new MusicLibrary();
-        }
-        return instance;
-    }
-    enum State {
-        NON_INITIALIZED, INITIALIZING, INITIALIZED
-    }
-
-    private  MusicLibrary() {
-    }
-
     public static final TreeMap<String, MediaMetadataCompat> music = new TreeMap<>();
     public static final HashMap<String, Integer> albumID = new HashMap<>();
     public static final HashMap<String, String> fileName = new HashMap<>();
@@ -86,14 +73,41 @@ public class MusicLibrary {
         return  -1;
     }
 
+    public static MediaBrowserCompat.MediaItem parseMediaItem(String mediaID){
+        MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(
+                music.get(mediaID).getDescription(),
+                MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
+        return mediaItem;
+    }
+
+    public static MediaSessionCompat.QueueItem parseQueueItem(String mediaID){
+        MediaSessionCompat.QueueItem queueItem =
+                new MediaSessionCompat.QueueItem(music.get(mediaID).getDescription(),
+                        music.get(mediaID).getDescription().hashCode());
+        return queueItem;
+    }
+
+    public static List<MediaBrowserCompat.MediaItem> parseListMediaToQueue( List<MediaSessionCompat.QueueItem> queueItems){
+        List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
+        for (MediaSessionCompat.QueueItem queueItem : queueItems){
+            mediaItems.add(parseMediaItem(queueItem.getDescription().getMediaId()));
+        }
+        return mediaItems;
+    }
+
+    public static List<MediaSessionCompat.QueueItem> parseListQueueToMedia(List<MediaBrowserCompat.MediaItem> mediaItems){
+            List<MediaSessionCompat.QueueItem> queueItems = new ArrayList<>();
+        for (MediaBrowserCompat.MediaItem mediaItem : mediaItems){
+            queueItems.add(parseQueueItem(mediaItem.getDescription().getMediaId()));
+        }
+        return queueItems;
+    }
+
     // khi change album sẽ có 1 list mới thì mình sẽ edit ở đây
     public static List<MediaBrowserCompat.MediaItem> getAllMediaService() {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
         for (MediaMetadataCompat metadata : music.values()) {
-            MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(
-                    metadata.getDescription(),
-                    MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
-            result.add(mediaItem);
+            result.add(parseMediaItem(metadata.getDescription().getMediaId()));
         }
         return result;
     }
@@ -101,10 +115,7 @@ public class MusicLibrary {
     public static List<MediaBrowserCompat.MediaItem> getAlbumService(ArrayList<String> albums) {
         List<MediaBrowserCompat.MediaItem> result = new ArrayList<>();
         for (int i = 0 ; i < albums.size();i ++){
-            MediaBrowserCompat.MediaItem mediaItem = new MediaBrowserCompat.MediaItem(
-                    music.get(albums.get(i)).getDescription(),
-                    MediaBrowserCompat.MediaItem.FLAG_PLAYABLE);
-            result.add(mediaItem);
+            result.add(parseMediaItem(albums.get(i)));
         }
         return result;
     }
@@ -113,10 +124,7 @@ public class MusicLibrary {
         List<MediaSessionCompat.QueueItem> queues = new ArrayList<>();
         List<MediaBrowserCompat.MediaItem> mediaItems = getAlbumService(queueItems);
         for (int i = 0 ;i < queueItems.size(); i++){
-            MediaSessionCompat.QueueItem queueItem =
-                    new MediaSessionCompat.QueueItem(mediaItems.get(i).getDescription(),
-                            mediaItems.get(i).getDescription().hashCode());
-            queues.add(queueItem);
+            queues.add(parseQueueItem(queueItems.get(i)));
         }
         return queues;
     }

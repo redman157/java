@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -20,19 +21,21 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
 
 import com.android.music_player.R;
 import com.android.music_player.adapters.ChooseMusicAdapter;
-import com.android.music_player.adapters.PlayListAdapter;
 import com.android.music_player.fragments.EqualizerFragment;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.LibraryFragment;
 import com.android.music_player.interfaces.DialogType;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
+import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.BottomSheetHelper;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogHelper;
@@ -43,6 +46,8 @@ import com.android.music_player.view.PlayPauseView;
 import com.google.android.material.appbar.AppBarLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -53,7 +58,7 @@ import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
         MediaBrowserListener.OnChangeMusicListener, SlidingUpPanelLayout.PanelSlideListener,
-        OnConnectMediaId, PlayListAdapter.OnClickItemListener {
+        OnConnectMediaId, OnClickItemListener {
     private RelativeLayout mViewControlMedia, mViewMusic;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
     private View mLayoutMedia, mLayoutState;
@@ -387,21 +392,39 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.image_view_queue:
-                mMediaManager.getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_ROOT);
+                final List<MediaBrowserCompat.MediaItem>[] mediaItems = new List[]{null};
                 if (mChooseMusicAdapter == null) {
-                    mChooseMusicAdapter = new ChooseMusicAdapter(this);
+                    mChooseMusicAdapter = new ChooseMusicAdapter(HomeActivity.this);
                     mChooseMusicAdapter.setOnConnectMediaIdListener(this);
                 }
-                mChooseMusicAdapter.setQueueMediaID(MusicLibrary.getUpdateQueueUI(MusicLibrary.getAllMusic()));
+                mMediaManager.getStateViewModel().getNamePlayList().observe(this, new Observer<String>() {
+                    @Override
+                    public void onChanged(String titlePlayList) {
+                        try {
+                            if (mMediaManager.getAllMusicOfPlayList(titlePlayList) != null) {
+                                ArrayList<String> playLists = mMediaManager.getAllMusicOfPlayList(titlePlayList);
+                                mediaItems[0] = MusicLibrary.getAlbumService(playLists);
+                            }
+                        }catch (NullPointerException e){
+                            Utils.ToastShort(HomeActivity.this, "Play List chưa có bài hát");
+                        }
+                    }
+                });
+                if (mediaItems[0] != null) {
+                    for (int i = 0; i< mediaItems[0].size(); i++){
+                        Log.d("ZZZ", mediaItems[0].get(i).getDescription().getMediaId());
+                        getControllerActivity().addQueueItem(mediaItems[0].get(i).getDescription());
+                    }
+                }
+                mChooseMusicAdapter.setQueueMediaID(MusicLibrary.parseListQueueToMedia(mediaItems[0]));
                 mChooseMusicAdapter.notifyDataSetChanged();
                 bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
-                                mChooseMusicAdapter);
+                        mChooseMusicAdapter);
                 bottomSheetHelper.setTitle("All Music In Device");
                 bottomSheetHelper.show(getSupportFragmentManager(), FRAGMENT_TAG);
                 break;
             case R.id.image_add_to_playlist:
-                bottomSheetHelper = new BottomSheetHelper(DialogType.ADD_MUSIC_TO_PLAYLIST,
-                        this);
+                bottomSheetHelper = new BottomSheetHelper(DialogType.ADD_MUSIC_TO_PLAYLIST, this);
                 bottomSheetHelper.show(getSupportFragmentManager(), FRAGMENT_TAG);
                 break;
             case R.id.relative_info_music:
@@ -606,18 +629,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mTextRightTime.setText(Utils.formatTime(duration));
     }
 
-    @Override
-    public void onChangeMediaId(String mediaID) {
-        setViewMusic(mediaID ,PanelState.EXPANDED );
-        mMediaManager.getMediaBrowserConnection().getTransportControls().prepareFromMediaId(mediaID, null);
-        if (bottomSheetHelper!= null && bottomSheetHelper.getShowsDialog()) {
-            bottomSheetHelper.dismiss();
-        }
-     /*   setViewMusic(mediaID, PanelState.EXPANDED);
-        mMediaManager.getMediaBrowserConnection().getTransportControls().prepareFromMediaId(mediaID, null);*/
-
-    }
-
+    /** OnClickItemListener* */
     @Override
     public void onAddMusicToPlayList(String namePlayList) {
         bottomSheetHelper.dismiss();
@@ -627,5 +639,26 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             Utils.ToastShort(this,"Add Bài: "+ mMediaManager.getCurrentMusic());
         }
         Log.d("SSS", "PlayListAdapter.OnClickItemListener: "+ namePlayList);
+
     }
+    @Override
+    public void onChooseItemLibrary(ArrayList<MusicModel> models) {
+
+    }
+
+    /** OnMediaConnectID **/
+    @Override
+    public void onChangeMediaId(String mediaID) {
+        setViewMusic(mediaID ,PanelState.EXPANDED );
+        mMediaManager.getMediaBrowserConnection().getTransportControls().prepareFromMediaId(mediaID, null);
+        if (bottomSheetHelper!= null && bottomSheetHelper.getShowsDialog()) {
+            bottomSheetHelper.dismiss();
+        }
+    }
+    @Override
+    public void onChangeFlowType(String type, String title) {
+
+    }
+
+
 }

@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -149,7 +148,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         private MediaManager mMediaManager;
         private LinearLayout mLinearRecently, mLinearMost, mLinearShuffle,
                 mLinearMediaMost;
-        private CardView mCardPlayList_1, mCardPlayList_2;
         private ChooseMusicAdapter mChooseMusicAdapter;
         private HomeActivity mHomeActivity = (HomeActivity) getContext();
         public HomeHolder(@NonNull View view) {
@@ -171,8 +169,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             mLinearRecently = view.findViewById(R.id.linear_recently_music);
             mLinearShuffle = view.findViewById(R.id.linear_shuffle_music);
             mLinearMediaMost = view.findViewById(R.id.linear_media_most);
-            mCardPlayList_1 = view.findViewById(R.id.card_playlist_1);
-            mCardPlayList_2 = view.findViewById(R.id.card_playlist_2);
         }
 
         public void initView(){
@@ -184,7 +180,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 ImageHelper.getInstance(mHomeActivity).getSmallImageByPicasso(mMediaManager.getSong(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC)).getAlbumID(),
                         mImgPlayerMusic);
             }
-
             mMostPlayList = mMediaManager.getListMost(Constants.VALUE.MOST_PLAY_LIST);
 
             mTextPlayer_1.setText(mMostPlayList.get(0));
@@ -203,12 +198,43 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             mRelativeRecentlyAdd.setNestedScrollingEnabled(false);
             mRelativeRecentlyAdd.setLayoutManager(new LinearLayoutManager(mHomeActivity,
                     LinearLayoutManager.VERTICAL, false));
-            mCardPlayList_2.setOnClickListener(this);
-            mCardPlayList_1.setOnClickListener(this);
             if (mChooseMusicAdapter == null) {
                 mChooseMusicAdapter = new ChooseMusicAdapter(mHomeActivity);
             }
 //            mLinearMediaMost.setOnClickListener(this);
+        }
+
+        public void setupAdapter(String title){
+            mChooseMusicAdapter.setOnConnectMediaIdListener(new OnConnectMediaId() {
+                @Override
+                public void onChangeMediaId(String mediaID) {
+                    if (mHomeActivity.bottomSheetHelper.getShowsDialog()){
+                        mHomeActivity.bottomSheetHelper.dismiss();
+                    }
+                    mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(
+                            mediaID, null);
+                    mHomeActivity.setViewMusic(mediaID, SlidingUpPanelLayout.PanelState.EXPANDED);
+                }
+
+                @Override
+                public void onChangeFlowType(String type, String title) {
+                }
+            });
+
+            try {
+                mChooseMusicAdapter.setQueueMediaID(
+                        MusicLibrary.getUpdateQueueUI(
+                                mMediaManager.getAllMusicOfPlayList(title)));
+
+                mChooseMusicAdapter.notifyDataSetChanged();
+                mHomeActivity.bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
+                        mChooseMusicAdapter);
+                mHomeActivity.bottomSheetHelper.setTitle(title);
+                mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
+                        HomeActivity.FRAGMENT_TAG);
+            }catch (NullPointerException e){
+                Utils.ToastShort(getContext(), "Play List chưa có bài hát");
+            }
         }
 
         @Override
@@ -226,67 +252,13 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                             "Check thử: "+keys.get(index));
                     break;
                 case R.id.image_player_2:
-
-                    mMediaManager.getStateViewModel().setNamePlayList(mTextPlayer_2.getText().toString());
-                    mMediaManager.getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_EMPTY_ROOT);
-                    Log.d("ZZZ", mTextPlayer_2.getText().toString()+": "+mHomeActivity.getControllerActivity().getQueue().size());
-
-                    mChooseMusicAdapter.setOnConnectMediaIdListener(new OnConnectMediaId() {
-                        @Override
-                        public void onChangeMediaId(String mediaID) {
-                            if (mHomeActivity.bottomSheetHelper.getShowsDialog()){
-                                mHomeActivity.bottomSheetHelper.dismiss();
-                            }
-                            mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(
-                                    mediaID, null);
-                            mHomeActivity.setViewMusic(mediaID, SlidingUpPanelLayout.PanelState.EXPANDED);
-                        }
-                    });
-
-                    try {
-                        mChooseMusicAdapter.setQueueMediaID(MusicLibrary.getUpdateQueueUI(mMediaManager.getAllMusicOfPlayList(mTextPlayer_2.getText().toString())));
-
-                        mChooseMusicAdapter.notifyDataSetChanged();
-                        mHomeActivity.bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
-                                mChooseMusicAdapter);
-                        mHomeActivity.bottomSheetHelper.setTitle(mTextPlayer_2.getText().toString());
-                        mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
-                                HomeActivity.FRAGMENT_TAG);
-                    }catch (NullPointerException e){
-                        Utils.ToastShort(getContext(), "Play List chưa có bài hát");
-                    }
-
-
+                    mMediaManager.changePlayList(mTextPlayer_2.getText().toString());
+                    setupAdapter(mTextPlayer_2.getText().toString());
                     break;
 
                 case R.id.image_player_1:
-                    mMediaManager.getStateViewModel().setNamePlayList(mTextPlayer_1.getText().toString());
-                    mMediaManager.getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_EMPTY_ROOT);
-
-                    mChooseMusicAdapter.setOnConnectMediaIdListener(new OnConnectMediaId() {
-                        @Override
-                        public void onChangeMediaId(String mediaID) {
-                            if (mHomeActivity.bottomSheetHelper.getShowsDialog()){
-                                mHomeActivity.bottomSheetHelper.dismiss();
-                            }
-                            mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(
-                                    mediaID, null);
-                            mHomeActivity.setViewMusic(mediaID, SlidingUpPanelLayout.PanelState.EXPANDED);
-                        }
-                    });
-
-                    try {
-                        mChooseMusicAdapter.setQueueMediaID(MusicLibrary.getUpdateQueueUI(mMediaManager.getAllMusicOfPlayList(mTextPlayer_1.getText().toString())));
-                        mChooseMusicAdapter.notifyDataSetChanged();
-                        mHomeActivity.bottomSheetHelper =
-                                new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
-                                        mChooseMusicAdapter);
-                        mHomeActivity.bottomSheetHelper.setTitle(mTextPlayer_1.getText().toString());
-                        mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),
-                                HomeActivity.FRAGMENT_TAG);
-                    }catch (NullPointerException e){
-                        Utils.ToastShort(getContext(), "Play List chưa có bài hát");
-                    }
+                    mMediaManager.changePlayList(mTextPlayer_1.getText().toString());
+                    setupAdapter(mTextPlayer_1.getText().toString());
 
                     break;
                 case R.id.linear_recently_music:
@@ -301,19 +273,12 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     break;
                 case R.id.image_player_music:
-
                     if (mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).length() > 0) {
+                        mHomeActivity.setViewMusic(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), SlidingUpPanelLayout.PanelState.EXPANDED);
                         (mHomeActivity).getControllerActivity().getTransportControls().prepareFromMediaId(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC), bundle);
-                        if (mHomeActivity.mSlidingUpPanelLayout.getPanelState() != SlidingUpPanelLayout.PanelState.EXPANDED) {
-                            mHomeActivity.mSlidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-                        }
                     }else {
                         Utils.ToastShort(mHomeActivity, "Chưa Có bài hát nghe nhiều");
                     }
-                    break;
-                case R.id.card_playlist_1:
-                    break;
-                case R.id.card_playlist_2:
                     break;
             }
         }

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
+import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.utils.DialogHelper;
 
 import java.util.ArrayList;
@@ -26,9 +27,6 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.ViewHo
     private OnClickItemListener onClickItemListener;
     public void setOnClickItemListener(OnClickItemListener onClickItemListener) {
         this.onClickItemListener = onClickItemListener;
-    }
-    public interface OnClickItemListener {
-        void onAddMusicToPlayList(String namePlayList);
     }
     @NonNull
     @Override

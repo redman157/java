@@ -23,6 +23,10 @@ public class Constants {
         String MOST_PLAY_LIST = "PlayList";
         String NAME_PLAYLIST = "NAME_PLAYLIST";
         String SYNC = "isSync";
+        String MUSIC = "music";
+        String ARTIST = "artist";
+        String ALBUM = "album";
+        String FOLDER = "folder";
     }
 
     public @interface PREFERENCES{

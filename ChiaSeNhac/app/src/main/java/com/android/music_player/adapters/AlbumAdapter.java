@@ -12,7 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
+import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.models.MusicModel;
+import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 
@@ -33,6 +35,11 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
         mActivity = activity;
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
     }
+
+    private OnConnectMediaId onConnectMediaId;
+    public void setOnConnectMediaIdListener(OnConnectMediaId onConnectMediaId){
+        this.onConnectMediaId = onConnectMediaId;
+    }
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,7 +50,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        String album = keys.get(position);
+        final String album = keys.get(position);
         ArrayList<MusicModel> music = mAlbums.get(album);
         holder.assignData(album, music);
 
@@ -51,6 +58,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ItemViewHold
         holder.mLinearAlbum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onConnectMediaId.onChangeFlowType(Constants.VALUE.ARTIST, album);
 //                onClickItemListener.onChooseMedia(mMusics.get(position).getMusicId());
 //                mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID, mMusics.get(position).getAlbumID());
             }

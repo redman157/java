@@ -3,7 +3,6 @@ package com.android.music_player.activities;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -86,21 +85,16 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     }
 
     @Override
-    public void onConnect(final MediaBrowserCompat mediaBrowserCompat,
-                          final MediaControllerCompat mediaController) {
+    public void onConnect(
+            final MediaControllerCompat mediaController) {
         // khi connect thành công của media browser
         // thì mới có controller chuyển cho activity sử dụng
-
-        setMediaBrowserCompat(mediaBrowserCompat);
         setControllerActivity(mediaController);
-
         /*VIEW MODEL CHANGE ROOT SERVICE*/
         mMediaManager.getStateViewModel().getParentId().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String parentId) {
-
                 if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)){
-                    Log.d("DDD", "onchange if: "+parentId);
                     // GỠ STATE VÀ SET STATE KHÁC
                     mMediaManager.getMediaBrowserConnection().unSetSubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
                             getMediaManager().getMediaBrowserConnection().getCallback());
@@ -109,7 +103,6 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
                             getMediaManager().getMediaBrowserConnection().getCallback());
 
                 }else if (parentId.equals(MusicLibrary.MEDIA_ID_EMPTY_ROOT)){
-                    Log.d("DDD", "onchange else if: "+parentId);
                     mMediaManager.getMediaBrowserConnection().unSetSubscribe(MusicLibrary.MEDIA_ID_ROOT,
                             getMediaManager().getMediaBrowserConnection().getCallback());
 

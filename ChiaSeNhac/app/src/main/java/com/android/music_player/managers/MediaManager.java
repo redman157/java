@@ -523,39 +523,45 @@ public class MediaManager {
     private void filterData(){
 
         ArrayList<MusicModel> allKeyInfoMusic = new ArrayList<>(MusicLibrary.info);
+        ArrayList<String> keys = new ArrayList<>(MusicLibrary.music.keySet());
+        ArrayList<MediaMetadataCompat> values = new ArrayList<>();
+        for (int i = 0; i < keys.size(); i++){
+            values.add(MusicLibrary.music.get(keys.get(i)));
+        }
 
         for (int index = 0; index < allKeyInfoMusic.size(); index++) {
         /*    String artist =
                     MusicLibrary.music.get(allKeyInfoMusic.get(index)).getString(Constants.METADATA.Artist);
             String album = MusicLibrary.music.get(allKeyInfoMusic.get(index)).getString(Constants.METADATA.Album);
             String folder = MusicLibrary.fileName.get(allKeyInfoMusic.get(index));*/
-            String artist = allKeyInfoMusic.get(index).getArtist();
-            String album = allKeyInfoMusic.get(index).getAlbum();
-            String folder = allKeyInfoMusic.get(index).getFileName();
+            String artist = values.get(index).getString(Constants.METADATA.Artist);
+            String album = values.get(index).getString(Constants.METADATA.Album);
+            String folder = MusicLibrary.fileName.get(keys.get(index));
+            String splitFolder = folder.split("/")[folder.split("/").length - 4]+"/"+folder.split("/")[folder.split("/").length - 3]+"/"+folder.split("/")[folder.split("/").length - 2];
             while (true) {
                 if (MusicLibrary.artist.get(artist) != null) {
-                    MusicLibrary.artist.get(artist).add(allKeyInfoMusic.get(index));
+                    MusicLibrary.artist.get(artist).add(keys.get(index));
                     break;
                 } else {
-                    MusicLibrary.artist.put(artist, new ArrayList<MusicModel>());
+                    MusicLibrary.artist.put(artist, new ArrayList<String>());
                 }
             }
 
             while (true) {
                 if (MusicLibrary.album.get(album) != null) {
-                    MusicLibrary.album.get(album).add(allKeyInfoMusic.get(index));
+                    MusicLibrary.album.get(album).add(keys.get(index));
                     break;
                 } else {
-                    MusicLibrary.album.put(album, new ArrayList<MusicModel>());
+                    MusicLibrary.album.put(album, new ArrayList<String>());
                 }
             }
 
             while (true) {
-                if (MusicLibrary.folder.get(folder) != null) {
-                    MusicLibrary.folder.get(folder).add(allKeyInfoMusic.get(index));
+                if (MusicLibrary.folder.get(splitFolder) != null) {
+                    MusicLibrary.folder.get(splitFolder).add(keys.get(index));
                     break;
                 } else {
-                    MusicLibrary.folder.put(folder, new ArrayList<MusicModel>());
+                    MusicLibrary.folder.put(splitFolder, new ArrayList<String>());
                 }
             }
         }
@@ -602,17 +608,17 @@ public class MediaManager {
         return result;
     }
 
-    public Map<String, ArrayList<MusicModel>> getAlbum() {
+    public Map<String, ArrayList<String>> getAlbum() {
         grabIfEmpty();
         return MusicLibrary.album;
     }
 
-    public Map<String, ArrayList<MusicModel>> getArtist() {
+    public Map<String, ArrayList<String>> getArtist() {
         grabIfEmpty();
         return MusicLibrary.artist;
     }
 
-    public Map<String, ArrayList<MusicModel>> getFolder() {
+    public Map<String, ArrayList<String>> getFolder() {
         grabIfEmpty();
         return MusicLibrary.folder;
     }

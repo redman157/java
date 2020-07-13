@@ -48,16 +48,16 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
     @Override
     protected Long doInBackground(String... strings) {
 
-        Map<String, ArrayList<MusicModel>> artists = mMediaManager.getArtist();
-        Map<String, ArrayList<MusicModel>> albums = mMediaManager.getAlbum();
-        Map<String, ArrayList<MusicModel>> folders = mMediaManager.getFolder();
+        Map<String, ArrayList<String>> artists = mMediaManager.getArtist();
+        Map<String, ArrayList<String>> albums = mMediaManager.getAlbum();
+        Map<String, ArrayList<String>> folders = mMediaManager.getFolder();
         if (artists.size() > 0 && albums.size() > 0 && folders.size() > 0) {
             Log.d(tag, "Done filter into data");
 //            Log.d(tag,
 //                    "artist : "+ artists.size() +" albums : "+ albums.size() +" folders : "+ folders.size() );
-            for (Map.Entry<String, ArrayList<MusicModel>> entry : artists.entrySet()) {
+            for (Map.Entry<String, ArrayList<String>> entry : artists.entrySet()) {
                 String k = entry.getKey();
-                ArrayList<MusicModel> v = entry.getValue();
+                ArrayList<String> v = entry.getValue();
                 Log.d(tag, "artist name: "+ k +" MusicModel: "+v.size());
             }
 

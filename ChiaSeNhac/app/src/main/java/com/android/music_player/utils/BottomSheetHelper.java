@@ -3,6 +3,7 @@ package com.android.music_player.utils;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,8 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
     private ChooseMusicAdapter mChooseMusicAdapter;
     private String title = "";
     private QueueManager mQueueManager;
-    private Map<String, ArrayList<MusicModel>> items;
+    private String titleType;
+    private Map<String, ArrayList<String>> items;
     public void cancelDialgo(){
         dismiss();
     }
@@ -56,9 +58,10 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         this.onClickItemListener = onClickItemListener;
     }
 
-    public BottomSheetHelper(DialogType type, Map<String, ArrayList<MusicModel>> items ,
+    public BottomSheetHelper(DialogType type, String title, Map<String, ArrayList<String>> items,
                              OnClickItemListener onClickItemListener){
         mType = type;
+        this.titleType = title;
         this.items = items;
         this.onClickItemListener = onClickItemListener;
     }
@@ -114,7 +117,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         }else if (mType == DialogType.CHOOSE_ITEM_LIBRARY){
             view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_choose_item_library,
                     container, false);
-            initAllItemLibrary(view, items, onClickItemListener);
+            initAllItemLibrary(view, titleType, items, onClickItemListener);
         }
         return view;
     }
@@ -213,10 +216,11 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         }
     }
 
-    private void initAllItemLibrary(View view, Map<String, ArrayList<MusicModel>> itemLibrary,
+    private void initAllItemLibrary(View view, String  title ,Map<String, ArrayList<String>> itemLibrary,
                                  OnClickItemListener onClickItemListener){
         if (itemLibrary != null && itemLibrary.size() > 0) {
-            ArrayList<String> items = new ArrayList<>(itemLibrary.keySet());
+            Log.d("XXX", "initAllItem: "+title);
+            ArrayList<String> items = new ArrayList<>(itemLibrary.get(title));
             TextView textTittle = view.findViewById(R.id.text_title);
             textTittle.setText(title);
 

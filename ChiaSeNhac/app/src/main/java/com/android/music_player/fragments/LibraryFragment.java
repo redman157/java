@@ -120,17 +120,14 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
         mMusicAdapter.notifyDataSetChanged();
         mMusicAdapter.setOnConnectMediaIdListener(this);
 
-        mArtistAdapter = new ArtistAdapter(getActivity(), mMediaManager.getArtist());
+        mArtistAdapter = new ArtistAdapter(getActivity(), mMediaManager.getArtist(), this);
         mArtistAdapter.notifyDataSetChanged();
-        mArtistAdapter.setOnConnectMediaIdListener(this);
 
-        mAlbumAdapter = new AlbumAdapter(getActivity(), mMediaManager.getAlbum());
+        mAlbumAdapter = new AlbumAdapter(getActivity(), mMediaManager.getAlbum(),this  );
         mAlbumAdapter.notifyDataSetChanged();
-        mAlbumAdapter.setOnConnectMediaIdListener(this);
 
-        mFolderAdapter = new FolderAdapter(getActivity(), mMediaManager.getFolder() );
+        mFolderAdapter = new FolderAdapter(getActivity(), mMediaManager.getFolder() ,this );
         mFolderAdapter.notifyDataSetChanged();
-        mFolderAdapter.setOnConnectMediaIdListener(this);
     }
 
     private void setupViewPager(ViewPager viewPager){
@@ -256,23 +253,49 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
 
         }else if (type.equals(Constants.VALUE.ALBUM)){
             mHomeActivity.bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_ITEM_LIBRARY,
-                    MusicLibrary.album, new OnClickItemListener() {
+                    title, MusicLibrary.album, new OnClickItemListener() {
                 @Override
                 public void onAddMusicToPlayList(String namePlayList) {
 
                 }
 
                 @Override
-                public void onChooseItemLibrary(ArrayList<MusicModel> models) {
+                public void onChooseItemLibrary(ArrayList<String> models) {
 
                 }
             });
-            mHomeActivity.bottomSheetHelper.setTitle("All Album In Device");
+            mHomeActivity.bottomSheetHelper.setTitle("All Alfolderbum In Device");
             mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),mHomeActivity.FRAGMENT_TAG);
         }else if (type.equals(Constants.VALUE.ARTIST)){
+            mHomeActivity.bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_ITEM_LIBRARY,
+                    title, MusicLibrary.artist, new OnClickItemListener() {
+                @Override
+                public void onAddMusicToPlayList(String namePlayList) {
 
+                }
+
+                @Override
+                public void onChooseItemLibrary(ArrayList<String> models) {
+
+                }
+            });
+            mHomeActivity.bottomSheetHelper.setTitle("All Artist In Device");
+            mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),mHomeActivity.FRAGMENT_TAG);
         }else if (type.equals(Constants.VALUE.FOLDER)){
+            mHomeActivity.bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_ITEM_LIBRARY,
+                    title, MusicLibrary.folder, new OnClickItemListener() {
+                @Override
+                public void onAddMusicToPlayList(String namePlayList) {
 
+                }
+
+                @Override
+                public void onChooseItemLibrary(ArrayList<String> models) {
+
+                }
+            });
+            mHomeActivity.bottomSheetHelper.setTitle("All Folder In Device");
+            mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(),mHomeActivity.FRAGMENT_TAG);
         }
     }
 }

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.interfaces.OnConnectMediaId;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
@@ -26,20 +27,18 @@ import java.util.Map;
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHolder> {
     private final Activity mActivity;
-    private Map<String, ArrayList<MusicModel>> mArtists;
+    private Map<String, ArrayList<String>> mArtists;
     private SharedPrefsUtils mSharedPrefsUtils;
     private List<String> keys;
-    public ArtistAdapter(Activity activity, Map<String, ArrayList<MusicModel>> artists) {
+    public ArtistAdapter(Activity activity, Map<String, ArrayList<String>> artists, OnConnectMediaId onConnectMediaId) {
         this.mArtists = artists;
         mActivity = activity;
         keys = new ArrayList<>(mArtists.keySet());
         Collections.sort(keys);
+        this.onConnectMediaId = onConnectMediaId;
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
     }
     private OnConnectMediaId onConnectMediaId;
-    public void setOnConnectMediaIdListener(OnConnectMediaId onConnectMediaId){
-        this.onConnectMediaId = onConnectMediaId;
-    }
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -51,7 +50,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         final String item = keys.get(position);
-        ArrayList<MusicModel> music = mArtists.get(item);
+        ArrayList<String> music = mArtists.get(item);
 
         holder.assignData(item, music);
         holder.mLinearArtist.setOnClickListener(new View.OnClickListener() {
@@ -80,12 +79,12 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ItemViewHo
         }
 
         @SuppressLint("SetTextI18n")
-        public void assignData(String artist, ArrayList<MusicModel> models) {
+        public void assignData(String artist, ArrayList<String> models) {
             //UI setting code
             mTextArtist.setText(artist);
-            mTextInfoArtist.setText(models.size() +" bài hát");
+            mTextInfoArtist.setText(models.size() +" bi hát");
             mImgArtist.setClipToOutline(true);
-            ImageHelper.getInstance(mActivity).getSmallImageByPicasso(models.get(0).getAlbumID(),
+            ImageHelper.getInstance(mActivity).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(models.get(0))),
                     mImgArtist);
         }
     }

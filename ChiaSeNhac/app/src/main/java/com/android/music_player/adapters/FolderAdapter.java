@@ -1,6 +1,7 @@
 package com.android.music_player.adapters;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,21 +24,19 @@ import java.util.Map;
 
 public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ItemViewHolder> {
     private final Activity mActivity;
-    private Map<String, ArrayList<MusicModel>> mFolders;
+    private Map<String, ArrayList<String>> mFolders;
     private SharedPrefsUtils mSharedPrefsUtils;
     private List<String> keys;
-    public FolderAdapter(Activity activity, Map<String, ArrayList<MusicModel>> folders) {
+    public FolderAdapter(Activity activity, Map<String, ArrayList<String>> folders, OnConnectMediaId onConnectMediaId) {
         this.mFolders = folders;
         keys = new ArrayList<>(mFolders.keySet());
         Collections.sort(keys);
         mActivity = activity;
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
+        this.onConnectMediaId = onConnectMediaId;
     }
 
     private OnConnectMediaId onConnectMediaId;
-    public void setOnConnectMediaIdListener(OnConnectMediaId onConnectMediaId){
-        this.onConnectMediaId = onConnectMediaId;
-    }
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,9 +47,9 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ItemViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        final String folder = keys.get(position).split("/")[keys.get(position).split("/").length - 2];
-
-        ArrayList<MusicModel> music = mFolders.get(keys.get(position));
+        final String folder = keys.get(position);
+        Log.d("ZZZ",folder);
+        ArrayList<String> music = mFolders.get(keys.get(position));
         holder.assignData(folder, music);
         holder.mLinearFolder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +77,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ItemViewHo
             mTextNameFolder = itemView.findViewById(R.id.item_text_title_folder);
         }
 
-        public void assignData(final String folder, ArrayList<MusicModel> models) {
+        public void assignData(final String folder, ArrayList<String> models) {
             //UI setting code
             mTextNameFolder.setText(folder);
             mTextInfoFolder.setText(models.size()+ " bài hát");

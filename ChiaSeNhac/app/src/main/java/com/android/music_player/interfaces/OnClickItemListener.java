@@ -6,5 +6,5 @@ import java.util.ArrayList;
 
 public interface OnClickItemListener {
     void onAddMusicToPlayList(String namePlayList);
-    void onChooseItemLibrary(ArrayList<MusicModel> models);
+    void onChooseItemLibrary(ArrayList<String> models);
 }

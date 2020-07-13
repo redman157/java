@@ -82,7 +82,7 @@ public class DialogHelper {
                                         }
 
                                         @Override
-                                        public void onChooseItemLibrary(ArrayList<MusicModel> models) {
+                                        public void onChooseItemLibrary(ArrayList<String> models) {
 
                                         }
                                     });
@@ -209,7 +209,7 @@ public class DialogHelper {
                                         }
 
                                         @Override
-                                        public void onChooseItemLibrary(ArrayList<MusicModel> models) {
+                                        public void onChooseItemLibrary(ArrayList<String> models) {
 
                                         }
                                     });
@@ -332,7 +332,7 @@ public class DialogHelper {
                                     }
 
                                     @Override
-                                    public void onChooseItemLibrary(ArrayList<MusicModel> models) {
+                                    public void onChooseItemLibrary(ArrayList<String> models) {
 
                                     }
                                 });

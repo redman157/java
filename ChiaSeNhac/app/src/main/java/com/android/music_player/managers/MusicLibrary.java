@@ -26,9 +26,9 @@ public class MusicLibrary {
     public static final Set<MusicModel> info = new HashSet<>();
 
     public ArrayList<MediaMetadataCompat> queue = new ArrayList<>();
-    public static final Map<String, ArrayList<MusicModel>> album = new HashMap<>();
-    public static final Map<String, ArrayList<MusicModel>> artist = new HashMap<>();
-    public static final Map<String, ArrayList<MusicModel>> folder = new HashMap<>();
+    public static final Map<String, ArrayList<String>> album = new HashMap<>();
+    public static final Map<String, ArrayList<String>> artist = new HashMap<>();
+    public static final Map<String, ArrayList<String>> folder = new HashMap<>();
     public static final Map<String , MusicModel> model = new HashMap<>();
     public static final Map<String, List<MediaSessionCompat.QueueItem>> mPlayingQueue =
             new ArrayMap<>();

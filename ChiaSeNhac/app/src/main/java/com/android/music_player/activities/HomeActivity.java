@@ -317,6 +317,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                         MusicLibrary.model.get(getControllerActivity().getMetadata().getString(Constants.METADATA.Title)));
                 break;
             case R.id.image_set_time:
+                String t = "/storage/emulated/0/CSNMusic/Download/Music/1 Phút_Andiez_500.m4a";
+
+                Log.d("ZZZ",t.split("/")[t.split("/").length - 4]+"/"+t.split("/")[t.split("/").length - 3]+"/"+t.split("/")[t.split("/").length - 2]);
                 break;
             case R.id.image_equalizer:
                 EqualizerFragment fragment = EqualizerFragment.newInstance();
@@ -632,7 +635,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     }
     @Override
-    public void onChooseItemLibrary(ArrayList<MusicModel> models) {
+    public void onChooseItemLibrary(ArrayList<String> models) {
 
     }
 

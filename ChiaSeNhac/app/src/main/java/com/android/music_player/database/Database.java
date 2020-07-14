@@ -5,29 +5,15 @@ public class Database {
         String DATABASE_NAME = "categories.db";
         String TABLE_NAME = "categories";
         String COLUMN_NAME_ID = "id";
-        String CATEGORY = "category";
+        String NAME = "name";
         String VOTES = "votes";
-        String NAME_CATEGORY = "name_category";
-        String PATH = "path";
-        String ARTIST = "artist";
-        String ALBUM = "album";
-        String FILE_NAME = "NAME";
-        String ALBUM_ID = "album_id";
-        String FAKE_PATH = "fake_path";
-        String TIME = "time";
+        String TYPE = "type";
         String CREATE_TABLE =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                         COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + "," +
-                        CATEGORY       + " TEXT "    + "," +
-                        VOTES          + " INTEGER " + "," +
-                        NAME_CATEGORY  + " TEXT "    + "," +
-                        PATH           + " TEXT "    + "," +
-                        ARTIST         + " TEXT "    + "," +
-                        ALBUM          + " TEXT "    + "," +
-                        ALBUM_ID       + " TEXT "    + "," +
-                        FILE_NAME      + " TEXT "    + "," +
-                        TIME           + " INTEGER " + "," +
-                        FAKE_PATH      + " TEXT "    + ");";
+                        NAME           + " TEXT "    + "," +
+                        TYPE           + " TEXT "    + "," +
+                        VOTES          + " INTEGER " + ");";
         String DELETE = "DROP TABLE IF EXISTS " + TABLE_NAME;
         String QUERY = "SELECT * FROM " + TABLE_NAME;
     }
@@ -39,14 +25,12 @@ public class Database {
         String NAME = "name";
         String MOST = "most";
         String TYPE = "type_name";
-        String FAV = "favorite";
         String CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT" + "," +
                     TYPE            + " TEXT "    + "," +
                     NAME            + " TEXT "    + "," +
-                    MOST            + " INTEGER " + "," +
-                    FAV            + " INTEGER " + ");";
+                    MOST            + " INTEGER " + ");";
         String DELETE = "DROP TABLE IF EXISTS " +TABLE_NAME;
         String QUERY = "SELECT * FROM " + TABLE_NAME;
     }

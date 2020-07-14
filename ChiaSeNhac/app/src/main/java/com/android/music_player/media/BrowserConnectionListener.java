@@ -10,6 +10,7 @@ import androidx.media.MediaBrowserServiceCompat;
 
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.services.MediaService;
 
 import java.util.List;
@@ -48,6 +49,7 @@ public class BrowserConnectionListener extends BrowserHelper {
         if (onServiceConnect != null) {
             onServiceConnect.onConnect(mediaController);
         }
+
         Log.d(TAG, "onConnected: "+mediaController.getPlaybackInfo().getPlaybackType());
         // khi connect mình sẽ set bài hát ở đây
     }

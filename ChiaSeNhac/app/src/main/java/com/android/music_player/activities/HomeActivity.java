@@ -32,6 +32,7 @@ import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.managers.QueueManager;
 import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
 import com.android.music_player.models.MusicModel;
@@ -86,11 +87,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private ChooseMusicAdapter mChooseMusicAdapter;
     public final static String FRAGMENT_TAG = "fragment_tag";
     public BottomSheetHelper bottomSheetHelper;
+    private QueueManager mQueueManager;
 
     @Override
     public void initManager() {
         mSharedPrefsUtils = getSharedPrefsUtils();
         mMediaManager = getMediaManager();
+        mQueueManager = QueueManager.getInstance(this);
         ImageHelper.getInstance(this);
     }
 
@@ -137,6 +140,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                             FRAGMENT_TAG)
                     .commit();
         }
+        mQueueManager.setupAllMusic();
         initView();
         assignView();
         Log.d("III","State hiện tại: "+(mSlidingUpPanelLayout.getPanelState()));

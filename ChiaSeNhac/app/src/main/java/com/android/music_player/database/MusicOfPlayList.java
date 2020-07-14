@@ -110,7 +110,7 @@ public class MusicOfPlayList {
                 " VALUES(" +
                 " null, " +
                 "'" + titlePlayList+ "'"  + ","+
-                "'" + titleMusic   + "'"     + ")";
+                "'" + titleMusic   + "'"  + ")";
 
         mDatabase.queryData(SQL_ADD);
         closeDatabase();

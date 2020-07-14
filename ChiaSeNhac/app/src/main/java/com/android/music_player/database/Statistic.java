@@ -230,13 +230,7 @@ public class Statistic {
             closeDatabase();
         }
     }
-    public void favorite(String name, int fav){
-        String SQL_UPDATE = "UPDATE "+ Database.STATISTIC.TABLE_NAME+ " SET "+
-                Database.STATISTIC.FAV + " = " + "'"+ fav +"'"
-                + " WHERE "+ Database.STATISTIC.NAME + " = "+name;
-        mDatabase.queryData(SQL_UPDATE);
-        closeDatabase();
-    }
+
 
     public boolean search(String type, String title){
         Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);

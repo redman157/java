@@ -288,6 +288,9 @@ public class MediaManager {
         }
     }
 
+    public void setFavorite(String titleName, int fav){
+        mCategoryMusic.favorite(titleName, fav);
+    }
     /**
      * Database AllPlayList
      * */
@@ -330,6 +333,7 @@ public class MediaManager {
 
         if (!mAllMusic.search(songName)){
             mAllMusic.addRow(songName);
+            mCategoryMusic.addCategory(Constants.VALUE.MUSIC, songName);
         }
     }
 

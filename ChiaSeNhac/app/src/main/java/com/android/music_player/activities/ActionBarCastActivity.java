@@ -40,11 +40,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
 import com.android.music_player.R;
+import com.android.music_player.fragments.EqualizerFragment;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.SettingsFragment;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.navigation.NavigationView;
+
+import static com.android.music_player.activities.HomeActivity.FRAGMENT_TAG;
 
 /**
  * Abstract activity with toolbar, navigation drawer and cast support. Needs to be extended by
@@ -250,11 +253,9 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         true);
                 startActivity(intent);
                 break;
-            case R.id.settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                break;
             case R.id.equalizer:
-                startActivity(new Intent(this, EqualizerActivity.class));
+                EqualizerFragment fragment = EqualizerFragment.newInstance();
+                fragment.show(getSupportFragmentManager(), FRAGMENT_TAG);
                 break;
             case R.id.changeTheme:
                 final Dialog dialog = new Dialog(this);
@@ -280,66 +281,6 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         startActivity(getIntent());
                     }
                 });
-              /*  dialog.findViewById(R.id.green).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.GREEN);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.yellow).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.YELLOW);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.pink).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.PINK);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.purple).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.PURPLE);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.grey).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.GREY);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });
-                dialog.findViewById(R.id.red).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.RED);
-                        dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
-                    }
-                });*/
                 dialog.show();
                 break;
         }

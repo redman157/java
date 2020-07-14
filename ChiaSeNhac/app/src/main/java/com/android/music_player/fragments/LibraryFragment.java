@@ -33,6 +33,7 @@ import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.tabs.TabLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
@@ -256,7 +257,9 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
                     title, MusicLibrary.album, new OnClickItemListener() {
                 @Override
                 public void onAddMusicToPlayList(String namePlayList) {
-
+                    mHomeActivity.bottomSheetHelper.dismiss();
+                    setTitle(namePlayList);
+                    mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(namePlayList,null);
                 }
 
                 @Override
@@ -271,7 +274,9 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
                     title, MusicLibrary.artist, new OnClickItemListener() {
                 @Override
                 public void onAddMusicToPlayList(String namePlayList) {
-
+                    mHomeActivity.bottomSheetHelper.dismiss();
+                    setTitle(namePlayList);
+                    mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(namePlayList,null);
                 }
 
                 @Override
@@ -286,7 +291,9 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
                     title, MusicLibrary.folder, new OnClickItemListener() {
                 @Override
                 public void onAddMusicToPlayList(String namePlayList) {
-
+                    mHomeActivity.bottomSheetHelper.dismiss();
+                    setTitle(namePlayList);
+                    mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(namePlayList,null);
                 }
 
                 @Override

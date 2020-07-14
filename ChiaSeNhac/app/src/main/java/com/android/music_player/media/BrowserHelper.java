@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media.MediaBrowserServiceCompat;
 
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.services.MediaService;
 
 import java.util.HashMap;
@@ -239,8 +240,10 @@ public abstract class BrowserHelper {
                     mMediaControllerCallback.onMetadataChanged(mMediaController.getMetadata());
                     mMediaControllerCallback.onPlaybackStateChanged(mMediaController.getPlaybackState());
                 }
+
                 Log.d(TAG, "MediaBrowserConnectionCallback --- onConnected: enter");
                 BrowserHelper.this.onConnected(mMediaController);
+
             }catch (AndroidException e) {
                 Log.d(TAG, String.format("onConnected: Problem: %s", e.toString()));
                 Log.d("BBB", "MediaBrowserConnectionCallback --- exception: "+e.getMessage());

@@ -2,11 +2,14 @@ package com.android.music_player.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.android.music_player.models.MusicModel;
+import com.android.music_player.utils.Constants;
+import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -35,8 +38,7 @@ public class CategoryMusic {
         return str.replaceAll("[^A-Za-z0-9()\\[\\]]", "");
     }
 
-    public boolean isSelect(Cursor cursor){
-        cursor = mDatabase.getData(Database.CATEGORY.QUERY);
+    public boolean isExistData(Cursor cursor){
         try {
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -51,104 +53,79 @@ public class CategoryMusic {
     }
 
     // add Data
-    public void addCategory(MusicModel song) {
+    public void addCategory(String type, String mediaId) {
         String SQL_INSERT = "INSERT INTO "+ Database.CATEGORY.TABLE_NAME+
                 " Value(null, " +
-
-                "'"+ "0" +"'" +","+
-                "'"+ song.getSongName() +"'" +","+
-                "'"+ song.getPath() +"'"     +","+
-                "'"+ song.getArtist() +"'"   +","+
-                "'"+ song.getAlbum() +"'"    +","+
-                "'"+ song.getAlbumID() +"'"  +","+
-                "'"+ song.getFileName()+"'"  +","+
-                "'"+ song.getTime()+"'"  +","+
-                "'"+ dropInvalidString(song.getPath())+"'"      +")";
+                "'"+ mediaId +"'"  + "," +
+                "'"+ type    +"'"  + "," +
+                "'"+ 0       +"'"  + ")";
 
         mDatabase.queryData(SQL_INSERT);
-        Toast.makeText(context, "Đã Add Bài Hát : "+song.getSongName(), Toast.LENGTH_SHORT).show();
         closeDatabase();
+    }
 
+    public void favorite(String name, int fav) {
+        String SQL_UPDATE = "UPDATE " + Database.CATEGORY.TABLE_NAME + " SET " +
+                Database.CATEGORY.VOTES + " = " + "'" + fav + "'"
+                + " WHERE " + Database.CATEGORY.NAME + " = " + name;
+        mDatabase.queryData(SQL_UPDATE);
+        closeDatabase();
+    }
+
+
+    public int isFavorite(String name){
+        Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
+        try {
+            if (isExistData(cursor)){
+                do  {
+                    if (cursor.getString(3).equals(name)) {
+                        Log.d("ZZZ", name);
+                        return cursor.getInt(5);
+                    }
+                }while (cursor.moveToNext());
+            }
+
+        }catch (SQLiteException e) {
+            Log.d(TAG, e.getMessage());
+        } catch (CursorIndexOutOfBoundsException e) {
+            return -1;
+        } finally {
+            closeDatabase();
+        }
+        return -1;
     }
 
     // lấy hết toàn bộ data
-    public ArrayList<MusicModel> getAllCategory() {
+    public ArrayList<String> getAllCategory() {
         Cursor data = mDatabase.getData(Database.CATEGORY.QUERY);
 
-        ArrayList<MusicModel> mSongs = new ArrayList<>();
-
-        if (isSelect(data)){
-            while (!data.isAfterLast()){
-                MusicModel.Builder builder = new MusicModel.Builder();
-                builder.setSongName(data.getString(3));
-                builder.setPath(data.getString(4));
-                builder.setArtist(data.getString(5));
-                builder.setAlbum(data.getString(6));
-                builder.setAlbumID(data.getString(7));
-                builder.setFileName(data.getString(9));
-                builder.setTime(data.getInt(8));
-
-                MusicModel musicModel = builder.generate();
-                mSongs.add(musicModel);
+        ArrayList<String> mSongs = new ArrayList<>();
+        try{
+            if (isExistData(data)){
+                do{
+                    if(data.getString(3).equals(Constants.VALUE.MUSIC)){
+                        if(data.getInt(4) == 1) {
+                            mSongs.add(data.getString(2));
+                        }
+                    }
+                }while(data.moveToNext());
             }
+        }catch (CursorIndexOutOfBoundsException e){
+            return null;
+        }finally{
+            closeDatabase();
         }
-        closeDatabase();
         return mSongs;
     }
 
-    // tìm category
-    public boolean searchCategory(long category){
-        Cursor mCategoryData = mDatabase.getData(Database.CATEGORY.QUERY);
-        try {
-            if (isSelect(mCategoryData) && getSize() != 0){
-                while (mCategoryData.moveToNext()){
-                    if (mCategoryData.getString(1).equals(String.valueOf(category))){
-                        return true;
-                    }
-                }
-            }
-        }catch (SQLiteException e){
-            Log.d(TAG, e.getMessage());
-        }finally {
-            closeDatabase();
-        }
-        return false;
-    }
-
     // xóa category theo id
-    public void deleteCategory(int id){
+    public void deleteCategory(String mediaId){
         String SQL_DELETE =
-                "DROP TABLE IF EXISTS "+ Database.CATEGORY.TABLE_NAME+" WHERE id= '"+id+ "' ";
+                "DROP TABLE IF EXISTS "+ Database.CATEGORY.TABLE_NAME+" WHERE name= '"+mediaId+ " ";
         mDatabase.queryData(SQL_DELETE);
         closeDatabase();
     }
 
-    // xóa category theo category
-    public boolean deleteCategory(long category) {
-        String id = String.valueOf(category);
-        String SQL_DELETE =
-                "DROP TABLE IF EXISTS "+ Database.CATEGORY.TABLE_NAME+" WHERE " +
-                        "category= " +
-                        "'"+id+ "' ";
-        Cursor data = mDatabase.getData(Database.CATEGORY.QUERY);
-
-        if (isSelect(data)){
-            if (searchCategory(category)){
-                mDatabase.queryData(SQL_DELETE);
-                Toast.makeText(context, "Xóa Thành Công Thể Loại: "+category,
-                        Toast.LENGTH_SHORT).show();
-                closeDatabase();
-                return true;
-            }else {
-                Toast.makeText(context, "Xóa Không Thành Công Thể Loại: "+category,
-                        Toast.LENGTH_SHORT).show();
-
-                return false;
-            }
-        }else {
-            return false;
-        }
-    }
 
     // xóa tất cả
     public void deleteAll(int id) {
@@ -168,7 +145,7 @@ public class CategoryMusic {
         Cursor songData = mDatabase.getData(Database.CATEGORY.QUERY);
         int count = 0;
         try {
-            if (isSelect(songData)) {
+            if (isExistData(songData)) {
                 count = songData.getCount();
             }
         } catch (SQLiteException e){
@@ -178,21 +155,4 @@ public class CategoryMusic {
         }
         return count;
     }
-
-    public void updateCategory(String fake_path, MusicModel song){
-        String SQL_UPDATE = "UPDATE "+ Database.CATEGORY.TABLE_NAME+ " SET "+
-                Database.CATEGORY.NAME_CATEGORY + "='"+ song.getSongName()+"'" + "," +
-                Database.CATEGORY.PATH          + "='"+ song.getPath()+"'"     + "," +
-                Database.CATEGORY.ARTIST        + "='"+ song.getArtist()+"'"   + "," +
-                Database.CATEGORY.ALBUM         + "='"+ song.getAlbum()+"'"    + "," +
-                Database.CATEGORY.ALBUM_ID      + "='"+ song.getAlbumID()+"'"  + "," +
-                Database.CATEGORY.FILE_NAME     + "='"+ song.getFileName()+"'" + "," +
-                Database.CATEGORY.TIME          + "='"+ song.getTime()+"'" +
-                " WHERE " + "fake_path= '"+ fake_path +"'";
-        mDatabase.queryData(SQL_UPDATE);
-        closeDatabase();
-    }
-
-
-
 }

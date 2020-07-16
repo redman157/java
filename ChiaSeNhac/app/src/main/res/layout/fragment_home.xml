@@ -16,10 +16,10 @@
                 android:id="@+id/rc_home_fragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:fastScrollPopupBgColor="@color/accentColor"
-                app:fastScrollPopupTextColor="@color/accentColor"
-                app:fastScrollThumbColor="@color/accentColor"
-                app:fastScrollThumbInactiveColor="@color/accentColor"/>
+                app:fastScrollPopupBgColor="?attr/accent_color"
+                app:fastScrollPopupTextColor="?attr/popup_text_color"
+                app:fastScrollThumbColor="?attr/accent_color"
+                app:fastScrollThumbInactiveColor="?attr/accent_color"/>
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

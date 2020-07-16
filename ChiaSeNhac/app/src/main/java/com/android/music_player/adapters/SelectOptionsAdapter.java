@@ -44,7 +44,6 @@ public class SelectOptionsAdapter extends RecyclerView.Adapter<SelectOptionsAdap
         ArrayList<OptionItem> mOptionItems = new ArrayList<>();
         mOptionItems.add(new OptionItem(R.drawable.app_heart, "Thêm vào mục ưa thích"));
         mOptionItems.add(new OptionItem(R.drawable.app_playlist, "Thêm vào danh sách phát"));
-        mOptionItems.add(new OptionItem(R.drawable.ic_library_white_24dp, "Phát bài kế tiếp"));
         mOptionItems.add(new OptionItem(R.drawable.ic_musician, "Xem nghệ sĩ"));
         mOptionItems.add(new OptionItem(R.drawable.ic_album, "Xem album"));
         mOptionItems.add(new OptionItem(R.drawable.app_heart, "Đặt làm nhạc chuông"));

@@ -27,13 +27,11 @@ import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.BottomSheetHelper;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.tabs.TabLayout;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 
@@ -178,10 +176,10 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
         ImageHelper.getInstance(getContext()).getSmallImageByPicasso(
                 String.valueOf(MusicLibrary.getAlbumRes(mediaID)), mBackGround);
         if (getActivity() instanceof HomeActivity) {
-            ((HomeActivity)getActivity()).mTextTitleMedia.setText(metadataCompat.getString(Constants.METADATA.Title));
-            ((HomeActivity)getActivity()).mTextArtistMedia.setText(metadataCompat.getString(Constants.METADATA.Artist));
+            ((HomeActivity)getActivity()).mTextTitlePanel.setText(metadataCompat.getString(Constants.METADATA.Title));
+            ((HomeActivity)getActivity()).mTextArtistPanel.setText(metadataCompat.getString(Constants.METADATA.Artist));
             ImageHelper.getInstance(getContext()).getSmallImageByPicasso(
-                    String.valueOf(MusicLibrary.getAlbumRes(mediaID)), ((HomeActivity)getActivity()).mImgAlbumArt);
+                    String.valueOf(MusicLibrary.getAlbumRes(mediaID)), ((HomeActivity)getActivity()).mImgAlbumArtPanel);
         }
     }
 

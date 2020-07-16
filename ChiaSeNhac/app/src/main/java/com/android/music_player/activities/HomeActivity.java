@@ -35,7 +35,6 @@ import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.QueueManager;
 import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserListener;
-import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.BottomSheetHelper;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogHelper;
@@ -62,8 +61,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private RelativeLayout mViewControlMedia, mViewMusic;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
     private View mLayoutMedia, mLayoutState;
-    public TextView mTextArtistMedia, mTextTitleMedia;
-    public ImageView mImgAlbumArt, mImgChangeMusic, mImgBack;
+    public TextView mTextArtistPanel, mTextTitlePanel;
+    public ImageView mImgAlbumArtPanel, mImgChangeMusic, mImgBack;
     private LinearLayout mLinearTop, mBtnHome,mBtnLibrary, mLinearNext;
     private MediaManager mMediaManager;
     public PlayPauseView mBtnPlayPauseMedia , mBtnPlayPausePanel;
@@ -109,7 +108,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onStart() {
         super.onStart();
-
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
             setViewMusic(mMediaManager.getCurrentMusic(),PanelState.EXPANDED );
         }else if (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED){
@@ -126,6 +124,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getTheme().applyStyle(R.style.OverlayThemeLime, true);
         initManager();
         setContentView(R.layout.activity_home);
         initializeToolbar();
@@ -160,17 +159,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     public void setViewMusic(String mediaID, PanelState state){
-
         this.nameChoose = mediaID;
         MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(this,
                 mediaID);
-        mTextArtistMedia.setText(metadataCompat.getString(Constants.METADATA.Artist));
-        mTextTitleMedia.setText(metadataCompat.getString(Constants.METADATA.Title));
+        mTextArtistPanel.setText(metadataCompat.getString(Constants.METADATA.Artist));
+        mTextTitlePanel.setText(metadataCompat.getString(Constants.METADATA.Title));
         ImageHelper.getInstance(this).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(mediaID)),
-                mImgAlbumArt);
+                mImgAlbumArtPanel);
         setPlayMedia(mediaID);
-
-        mSlidingUpPanelLayout.setPanelState(state);
+        if (state != null) {
+            mSlidingUpPanelLayout.setPanelState(state);
+        }
     }
 
     @SuppressLint("ResourceAsColor")
@@ -191,9 +190,9 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mLayoutControlSong = mLayoutMedia.findViewById(R.id.linear_control_song);
 
         // status play media
-        mImgAlbumArt = mLayoutMedia.findViewById(R.id.img_albumArt_media);
-        mTextTitleMedia = mLayoutMedia.findViewById(R.id.text_title_media);
-        mTextArtistMedia = mLayoutMedia.findViewById(R.id.text_artists_media);
+        mImgAlbumArtPanel = mLayoutMedia.findViewById(R.id.img_albumArt_panel);
+        mTextTitlePanel = mLayoutMedia.findViewById(R.id.text_title_panel);
+        mTextArtistPanel = mLayoutMedia.findViewById(R.id.text_artists_panel);
         mBtnPlayPauseMedia = mLayoutMedia.findViewById(R.id.imbt_play_media);
 
         // thông tin bài hát
@@ -398,10 +397,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.image_view_queue:
-                /*Log.d("ZZZ",
-                        "kích thước: "+((HomeActivity)this).getQueueManager().getNamePlayList().size());
-                Log.d("ZZZ",
-                        "kích thước controller: "+getControllerActivity().getQueue().size());*/
                 if (mChooseMusicAdapter == null) {
                     mChooseMusicAdapter = new ChooseMusicAdapter(HomeActivity.this);
                     mChooseMusicAdapter.setOnConnectMediaIdListener(this);
@@ -542,6 +537,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case EXPANDED:
                 break;
             case COLLAPSED:
+                Log.d("III", "enter");
+                mQueueManager.getCurrentMediaMetadata();
                 mLayoutState.setAlpha(1);
                 break;
             case DRAGGING:
@@ -574,7 +571,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     };
 
     private void scheduleSeekBarUpdate() {
-
         stopSeekBarUpdate();
         if (!mExecutorService.isShutdown()) {
             mScheduleFuture = mExecutorService.scheduleAtFixedRate(

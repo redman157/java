@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
@@ -26,7 +25,6 @@ import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,9 +34,6 @@ import java.util.concurrent.ExecutionException;
 
 public class MediaManager {
     private BrowserConnectionListener mBrowserConnectionListener;
-    private ArrayList<MediaBrowserCompat.MediaItem> queue = new ArrayList<>();
-    private ArrayList<MusicModel> shuffleSongs = new ArrayList<>();
-//    public Set<MusicModel> temp = new HashSet<>();
     private String TAG = "MediaManagerLog";
     /* access modifiers changed from: private */
     private Context mContext;
@@ -60,7 +55,7 @@ public class MediaManager {
     private static final int ALBUM = 4;
     private static final int ALBUM_ID = 5;
     private static final int DURATION = 6;
-
+    private static final int ARTIST_ID = 7;
 
     public static MediaManager getInstance() {
         if (instance == null){
@@ -98,19 +93,6 @@ public class MediaManager {
         // lần đầu tiên cài app
         if (mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1) == -1) {
             grabIfEmpty();
-/*            if (queue.isEmpty()) {
-                try {
-                    // sao lưu file
-                    Type type = new TypeToken<ArrayList<MediaBrowserCompat.MediaItem>>() {
-                    }.getType();
-                    ArrayList<MediaBrowserCompat.MediaItem> restoreData = new Gson().fromJson(mSharedPrefsUtils.getString(Constants.PREFERENCES.KEY, null), type);
-                    replaceQueue(restoreData);
-                    Log.d(TAG, "Retrieved queue from storage in MediaManager. " + restoreData.size() + " mSongsMain!");
-                } catch (Exception e) {
-                    Log.d(TAG, "Unable to retrieve data while queue is empty.");
-                    Log.d(TAG, e.getMessage());
-                }
-            }*/
         }else if (MusicLibrary.model != null && MusicLibrary.model.size() > 0){
             if ( mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1) == MusicLibrary.model.size()){
                 return;
@@ -136,11 +118,22 @@ public class MediaManager {
 
     public String getCurrentMusic(){
         mQueueManager = QueueManager.getInstance(mContext);
-        String nameSong =
-                mQueueManager.getCurrentMediaMetadata() == null ?
-                        MusicLibrary.music.get(MusicLibrary.music.keySet().toArray()[0]).getString(Constants.METADATA.Title):
-                        mQueueManager.getCurrentMediaMetadata().getString(Constants.METADATA.Title);
+        String nameSong = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC, "");
+        if (nameSong.equals("")){
+            ArrayList<String> keys = new ArrayList<>(MusicLibrary.music.keySet());
+            mQueueManager.setCurrentMediaMetadata(getMetadata(mContext,
+                    keys.get(0)));
+            nameSong = keys.get(0);
+        }else {
+            mQueueManager.setCurrentMediaMetadata(getMetadata(mContext,
+                   nameSong));
+        }
+        Log.d("PPP", nameSong);
         return nameSong;
+    }
+
+    public void setCurrentMusic(String mediaId){
+        mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, mediaId);
     }
 
     public List<String> getAlbumIds(String rawAlbumIds) {
@@ -150,7 +143,6 @@ public class MediaManager {
         Collections.addAll(list, albumIDs);
         return list;
     }
-
 
     public ArrayList<MusicModel> artistSongs(String artist) {
         ArrayList<MusicModel> songs = new ArrayList<>();
@@ -198,41 +190,9 @@ public class MediaManager {
     public void isSync(boolean sync) {
         if (sync) {
             MusicLibrary.clear();
-            queue.clear();
         }
         grabIfEmpty(); // isSync
     }
-
-
-    public  boolean replaceQueue(final List<MediaBrowserCompat.MediaItem> list) {
-        if (list != null && !list.isEmpty()) {
-            clearQueue();
-            queue.addAll(list);
-            try {
-
-                new Thread(new Runnable() {
-                    public void run() {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.KEY, new Gson().toJson(list));
-                    }
-                }).start();
-            } catch (Exception e) {
-                e.getStackTrace();
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /*
-     * Helper Functions. Keep them private or public as required
-     */
-
-    private void clearQueue() {
-        queue.clear();
-    }
-
-
     /**
      * Database MusicOfPlayList
      * */
@@ -368,6 +328,7 @@ public class MediaManager {
         if (namePlayList.equals("")){
             if (mAllMusic.search(mediaID)){
                 mAllMusic.delete(mediaID);
+                mCategoryMusic.deleteCategory(mediaID);
                 Utils.ToastShort(mContext, "Đã xóa bài hát thành công: "+mediaID);
                 return true;
             }else {
@@ -377,6 +338,7 @@ public class MediaManager {
         }else {
             if (mAllPlayList.search(namePlayList) && mAllMusic.search(mediaID)){
                 mAllMusic.delete(mediaID);
+                mCategoryMusic.deleteCategory(mediaID);
                 Utils.ToastShort(mContext,
                         "Xóa bài hát trong NAME: "+namePlayList+" thành công: "+mediaID);
                 return true;
@@ -445,6 +407,7 @@ public class MediaManager {
             MediaStore.Audio.AudioColumns.ALBUM,// 4
             MediaStore.Audio.AudioColumns.ALBUM_ID,// 5
             MediaStore.Audio.AudioColumns.DURATION,// 6
+            MediaStore.Audio.AudioColumns.ARTIST_ID,// 6
     };
 
     private Cursor makeSongCursor(@NonNull final Context context) {
@@ -462,8 +425,6 @@ public class MediaManager {
                 MediaStore.Audio.Albums.DEFAULT_SORT_ORDER + ", " +
                 MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
     }
-
-
     @NonNull
     private static MusicModel getSongFromCursorImpl(@NonNull Cursor cursor) {
         final String title = cursor.getString(TITLE);
@@ -473,10 +434,10 @@ public class MediaManager {
         final String albumName = cursor.getString(ALBUM);
         final String album_Id = cursor.getString(ALBUM_ID);
         final int duration = cursor.getInt(DURATION);
-
-        return new MusicModel(title, path,artistName,albumName, album_Id, displayName ,duration);
+        final String artist_Id = cursor.getString(ARTIST_ID);
+        Log.d("SSS", "album_Id: "+album_Id + " --- artist_Id: "+artist_Id);
+        return new MusicModel(title, path,artistName,artist_Id,albumName, album_Id, displayName ,duration);
     }
-
 
     private void crawlData() {
         boolean excludeShortSounds = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_SHORT_SOUNDS, false);
@@ -497,7 +458,7 @@ public class MediaManager {
                     int currentDuration = Math.round(Integer.parseInt(duration));
                     if (getSongFromCursorImpl(cursor).getTime() >= 5000) {
                         Log.d("SSS", "crawlData: " + getSongFromCursorImpl(cursor).getSongName());
-                        String fileName = cursor
+                  /*      String fileName = cursor
                                 .getString(
                                         cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
                                 .replace("_", " ").trim().replaceAll(" +", " ");
@@ -519,16 +480,17 @@ public class MediaManager {
                         builder.setAlbumID(albumID);
                         builder.setPath(path);
                         builder.setTime(currentDuration);
-
-                        MusicLibrary.createMediaMetadataCompat(new MusicModel(songName,
-                                path, artistName, albumName, albumID, fileName, currentDuration));
-                        buildDataTheFirst(songName);
+                        */
+                        MusicLibrary.createMediaMetadataCompat(getSongFromCursorImpl(cursor));
+                        buildDataTheFirst(getSongFromCursorImpl(cursor).getSongName());
 
                     }
                 }
                 while (cursor.moveToNext());
                 mSharedPrefsUtils.setInteger(Constants.PREFERENCES.TOTAL_SONGS, MusicLibrary.music.size());
                 Log.d(TAG, "CrawlData() performed");
+                Log.d(TAG, "info: "+MusicLibrary.info.size());
+                filterData();
             }
         } catch (SQLiteException e) {
             Log.d(TAG, e.getMessage());
@@ -541,8 +503,9 @@ public class MediaManager {
      * Albums Data && Artist Data && folder Data
      */
     public void filterData(){
-
+        Log.d(TAG, "allKeyInfoMusic: "+MusicLibrary.info.size());
         ArrayList<MusicModel> allKeyInfoMusic = new ArrayList<>(MusicLibrary.info);
+
         ArrayList<String> keys = new ArrayList<>(MusicLibrary.music.keySet());
         ArrayList<MediaMetadataCompat> values = new ArrayList<>();
         for (int i = 0; i < keys.size(); i++){
@@ -597,6 +560,8 @@ public class MediaManager {
         MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
         for (String key :
                 new String[]{
+                        MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
+                        MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST,
                         MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
                         MediaMetadataCompat.METADATA_KEY_ALBUM,
                         MediaMetadataCompat.METADATA_KEY_ARTIST,

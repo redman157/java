@@ -19,7 +19,7 @@ import com.android.music_player.utils.SharedPrefsUtils;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
+public class PerformMusicTasks  extends AsyncTask<String, Integer, Integer> {
     private boolean sync;
     private String tag = "PerformMusicTasksLog";
     private MediaManager mMediaManager;
@@ -41,13 +41,12 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
         mMediaManager.setContext(mActivity);
         mMediaManager.installData();
-        mMediaManager.filterData();
 
     }
 
     @SuppressLint("WrongThread")
     @Override
-    protected Long doInBackground(String... strings) {
+    protected Integer doInBackground(String... strings) {
         Log.d("VVV","doInBackground: "+strings[0]);
 
         Map<String, ArrayList<String>> artists = mMediaManager.getArtist();
@@ -61,32 +60,31 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Long> {
                 Log.d(tag, "artist name: "+ k +" MusicModel: "+v.size());
             }
         }
-
         try {
             // lần đầu tiên cài app
             Log.d(tag, "Sync: "+sync);
             if (sync) {
 
             }else {
-                return null;
+                return 15;
             }
 
         } catch (Exception e) {
             Log.d(tag, "Unable to perform isSync");
             e.printStackTrace();
             Log.d(tag, e.getMessage());
-
+        }finally {
         }
-        return null;
+        return 100;
     }
     @Override
     protected void onProgressUpdate(Integer... values) {
         ((SplashActivity) mActivity).mTextSync.setText(R.string.updating_songs);
-        ((SplashActivity) mActivity).mTextSync.setText("Loading: "+values);
+        ((SplashActivity) mActivity).mTextSync.setText("Loading: "+values[0]+" %");
     }
 
     @Override
-    protected void onPostExecute(Long aLong) {
+    protected void onPostExecute(Integer aLong) {
         ((SplashActivity) mActivity).mTextSync.setText("Done");
 
         CountDownTimer count = new CountDownTimer(1000,3000) {

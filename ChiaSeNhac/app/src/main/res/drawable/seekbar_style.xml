@@ -6,7 +6,6 @@
         android:drawable="@drawable/background_seekbar" />
 
     <item android:id="@android:id/progress">
-
         <clip android:drawable="@drawable/background_process_seekbar"/>
     </item>
 </layer-list>

@@ -33,6 +33,11 @@ public class Constants {
         String CURRENT_MUSIC = "current_music";
         String SAVE_ALBUM_ID = "SaveAlbumId";
         String IS_ROOT = "IsRoot";
+
+        String ACCENT_PREF= "pref_accent";
+        String THEME_PREF ="pref_theme";
+        String ACCENT_VALUE = "value_accent";
+        String THEME_VALUES = "value_theme";
         String KEY = "key";
         String TOTAL_SONGS = "TotalSongs";
         String AUDIO_SESSION_ID = "AudioSessionId";
@@ -68,6 +73,7 @@ public class Constants {
         String Genre = MediaMetadataCompat.METADATA_KEY_GENRE;
         String MediaID = MediaMetadataCompat.METADATA_KEY_MEDIA_ID;
         String Duration = MediaMetadataCompat.METADATA_KEY_DURATION;
+        String Path = MediaMetadataCompat.METADATA_KEY_MEDIA_URI;
     }
 
 }

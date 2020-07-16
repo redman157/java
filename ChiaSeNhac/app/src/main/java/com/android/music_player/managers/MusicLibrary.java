@@ -144,6 +144,8 @@ public class MusicLibrary {
                                 MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI,
                                 getAlbumArtUri(song.getAlbumID()))
                         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, song.getSongName())
+                        .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, song.getArtistID())
+                        .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, song.getPath())
                         .build());
         albumID.put(song.getSongName(), Integer.valueOf(song.getAlbumID()));
         fileName.put(song.getSongName(), song.getPath());

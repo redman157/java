@@ -4,9 +4,9 @@
     >
 
     <gradient
-        android:startColor="@color/background"
-        android:centerColor="@color/background"
-        android:endColor="@color/background" />
+        android:startColor="?accent_color"
+        android:centerColor="?accent_color"
+        android:endColor="?accent_color" />
 
     <size
         android:height="14dp"

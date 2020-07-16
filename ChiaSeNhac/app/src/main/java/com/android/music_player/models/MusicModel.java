@@ -12,6 +12,7 @@ public class MusicModel implements Serializable {
     private String mPath;
     private String mSongName;
     private Bitmap mBitmap;
+    private String mArtistID;
     private int time;
 
     public static class Builder {
@@ -22,6 +23,7 @@ public class MusicModel implements Serializable {
         private String mPath;
         private String mSongName;
         private int time;
+        private String mArtistID;
         private MusicModel model;
         public Builder() {
         }
@@ -35,6 +37,10 @@ public class MusicModel implements Serializable {
             return this;
         }
 
+        public Builder setArtistID(String artistID) {
+            mArtistID = artistID;
+            return this;
+        }
 
         public Builder setPath(String path) {
             mPath = path;
@@ -66,7 +72,7 @@ public class MusicModel implements Serializable {
             return this;
         }
         public MusicModel generate(){
-            model = new MusicModel(mSongName,mPath,mArtist,mAlbum,mAlbumID,mFileName ,
+            model = new MusicModel(mSongName,mPath,mArtist,mArtistID,mAlbum,mAlbumID,mFileName ,
                     time);
             return model;
         }
@@ -85,10 +91,12 @@ public class MusicModel implements Serializable {
         return matches;
     }
 
-    public MusicModel(String songName, String path, String artist,
+    public MusicModel(String songName, String path,
+                      String artist, String artistID,
                       String album, String albumID,
                       String fileName, int time) {
         mAlbum = album;
+        mArtistID = artistID;
         mAlbumID = albumID;
         mArtist = artist;
         mFileName = fileName;
@@ -142,6 +150,13 @@ public class MusicModel implements Serializable {
         return mSongName;
     }
 
+    public String getArtistID() {
+        return mArtistID;
+    }
+
+    public void setArtistID(String mArtistID) {
+        this.mArtistID = mArtistID;
+    }
 
     public String getArtist() {
         return mArtist;

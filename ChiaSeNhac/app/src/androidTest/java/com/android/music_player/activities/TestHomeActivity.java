@@ -73,10 +73,10 @@ public class TestHomeActivity {
     @Test
     public void displayView(){
         onView(withId(R.id.layout_play_media)).check(matches(isCompletelyDisplayed()));
-        onView(withId(R.id.text_title_media)).check(matches(isCompletelyDisplayed()));
-        onView(withId(R.id.text_artists_media)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.text_title_panel)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.text_artists_panel)).check(matches(isCompletelyDisplayed()));
         onView(withId(R.id.imbt_play_media)).check(matches(isCompletelyDisplayed()));
-        onView(withId(R.id.img_albumArt_media)).check(matches(isCompletelyDisplayed()));
+        onView(withId(R.id.img_albumArt_panel)).check(matches(isCompletelyDisplayed()));
         onView(withId(R.id.btn_title_media)).check(matches(isCompletelyDisplayed()));
         onView(withId(R.id.menu_item)).check(matches(isCompletelyDisplayed()));
         onView(withId(R.id.rc_OptionMenu)).check(matches(isCompletelyDisplayed()));

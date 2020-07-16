@@ -4,23 +4,33 @@
     <!-- colorPrimary là background của 1 image nào đó-->
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDark</item>
-        <item name="colorAccent">@color/accentColor</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowActionBarOverlay">true</item>
 
         <item name="android:textColor">@color/primaryDark</item>
-        <item name="android:windowBackground">@color/primaryColor</item>
+        <item name="android:windowBackground">@color/white</item>
         <item name="android:fillColor">@color/primaryDark</item>
-
+        <item name="android:colorEdgeEffect">@color/black</item>
         <item name="buttonStyle">@style/MyCustomButton</item>
-
-
         <item name="editTextStyle">@style/MyCustomEditText</item>
     </style>
+
+    <style name="AppThemeInverted" parent="Theme.AppCompat.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+
+        <item name="android:textColor">@color/primaryDark</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:fillColor">@color/primaryDark</item>
+        <item name="android:colorEdgeEffect">@color/white</item>
+        <item name="buttonStyle">@style/MyCustomButton</item>
+        <item name="editTextStyle">@style/MyCustomEditText</item>
+    </style>
+
 
     <style name="SCBSwitch" parent="Theme.AppCompat.Light">
         <!-- active thumb & track color (30% transparency) -->
@@ -35,91 +45,13 @@
         </item>
     </style>
 
-    <style name="BackgroundPlay" parent="AppTheme">
-        <item name="windowActionBarOverlay">true</item>
-        <item name="colorPrimaryDark">@color/primaryDark</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:fillColor">@color/primaryDark</item>
-        <item name="android:windowTranslucentNavigation">false</item>
-    </style>
-    
-    <style name="CustomToolBarStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/white</item>
-        <item name="colorPrimaryDark">@color/primaryDark</item>
-        <item name="colorAccent">@color/black</item>
-        <item name="android:tint">@color/black</item>
+    <style name="SeekBarStyle" parent="android:Widget.Material.SeekBar">
+        <item name="android:progressBackgroundTint">?attr/accent_color</item>
+        <item name="android:progressTint">?attr/accent_color</item>
+        <item name="android:colorControlActivated">?attr/accent_color</item>
+        <item name="android:thumbTint">?attr/accent_color</item>
     </style>
 
-    <style name="CustomToolBarPlay" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/white</item>
-        <item name="colorPrimaryDark">@color/primaryDark</item>
-        <item name="colorAccent">@color/black</item>
-    </style>
-
-    <style name="CustomPopupStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:background">@color/white</item>
-        <item name="overlapAnchor">false</item>
-        <item name="android:dropDownVerticalOffset">0dp</item>
-    </style>
-
-    <style name="CustomPopupPlay" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:background">@color/white</item>
-        <item name="overlapAnchor">false</item>
-        <item name="android:dropDownVerticalOffset">0dp</item>
-    </style>
-
-    <!-- HomeActivity -->
-    <style name="AppThemeToolbar" parent="AppTheme">
-        <item name="android:actionBarStyle">@style/MyHomeActionBar</item>
-        <item name="actionBarStyle">@style/MyHomeActionBar</item>
-        <item name="dialogTheme">@style/MyCustomDialog</item>
-        <item name="android:dialogTheme">@style/MyCustomDialog</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <!-- PlayActivity -->
-    <style name="AppThemeToolbar.Overlay" parent="AppThemeToolbar">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="windowActionBarOverlay">true</item>
-        <item name="colorPrimaryDark">@color/transparent</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">false</item>
-    </style>
-
-    <!-- SettingsActivity -->
-    <style name="ThemeActionBar" parent="AppTheme">
-        <item name="android:actionBarStyle">@style/MyHomeActionBar</item>
-        <item name="actionBarStyle">@style/MyHomeActionBar</item>
-    </style>
-
-    <!-- GlobalActivity -->
-    <style name="ThemeToolBarTranslucent" parent="AppThemeToolbar">
-        <item name="android:windowTranslucentNavigation">false</item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="windowActionBarOverlay">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-    </style>
-
-    <style name="CarTheme" parent="CustomToolBarPlay">
-        <!-- colorPrimaryDark is currently used in Android Auto for:
-             - App background
-             - Drawer right side ("more" custom actions) background
-             - Notification icon badge tinting
-             - Overview “now playing” icon tinting
-         -->
-        <item name="colorPrimaryDark">#ffbf360c</item>
-
-        <!-- colorAccent is used in Android Auto for:
-             - Spinner
-             - progress bar
-             - floating action button background (Play/Pause in media apps)
-         -->
-        <item name="colorAccent">@color/cyan</item>
-    </style>
-    <!--
-        *
-        -->
     <style name="MyHomeActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/primaryColor</item>
         <item name="background">@color/primaryColor</item>
@@ -178,4 +110,43 @@
         <item name="android:background">@drawable/custom_corner_dialog</item>
         <item name="buttonStyle">@style/MyCustomButton</item>
     </style>
+
+    <!-- HomeActivity -->
+    <style name="AppThemeToolbar" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/MyHomeActionBar</item>
+        <item name="actionBarStyle">@style/MyHomeActionBar</item>
+        <item name="dialogTheme">@style/MyCustomDialog</item>
+        <item name="android:dialogTheme">@style/MyCustomDialog</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="BackgroundPlay" parent="AppTheme">
+        <item name="windowActionBarOverlay">true</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:fillColor">@color/primaryDark</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+    </style>
+
+    <!--Toolbar pop up-->
+    <style name="CustomToolBarStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:tint">@color/black</item>
+    </style>
+
+    <style name="CustomToolBarPlay" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/black</item>
+    </style>
+
+    <style name="CustomPopupStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:background">@color/white</item>
+        <item name="overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">0dp</item>
+    </style>
+
 </resources>

@@ -70,7 +70,8 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
 
     private boolean mToolbarInitialized;
-
+    private int mAccent;
+    private boolean sThemeInverted;
     private int mItemToOpenWhenDrawerCloses = -1;
     private SharedPrefsUtils mSharedPrefsUtils ;
     public abstract void OnStateChange( STATE state);
@@ -267,8 +268,15 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         mSharedPrefsUtils.setString(
                                 Constants.PREFERENCES.ACCENT_COLOR, Constants.COLOR.BLACK);
                         dialog.cancel();
+
+                        Intent intent = getIntent(); // from getIntent()
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         finish();
-                        startActivity(getIntent());
+                        startActivity(intent);
+                      /*  sThemeInverted = ChangeTheme.isThemeInverted(ActionBarCastActivity.this);
+                        mAccent = ChangeTheme.getAccent(ActionBarCastActivity.this);
+
+                        ChangeTheme.setTheme(ActionBarCastActivity.this, sThemeInverted, mAccent);*/
                     }
                 });
                 dialog.findViewById(R.id.white).setOnClickListener(new View.OnClickListener() {

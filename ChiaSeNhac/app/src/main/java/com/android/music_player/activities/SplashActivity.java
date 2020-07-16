@@ -76,7 +76,8 @@ public class SplashActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
 
-                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}
+                        requestPermissions(new String[]{
+                                Manifest.permission.READ_EXTERNAL_STORAGE}
                                 , READ_FILES_CODE);
                     }
                 });
@@ -94,6 +95,7 @@ public class SplashActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
 
     private void setTextStatus() {
         mMediaManager = MediaManager.getInstance();

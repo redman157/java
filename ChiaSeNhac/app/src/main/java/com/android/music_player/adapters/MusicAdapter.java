@@ -2,7 +2,6 @@ package com.android.music_player.adapters;
 
 import android.app.Activity;
 import android.support.v4.media.MediaMetadataCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
-    private final Activity mActivity;
+    private Activity mActivity;
     private Map<String, MediaMetadataCompat> mMusics;
     private SharedPrefsUtils mSharedPrefsUtils;
     private MediaManager mMediaManager;
@@ -32,7 +31,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
     public void setLimit(boolean isLimit){
         this.isSort = isLimit;
     }
-    private List<String> keys;
+    public static List<String> keys;
     public MusicAdapter(Activity activity, Map<String, MediaMetadataCompat> musics,
                         boolean isSort) {
         mMediaManager = MediaManager.getInstance();
@@ -40,14 +39,24 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
         this.mMusics = musics;
         mActivity = activity;
         this.isSort = isSort;
-        Log.d("SSS", "MusicAdapter: "+musics.size());
-        keys = new ArrayList<>(musics.keySet());
         if (isSort) {
+            keys = new ArrayList<>(musics.keySet());
             Collections.sort(keys);
+            setMusicList(keys);
         }else {
+            keys = new ArrayList<>(musics.keySet());
             Collections.reverse(keys);
+            setMusicList(keys);
         }
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
+    }
+
+    public MusicAdapter(){
+
+    }
+
+    public void setMusicList(List<String> keys) {
+        this.keys = keys;
     }
 
     public List<String> getMusicList(){
@@ -76,22 +85,23 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
 
     @Override
     public void onBindViewHolder(MediaItemViewHolder holder, final int position) {
-        final MediaMetadataCompat description = mMediaManager.getMetadata(mActivity,keys.get(position));
-        holder.assignData(description);
+        final MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(mActivity,keys.get(position));
+        holder.assignData(metadataCompat);
         holder.mLinearMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /* bắt sự kiện click để bật nhạc*/
-                onConnectMediaId.onChangeMediaId(description.getDescription().getMediaId());
+                onConnectMediaId.onChangeMediaId(metadataCompat.getDescription().getMediaId());
                 mSharedPrefsUtils.setString(Constants.PREFERENCES.SAVE_ALBUM_ID,
-                        description.getString(Constants.METADATA.AlbumID));
+                        metadataCompat.getString(Constants.METADATA.AlbumID));
             }
         });
 
         holder.mBtnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogHelper.showDialogChangeMusic(mActivity,description.getDescription().getMediaId());
+
+                DialogHelper.showDialogChangeMusic(mActivity,metadataCompat);
             }
         });
 

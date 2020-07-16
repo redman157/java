@@ -149,7 +149,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:max="1000"
-                        android:thumb="@drawable/thumb_seekbar"
+                        android:thumb="@drawable/progress_bar_accent"
                         android:theme="@style/Widget.AppCompat.SeekBar"
 
                         android:progressDrawable="@drawable/seekbar_style" />

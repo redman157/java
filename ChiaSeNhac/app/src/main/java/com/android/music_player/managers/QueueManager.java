@@ -51,8 +51,6 @@ public class QueueManager {
         }
     }
 
-
-
     public StateViewModel getStateViewModel() {
         return mStateViewModel;
     }
@@ -138,6 +136,8 @@ public class QueueManager {
             public void onChanged(MediaMetadataCompat metadataCompat) {
                 mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, metadataCompat.getString(Constants.METADATA.Title));
                 mediaMetadataCompat = metadataCompat;
+                Log.d("III",mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC));
+
             }
         });
 
@@ -156,6 +156,8 @@ public class QueueManager {
     }
 
     public void setCurrentMediaMetadata(MediaMetadataCompat metadataCompat){
+        mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC,
+                metadataCompat.getString(Constants.METADATA.Title));
         getStateViewModel().setMediaDataCurrent(metadataCompat);
     }
 }

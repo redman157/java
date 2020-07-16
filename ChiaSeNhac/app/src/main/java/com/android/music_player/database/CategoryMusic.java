@@ -72,7 +72,7 @@ public class CategoryMusic {
 
 
     public int isFavorite(String name){
-        Cursor cursor = mDatabase.getData(Database.STATISTIC.QUERY);
+        Cursor cursor = mDatabase.getData(Database.CATEGORY.QUERY);
         try {
             if (isExistData(cursor)){
                 do  {

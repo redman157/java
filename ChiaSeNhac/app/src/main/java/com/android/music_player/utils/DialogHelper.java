@@ -5,8 +5,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.v4.media.MediaMetadataCompat;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +36,7 @@ import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.models.MusicModel;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static com.android.music_player.activities.HomeActivity.FRAGMENT_TAG;
@@ -54,8 +59,13 @@ public class DialogHelper {
         }
     }
 
-    public static void showDialogChangeMusic(final Context context, final String mediaID){
+    public static void showDialogChangeMusic(final Context context,
+                                             final MediaMetadataCompat metadataCompat){
         // fragment home -- > show dialog add music vào play list
+        final String mediaID = metadataCompat.getString(Constants.METADATA.Title);
+        final String album = metadataCompat.getString(Constants.METADATA.Album);
+        final String artist = metadataCompat.getString(Constants.METADATA.Artist);
+        final String path = metadataCompat.getString(Constants.METADATA.Path);
         final MediaManager manager = MediaManager.getInstance();
         manager.setContext(context);
         SelectOptionsAdapter selectOptionsAdapter = new SelectOptionsAdapter(context, SelectOptionsAdapter.initData());
@@ -66,15 +76,15 @@ public class DialogHelper {
                 public void onClick(int position) {
                     switch (position) {
                         case 0:
-                            if(manager.getCategorySongsDB().isFavorite(mediaID) != -1){
-                                Log.d("AAA","enter if");
-                                if(manager.getCategorySongsDB().isFavorite(mediaID) == 0 ){
+                            if (manager.getCategorySongsDB().isFavorite(mediaID) != -1) {
+                                Log.d("AAA", "enter if");
+                                if (manager.getCategorySongsDB().isFavorite(mediaID) == 0) {
 //                                    manager.getCategorySongsDB().favorite(mediaID, 1);
-                                }else if(manager.getCategorySongsDB().isFavorite(mediaID) == 1){
+                                } else if (manager.getCategorySongsDB().isFavorite(mediaID) == 1) {
 //                                    manager.getCategorySongsDB().favorite(mediaID, 0);
                                 }
-                            }else{
-                                Log.d("AAA","enter elseAAA: "+mediaID);
+                            } else {
+                                Log.d("AAA", "enter elseAAA: " + mediaID);
                             }
                             break;
                         case 1:
@@ -83,10 +93,10 @@ public class DialogHelper {
                                         @Override
                                         public void onAddMusicToPlayList(String namePlayList) {
                                             activity.bottomSheetHelper.dismiss();
-                                            if (manager.addMusicToPlayList(namePlayList, mediaID)){
-                                                Utils.ToastShort(context,"Đã Add Bài: "+ mediaID);
-                                            }else {
-                                                Utils.ToastShort(context,"Add Bài: "+ mediaID);
+                                            if (manager.addMusicToPlayList(namePlayList, mediaID)) {
+                                                Utils.ToastShort(context, "Đã Add Bài: " + mediaID);
+                                            } else {
+                                                Utils.ToastShort(context, "Add Bài: " + mediaID);
                                             }
                                         }
 
@@ -99,24 +109,99 @@ public class DialogHelper {
                                     FRAGMENT_TAG);
                             break;
                         case 2:
+                            if (activity instanceof HomeActivity) {
+                                final HomeActivity mHomeActivity = (HomeActivity)activity;
+                                mHomeActivity.bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_ITEM_LIBRARY,
+                                        artist, MusicLibrary.artist, new OnClickItemListener() {
+                                    @Override
+                                    public void onAddMusicToPlayList(String namePlayList) {
+                                        dialog.dismiss();
+                                        mHomeActivity.bottomSheetHelper.dismiss();
+                                        mHomeActivity.setTitle(namePlayList);
+                                        mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(namePlayList, null);
+                                    }
+
+                                    @Override
+                                    public void onChooseItemLibrary(ArrayList<String> models) {
+
+                                    }
+                                });
+                                mHomeActivity.bottomSheetHelper.setTitle("All Alfolderbum In Device");
+                                mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(), mHomeActivity.FRAGMENT_TAG);
+                            }
                             Utils.ToastShort(context, position + "");
+
                             break;
                         case 3:
+                            if (activity instanceof HomeActivity) {
+                                final HomeActivity mHomeActivity = (HomeActivity)activity;
+                                mHomeActivity.bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_ITEM_LIBRARY,
+                                        album, MusicLibrary.album, new OnClickItemListener() {
+                                    @Override
+                                    public void onAddMusicToPlayList(String namePlayList) {
+                                        dialog.dismiss();
+                                        mHomeActivity.bottomSheetHelper.dismiss();
+                                        mHomeActivity.setTitle(namePlayList);
+                                        mHomeActivity.getControllerActivity().getTransportControls().prepareFromMediaId(namePlayList, null);
+                                    }
+
+                                    @Override
+                                    public void onChooseItemLibrary(ArrayList<String> models) {
+
+                                    }
+                                });
+                                mHomeActivity.bottomSheetHelper.setTitle("All Alfolderbum In Device");
+                                mHomeActivity.bottomSheetHelper.show(mHomeActivity.getSupportFragmentManager(), mHomeActivity.FRAGMENT_TAG);
+                            }
                             Utils.ToastShort(context, position + "");
                             break;
                         case 4:
+                            Context c = context.getApplicationContext();
+                            boolean settingsCanWrite = Settings.System.canWrite(c);
+                            // Check whether has the write settings permission or not.
+                            if(!settingsCanWrite) {
+                                // If do not have write settings permission then open the Can modify system settings panel.
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                c.startActivity(intent);
+                            }else {
+                                // If has permission then show an alert dialog with message.
+                                AlertDialog builder = new AlertDialog.Builder(context).create();
+                                builder.setMessage("You want to select this song as the ringtone ?");
+                                builder.setButton(AlertDialog.BUTTON_POSITIVE, "OKEY",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                File file = new File(path); // path is a file to /sdcard/media/ringtone
+                                                Uri uri = Uri.fromFile(file);
+                                                RingtoneManager.setActualDefaultRingtoneUri(
+                                                    context,
+                                                    RingtoneManager.TYPE_RINGTONE,
+                                                    uri
+                                                );
+                                            }
+                                        });
+                                builder.setButton(AlertDialog.BUTTON_NEGATIVE, "Exit",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                ((HomeActivity) context).finish();
+                                            }
+                                        });
+                                builder.show();
+                            }
+
                             Utils.ToastShort(context, position + "");
                             break;
                         case 5:
-                            Utils.ToastShort(context, position + "");
+
+                            Utils.ToastShort(context,
+                                    metadataCompat.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI) + "");
                             break;
                         case 6:
                             Utils.ToastShort(context, position + "");
                             break;
                         case 7:
-                            Utils.ToastShort(context, position + "");
-                            break;
-                        case 8:
                             Utils.ToastShort(context, position + "");
                             break;
                     }

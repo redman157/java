@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="OverlayThemeLime" parent="AppTheme">
+        <item name="colorPrimary">@color/green_A400</item>
+        <item name="colorPrimaryDark">@color/green</item>
+        <item name="accent_color">@color/light_green</item>
+        <item name="popup_text_color">@color/light</item>
+        <item name="android:seekBarStyle">@style/SeekBarStyle</item>
+    </style>
+
+    <style name="OverlayThemeBlack" parent="AppTheme">
+
+        <item name="colorPrimary">@color/green_A400</item>
+        <item name="colorPrimaryDark">@color/green</item>
+        <item name="colorAccent">@color/light_green</item>
+    </style>
+
+    <style name="OverlayThemeWhite" parent="AppTheme">
+        <item name="colorPrimary">@color/green_A400</item>
+        <item name="colorPrimaryDark">@color/green</item>
+        <item name="colorAccent">@color/light_green</item>
+    </style>
+
+    <style name="OverlayThemeBlue" parent="AppTheme">
+        <item name="colorPrimary">@color/green_A400</item>
+        <item name="colorPrimaryDark">@color/green</item>
+        <item name="colorAccent">@color/light_green</item>
+    </style>
+</resources>

@@ -73,8 +73,6 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
         }
         // assignData up việc chuyển page
         if (onChangeMusicListener != null){
-            Log.d("CCC",
-                    "MediaBrowserListener --- onMetadataChanged: "+ (mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)));
             onChangeMusicListener.onMediaMetadata(mediaMetadata);
         }
     }

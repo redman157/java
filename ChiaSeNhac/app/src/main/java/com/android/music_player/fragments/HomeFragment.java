@@ -170,12 +170,14 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
 
         public void initView(){
+
             if (mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).equals("")) {
                 mTextPlayerSongs.setText("");
                 mImgPlayerMusic.setImageResource(R.drawable.ic_music_notes_padded);
             }else {
                 mTextPlayerSongs.setText(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC));
-                ImageHelper.getInstance(mHomeActivity).getSmallImageByPicasso(mMediaManager.getSong(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC)).getAlbumID(),
+                ImageHelper.getInstance(mHomeActivity).getSmallImageByPicasso(
+                        String.valueOf(MusicLibrary.getAlbumRes(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC))),
                         mImgPlayerMusic);
             }
             mMostPlayList = mMediaManager.getListMost(Constants.VALUE.MOST_PLAY_LIST);

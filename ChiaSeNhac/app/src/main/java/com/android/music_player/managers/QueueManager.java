@@ -45,7 +45,7 @@ public class QueueManager {
             mStateViewModel = new StateViewModel(((Activity) mContext).getApplication());
             mStateViewModel.setParentId(MusicLibrary.MEDIA_ID_ROOT);
             mStateViewModel.setNamePlayList("");
-            if (mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"").equals("")){
+            if (mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"").equals("") && MusicLibrary.music.size() > 0){
                 mStateViewModel.setMediaDataCurrent(MusicLibrary.music.get(MusicLibrary.music.keySet().toArray()[0]));
             }
         }

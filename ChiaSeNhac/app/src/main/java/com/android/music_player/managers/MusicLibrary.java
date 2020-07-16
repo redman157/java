@@ -23,7 +23,7 @@ public class MusicLibrary {
     public static final HashMap<String, Integer> albumID = new HashMap<>();
     public static final HashMap<String, String> fileName = new HashMap<>();
     public static final Set<MediaMetadataCompat> metadata = new HashSet<>();
-    public static final Set<MusicModel> info = new HashSet<>();
+    public static Set<MusicModel> info = new HashSet<>();
 
     public ArrayList<MediaMetadataCompat> queue = new ArrayList<>();
     public static final Map<String, ArrayList<String>> album = new HashMap<>();
@@ -137,7 +137,6 @@ public class MusicLibrary {
                         .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, song.getAlbum())
                         .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, song.getArtist())
                         .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, song.getTime())
-                        .putString(MediaMetadataCompat.METADATA_KEY_GENRE, song.getGenres())
                         .putString(
                                 MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
                                 getAlbumArtUri(song.getAlbumID()))

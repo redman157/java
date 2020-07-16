@@ -189,8 +189,6 @@ public abstract class BrowserHelper {
                 final MediaMetadataCompat metadata = mMediaController.getMetadata();
 
                 if (metadata != null) {
-                    Log.d("CCC",
-                            "BrowserHelper --- registerCallback --- musicID: " + metadata.getDescription().getMediaId());
                     Log.d("JJJ",
                             "BrowserHelper --- registerCallback --- musicID: " + metadata.getDescription().getMediaId());
                     callback.onMetadataChanged(metadata);

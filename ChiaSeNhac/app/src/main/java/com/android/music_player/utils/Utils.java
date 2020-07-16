@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.widget.Toast;
 
@@ -20,6 +21,9 @@ import java.util.TimeZone;
 
 public class Utils {
 
+    public static boolean isMarshmallow() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
 
     public static String formatTime(int currentDuration){
         TimeZone tz = TimeZone.getTimeZone("UTC");

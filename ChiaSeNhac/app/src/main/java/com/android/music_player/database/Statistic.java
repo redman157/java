@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,9 +45,8 @@ public class Statistic {
                 " VALUES(" +
                 " null, " +
                 "'" + type    + "'"+ ","+
-                "'" + name + "'"+ ","+
-                "'" + 1       + "'"+ ","+
-                "'" + 0       + "'"+ ")";
+                "'" + name    + "'"+ ","+
+                "'" + 1       + "'"+ ")";
         mDatabase.queryData(SQL_ADD);
         closeDatabase();
     }
@@ -107,7 +105,6 @@ public class Statistic {
                         if (playListMost.get(counter) == null) {
                             playListMost.put(counter, new ArrayList<String>());
                         }
-
                         playListMost.get(counter).add(playlist);
                     } while (cursor.moveToNext());
 
@@ -140,7 +137,10 @@ public class Statistic {
         } catch (SQLiteException exception) {
             Log.d(TAG, exception.getMessage());
         } catch (CursorIndexOutOfBoundsException e){
+            addRow(Constants.VALUE.MOST_PLAY_LIST, "Play List 1");
+            addRow(Constants.VALUE.MOST_PLAY_LIST, "Play List 2");
             return most;
+        }catch (IndexOutOfBoundsException e){
         }
         finally {
             closeDatabase();
@@ -165,7 +165,8 @@ public class Statistic {
 
 
             }
-        }finally {
+        }
+        finally {
             closeDatabase();
         }
         allMusic = (ArrayList<String>) allMusicMap.values();

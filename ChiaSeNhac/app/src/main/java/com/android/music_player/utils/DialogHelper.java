@@ -66,12 +66,12 @@ public class DialogHelper {
                 public void onClick(int position) {
                     switch (position) {
                         case 0:
-                            if(manager.getStatistic().isFavorite(mediaID) != -1){
+                            if(manager.getCategorySongsDB().isFavorite(mediaID) != -1){
                                 Log.d("AAA","enter if");
-                                if(manager.getStatistic().isFavorite(mediaID) == 0 ){
-                                    manager.getStatistic().favorite(mediaID, 1);
-                                }else if(manager.getStatistic().isFavorite(mediaID) == 1){
-                                    manager.getStatistic().favorite(mediaID, 0);
+                                if(manager.getCategorySongsDB().isFavorite(mediaID) == 0 ){
+//                                    manager.getCategorySongsDB().favorite(mediaID, 1);
+                                }else if(manager.getCategorySongsDB().isFavorite(mediaID) == 1){
+//                                    manager.getCategorySongsDB().favorite(mediaID, 0);
                                 }
                             }else{
                                 Log.d("AAA","enter elseAAA: "+mediaID);

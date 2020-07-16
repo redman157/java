@@ -2,6 +2,7 @@ package com.android.music_player.adapters;
 
 import android.app.Activity;
 import android.support.v4.media.MediaMetadataCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MediaItemViewHolder> {
         this.mMusics = musics;
         mActivity = activity;
         this.isSort = isSort;
+        Log.d("SSS", "MusicAdapter: "+musics.size());
         keys = new ArrayList<>(musics.keySet());
         if (isSort) {
             Collections.sort(keys);

@@ -5,11 +5,8 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.android.music_player.models.MusicModel;
 import com.android.music_player.utils.Constants;
-import com.android.music_player.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -55,7 +52,8 @@ public class CategoryMusic {
     // add Data
     public void addCategory(String type, String mediaId) {
         String SQL_INSERT = "INSERT INTO "+ Database.CATEGORY.TABLE_NAME+
-                " Value(null, " +
+                " VALUES(" +
+                " null," +
                 "'"+ mediaId +"'"  + "," +
                 "'"+ type    +"'"  + "," +
                 "'"+ 0       +"'"  + ")";

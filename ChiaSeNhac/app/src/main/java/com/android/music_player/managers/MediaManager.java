@@ -12,6 +12,8 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.android.music_player.database.AllMusic;
 import com.android.music_player.database.AllPlayList;
 import com.android.music_player.database.CategoryMusic;
@@ -25,9 +27,7 @@ import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +38,8 @@ public class MediaManager {
     private BrowserConnectionListener mBrowserConnectionListener;
     private ArrayList<MediaBrowserCompat.MediaItem> queue = new ArrayList<>();
     private ArrayList<MusicModel> shuffleSongs = new ArrayList<>();
-    private String TAG = "SongsManagerConsole";
+//    public Set<MusicModel> temp = new HashSet<>();
+    private String TAG = "MediaManagerLog";
     /* access modifiers changed from: private */
     private Context mContext;
     /* access modifiers changed from: private */
@@ -51,8 +52,16 @@ public class MediaManager {
     private MusicOfPlayList mMusicOfPlayList;
     private QueueManager mQueueManager;
     @SuppressLint("StaticFieldLeak")
-    private String albumChoose;
     private static MediaManager instance;
+    private static final int TITLE = 0;
+    private static final int DISPLAY_NAME = 1;
+    private static final int DATA = 2;
+    private static final int ARTIST = 3;
+    private static final int ALBUM = 4;
+    private static final int ALBUM_ID = 5;
+    private static final int DURATION = 6;
+
+
     public static MediaManager getInstance() {
         if (instance == null){
             instance = new MediaManager();
@@ -61,7 +70,6 @@ public class MediaManager {
     }
 
     private MediaManager() {
-
     }
 
     public Context getContext() {
@@ -83,12 +91,14 @@ public class MediaManager {
         mSharedPrefsUtils = new SharedPrefsUtils(mContext);
 //        mQueueManager = QueueManager.getInstance(mContext);
         mTotalSong = mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1);
+
     }
+
     public void installData(){
         // lần đầu tiên cài app
-        if (mTotalSong == -1) {
+        if (mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1) == -1) {
             grabIfEmpty();
-            if (queue.isEmpty()) {
+/*            if (queue.isEmpty()) {
                 try {
                     // sao lưu file
                     Type type = new TypeToken<ArrayList<MediaBrowserCompat.MediaItem>>() {
@@ -100,9 +110,9 @@ public class MediaManager {
                     Log.d(TAG, "Unable to retrieve data while queue is empty.");
                     Log.d(TAG, e.getMessage());
                 }
-            }
+            }*/
         }else if (MusicLibrary.model != null && MusicLibrary.model.size() > 0){
-            if (mTotalSong == MusicLibrary.model.size()){
+            if ( mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1) == MusicLibrary.model.size()){
                 return;
             }else {
                 crawlData();
@@ -282,7 +292,7 @@ public class MediaManager {
 
     public ArrayList<String> getListMost(String type){
         if (type.equals(Constants.VALUE.MOST_PLAY_LIST)) {
-                return mStatistic.getPlayListMost();
+            return mStatistic.getPlayListMost();
         }else {
             return mStatistic.getAllMusicMost();
         }
@@ -316,24 +326,28 @@ public class MediaManager {
     }*/
 
     public void buildDataTheFirst(String songName){
-        if (mAllPlayList.getSize() == 0) {
-            mAllPlayList.addRow("Play List 1");
-            mAllPlayList.addRow("Play List 2");
+        try {
+            if (mAllPlayList.getSize() == 0) {
+                mAllPlayList.addRow("Play List 1");
+                mAllPlayList.addRow("Play List 2");
+            } else {
+                Log.d(TAG, "MediaManager --- buildDataTheFirst mAllPlayList size > 0");
+            }
 
-        }else {
-            Log.d(TAG, "MediaManager --- buildDataTheFirst mAllPlayList size > 0");
-        }
+            if (mStatistic.getSize() == 0) {
+                Log.d(TAG, "MediaManager --- buildDataTheFirst mStatistic size = 0");
+                mStatistic.addRow(Constants.VALUE.MOST_PLAY_LIST, "Play List 1");
+                mStatistic.addRow(Constants.VALUE.MOST_PLAY_LIST, "Play List 2");
+            } else {
+                Log.d(TAG, "MediaManager --- buildDataTheFirst mStatistic size > 0");
+            }
 
-        if (mStatistic.getSize() == 0){
-            mStatistic.addRow(Constants.VALUE.MOST_PLAY_LIST, "Play List 1");
-            mStatistic.addRow(Constants.VALUE.MOST_PLAY_LIST, "Play List 2");
-        }else {
-            Log.d(TAG, "MediaManager --- buildDataTheFirst mStatistic size > 0");
-        }
-
-        if (!mAllMusic.search(songName)){
-            mAllMusic.addRow(songName);
-            mCategoryMusic.addCategory(Constants.VALUE.MUSIC, songName);
+            if (!mAllMusic.search(songName)) {
+                mAllMusic.addRow(songName);
+                mCategoryMusic.addCategory(Constants.VALUE.MUSIC, songName);
+            }
+        }catch (SQLiteException e){
+            Log.d(TAG, e.getMessage());
         }
     }
 
@@ -423,108 +437,110 @@ public class MediaManager {
         }
     }
 
-    private void crawlData() {
-        try {
-            String[] mediaProjection = {"*"};
-            String[] genresProjection = {
-                    MediaStore.Audio.Genres.NAME,
-                    MediaStore.Audio.Genres._ID
-            };
-            boolean excludeShortSounds = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_SHORT_SOUNDS, false);
-            boolean excludeWhatsApp = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_WHATS_APP_SOUNDS, false);
+    private static final String[] BASE_PROJECTION = new String[]{
+            MediaStore.Audio.AudioColumns.TITLE,// 0
+            MediaStore.Audio.AudioColumns.DISPLAY_NAME,// 1
+            MediaStore.Audio.AudioColumns.DATA,// 2
+            MediaStore.Audio.AudioColumns.ARTIST,// 3
+            MediaStore.Audio.AudioColumns.ALBUM,// 4
+            MediaStore.Audio.AudioColumns.ALBUM_ID,// 5
+            MediaStore.Audio.AudioColumns.DURATION,// 6
+    };
 
+    private Cursor makeSongCursor(@NonNull final Context context) {
+        try {
             Uri uriMedia = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
             String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+            return context.getContentResolver().query(uriMedia, BASE_PROJECTION, selection, null,
+                    getSongLoaderSortOrder());
+        } catch (SecurityException e) {
+            return null;
+        }
+    }
+    private static String getSongLoaderSortOrder() {
+        return MediaStore.Audio.Artists.DEFAULT_SORT_ORDER + ", " +
+                MediaStore.Audio.Albums.DEFAULT_SORT_ORDER + ", " +
+                MediaStore.Audio.Media.DEFAULT_SORT_ORDER;
+    }
 
-            Cursor cursor =
-                    mContext.getContentResolver()
-                    .query(uriMedia, mediaProjection, selection, null, null);
-            Log.d(TAG, "Uri: " + uriMedia.getPath() + " ==== Selection: " + selection + " ====== Cursor: " + cursor.getCount());
+
+    @NonNull
+    private static MusicModel getSongFromCursorImpl(@NonNull Cursor cursor) {
+        final String title = cursor.getString(TITLE);
+        final String displayName = cursor.getString(DISPLAY_NAME);
+        final String path = cursor.getString(DATA);
+        final String artistName = cursor.getString(ARTIST);
+        final String albumName = cursor.getString(ALBUM);
+        final String album_Id = cursor.getString(ALBUM_ID);
+        final int duration = cursor.getInt(DURATION);
+
+        return new MusicModel(title, path,artistName,albumName, album_Id, displayName ,duration);
+    }
 
 
-            if (cursor.moveToFirst()) {
+    private void crawlData() {
+        boolean excludeShortSounds = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_SHORT_SOUNDS, false);
+        boolean excludeWhatsApp = mSharedPrefsUtils.getBoolean(Constants.PREFERENCES.EXCLUDE_WHATS_APP_SOUNDS, false);
+
+        Cursor cursor = makeSongCursor(mContext);
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                Log.d("SSEE", "crawl: " + cursor.getCount());
                 do {
                     MusicModel.Builder builder = null;
                     String duration = cursor
                             .getString(cursor
                                     .getColumnIndex(MediaStore.Audio.Media.DURATION));
+                    String apps =
+                            cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+
                     int currentDuration = Math.round(Integer.parseInt(duration));
-                    if (currentDuration > ((excludeShortSounds) ? 60000 : 0)) {
-                        if (!excludeWhatsApp ||
-                                !cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)).equals("WhatsApp Audio")) {
+                    if (getSongFromCursorImpl(cursor).getTime() >= 5000) {
+                        Log.d("SSS", "crawlData: " + getSongFromCursorImpl(cursor).getSongName());
+                        String fileName = cursor
+                                .getString(
+                                        cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
+                                .replace("_", " ").trim().replaceAll(" +", " ");
+                        String path = cursor.getString(cursor
+                                .getColumnIndex(MediaStore.Audio.Media.DATA));
+                        String songName = cursor.getString(cursor
+                                .getColumnIndex(MediaStore.Audio.Media.TITLE));
+                        String artistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
 
+                        String albumName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+                        String albumID = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
 
-                            int id_column_index = cursor
-                                    .getColumnIndexOrThrow(MediaStore.Audio.Media._ID);
+                        // Adding song to list
+                        builder = new MusicModel.Builder();
+                        builder.setFileName(fileName);
+                        builder.setSongName(songName);
+                        builder.setArtist(artistName);
+                        builder.setAlbum(albumName);
+                        builder.setAlbumID(albumID);
+                        builder.setPath(path);
+                        builder.setTime(currentDuration);
 
-                            int musicId = Integer.parseInt(cursor.getString(id_column_index));
+                        MusicLibrary.createMediaMetadataCompat(new MusicModel(songName,
+                                path, artistName, albumName, albumID, fileName, currentDuration));
+                        buildDataTheFirst(songName);
 
-
-                            String fileName = cursor
-                                    .getString(
-                                            cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                                    .replace("_", " ").trim().replaceAll(" +", " ");
-                            String path = cursor.getString(cursor
-                                    .getColumnIndex(MediaStore.Audio.Media.DATA));
-                            String songName = cursor.getString(cursor
-                                    .getColumnIndex(MediaStore.Audio.Media.TITLE)).replace("_", " ").trim().replaceAll(" +", " ");
-                            String artistName = cursor.getString(cursor
-                                    .getColumnIndex(MediaStore.Audio.Media.ARTIST));
-
-                            String albumName = cursor.getString(cursor
-                                    .getColumnIndex(MediaStore.Audio.Media.ALBUM));
-
-                            String albumID = cursor
-                                    .getString(
-                                            cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
-                                    );
-
-
-                            Uri uriGenres = MediaStore.Audio.Genres.getContentUriForAudioId("external", musicId);
-                            Cursor genresCursor = mContext.getContentResolver().query(uriGenres,
-                                    genresProjection, null, null, null);
-                            String genres = "";
-                            int genre_column_index = genresCursor.getColumnIndexOrThrow(MediaStore.Audio.Genres.NAME);
-                            if (genresCursor.moveToFirst()) {
-                                do {
-                                    genres = genresCursor.getString(genre_column_index);
-                                } while (genresCursor.moveToNext());
-                            }
-
-
-                            // Adding song to list
-                            builder = new MusicModel.Builder();
-                            builder.setFileName(fileName);
-                            builder.setSongName(songName);
-                            builder.setArtist(artistName);
-                            builder.setAlbum(albumName);
-                            builder.setAlbumID(albumID);
-                            builder.setGenres(genres);
-                            builder.setPath(path);
-                            builder.setTime(currentDuration);
-
-                            MusicLibrary.createMediaMetadataCompat(builder.generate());
-
-                            buildDataTheFirst(songName);
-
-                        }
                     }
-
                 }
                 while (cursor.moveToNext());
                 mSharedPrefsUtils.setInteger(Constants.PREFERENCES.TOTAL_SONGS, MusicLibrary.music.size());
-                cursor.close();
+                Log.d(TAG, "CrawlData() performed");
             }
-            filterData();
-            Log.d(TAG, "CrawlData() performed");
-        }catch (SQLiteException e){
+        } catch (SQLiteException e) {
+            Log.d(TAG, e.getMessage());
+        } finally {
+            cursor.close();
         }
     }
 
     /*
      * Albums Data && Artist Data && folder Data
      */
-    private void filterData(){
+    public void filterData(){
 
         ArrayList<MusicModel> allKeyInfoMusic = new ArrayList<>(MusicLibrary.info);
         ArrayList<String> keys = new ArrayList<>(MusicLibrary.music.keySet());

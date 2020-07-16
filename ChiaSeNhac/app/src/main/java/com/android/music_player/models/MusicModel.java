@@ -12,7 +12,6 @@ public class MusicModel implements Serializable {
     private String mPath;
     private String mSongName;
     private Bitmap mBitmap;
-    private String mGenres;
     private int time;
 
     public static class Builder {
@@ -21,11 +20,14 @@ public class MusicModel implements Serializable {
         private String mArtist;
         private String mFileName;
         private String mPath;
-        private String mGenres;
         private String mSongName;
         private int time;
-
+        private MusicModel model;
         public Builder() {
+        }
+
+        public MusicModel getModel(){
+            return model;
         }
 
         public Builder setSongName(String songName) {
@@ -33,14 +35,6 @@ public class MusicModel implements Serializable {
             return this;
         }
 
-        public Builder setGenres(String genres) {
-            if (genres.equals("")){
-                mGenres = "None";
-            }else {
-                mGenres = genres;
-            }
-            return this;
-        }
 
         public Builder setPath(String path) {
             mPath = path;
@@ -72,8 +66,9 @@ public class MusicModel implements Serializable {
             return this;
         }
         public MusicModel generate(){
-            return new MusicModel(mSongName,mPath,mArtist,mAlbum,mAlbumID, mGenres,mFileName ,
+            model = new MusicModel(mSongName,mPath,mArtist,mAlbum,mAlbumID,mFileName ,
                     time);
+            return model;
         }
 
     }
@@ -91,12 +86,11 @@ public class MusicModel implements Serializable {
     }
 
     public MusicModel(String songName, String path, String artist,
-                      String album, String albumID, String genres,
+                      String album, String albumID,
                       String fileName, int time) {
         mAlbum = album;
         mAlbumID = albumID;
         mArtist = artist;
-        mGenres = genres;
         mFileName = fileName;
         mPath = path;
         mSongName = songName;
@@ -105,14 +99,6 @@ public class MusicModel implements Serializable {
 
     public int getTime() {
         return time;
-    }
-
-    public String getGenres() {
-        return mGenres;
-    }
-
-    public void setGenres(String genres) {
-        this.mGenres = genres;
     }
 
     public void setTime(int time) {

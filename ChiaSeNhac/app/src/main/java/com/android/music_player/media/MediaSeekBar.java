@@ -65,7 +65,6 @@ public class MediaSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBarC
         mStateCompat = state;
         if (isPlay &&
                 (state.getState() == PlaybackStateCompat.STATE_PLAYING || state.getState() == PlaybackStateCompat.STATE_BUFFERING)) {
-            Log.d("CCC", "HomeActivity --- PlaybackStateCompat: "+state.getPosition()+ " --- isplay: "+isPlay);
             scheduleSeekBarUpdate();
         }
     }
@@ -145,7 +144,6 @@ public class MediaSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBarC
         }
 
         mTextStartTime.setText(Utils.formatTime((int) currentPosition));
-        Log.d("CCC", " current pos: "+currentPosition + " --- getMax: "+getMax());
         setProgress((int) currentPosition);
     }
     private void updateDuration(MediaMetadataCompat metadata) {

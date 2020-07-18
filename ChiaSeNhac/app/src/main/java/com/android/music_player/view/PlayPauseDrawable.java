@@ -15,8 +15,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.Property;
 
-import com.android.music_player.R;
-
 public class PlayPauseDrawable extends Drawable {
 
     private static final Property<PlayPauseDrawable, Float> PROGRESS = new Property<PlayPauseDrawable, Float>(Float.class, "progress") {
@@ -49,11 +47,12 @@ public class PlayPauseDrawable extends Drawable {
         this.mIsPlay = mIsPlay;
     }
 
-    public PlayPauseDrawable(Context context) {
+
+    public PlayPauseDrawable(Context context, int color) {
         final Resources res = context.getResources();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(context.getColor(R.color.accentColor));
+        mPaint.setColor(color);
     }
 
     @Override

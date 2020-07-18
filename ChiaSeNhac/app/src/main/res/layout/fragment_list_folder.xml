@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:background="?back_ground_app"
     android:layout_height="match_parent">
     <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
         android:id="@+id/rc_folder_add"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:fastScrollPopupBgColor="?attr/accent_color"
+        app:fastScrollPopupTextColor="?attr/popup_text_color"
+        app:fastScrollThumbColor="?attr/accent_color"
+        app:fastScrollThumbInactiveColor="?attr/accent_color"/>
 </LinearLayout>

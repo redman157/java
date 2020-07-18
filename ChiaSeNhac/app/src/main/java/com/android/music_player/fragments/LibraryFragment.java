@@ -186,10 +186,6 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
-            case R.id.img_back:
-                getActivity().getSupportFragmentManager().popBackStack();
-                break;
             case R.id.relative_info_music:
                 break;
             case R.id.imbt_play_media:
@@ -215,10 +211,12 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
+
         for (int i = 0; i < mTabLayoutSong.getTabCount(); i ++){
             View view = mTabLayoutSong.getTabAt(i).getCustomView();
             TextView title = view.findViewById(R.id.item_tl_text_home);
-            int color = (i == tab.getPosition()) ? getResources().getColor(R.color.red) :
+            int color = (i == tab.getPosition()) ?
+                    ((HomeActivity)getActivity()).colorEnable :
                     getResources().getColor(R.color.white);
             title.setTextColor(color);
         }

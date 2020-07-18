@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,9 +27,11 @@ import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.QueueManager;
 import com.android.music_player.models.MusicModel;
+import com.android.music_player.view.SpeedyLinearLayoutManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -112,7 +115,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
             initAddMusicToPlayList(view, onClickItemListener);
         }else if (mType == DialogType.CHOOSE_MUSIC){
             view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_choose_music,
-                    container,false);
+                    null);
             initChooseMusic(view,title, mChooseMusicAdapter);
         }else if (mType == DialogType.CHOOSE_ITEM_LIBRARY){
             view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_choose_item_library,
@@ -156,8 +159,10 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
 
     private void initChooseMusic(View view,String title,  ChooseMusicAdapter chooseMusicAdapter){
         MediaManager.getInstance().setContext(getContext());
-        RecyclerView mRecyclerChooseMusic = view.findViewById(R.id.rc_choose_music);
+        FastScrollRecyclerView mRecyclerChooseMusic = view.findViewById(R.id.rc_choose_music);
         TextView textTitle = view.findViewById(R.id.text_title);
+        LinearLayoutManager layoutManager = new SpeedyLinearLayoutManager(getContext(),
+                SpeedyLinearLayoutManager.VERTICAL, false);
         View line = view.findViewById(R.id.line);
         if (!title.equals("")){
             line.setVisibility(View.VISIBLE);
@@ -165,9 +170,13 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         }else {
             line.setVisibility(View.GONE);
         }
+        if (chooseMusicAdapter.getItemCount() > 5){
+            mRecyclerChooseMusic.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 650));
+        }else {
+            mRecyclerChooseMusic.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
         mRecyclerChooseMusic.setAdapter(chooseMusicAdapter);
-        mRecyclerChooseMusic.setLayoutManager(new LinearLayoutManager(getContext(),
-                LinearLayoutManager.VERTICAL, false));
+        mRecyclerChooseMusic.setLayoutManager(layoutManager);
 
         mRecyclerChooseMusic.getLayoutManager().scrollToPosition(
                 MusicLibrary.getPosition(chooseMusicAdapter.getQueueItems(),
@@ -199,7 +208,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         if (allPlayList != null && allPlayList.size() > 0) {
 
             Button btnNewPlayList = view.findViewById(R.id.btn_create_playlist);
-            RecyclerView mRcAddPlayList = view.findViewById(R.id.rc_all_playlist);
+            FastScrollRecyclerView mRcAddPlayList = view.findViewById(R.id.rc_all_playlist);
             PlayListAdapter mPlayListAdapter = new PlayListAdapter(getContext(), allPlayList);
             mPlayListAdapter.setOnClickItemListener(onClickItemListener);
 
@@ -225,7 +234,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
             textTittle.setText(title);
 
             Button btnCancel = view.findViewById(R.id.btn_create_playlist);
-            RecyclerView mRcAddPlayList = view.findViewById(R.id.rc_all_item);
+            FastScrollRecyclerView mRcAddPlayList = view.findViewById(R.id.rc_all_item);
             PlayListAdapter mPlayListAdapter = new PlayListAdapter(getContext(), items);
             mPlayListAdapter.setOnClickItemListener(onClickItemListener);
 

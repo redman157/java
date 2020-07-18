@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="?back_ground_app"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <LinearLayout
@@ -25,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
-                android:src="@drawable/ic_library_music_black_24dp"
+                android:src="@drawable/ic_library_music_accent_24dp"
                 android:scaleType="fitCenter"
                 android:layout_height="match_parent"/>
         </androidx.cardview.widget.CardView>
@@ -45,7 +46,7 @@
                     android:layout_weight="1"
                     android:textSize="@dimen/_13sdp"
                     android:gravity="left|center"
-                    android:textColor="@color/accentColor"
+                    android:textColor="?text_color"
                     android:id="@+id/item_text_title_music"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"/>
@@ -55,7 +56,7 @@
                     android:layout_weight="1"
                     android:maxLines="1"
                     android:ellipsize="end"
-                    android:textColor="@color/accentColor"
+                    android:textColor="?text_color"
                     android:layout_width="match_parent"
                     android:id="@+id/item_text_artist_music"
                     android:layout_height="0dp"/>
@@ -63,7 +64,7 @@
                 <View
                     android:paddingTop="10dp"
                     android:layout_width="match_parent"
-                    android:background="@color/accentColor"
+                    android:background="?text_color"
                     android:layout_height="1dp"/>
             </LinearLayout>
             <TextView
@@ -72,7 +73,7 @@
                 android:gravity="center"
                 android:layout_weight="1.5"
                 android:layout_width="0dp"
-                android:textColor="@color/accentColor"
+                android:textColor="?text_color"
                 android:layout_height="match_parent"/>
             <ImageButton
                 android:id="@+id/item_btn_music"
@@ -80,7 +81,8 @@
                 android:layout_margin="4dp"
                 android:layout_width="0dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_menu_dot_black"
+                android:src="@drawable/ic_menu_dot_unenable"
+                android:tint="?text_color"
                 android:padding="@dimen/_5sdp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_height="wrap_content"/>

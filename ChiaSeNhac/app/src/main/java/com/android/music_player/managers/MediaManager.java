@@ -72,8 +72,9 @@ public class MediaManager {
     }
 
 
-    public void setContext(Context mContext) {
-        this.mContext = mContext;
+    public void setContext(Context context) {
+        this.mContext = context;
+
         initDatabase();
     }
 

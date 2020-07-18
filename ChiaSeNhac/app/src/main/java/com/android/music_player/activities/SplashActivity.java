@@ -38,6 +38,9 @@ public class SplashActivity extends AppCompatActivity {
     @SuppressLint({"SetTextI18n"})
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+        mSharedPrefsUtils = new SharedPrefsUtils(this);
+        getTheme().applyStyle(mSharedPrefsUtils.getInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                R.style.OverlayThemeWhite), true);
         setContentView(R.layout.activity_splash);
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
             finish();

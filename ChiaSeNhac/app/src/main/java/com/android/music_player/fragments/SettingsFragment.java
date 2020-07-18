@@ -33,7 +33,7 @@ public class SettingsFragment extends Fragment implements OptionAdapter.OnClickL
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (view == null) {
-            view = inflater.inflate(R.layout.fragment_library_1, container, false);
+            view = inflater.inflate(R.layout.fragment_settings, container, false);
             initView(view);
         }
         assignView();
@@ -69,16 +69,14 @@ public class SettingsFragment extends Fragment implements OptionAdapter.OnClickL
     }
     private void initData(){
         mLibrary = new ArrayList<>();
-        mLibrary.add(new OptionItem(R.drawable.ic_music_note_white_24dp, "All The Songs"));
-        mLibrary.add(new OptionItem(R.drawable.ic_music_note_white_24dp, "DownLoading"));
+        mLibrary.add(new OptionItem(R.drawable.ic_music_notes_padded, "All The Songs"));
+        mLibrary.add(new OptionItem(R.drawable.ic_download_24px, "DownLoading"));
         mLibrary.add(new OptionItem(R.drawable.app_add_playlist, "All PlayList"));
-        mLibrary.add(new OptionItem(R.drawable.app_heart, "Favorites"));
+        mLibrary.add(new OptionItem(R.drawable.ic_favorite_accent_24dp, "Favorites"));
         mLibrary.add(new OptionItem(R.drawable.ic_time_black_24dp, "Recently played"));
-
-
         mSettings = new ArrayList<>();
-        mSettings.add(new OptionItem(R.drawable.ic_music_note_white_24dp, "Settings"));
-        mSettings.add(new OptionItem(R.drawable.ic_info_outline_black_24dp, "Introduce"));
+        mSettings.add(new OptionItem(R.drawable.ic_settings_icon_24px, "Settings"));
+        mSettings.add(new OptionItem(R.drawable.ic_info_outline_accent_24dp, "Introduce"));
     }
 
     @Override

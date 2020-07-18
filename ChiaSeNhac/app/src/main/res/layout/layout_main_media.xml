@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:theme="@style/BackgroundPlay"
-    android:background="@color/accentColor"
+    android:background="?back_ground_sliding"
     android:layout_height="@dimen/_500sdp"
     android:orientation="vertical">
     <include
@@ -24,7 +23,6 @@
             android:layout_height="match_parent"
             android:layout_marginTop="0dp"
             android:alpha="0.7"
-            android:background="@color/white"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_music_notes_padded"
             android:contentDescription="TODO"
@@ -48,7 +46,7 @@
                     android:background="?attr/selectableItemBackground"
                     android:padding="@dimen/_10sdp"
                     android:src="@drawable/ic_down_arrow_white"
-                    android:tint="@color/primaryColor" />
+                    android:tint="@color/white" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -79,7 +77,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentTop="true"
                             android:fontFamily="sans-serif-condensed"
-                            android:textColor="@color/primaryColor"
+                            android:textColor="?text_color"
                             android:textScaleX="1.1"
                             android:textSize="18sp" />
 
@@ -94,7 +92,7 @@
                             android:fontFamily="sans-serif-condensed"
                             android:marqueeRepeatLimit="marquee_forever"
                             android:singleLine="true"
-                            android:textColor="@color/primaryColor"
+                            android:textColor="?text_color"
                             android:textScaleX="1.1"
                             android:textSize="14sp" />
 
@@ -107,7 +105,7 @@
                             android:layout_alignParentEnd="true"
                             android:fontFamily="sans-serif-condensed"
                             android:maxLines="1"
-                            android:textColor="@color/primaryColor"
+                            android:textColor="?text_color"
                             android:textScaleX="1.1"
                             android:textSize="14sp" />
                     </RelativeLayout>
@@ -128,7 +126,7 @@
                             android:padding="10dp"
                             android:scaleType="fitCenter"
                             android:src="@drawable/ic_list"
-                            android:tint="@color/primaryColor" />
+                            android:tint="?tint_color" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -146,7 +144,7 @@
                             android:padding="@dimen/_10sdp"
                             android:scaleType="fitCenter"
                             android:src="@drawable/app_add_playlist"
-                            android:tint="@color/primaryColor" />
+                            android:tint="?tint_color" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -170,7 +168,7 @@
         <LinearLayout
             android:layout_above="@+id/linear_control_song"
             android:id="@+id/linear_see_more"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:weightSum="5"
@@ -193,8 +191,8 @@
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_info_outline_black_24dp"
-                    android:tint="@color/primaryColor"/>
+                    android:src="@drawable/ic_info_outline_accent_24dp"
+                    android:tint="?tint_color"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -212,7 +210,7 @@
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content"
                     android:scaleType="fitCenter"
-                    android:tint="@color/primaryColor"
+                    android:tint="?tint_color"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_time_black_24dp" />
             </RelativeLayout>
@@ -249,9 +247,9 @@
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content"
                     android:scaleType="fitCenter"
-                    android:tint="@color/primaryColor"
+                    android:tint="?tint_color"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_equalizer"
+                    android:src="@drawable/ic_equalizer_accent"
                     />
             </RelativeLayout>
 
@@ -270,9 +268,9 @@
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content"
                     android:scaleType="fitCenter"
-                    android:tint="@color/primaryColor"
+                    android:tint="?tint_color"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/app_heart" />
+                    android:src="@drawable/ic_favorite_accent_24dp" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -377,7 +375,8 @@
                         android:padding="@dimen/_5sdp"
                         android:layout_centerInParent="true"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_previous_white" />
+                        android:tint="?tint_color"
+                        android:src="@drawable/ic_previous_accent" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -398,7 +397,7 @@
                         android:clickable="true"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         playpauseview:isCircleDraw="false"
-                        android:tint="@color/accentColor" />
+                        android:tint="?accent_color" />
                 </RelativeLayout>
 
 
@@ -416,6 +415,7 @@
                         android:padding="@dimen/_5sdp"
                         android:layout_centerInParent="true"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:tint="?tint_color"
                         android:src="@drawable/ic_next_white"
                         />
                 </RelativeLayout>
@@ -426,7 +426,6 @@
                     android:layout_weight="1"
                     android:layout_gravity="center"
                     android:gravity="center">
-
                     <ImageView
                         android:id="@+id/image_more"
                         android:layout_width="wrap_content"
@@ -435,7 +434,7 @@
                         android:layout_centerInParent="true"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_menu_dot_black" />
+                        android:src="@drawable/ic_menu_dot_unenable" />
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

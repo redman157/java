@@ -8,13 +8,13 @@
     <TextView
         android:padding="10dp"
         android:id="@+id/text_play_list"
-        android:drawableLeft="@drawable/app_playlist"
+        android:drawableLeft="@drawable/ic_music_notes_padded"
+        android:drawableTint="?attr/text_color"
         android:drawablePadding="@dimen/_10sdp"
-        android:drawableTint="@color/accentColor"
         android:gravity="center|left"
         android:layout_gravity="center"
         android:textSize="@dimen/_14sdp"
-        android:textColor="@color/accentColor"
+        android:textColor="?attr/text_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 </LinearLayout>

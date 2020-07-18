@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:weightSum="10"
     android:layout_width="match_parent"
+    android:background="?attr/back_ground_app"
     android:layout_height="@dimen/_80sdp"
     app:ignore="NamespaceTypo">
     <LinearLayout
@@ -23,7 +24,7 @@
 
         <RelativeLayout
             app:ignore="NamespaceTypo"
-            android:background="@color/primaryColor"
+            android:background="?back_ground_sliding"
             android:elevation="3dp"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
@@ -82,7 +83,7 @@
                     android:singleLine="true"
                     android:text="@string/app_name"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@color/blackGrey"
+                    android:textColor="?text_color"
                     android:textScaleX="1.05"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -97,7 +98,7 @@
                     android:padding="@dimen/_2sdp"
                     android:singleLine="true"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@color/blackGrey"
+                    android:textColor="?text_color"
                     android:textScaleX="1.05"
                     android:textSize="12sp"
                     android:textStyle="normal" />
@@ -109,6 +110,7 @@
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_centerVertical="true"
+                android:tint="?accent_color"
                 android:background="@drawable/selection_item"
                 android:clickable="true"
                 android:gravity="center_vertical|right"
@@ -156,7 +158,7 @@
                 android:id="@+id/text_home"
                 android:text="Home"
                 android:textSize="@dimen/_13sdp"
-                android:textColor="@color/accentColor"
+                android:textColor="?text_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
@@ -177,7 +179,7 @@
 
                 android:id="@+id/text_library"
                 android:textSize="@dimen/_13sdp"
-                android:textColor="@color/accentColor"
+                android:textColor="?text_color"
                 android:text="Library"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>

@@ -265,12 +265,13 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                 dialog.findViewById(R.id.black).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSharedPrefsUtils.setString(
-                                Constants.PREFERENCES.ACCENT_COLOR, Constants.COLOR.BLACK);
+                        mSharedPrefsUtils.setInteger(
+                                Constants.PREFERENCES.ACCENT_COLOR, R.style.OverlayThemeBlack);
                         dialog.cancel();
 
                         Intent intent = getIntent(); // from getIntent()
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         finish();
                         startActivity(intent);
                       /*  sThemeInverted = ChangeTheme.isThemeInverted(ActionBarCastActivity.this);
@@ -282,8 +283,93 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                 dialog.findViewById(R.id.white).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mSharedPrefsUtils.setString(Constants.PREFERENCES.ACCENT_COLOR,
-                                Constants.COLOR.WHITE);
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                                R.style.OverlayThemeWhite);
+                        dialog.cancel();
+                        Intent intent = getIntent(); // from getIntent()
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        finish();
+                        startActivity(intent);
+                    }
+                });
+                dialog.findViewById(R.id.purple).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                                R.style.OverlayThemePurpe);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.brown).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                                R.style.OverlayThemeBrown);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.cyan).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                                R.style.OverlayThemeCyan);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+
+                dialog.findViewById(R.id.blue).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                                R.style.OverlayThemeBlue);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.deep_purple).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                                R.style.OverlayThemeDeepPurple);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.yellow).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                                R.style.OverlayThemeYellow);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+
+                dialog.findViewById(R.id.green).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                                R.style.OverlayThemeLime);
+                        dialog.cancel();
+                        finish();
+                        startActivity(getIntent());
+                    }
+                });
+                dialog.findViewById(R.id.orange).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                                R.style.OverlayThemeOrange);
                         dialog.cancel();
                         finish();
                         startActivity(getIntent());

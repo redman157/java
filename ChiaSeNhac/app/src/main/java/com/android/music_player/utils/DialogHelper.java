@@ -18,8 +18,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -326,48 +324,6 @@ public class DialogHelper {
         dialog.show();
     }
 
-    public static void showAddSongs(final Context context, final String mediaID,
-                                    final String namePlayList){
-        MediaManager.getInstance().setContext(context);
-        initDialog(context,R.layout.dialog_add_music);
-
-        ImageView imageView = dialog.findViewById(R.id.img_add_music);
-        TextView textTitle = dialog.findViewById(R.id.text_title_music);
-        ImageButton btnAddMusic = dialog.findViewById(R.id.imgb_add_music);
-        final Button btnAdd = dialog.findViewById(R.id.btnAddMusic);
-        btnAdd.setText(namePlayList);
-        MediaMetadataCompat mediaMetadata = MediaManager.getInstance().getMetadata(context, mediaID);
-        ImageHelper.getInstance(context).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(mediaID))
-                , imageView);
-
-        textTitle.setText(mediaID);
-
-        btnAddMusic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                showCreatePlayList(context);
-            }
-        });
-
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Add music cần search playlist rồi mới add music
-
-                // add bài hát
-                if (MediaManager.getInstance().addMusicToPlayList(namePlayList, mediaID)){
-                    Utils.ToastShort(context,"Đã Add Bài: "+ mediaID);
-                }else {
-                    Utils.ToastShort(
-                            context,"Add Bài: "+ mediaID);
-                }
-
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
 
     @SuppressLint("SetTextI18n")
     public static void showAboutMusic(Context context, MusicModel musicModel){

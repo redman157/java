@@ -3,6 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:shape="line">
-    <stroke android:width="4dp" android:color="?attr/accent_color"/>
+    <stroke android:width="4dp" android:color="?progress_bar_enable"/>
     <corners android:radius="3dp" />
 </shape>

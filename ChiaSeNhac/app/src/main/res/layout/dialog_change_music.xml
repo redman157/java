@@ -11,7 +11,7 @@
         android:paddingBottom="10dp"
         android:paddingLeft="5dp"
         android:gravity="center"
-        android:textColor="@color/accentColor"
+        android:textColor="@color/black"
         android:layout_height="wrap_content"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:text="Cancel"
         android:textSize="@dimen/_18sdp"
-        android:textColor="@color/red"
+        android:textColor="?select_enable"
         android:id="@+id/btn_cancel"
         android:layout_gravity="center"/>
 

@@ -71,7 +71,7 @@ public class MediaNotificationManager {
                         PlaybackStateCompat.ACTION_STOP));
 
         mPrevAction = new NotificationCompat.Action(
-                R.drawable.ic_previous_white,
+                R.drawable.ic_previous_accent,
                 mService.getString(R.string.label_previous),
                 MediaButtonReceiver.buildMediaButtonPendingIntent(mService,
                         PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
@@ -113,7 +113,7 @@ public class MediaNotificationManager {
                     .setShowWhen(false)
                     .setColorized(true).setColor(mService.getResources().getColor(R.color.accentColor))
 
-                    .setSmallIcon(R.drawable.ic_music_note_white_24dp)
+                    .setSmallIcon(R.drawable.ic_music_notes_padded)
                     .setLargeIcon(ImageHelper.getAlbumArt(mService,
                             Long.valueOf(MusicLibrary.getAlbumRes(description.getMediaId()))))
                     // Pending intent that is fired when user clicks on notification.
@@ -155,7 +155,7 @@ public class MediaNotificationManager {
                                     mService,
                                     PlaybackStateCompat.ACTION_STOP)))
                     .setColorized(true).setColor(mService.getResources().getColor(R.color.white))
-                    .setSmallIcon(R.drawable.ic_music_note_white_24dp)
+                    .setSmallIcon(R.drawable.ic_music_notes_padded)
                     // Pending intent that is fired when user clicks on notification.
                     .setContentIntent(createContentIntent())
                     // Title - Usually Song name.

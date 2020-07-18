@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?back_ground_app"
     tools:mContext=".activities.SplashActivity">
 
     <RelativeLayout
@@ -17,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/accentColor"
+            android:textColor="?colorPrimaryDark"
             android:textSize="16sp"
             android:text="@string/updating_songs"
             android:layout_marginBottom="16dp"/>
@@ -30,7 +31,7 @@
             android:indeterminate="true"
             android:layout_above="@id/text_status"
             android:layout_centerHorizontal="true"
-            android:indeterminateTint="@color/accentColor"
+            android:indeterminateTint="?colorPrimaryDark"
             android:indeterminateTintMode="src_in"/>
 
         <ImageView
@@ -39,7 +40,6 @@
             android:id="@+id/imageView20"
             android:src="@drawable/ic_music_notes_padded"
             android:scaleType="centerCrop"
-            android:tint="@color/accentColor"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
 

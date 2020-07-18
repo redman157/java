@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
+    android:background="@color/white"
     android:layout_height="wrap_content">
 
     <TextView
@@ -9,7 +10,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Type Playlist Name"
-        android:textColor="@color/accentColor"
+        android:textColor="@color/black"
         android:layout_marginBottom="16dp"
         android:textSize="@dimen/_20sdp"
         android:padding="@dimen/_7sdp"
@@ -23,7 +24,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/edit_title"
         android:maxLines="1"
-        android:textColor="@color/accentColor"
+        android:textColor="@color/black"
         android:inputType="textCapWords"
         android:fontFamily="sans-serif"
         android:theme="@style/MyCustomEditText"
@@ -52,7 +53,6 @@
             android:layout_height="wrap_content"
             android:text="Cancel"
             android:maxLines="1"
-
             android:id="@+id/btnCancel"
             android:layout_margin="@dimen/_10sdp"
             android:layout_below="@id/edit_title"

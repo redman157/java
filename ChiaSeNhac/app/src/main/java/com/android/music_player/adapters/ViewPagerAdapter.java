@@ -80,8 +80,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private ArrayList<Drawable> iconList(){
         ArrayList<Drawable> icons = new ArrayList<>();
-        icons.add(context.getDrawable(R.drawable.ic_home_black_24dp));
-        icons.add(context.getDrawable(R.drawable.ic_library_black_24dp));
+        icons.add(context.getDrawable(R.drawable.ic_home_accent_24dp));
+        icons.add(context.getDrawable(R.drawable.ic_library_accent_24dp));
 
         return icons;
     }

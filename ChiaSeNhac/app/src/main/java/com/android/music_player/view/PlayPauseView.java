@@ -20,6 +20,8 @@ import android.view.ViewOutlineProvider;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
+import androidx.annotation.ColorInt;
+
 import com.android.music_player.R;
 
 public class PlayPauseView extends FrameLayout {
@@ -54,12 +56,13 @@ public class PlayPauseView extends FrameLayout {
         setWillNotDraw(false);
 
         TypedValue colorTheme = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.colorAccent, colorTheme, true);
+        context.getTheme().resolveAttribute(R.attr.accent_color, colorTheme, true);
 
         mBackgroundColor = colorTheme.data;
+        @ColorInt int color = colorTheme.data;
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
-        mDrawable = new PlayPauseDrawable(context);
+        mDrawable = new PlayPauseDrawable(context, color);
         mDrawable.setCallback(this);
 
         mPauseBackgroundColor = colorTheme.data;

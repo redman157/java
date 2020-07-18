@@ -20,14 +20,14 @@
                 android:layout_weight="1"
                 android:textSize="14sp"
                 android:gravity="left|center"
-                android:textColor="@color/black"
+                android:textColor="?attr/text_color"
                 android:id="@+id/item_text_title_folder"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"/>
             <TextView
                 android:textSize="12sp"
                 android:gravity="left|center"
-                android:textColor="@color/black"
+                android:textColor="?attr/text_color"
                 android:layout_weight="1"
                 android:maxLines="1"
                 android:ellipsize="end"
@@ -37,7 +37,7 @@
             <View
                 android:paddingTop="10dp"
                 android:layout_width="match_parent"
-                android:background="#ABAFAF"
+                android:background="?attr/text_color"
                 android:layout_height="1dp"/>
         </LinearLayout>
 

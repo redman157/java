@@ -3,20 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/back_ground_app"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-
-        android:layout_height="@dimen/app_bar_height"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_height="@dimen/app_bar_height">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:contentScrim="@color/transparent"
-            android:background="@color/whiteOpaqueX4"
+
             app:expandedTitleGravity="center_horizontal"
             app:layout_collapseMode="pin"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
@@ -26,7 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:alpha="0.5"
+
                 android:background="@color/transparent"
                 android:minHeight="@dimen/app_bar_height"
                 android:scaleType="centerCrop"
@@ -35,20 +33,6 @@
                 app:layout_scrollFlags="scroll|enterAlwaysCollapsed|exitUntilCollapsed"
                 tools:ignore="NestedWeights" />
 
-       <!--     <LinearLayout
-                android:id="@+id/ll_all_music"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="40dp">
-                <ImageView
-                    android:layout_margin="7dp"
-                    android:id="@+id/img_back"
-                    android:adjustViewBounds="true"
-                    android:background="?attr/selectableItemBackground"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_arrow_back_black_24dp"/>
-            </LinearLayout>-->
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/tb_AllMusic"
                 android:layout_width="match_parent"
@@ -94,6 +78,7 @@
             android:layout_height="wrap_content"/>
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/vp_AllMusic"
+            android:background="?attr/accent_color"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 

@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/navigation_favorites"
-        android:icon="@drawable/app_heart"
+        android:icon="@drawable/ic_favorite_accent_24dp"
         android:title="Favorites"/>
 
     <item
@@ -30,7 +30,7 @@
         android:title="Settings"/>
     <item
         android:id="@+id/navigation_about"
-        android:icon="@drawable/ic_info_outline_black_24dp"
+        android:icon="@drawable/ic_info_outline_accent_24dp"
         android:title="About"/>
 
 

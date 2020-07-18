@@ -17,7 +17,7 @@
                 android:id="@+id/text_QuickPlay"
                 android:text="Quick Play"
                 android:textSize="20sp"
-                android:textColor="@color/accentColor"
+                android:textColor="?attr/text_color"
                 android:layout_marginLeft="@dimen/_7sdp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                         <ImageView
                             android:layout_gravity="center"
                             android:layout_margin="5dp"
-                            android:src="@drawable/app_shuffle_active"
+                            android:src="@drawable/app_shuffle_unactive"
                             android:id="@+id/image_shuffle_all"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"/>
@@ -69,7 +69,7 @@
                         android:layout_weight="3"
                         android:text="Shuffle Music"
                         android:textSize="15dp"
-                        android:textColor="@color/accentColor"
+                        android:textColor="?text_color"
                         android:layout_marginTop="5dp"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
@@ -100,7 +100,7 @@
                         <ImageView
                             android:layout_margin="5dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_growth"
+                            android:src="@drawable/ic_growth_accent"
                             android:id="@+id/image_most_player"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
@@ -112,7 +112,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_gravity="center"
                         android:layout_width="wrap_content"
-                        android:textColor="@color/accentColor"
+                        android:textColor="?text_color"
                         android:layout_height="0dp"/>
                 </LinearLayout>
 
@@ -142,7 +142,7 @@
                         <ImageView
                             android:layout_margin="5dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_recently"
+                            android:src="@drawable/ic_recently_accent"
                             android:id="@+id/img_Recently_Add"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
@@ -153,7 +153,7 @@
                         android:layout_weight="3"
                         android:text="Recently Added"
                         android:textSize="15dp"
-                        android:textColor="@color/accentColor"
+                        android:textColor="?text_color"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"/>
                 </LinearLayout>
@@ -182,28 +182,28 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:cardCornerRadius="10dp"
+                        app:cardBackgroundColor="@color/light_grey"
                         app:cardPreventCornerOverlap = "false"
                         app:cardElevation="6dp">
                         <ImageView
                             android:id="@+id/image_player_music"
                             android:layout_width="match_parent"
                             android:src="@drawable/ic_music_notes_padded"
-                            android:scaleType="fitXY"
+                            android:scaleType="fitCenter"
                             android:adjustViewBounds="true"
                             android:layout_height="match_parent"/>
 
                         <TextView
-
                             android:id="@+id/text_player_music"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom"
-                            android:drawableLeft="@drawable/ic_artists_black_24dp"
-                            android:drawableTint="@color/primaryDark"
+                            android:drawableLeft="@drawable/ic_artists_accent_24dp"
+                            android:drawableTint="?back_ground_title"
                             android:drawablePadding="6dp"
                             android:paddingBottom="7dp"
                             android:paddingLeft="12dp"
-                            android:textColor="@color/primaryDark"
+                            android:textColor="?back_ground_title"
                             android:textSize="12dp" />
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
@@ -220,6 +220,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_margin="7dp"
+                        app:cardBackgroundColor="@color/light_grey"
                         app:cardCornerRadius="10dp"
                         app:cardPreventCornerOverlap = "false"
                         app:cardElevation="6dp">
@@ -227,7 +228,7 @@
                             android:id="@+id/image_player_1"
                             android:layout_width="match_parent"
                             android:src="@drawable/ic_music_notes_padded"
-                            android:scaleType="fitXY"
+                            android:scaleType="fitCenter"
                             android:adjustViewBounds="true"
                             android:layout_height="wrap_content"/>
                         <TextView
@@ -235,10 +236,10 @@
                             android:paddingBottom="7dp"
                             android:paddingLeft="12dp"
                             android:layout_gravity="bottom"
-                            android:drawableTint="@color/primaryDark"
+                            android:drawableTint="?back_ground_title"
                             android:drawableLeft="@drawable/app_playlist"
                             android:textSize="12dp"
-                            android:textColor="@color/primaryDark"
+                            android:textColor="?back_ground_title"
                             android:gravity="center|left"
                             android:id="@+id/text_player_1"
                             android:layout_width="match_parent"
@@ -251,6 +252,7 @@
                         android:layout_margin="7dp"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
+                        app:cardBackgroundColor="@color/light_grey"
                         app:cardCornerRadius="10dp"
                         app:cardPreventCornerOverlap = "false"
                         app:cardElevation="6dp">
@@ -258,7 +260,7 @@
                             android:id="@+id/image_player_2"
                             android:layout_width="match_parent"
                             android:src="@drawable/ic_music_notes_padded"
-                            android:scaleType="fitXY"
+                            android:scaleType="fitCenter"
                             android:adjustViewBounds="true"
                             android:layout_height="wrap_content"/>
                         <TextView
@@ -267,10 +269,10 @@
                             android:paddingLeft="12dp"
                             android:layout_gravity="bottom"
                             android:drawableLeft="@drawable/app_playlist"
-                            android:drawableTint="@color/primaryDark"
+                            android:drawableTint="?back_ground_title"
                             android:textSize="12dp"
                             android:gravity="center|left"
-                            android:textColor="@color/primaryDark"
+                            android:textColor="?back_ground_title"
                             android:id="@+id/text_Player_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
@@ -299,7 +301,7 @@
                     android:layout_width="0dp"
                     android:textSize="20dp"
                     android:gravity="center"
-                    android:textColor="@color/accentColor"
+                    android:textColor="?text_color"
                     android:text="Recently Added To Library"
                     android:layout_height="match_parent"/>
 

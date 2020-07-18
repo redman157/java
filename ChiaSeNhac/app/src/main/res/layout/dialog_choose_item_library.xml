@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="@dimen/_300sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="@dimen/_300sdp"
     android:layout_height="wrap_content">
     <TextView
         android:id="@+id/text_title"
         android:textSize="@dimen/_18sdp"
-        android:textColor="@color/accentColor"
+        android:textColor="@color/black"
         android:layout_gravity="center"
         android:gravity="center"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <View
@@ -16,10 +19,14 @@
         android:layout_marginTop="@dimen/_7sdp"
         android:layout_marginBottom="@dimen/_7sdp"
         android:background="@color/line"/>
-    <androidx.recyclerview.widget.RecyclerView
+    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
         android:id="@+id/rc_all_item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:fastScrollPopupBgColor="?attr/accent_color"
+        app:fastScrollPopupTextColor="?attr/popup_text_color"
+        app:fastScrollThumbColor="?attr/accent_color"
+        app:fastScrollThumbInactiveColor="?attr/accent_color"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -27,6 +34,7 @@
         android:layout_marginBottom="@dimen/_7sdp"
         android:background="@color/line"/>
     <Button
+
         android:layout_gravity="center"
         android:id="@+id/btn_create_playlist"
         android:text="Cancel"

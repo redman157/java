@@ -54,13 +54,13 @@ public class Constants {
 
     public @interface COLOR{
         String ORANGE = "Orange";
-        String RED = "Red";
+        String DEEP_PURPLE = "Red";
         String CYAN = "Cyan";
         String GREEN = "Green";
         String YELLOW = "Yellow";
-        String PINK = "Pink";
+        String BLUE = "Pink";
         String PURPLE = "Purple";
-        String GREY = "Grey";
+        String BROWN = "Grey";
         String WHITE = "White";
         String BLACK = "Black";
     }

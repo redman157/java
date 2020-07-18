@@ -1,7 +1,6 @@
 package com.android.music_player.activities;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -9,6 +8,7 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -87,7 +87,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public final static String FRAGMENT_TAG = "fragment_tag";
     public BottomSheetHelper bottomSheetHelper;
     private QueueManager mQueueManager;
-
+    public int colorEnable, colorUnEnable;
     @Override
     public void initManager() {
         mSharedPrefsUtils = getSharedPrefsUtils();
@@ -124,7 +124,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getTheme().applyStyle(R.style.OverlayThemeLime, true);
+        mSharedPrefsUtils = new SharedPrefsUtils(this);
+        getTheme().applyStyle(mSharedPrefsUtils.getInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                R.style.OverlayThemeWhite),
+                true);
+        TypedValue colorEn = new TypedValue();
+        getTheme().resolveAttribute(R.attr.select_enable, colorEn, true);
+        colorEnable = colorEn.data;
+
+        TypedValue colorUn = new TypedValue();
+        getTheme().resolveAttribute(R.attr.text_color, colorUn, true);
+        colorUnEnable = colorUn.data;
         initManager();
         setContentView(R.layout.activity_home);
         initializeToolbar();
@@ -235,7 +245,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mTextLibrary = mLayoutMedia.findViewById(R.id.text_library);
 
         mBtnHome.setEnabled(false);
-        mTextHome.setTextColor(getColor(R.color.red));
+        mTextHome.setTextColor(colorEnable);
         mViewMusic = mLayoutState.findViewById(R.id.relative_info_music);
     }
 
@@ -294,8 +304,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_home:
-                mTextHome.setTextColor(getColor(R.color.red));
-                mTextLibrary.setTextColor(getColor(R.color.accentColor));
+                mTextHome.setTextColor(colorEnable);
+                mTextLibrary.setTextColor(colorUnEnable);
                 mBtnHome.setEnabled(false);
                 mBtnLibrary.setEnabled(true);
                 getSupportFragmentManager().beginTransaction()
@@ -307,8 +317,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case R.id.btn_library:
                 mBtnHome.setEnabled(true);
                 mBtnLibrary.setEnabled(false);
-                mTextHome.setTextColor(getColor(R.color.accentColor));
-                mTextLibrary.setTextColor(getColor(R.color.red));
+                mTextHome.setTextColor(colorUnEnable);
+                mTextLibrary.setTextColor(colorEnable);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fl_placeholder ,
                                 LibraryFragment.newInstance(),
@@ -380,13 +390,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case R.id.image_more:
                 if (!isMore){
                     mLayoutSeeMore.setAlpha(1);
-                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_white);
+                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_enable);
                     isMore = true;
                     Animation fadeIn = AnimationUtils.loadAnimation(HomeActivity.this,R.anim.fadein);
                     mLayoutSeeMore.setAnimation(fadeIn);
                     mLayoutSeeMore.setVisibility(View.VISIBLE);
                 }else {
-                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_black);
+                    mBtnSeeMore.setImageResource(R.drawable.ic_menu_dot_unenable);
                     isMore = false;
                     mLayoutSeeMore.animate().alpha(0).setDuration(500).withEndAction(new Runnable() {
                         @Override
@@ -432,10 +442,10 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
                 }
                 break;
-            case R.id.menu_search:
+         /*   case R.id.menu_search:
                 Intent iSearch = new Intent(this, SearchActivity.class);
                 startActivity(iSearch);
-                break;
+                break;*/
         }
     }
 

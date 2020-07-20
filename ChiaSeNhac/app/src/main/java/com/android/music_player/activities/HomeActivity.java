@@ -108,6 +108,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void onStart() {
         super.onStart();
+
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
             setViewMusic(mMediaManager.getCurrentMusic(),PanelState.EXPANDED );
         }else if (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED){

@@ -41,7 +41,6 @@ public class QueueManager {
         mSharedPrefsUtils = new SharedPrefsUtils(mContext);
         // setup data ban đầu của khi mở app
         if (mStateViewModel == null){
-
             mStateViewModel = new StateViewModel(((Activity) mContext).getApplication());
             mStateViewModel.setParentId(MusicLibrary.MEDIA_ID_ROOT);
             mStateViewModel.setNamePlayList("");

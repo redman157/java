@@ -3,6 +3,7 @@ package com.android.music_player.activities;
 import android.os.Bundle;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.session.MediaControllerCompat;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -48,12 +49,21 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     protected void onStart() {
         super.onStart();
         mBrowserHelper.onStart();
+
+        Log.d("VVV","BaseActivity --- onStart: Enter");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("VVV","BaseActivity --- onResume: Enter");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mBrowserHelper.onStop();
+//        mBrowserHelper.onStop();
+        Log.d("VVV","BaseActivity --- onStop: Enter");
     }
 
     public void setMediaChange(String tag,

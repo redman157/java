@@ -111,7 +111,6 @@ public class ImageHelper {
                 Log.d("GGG","FileNotFoundException Enter: "+albumId);
                 bitmap = getBitmapFromVectorDrawable(context,
                         R.drawable.ic_music_notes_padded);
-
             }
         }
         return bitmap;
@@ -128,6 +127,24 @@ public class ImageHelper {
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
 
+        return bitmap;
+    }
+
+    public static Bitmap getAlbumArtNotification(Context context, Long albumId) {
+        Bitmap bitmap = null;
+        try {
+            Uri uri = ContentUris.withAppendedId(Uri
+                    .parse("content://media/external/audio/albumart"), albumId);
+            bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver() , uri);
+        }
+        catch (IOException e) {
+            //handle exception
+            if (e instanceof FileNotFoundException){
+                Log.d("GGG","FileNotFoundException Enter: "+albumId);
+                bitmap = getBitmapFromVectorDrawable(context,
+                        R.drawable.app_icon_music);
+            }
+        }
         return bitmap;
     }
 }

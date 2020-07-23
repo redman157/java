@@ -39,6 +39,7 @@
             android:layout_height="220dp"
             android:id="@+id/imageView20"
             android:src="@drawable/ic_music_notes_padded"
+            android:tint="?attr/color_primary_dark"
             android:scaleType="centerCrop"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />

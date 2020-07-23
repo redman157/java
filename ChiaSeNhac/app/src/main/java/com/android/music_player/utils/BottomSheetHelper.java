@@ -171,7 +171,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
             line.setVisibility(View.GONE);
         }
         if (chooseMusicAdapter.getItemCount() > 5){
-            mRecyclerChooseMusic.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 650));
+            mRecyclerChooseMusic.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 700));
         }else {
             mRecyclerChooseMusic.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }

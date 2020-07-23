@@ -31,7 +31,7 @@ import java.util.List;
 public class MediaService extends MediaBrowserServiceCompat {
 
 //    private static final String TAG = MediaService.class.getSimpleName();
-    private static final String TAG ="JJJ";
+    private static final String TAG = "MediaService";
     private MediaSessionCompat mSessionCompat;
     private PlayerAdapter mPlayback;
     private MediaNotificationManager mMediaNotificationManager;
@@ -41,6 +41,18 @@ public class MediaService extends MediaBrowserServiceCompat {
     private boolean mServiceStarted;
     private boolean isAutoPlay = false;
     private QueueManager mQueueManager;
+//    private final IBinder mIBinder = new LocalBinder();
+//    public class LocalBinder extends Binder {
+//        public MediaService getInstance() {
+//            return MediaService.this;
+//        }
+//    }
+//
+//    @Override
+//    public IBinder onBind(Intent intent) {
+//        return mIBinder;
+//    }
+
     private BroadcastReceiver updateQueueItems = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -49,7 +61,7 @@ public class MediaService extends MediaBrowserServiceCompat {
     };
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY ;
+        return START_NOT_STICKY ;
     }
 
     /**
@@ -68,7 +80,8 @@ public class MediaService extends MediaBrowserServiceCompat {
             mMediaNotificationManager = new MediaNotificationManager(this);
 
         }
-        Log.d(TAG, "onCreate: MusicService creating MediaSession, and MediaNotificationManager");
+        Log.d(TAG, this.getClass().getSimpleName()+" --- onCreate: MusicService creating MediaSession, and " +
+                "MediaNotificationManager");
     }
 
     @Override
@@ -174,7 +187,7 @@ public class MediaService extends MediaBrowserServiceCompat {
         @Override
         public void onPlayFromMediaId(String mediaId, Bundle extras) {
             super.onPlayFromMediaId(mediaId, extras);
-            Log.d("JJJ","MediaService ---onPlayFromMediaId: "+mediaId);
+            Log.d(TAG,"MediaService ---onPlayFromMediaId: "+mediaId);
 
             if (mPreparedMedia == null) {
                 // công đoan chuẩn bị từ media session
@@ -202,7 +215,7 @@ public class MediaService extends MediaBrowserServiceCompat {
             mPreparedMedia = mMediaManager.getMetadata(MediaService.this,
                    mediaId);
             mSessionCompat.setMetadata(mPreparedMedia);
-            Log.d("JJJ", "MediaService --- onPrepareFromMediaId: "+mediaId);
+            Log.d(TAG, "MediaService --- onPrepareFromMediaId: "+mediaId);
             onPlayFromMediaId(mediaId, null);
             isActive();
         }
@@ -262,17 +275,16 @@ public class MediaService extends MediaBrowserServiceCompat {
                 currentPos = MusicLibrary.getPosition(mMainList, mMediaManager.getCurrentMusic());
                 currentPos = (currentPos + 1) % mMainList.size();
                 Log.d("ZZZ",mMainList.get(currentPos).getDescription().getMediaId() + " --- "+currentPos);
+                String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
+                // khi next muốn tự động phát hay k ?
 
-
+                mPreparedMedia = null;
+                onPlayFromMediaId(mediaId, null);
             }catch (ArithmeticException e){
                 Log.d("ZZZ", "onSkipToNext: "+e.getMessage());
 //                currentPos = 0;
             }
-            String mediaId = mMainList.get(currentPos).getDescription().getMediaId();
-            // khi next muốn tự động phát hay k ?
 
-            mPreparedMedia = null;
-            onPlayFromMediaId(mediaId, null);
         }
 
         @Override

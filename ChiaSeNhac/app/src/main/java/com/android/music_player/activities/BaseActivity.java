@@ -8,10 +8,11 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.managers.QueueManager;
 import com.android.music_player.media.BrowserConnectionListener;
 import com.android.music_player.media.BrowserHelper;
-import com.android.music_player.media.MediaBrowserListener;
+import com.android.music_player.media.MediaBrowserCallBack;
 import com.android.music_player.services.MediaService;
 import com.android.music_player.utils.SharedPrefsUtils;
 
@@ -22,7 +23,7 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     private MediaManager mMediaManager;
     private MediaControllerCompat mMediaControllerCompat;
     public BrowserHelper mBrowserHelper;
-    private MediaBrowserListener mMediaBrowserListener;
+    private MediaBrowserCallBack mMediaBrowserCallBack;
     public abstract void initManager();
     private static final String TAG = BaseActivity.class.getSimpleName();
     private MediaBrowserCompat mMediaBrowserCompat;
@@ -40,9 +41,11 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(this);
         mQueueManager = QueueManager.getInstance(this);
+        mQueueManager.setupAllMusic();
         mSharedPrefsUtils = new SharedPrefsUtils(this);
         mBrowserHelper = mMediaManager.getMediaBrowserConnection();
         mMediaManager.getMediaBrowserConnection().setOnServiceConnectListener(this);
+//        doBindService();
     }
 
     @Override
@@ -50,7 +53,7 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         super.onStart();
         mBrowserHelper.onStart();
 
-        Log.d("VVV","BaseActivity --- onStart: Enter");
+        Log.d("VVV","BaseActivity --- onStart: "+getIntent().getStringExtra("hehe"));
     }
 
     @Override
@@ -62,17 +65,17 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     @Override
     protected void onStop() {
         super.onStop();
-//        mBrowserHelper.onStop();
-        Log.d("VVV","BaseActivity --- onStop: Enter");
+        mBrowserHelper.onStop();
+        Log.d("VVV","BaseActivity --- onStop: "+getIntent().getStringExtra("hehe"));
     }
 
     public void setMediaChange(String tag,
-            MediaBrowserListener.OnChangeMusicListener onChangeMusicListener){
-        if (mMediaBrowserListener == null) {
-            mMediaBrowserListener = new MediaBrowserListener();
+                               MediaBrowserCallBack.OnChangeMusicListener onChangeMusicListener){
+        if (mMediaBrowserCallBack == null) {
+            mMediaBrowserCallBack = new MediaBrowserCallBack();
         }
-        mMediaBrowserListener.setOnChangeMusicListener(onChangeMusicListener);
-        mBrowserHelper.registerCallback(tag, mMediaBrowserListener);
+        mMediaBrowserCallBack.setOnChangeMusicListener(onChangeMusicListener);
+        mBrowserHelper.registerCallback(tag, mMediaBrowserCallBack);
     }
 
     public MediaControllerCompat getControllerActivity() {
@@ -96,12 +99,32 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     }
 
     @Override
-    public void onConnect(
-            final MediaControllerCompat mediaController) {
+    public void onConnect(final MediaControllerCompat mediaController) {
         // khi connect thành công của media browser
         // thì mới có controller chuyển cho activity sử dụng
         setControllerActivity(mediaController);
         /*VIEW MODEL CHANGE ROOT SERVICE*/
-       mQueueManager.getParentId();
+        try {
+            String parentId = mQueueManager.getParentId();
+            if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)){
+                // GỠ STATE VÀ SET STATE KHÁC
+                mMediaManager.getMediaBrowserConnection().unSetSubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
+                        mMediaManager.getMediaBrowserConnection().getCallback());
+
+                mMediaManager.getMediaBrowserConnection().setSubscribe(MusicLibrary.MEDIA_ID_ROOT,
+                        mMediaManager.getMediaBrowserConnection().getCallback());
+                Log.d("ZZZ",
+                        "kích thước: "+parentId);
+            }else if (parentId.equals(MusicLibrary.MEDIA_ID_EMPTY_ROOT)){
+                mMediaManager.getMediaBrowserConnection().unSetSubscribe(MusicLibrary.MEDIA_ID_ROOT,
+                        mMediaManager.getMediaBrowserConnection().getCallback());
+
+                mMediaManager.getMediaBrowserConnection().setSubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
+                        mMediaManager.getMediaBrowserConnection().getCallback());
+            }
+        }catch (NullPointerException e){
+            Log.d("VVV", "onConnect: "+e.getMessage());
+        }
     }
+
 }

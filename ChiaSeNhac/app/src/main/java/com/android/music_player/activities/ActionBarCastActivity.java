@@ -68,7 +68,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
-
+    public static int REQUEST_CODE_RESTORE = 100;
     private boolean mToolbarInitialized;
     private int mAccent;
     private boolean sThemeInverted;
@@ -250,9 +250,11 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                 startActivity(new Intent(this, TimerActivity.class));
                 break;
             case R.id.sync:
-                Intent intent = new Intent(this, SplashActivity.class).putExtra(Constants.VALUE.SYNC,
+                Intent intent = new Intent(this, SplashActivity.class)
+                        .putExtra(Constants.VALUE.SYNC,
                         true);
                 startActivity(intent);
+
                 break;
             case R.id.equalizer:
                 EqualizerFragment fragment = EqualizerFragment.newInstance();
@@ -269,11 +271,12 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                                 Constants.PREFERENCES.ACCENT_COLOR, R.style.OverlayThemeBlack);
                         dialog.cancel();
 
-                        Intent intent = getIntent(); // from getIntent()
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        finish();
+                        Intent intent = new Intent(ActionBarCastActivity.this,
+                                SplashActivity.class); // from getIntent()
+                        intent.putExtra(Constants.VALUE.SYNC,
+                                false);
                         startActivity(intent);
+
                       /*  sThemeInverted = ChangeTheme.isThemeInverted(ActionBarCastActivity.this);
                         mAccent = ChangeTheme.getAccent(ActionBarCastActivity.this);
 
@@ -286,11 +289,12 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeWhite);
                         dialog.cancel();
-                        Intent intent = getIntent(); // from getIntent()
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        finish();
+
+                        Intent intent = new Intent(ActionBarCastActivity.this,
+                                SplashActivity.class); // from getIntent()
+                        intent.putExtra(Constants.VALUE.SYNC, false);
                         startActivity(intent);
+
                     }
                 });
                 dialog.findViewById(R.id.purple).setOnClickListener(new View.OnClickListener() {
@@ -299,8 +303,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemePurpe);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        Intent intent = new Intent(ActionBarCastActivity.this,
+                                SplashActivity.class); // from getIntent()
+                        intent.putExtra(Constants.VALUE.SYNC, false);
+                        startActivity(intent);
                     }
                 });
                 dialog.findViewById(R.id.brown).setOnClickListener(new View.OnClickListener() {
@@ -309,8 +315,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeBrown);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        Intent intent = new Intent(ActionBarCastActivity.this,
+                                SplashActivity.class); // from getIntent()
+                        intent.putExtra(Constants.VALUE.SYNC, false);
+                        startActivity(intent);
                     }
                 });
                 dialog.findViewById(R.id.cyan).setOnClickListener(new View.OnClickListener() {
@@ -319,8 +327,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeCyan);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        Intent intent = new Intent(ActionBarCastActivity.this,
+                                SplashActivity.class); // from getIntent()
+                        intent.putExtra(Constants.VALUE.SYNC, false);
+                        startActivity(intent);
                     }
                 });
 
@@ -330,8 +340,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeBlue);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        Intent intent = new Intent(ActionBarCastActivity.this,
+                                SplashActivity.class); // from getIntent()
+                        intent.putExtra(Constants.VALUE.SYNC, false);
+                        startActivity(intent);
                     }
                 });
                 dialog.findViewById(R.id.deep_purple).setOnClickListener(new View.OnClickListener() {
@@ -340,8 +352,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeDeepPurple);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        Intent intent = new Intent(ActionBarCastActivity.this,
+                                SplashActivity.class); // from getIntent()
+                        intent.putExtra(Constants.VALUE.SYNC, false);
+                        startActivity(intent);
                     }
                 });
                 dialog.findViewById(R.id.yellow).setOnClickListener(new View.OnClickListener() {
@@ -350,8 +364,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeYellow);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        Intent intent = new Intent(ActionBarCastActivity.this,
+                                SplashActivity.class); // from getIntent()
+                        intent.putExtra(Constants.VALUE.SYNC, false);
+                        startActivity(intent);
                     }
                 });
 
@@ -361,8 +377,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeLime);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        Intent intent = new Intent(ActionBarCastActivity.this,
+                                SplashActivity.class); // from getIntent()
+                        intent.putExtra(Constants.VALUE.SYNC, false);
+                        startActivity(intent);
                     }
                 });
                 dialog.findViewById(R.id.orange).setOnClickListener(new View.OnClickListener() {
@@ -371,8 +389,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeOrange);
                         dialog.cancel();
-                        finish();
-                        startActivity(getIntent());
+                        Intent intent = new Intent(ActionBarCastActivity.this,
+                                SplashActivity.class); // from getIntent()
+                        intent.putExtra(Constants.VALUE.SYNC, false);
+                        startActivity(intent);
                     }
                 });
                 dialog.show();
@@ -380,7 +400,6 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     @Override
     public void onBackPressed() {

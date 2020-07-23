@@ -76,14 +76,17 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_home, container, false);
-        initView();
-        mSwipeRefreshLayout.setRefreshing(false);
-        mHomeAdapter = new HomeFragmentAdapter((HomeActivity)getActivity(), mMusicAdapter);
-        mHomeAdapter.notifyDataSetChanged();
-        mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRcHome.setAdapter(mHomeAdapter);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
+        super.onCreateView(inflater, container, savedInstanceState);
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_home, container, false);
+            initView();
+            mSwipeRefreshLayout.setRefreshing(false);
+            mHomeAdapter = new HomeFragmentAdapter((HomeActivity) getActivity(), mMusicAdapter);
+            mHomeAdapter.notifyDataSetChanged();
+            mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
+            mRcHome.setAdapter(mHomeAdapter);
+            mSwipeRefreshLayout.setOnRefreshListener(this);
+        }
 
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = getActivity().getTheme();

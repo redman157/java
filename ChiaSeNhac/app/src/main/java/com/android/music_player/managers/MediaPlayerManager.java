@@ -92,7 +92,6 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
                     0 : mMediaPlayer.getCurrentPosition();
             Log.d("BBB", "MediaPlayerManager --- mSeekWhileNotPlaying < 0: "+reportPosition);
         }
-        Log.d("TTT", "MediaPlayerManager --- setNewState: "+reportPosition);
         updatePlaybackState(mState ,reportPosition);
     }
 

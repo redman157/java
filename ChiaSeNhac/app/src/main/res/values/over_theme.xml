@@ -46,7 +46,7 @@
         <!--backgroud sliding panel-->
         <item name="back_ground_sliding">@color/blackOpaque</item>
         <!--back ground toàn app-->
-        <item name="back_ground_app">@color/whiteOpaqueX4</item>
+        <item name="back_ground_app">@color/light</item>
         <!--màu chữ của title playlist, music-->
         <item name="back_ground_title">@color/black</item>
         <!--back gorund của dialog -->
@@ -69,7 +69,7 @@
         <item name="popup_text_color">@color/white</item>
 
         <item name="color_primary">@color/light_grey</item>
-        <item name="color_primary_dark">@color/whiteOpaqueX2</item>
+        <item name="color_primary_dark">@color/blackOpaque</item>
         <item name="accent_color">@color/white</item>
     </style>
 

@@ -3,14 +3,11 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <androidx.cardview.widget.CardView
-        app:contentPadding="@dimen/_4sdp"
-        android:layout_height="match_parent"
-        app:cardBackgroundColor="@color/white"
-        android:layout_width="match_parent">
+
         <LinearLayout
             android:id="@+id/ll_item_option_music"
             android:orientation="horizontal"
@@ -23,15 +20,23 @@
                 android:layout_width="0dp"
                 android:gravity="center"
                 android:layout_gravity="center"
+
                 android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/item_music_img_music"
+                <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
                     android:padding="@dimen/_7sdp"
-                    android:layout_height="@dimen/_36sdp"
-                    android:src="@drawable/tinh_dep"/>
+                    android:layout_margin="@dimen/_7sdp"
+                    app:cardBackgroundColor="@color/transparent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/item_music_img_music"
+                        android:layout_width="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:layout_height="@dimen/_36sdp"
+                        android:src="@drawable/tinh_dep"/>
+                </androidx.cardview.widget.CardView>
+
             </LinearLayout>
 
             <LinearLayout
@@ -75,5 +80,4 @@
                 android:textColor="?text_color"
                 android:layout_height="match_parent"/>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
 </LinearLayout>

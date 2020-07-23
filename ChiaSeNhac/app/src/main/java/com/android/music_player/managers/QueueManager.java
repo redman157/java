@@ -23,6 +23,7 @@ public class QueueManager {
     private StateViewModel mStateViewModel;
     private MediaManager mMediaManager;
     private Context mContext;
+    private String currentParent;
     private SharedPrefsUtils mSharedPrefsUtils;
     private MediaMetadataCompat mediaMetadataCompat;
     private List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
@@ -41,11 +42,15 @@ public class QueueManager {
         mSharedPrefsUtils = new SharedPrefsUtils(mContext);
         // setup data ban đầu của khi mở app
         if (mStateViewModel == null){
-            mStateViewModel = new StateViewModel(((Activity) mContext).getApplication());
-            mStateViewModel.setParentId(MusicLibrary.MEDIA_ID_ROOT);
-            mStateViewModel.setNamePlayList("");
-            if (mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC,"").equals("") && MusicLibrary.music.size() > 0){
-                mStateViewModel.setMediaDataCurrent(MusicLibrary.music.get(MusicLibrary.music.keySet().toArray()[0]));
+            try {
+                mStateViewModel = new StateViewModel(((Activity) mContext).getApplication());
+                mStateViewModel.setParentId(MusicLibrary.MEDIA_ID_ROOT);
+                mStateViewModel.setNamePlayList("");
+                if (mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC, "").equals("") && MusicLibrary.music.size() > 0) {
+                    mStateViewModel.setMediaDataCurrent(MusicLibrary.music.get(MusicLibrary.music.keySet().toArray()[0]));
+                }
+            }catch (ClassCastException e){
+                Log.d("ZZZ",e.getMessage());
             }
         }
     }
@@ -62,47 +67,63 @@ public class QueueManager {
         mStateViewModel.getControllerStyle().observe((LifecycleOwner) mContext, new Observer<ControllerStyle>() {
             @Override
             public void onChanged(ControllerStyle controllerStyle) {
+                Log.d("TTT", "onChanged: "+controllerStyle.toString());
                 if (controllerStyle == ControllerStyle.ALL_MUSIC) {
                     ArrayList<String> playLists = new ArrayList<>(MusicLibrary.music.keySet());
                     mediaItems = MusicLibrary.getAlbumService(playLists);
-                } else if (controllerStyle == ControllerStyle.ARTIST){
+                } else if (controllerStyle == ControllerStyle.ARTIST) {
 
-                }else if (controllerStyle == ControllerStyle.ALBUM){
+                } else if (controllerStyle == ControllerStyle.ALBUM) {
 
-                } else if (controllerStyle == ControllerStyle.FOLDER){
+                } else if (controllerStyle == ControllerStyle.FOLDER) {
 
-                }
-                else if (controllerStyle == ControllerStyle.PLAY_LIST){
+                } else if (controllerStyle == ControllerStyle.PLAY_LIST) {
                     mediaItems = getNamePlayList();
                 }
             }
         });
+      /*  try {
+            Log.d("TTT", "getControllerStyle: enter");
+            mStateViewModel.getControllerStyle().observe((LifecycleOwner) mContext, new Observer<ControllerStyle>() {
+                @Override
+                public void onChanged(ControllerStyle controllerStyle) {
+                    Log.d("TTT", "onChanged: "+controllerStyle.toString());
+                    if (controllerStyle == ControllerStyle.ALL_MUSIC) {
+                        ArrayList<String> playLists = new ArrayList<>(MusicLibrary.music.keySet());
+                        mediaItems = MusicLibrary.getAlbumService(playLists);
+                    } else if (controllerStyle == ControllerStyle.ARTIST) {
+
+                    } else if (controllerStyle == ControllerStyle.ALBUM) {
+
+                    } else if (controllerStyle == ControllerStyle.FOLDER) {
+
+                    } else if (controllerStyle == ControllerStyle.PLAY_LIST) {
+                        mediaItems = getNamePlayList();
+                    }
+                }
+            });
+
+        } catch (NullPointerException e){
+
+            ArrayList<String> playLists = new ArrayList<>(MusicLibrary.music.keySet());
+            mediaItems = MusicLibrary.getAlbumService(playLists);
+            Log.d("TTT", "NullPointerException: "+mediaItems.size());
+        }catch (Exception e){
+            Log.d("TTT", "Exception: "+e.getMessage());
+        }*/
         return mediaItems;
     }
 
-    public void getParentId(){
+
+    public String getParentId(){
         mStateViewModel.getParentId().observe((LifecycleOwner) mContext, new Observer<String>() {
                 @Override
                 public void onChanged(String parentId) {
+                    currentParent = parentId;
 
-                if (parentId.equals(MusicLibrary.MEDIA_ID_ROOT)){
-                    // GỠ STATE VÀ SET STATE KHÁC
-                    mMediaManager.getMediaBrowserConnection().unSetSubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
-                            mMediaManager.getMediaBrowserConnection().getCallback());
-
-                    mMediaManager.getMediaBrowserConnection().setSubscribe(MusicLibrary.MEDIA_ID_ROOT,
-                            mMediaManager.getMediaBrowserConnection().getCallback());
-                    Log.d("ZZZ",
-                            "kích thước: "+parentId);
-                }else if (parentId.equals(MusicLibrary.MEDIA_ID_EMPTY_ROOT)){
-                    mMediaManager.getMediaBrowserConnection().unSetSubscribe(MusicLibrary.MEDIA_ID_ROOT,
-                            mMediaManager.getMediaBrowserConnection().getCallback());
-
-                    mMediaManager.getMediaBrowserConnection().setSubscribe(MusicLibrary.MEDIA_ID_EMPTY_ROOT,
-                            mMediaManager.getMediaBrowserConnection().getCallback());
-                }
             }
         });
+        return currentParent;
     }
 
     public List<MediaBrowserCompat.MediaItem> getNamePlayList(){
@@ -149,14 +170,21 @@ public class QueueManager {
     }
 
     public void setupAllMusic( ){
-        getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_ROOT);
-        getStateViewModel().setControllerStyle(ControllerStyle.ALL_MUSIC);
+        if (getStateViewModel() != null) {
+            getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_ROOT);
+            getStateViewModel().setControllerStyle(ControllerStyle.ALL_MUSIC);
+            Log.d("TTT", "HomeActivity --- setupallmusic: if enter");
+        }else {
+            Log.d("TTT", "HomeActivity --- setupallmusic: else enter");
+        }
 //        getStateViewModel().setNamePlayList("");
     }
 
     public void setCurrentMediaMetadata(MediaMetadataCompat metadataCompat){
         mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC,
                 metadataCompat.getString(Constants.METADATA.Title));
-        getStateViewModel().setMediaDataCurrent(metadataCompat);
+        if (getStateViewModel() != null) {
+            getStateViewModel().setMediaDataCurrent(metadataCompat);
+        }
     }
 }

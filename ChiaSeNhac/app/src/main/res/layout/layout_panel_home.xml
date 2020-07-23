@@ -52,7 +52,6 @@
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:scaleType="fitCenter"
-                        android:background="?attr/back_ground_app"
                         android:src="@drawable/ic_music_notes_padded" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -69,40 +68,64 @@
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp">
 
-                <TextView
-                    android:padding="@dimen/_3sdp"
-                    android:id="@+id/text_title_panel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:fontFamily="sans-serif"
-                    android:freezesText="true"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:scrollHorizontally="true"
-                    android:singleLine="true"
-                    android:text="@string/app_name"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="?text_color"
-                    android:textScaleX="1.05"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                <LinearLayout
+                    android:id="@+id/linear_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_title_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:fontFamily="sans-serif"
+                        android:freezesText="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:padding="@dimen/_3sdp"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:text="@string/app_name"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="?text_color"
+                        android:textScaleX="1.05"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/text_artists_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/text_title_panel"
+                        android:fontFamily="sans-serif"
+                        android:maxLines="1"
+                        android:padding="@dimen/_2sdp"
+                        android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColor="?text_color"
+                        android:textScaleX="1.05"
+                        android:textSize="12sp"
+                        android:textStyle="normal" />
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/text_artists_panel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/text_title_panel"
+                    android:layout_alignParentEnd="true"
                     android:fontFamily="sans-serif"
                     android:maxLines="1"
-                    android:padding="@dimen/_2sdp"
-                    android:singleLine="true"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="?text_color"
                     android:textScaleX="1.05"
-                    android:textSize="12sp"
-                    android:textStyle="normal" />
+                    android:textSize="10sp"
+                    android:padding="@dimen/_2sdp"
+                    android:layout_toEndOf="@id/linear_title"
+                    android:id="@+id/text_time_panel"
+                    android:layout_width="wrap_content"
+                    android:gravity="center"
+                    android:layout_height="match_parent"/>
+
             </RelativeLayout>
 
             <com.android.music_player.view.PlayPauseView

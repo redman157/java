@@ -121,7 +121,8 @@ public class ChooseMusicAdapter extends RecyclerView.Adapter<ChooseMusicAdapter.
             MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(mContext,
                     item.getDescription().getMediaId());
 
-            mImageUtils.getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes((String) metadataCompat.getText(Constants.METADATA.Title))), imageView);
+            mImageUtils.getImagePanel(String.valueOf(MusicLibrary.getAlbumRes((String) metadataCompat.getText(Constants.METADATA.Title))), imageView);
+
             textTime.setText(format.format(metadataCompat.getLong(Constants.METADATA.Duration)));
             textArtist.setText(metadataCompat.getText(Constants.METADATA.Artist));
             textTitle.setText(metadataCompat.getText(Constants.METADATA.Title));

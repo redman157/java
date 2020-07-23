@@ -2,6 +2,7 @@ package com.android.music_player.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,10 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.music_player.R;
 import com.android.music_player.managers.MediaManager;
+import com.android.music_player.managers.QueueManager;
 import com.android.music_player.tasks.PerformMusicTasks;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
@@ -34,7 +37,7 @@ public class SplashActivity extends AppCompatActivity {
     /* access modifiers changed from: protected */
     //Binding this Client to the AudioPlayer Service
 
-
+    private QueueManager mQueueManager;
     @SuppressLint({"SetTextI18n"})
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -52,6 +55,8 @@ public class SplashActivity extends AppCompatActivity {
 
         setTextStatus();
         checkReadStoragePermissions();
+    //        mQueueManager = QueueManager.getInstance(this);
+    //        mQueueManager.setupAllMusic();
     }
     private void checkReadStoragePermissions() {
         if (Utils.isMarshmallow()) {
@@ -109,6 +114,18 @@ public class SplashActivity extends AppCompatActivity {
             mTextSync.setText("Syncing...");
         } else {
             mTextSync.setText("Initiating...");
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ActionBarCastActivity.REQUEST_CODE_RESTORE){
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+
+            Log.d("ZZZ","SplashActivity --- onactivityresult: enter");
         }
     }
 

@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media.MediaBrowserServiceCompat;
 
-import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.managers.QueueManager;
 import com.android.music_player.services.MediaService;
 
 import java.util.HashMap;
@@ -37,8 +37,9 @@ public abstract class BrowserHelper {
 
     private final MediaBrowserConnectionCallback mMediaBrowserConnectionCallback;
     private final MediaControllerCallback mMediaControllerCallback;
-
+    private QueueManager mQueueManager;
     private MediaBrowserCompat mMediaBrowser;
+    private MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
     public BrowserHelper(Context mContext,
                          Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass) {
         // thực hiện công việc kết nối từ activity tới service
@@ -46,16 +47,13 @@ public abstract class BrowserHelper {
         this.mMediaBrowserServiceClass = mMediaBrowserServiceClass;
         mMediaBrowserConnectionCallback = new MediaBrowserConnectionCallback();
         mMediaControllerCallback = new MediaControllerCallback();
+        mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
+        mQueueManager = QueueManager.getInstance(mContext);
     }
 
-    public boolean isConnect(){
-        if (mMediaBrowser != null && mMediaBrowser.isConnected()){
-            return true;
-        }else {
-            return false;
-        }
-    }
+    public void restore(){
 
+    }
 
     public void onStart(){
         if (mMediaBrowser == null){
@@ -65,24 +63,35 @@ public abstract class BrowserHelper {
                     mMediaBrowserConnectionCallback,
                             null);
             mMediaBrowser.connect();
-
             Log.d(TAG, "BrowserHelper --- onStart: Creating MediaBrowser, and connecting");
         } else {
-            Log.d(TAG, "BrowserHelper --- mMediaBrowser: khác null");
+//            if (mMediaBrowser.isConnected()){
+//                mMediaBrowser.disconnect();
+//                mMediaBrowser.connect();
+//                Log.d(TAG, "BrowserHelper --- isConnected: true");
+//            }else {
+//                Log.d(TAG, "BrowserHelper --- isConnected: false");
+//            }
+
         }
     }
 
     public void onStop(){
+        Log.d(TAG, "BrowserHelper --- onStop --- mMediaController enter");
         if (mMediaController != null){
             mMediaController.unregisterCallback(mMediaControllerCallback);
             mMediaController = null;
-            Log.d(TAG, "BrowserHelper --- mMediaController enter");
+
+        }else {
+            Log.d(TAG, "BrowserHelper --- onStop --- mMediaController là null");
         }
         if (mMediaBrowser != null && mMediaBrowser.isConnected()) {
-//            mMediaBrowser.unsubscribe(mMediaBrowser.getRoot(), mMediaBrowserSubscriptionCallback);
+            mMediaBrowser.unsubscribe(mQueueManager.getParentId(), mMediaBrowserSubscriptionCallback);
             mMediaBrowser.disconnect();
             mMediaBrowser = null;
-            Log.d(TAG, "BrowserHelper --- mMediaBrowser enter");
+            Log.d(TAG, "BrowserHelper --- onStop --- mMediaBrowser là null");
+        }else {
+            Log.d(TAG, "BrowserHelper --- onStop ---mMediaBrowser null");
         }
         resetState();
         Log.d(TAG, "BrowserHelper --- onStop: Releasing MediaController, Disconnecting from " +
@@ -189,7 +198,7 @@ public abstract class BrowserHelper {
                 final MediaMetadataCompat metadata = mMediaController.getMetadata();
 
                 if (metadata != null) {
-                    Log.d("JJJ",
+                    Log.d(TAG,
                             "BrowserHelper --- registerCallback --- musicID: " + metadata.getDescription().getMediaId());
                     callback.onMetadataChanged(metadata);
                 }
@@ -197,12 +206,12 @@ public abstract class BrowserHelper {
                 final PlaybackStateCompat playbackState = mMediaController.getPlaybackState();
 
                 if (playbackState != null) {
-                    Log.d("JJJ",
+                    Log.d(TAG,
                             "BrowserHelper --- registerCallback --- state:" + playbackState.getState());
                     callback.onPlaybackStateChanged(playbackState);
                 }
             }else {
-                Log.d("JJJ",
+                Log.d(TAG,
                         "BrowserHelper --- registerCallback --- mMediaController: null");
             }
         }
@@ -216,13 +225,16 @@ public abstract class BrowserHelper {
         @Override
         public void onConnectionSuspended() {
             super.onConnectionSuspended();
-            Log.d("JJJ","BrowserHelper --- onConnectionSuspended: enter");
+            Log.d(TAG,"BrowserHelper --- onConnectionSuspended: enter");
         }
 
         @Override
         public void onConnectionFailed() {
             super.onConnectionFailed();
-            Log.d("JJJ","BrowserHelper --- onConnectionFailed: enter");
+            Log.d(TAG,"BrowserHelper --- onConnectFailded: "+(mMediaBrowser == null? "null":
+                    "khac null"));
+           /* Log.d(TAG","BrowserHelper --- onConnectionFailed: "+(mMediaBrowser.isConnected() ?
+                    "connect":"k connect"));*/
         }
 
         @Override
@@ -237,10 +249,12 @@ public abstract class BrowserHelper {
                 if (mMediaController.getMetadata() != null) {
                     mMediaControllerCallback.onMetadataChanged(mMediaController.getMetadata());
                     mMediaControllerCallback.onPlaybackStateChanged(mMediaController.getPlaybackState());
+
+                    BrowserHelper.this.onConnected(mMediaController);
                 }
 
-                Log.d(TAG, "MediaBrowserConnectionCallback --- onConnected: enter");
-                BrowserHelper.this.onConnected(mMediaController);
+                Log.d(TAG,
+                        "MediaBrowserConnectionCallback --- check null MeidaController: "+(mMediaController == null ? "null":"khac null"));
 
             }catch (AndroidException e) {
                 Log.d(TAG, String.format("onConnected: Problem: %s", e.toString()));
@@ -259,14 +273,14 @@ public abstract class BrowserHelper {
         @Override
         public void onChildrenLoaded(@NonNull String parentId,
                                      @NonNull List<MediaBrowserCompat.MediaItem> children) {
-            Log.d("WWW","MediaBrowserSubscriptionCallback --- onChildrenLoaded: "+parentId);
+            Log.d(TAG,"MediaBrowserSubscriptionCallback --- onChildrenLoaded: "+parentId);
 
             BrowserHelper.this.onChildrenLoaded(parentId, children);
         }
 
         @Override
         public void onError(@NonNull String parentId) {
-            Log.d("JJJ", "BrowserHelper --- MediaBrowserSubscriptionCallback: "+parentId);
+            Log.d(TAG, "BrowserHelper --- MediaBrowserSubscriptionCallback: "+parentId);
         }
     }
 
@@ -300,6 +314,7 @@ public abstract class BrowserHelper {
         // foreground and onStart() has been called (but not onStop()).
         @Override
         public void onSessionDestroyed() {
+            Log.d(TAG,this.getClass().getSimpleName() + " --- onSessionDestroyed : Enter");
             resetState();
             onPlaybackStateChanged(null);
             BrowserHelper.this.onDisconnected();

@@ -7,7 +7,6 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -26,8 +25,8 @@ public class MediaSeekBar extends AppCompatSeekBar implements SeekBar.OnSeekBarC
     private MediaControllerCompat mControllerCompat;
     private PlaybackStateCompat mStateCompat;
     private MediaMetadataCompat mMediaMetadataCompat;
-    private MediaBrowserListener.OnChangeMusicListener onChangeMusicListener;
-    public void setOnChangeMusicListener(MediaBrowserListener.OnChangeMusicListener onChangeMusicListener){
+    private MediaBrowserCallBack.OnChangeMusicListener onChangeMusicListener;
+    public void setOnChangeMusicListener(MediaBrowserCallBack.OnChangeMusicListener onChangeMusicListener){
         this.onChangeMusicListener = onChangeMusicListener;
     }
     public MediaSeekBar(Context context ) {

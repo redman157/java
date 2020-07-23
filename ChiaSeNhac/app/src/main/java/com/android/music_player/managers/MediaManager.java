@@ -120,16 +120,20 @@ public class MediaManager {
     public String getCurrentMusic(){
         mQueueManager = QueueManager.getInstance(mContext);
         String nameSong = mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC, "");
-        if (nameSong.equals("")){
-            ArrayList<String> keys = new ArrayList<>(MusicLibrary.music.keySet());
-            mQueueManager.setCurrentMediaMetadata(getMetadata(mContext,
-                    keys.get(0)));
-            nameSong = keys.get(0);
-        }else {
-            mQueueManager.setCurrentMediaMetadata(getMetadata(mContext,
-                   nameSong));
+        if (MusicLibrary.music.size() > 0) {
+            if (nameSong.equals("")) {
+                ArrayList<String> keys = new ArrayList<>(MusicLibrary.music.keySet());
+                Log.d("PPP", "getCurrentMusic size: " + keys.size());
+                mQueueManager.setCurrentMediaMetadata(getMetadata(mContext,
+                        keys.get(0)));
+                nameSong = keys.get(0);
+
+            } else {
+                mQueueManager.setCurrentMediaMetadata(getMetadata(mContext,
+                        nameSong));
+            }
         }
-        Log.d("PPP", nameSong);
+        Log.d("PPP", "getCurrentMusic: "+nameSong);
         return nameSong;
     }
 
@@ -552,9 +556,8 @@ public class MediaManager {
     }
 
     public MediaMetadataCompat getMetadata(Context context, String songName) {
+
         MediaMetadataCompat metadataWithoutBitmap = MusicLibrary.music.get(songName);
-        Bitmap albumArt = ImageHelper.getAlbumArt(context,
-                Long.valueOf(MusicLibrary.albumID.get(songName)));
 
         // Since MediaMetadataCompat is immutable, we need to create a copy to assignData the album art.
         // We don't assignData it initially on all items so that they don't take unnecessary memory.
@@ -574,7 +577,12 @@ public class MediaManager {
         builder.putLong(
                 MediaMetadataCompat.METADATA_KEY_DURATION,
                 metadataWithoutBitmap.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
-        builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt);
+
+        if (MusicLibrary.albumID.get(songName) != null) {
+            Bitmap albumArt = ImageHelper.getAlbumArt(context,
+                    Long.valueOf(MusicLibrary.albumID.get(songName)));
+            builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt);
+        }
         return builder.build();
     }
 

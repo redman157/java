@@ -13,7 +13,7 @@
         android:layout_width="0dp"
         android:scaleType="fitCenter"
         android:layout_margin="5dp"
-        android:tint="?attr/accent_color"
+        android:tint="?attr/text_color"
         android:layout_height="match_parent"/>
     <LinearLayout
         android:layout_weight="9"

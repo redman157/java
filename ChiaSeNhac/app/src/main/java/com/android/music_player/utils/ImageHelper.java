@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -64,6 +65,18 @@ public class ImageHelper {
         catch (Exception ignored) {}
     }
 
+    public void getImagePanel(String albumID, ImageView image) {
+        try {
+            Picasso.get().load(getSongUri(Long.parseLong(albumID)))
+                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext,
+                            R.drawable.ic_music_note_black_24dp)))
+                    .resize(400,400)
+                    .onlyScaleDown()
+                    .into(image);
+        }
+        catch (Exception ignored) {}
+    }
+
     public Bitmap getBitmapIntoPicasso(String albumID){
         final Bitmap[] mBitmap = new Bitmap[1];
         try {
@@ -112,6 +125,8 @@ public class ImageHelper {
                 bitmap = getBitmapFromVectorDrawable(context,
                         R.drawable.ic_music_notes_padded);
             }
+        } catch (NullPointerException e){
+            Log.d("GGG","NullPointerException Enter: "+albumId);
         }
         return bitmap;
     }
@@ -140,11 +155,33 @@ public class ImageHelper {
         catch (IOException e) {
             //handle exception
             if (e instanceof FileNotFoundException){
+                int color = ChangeTheme.getAccent(context);
+                int accent = ContextCompat.getColor(context, color);
                 Log.d("GGG","FileNotFoundException Enter: "+albumId);
-                bitmap = getBitmapFromVectorDrawable(context,
-                        R.drawable.app_icon_music);
+                bitmap = getLargeIcon(context, accent);
             }
         }
+        return bitmap;
+    }
+
+    //https://gist.github.com/Gnzlt/6ddc846ef68c587d559f1e1fcd0900d3
+    private static Bitmap getLargeIcon(Context context, int accent) {
+
+        final VectorDrawable vectorDrawable =
+                (VectorDrawable) context.getDrawable(R.drawable.app_icon_music);
+
+        final int largeIconSize =
+                context.getResources().getDimensionPixelSize(R.dimen._240sdp);
+        final Bitmap bitmap = Bitmap.createBitmap(largeIconSize, largeIconSize, Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bitmap);
+
+        if (vectorDrawable != null) {
+            vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            vectorDrawable.setTint(accent);
+            vectorDrawable.setAlpha(100);
+            vectorDrawable.draw(canvas);
+        }
+
         return bitmap;
     }
 }

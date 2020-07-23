@@ -16,21 +16,14 @@ import java.util.List;
  * are added or removed from the queue. We don't do this here in order to keep the UI
  * simple.
  */
-public class MediaBrowserListener extends MediaControllerCompat.Callback {
+public class MediaBrowserCallBack extends MediaControllerCompat.Callback {
     private OnChangeMusicListener onChangeMusicListener;
-    private String TAG = "JJJ";
+    private String TAG = "MediaBrowserCallBack";
 
     public interface OnChangeMusicListener {
         void onStateChange(boolean isPlay, PlaybackStateCompat state);
         void onComplete(boolean isNext);
         void onMediaMetadata(MediaMetadataCompat mediaMetadata);
-    }
-
-
-    @Override
-    public void onRepeatModeChanged(int repeatMode) {
-        super.onRepeatModeChanged(repeatMode);
-        Log.d("LLL", "MediaBrowserListener --- onRepeatModeChanged"+repeatMode);
     }
 
     public void setOnChangeMusicListener(OnChangeMusicListener onChangeMusicListener){
@@ -41,18 +34,18 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
     public void onPlaybackStateChanged(PlaybackStateCompat state) {
         if (state!= null && onChangeMusicListener != null) {
             Log.d(TAG,
-                    "MediaBrowserListener --- onPlaybackStateChanged: "+state.getState()+" --- " +
+                    "MediaBrowserCallBack --- onPlaybackStateChanged: "+state.getState()+" --- " +
                             "current pos:" +
                             " "+state.getPosition());
             boolean isPlay = state.getExtras().getBoolean("isPlay");
             switch (state.getState()) {
                 case PlaybackStateCompat.STATE_PLAYING:
-                    Log.d(TAG,"MediaBrowserListener --- STATE_PLAYING: "+state.getPosition());
+                    Log.d(TAG,"MediaBrowserCallBack --- STATE_PLAYING: "+state.getPosition());
 
                     onChangeMusicListener.onStateChange(isPlay, state);
                     break;
                 case PlaybackStateCompat.STATE_BUFFERING:
-                    Log.d(TAG,"MediaBrowserListener --- STATE_BUFFERING: "+state.getPosition() +
+                    Log.d(TAG,"MediaBrowserCallBack --- STATE_BUFFERING: "+state.getPosition() +
                             " --- "+state.getExtras().getBoolean("isPlay"));
                     onChangeMusicListener.onStateChange(isPlay,
                             state);
@@ -80,6 +73,7 @@ public class MediaBrowserListener extends MediaControllerCompat.Callback {
     @Override
     public void onSessionDestroyed() {
         super.onSessionDestroyed();
+        Log.d("JJJ","onSessionDestroyed: enter" );
     }
 
     @Override

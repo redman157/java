@@ -32,9 +32,8 @@ import com.android.music_player.interfaces.OnClickItemListener;
 import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
-import com.android.music_player.managers.QueueManager;
 import com.android.music_player.media.BrowserHelper;
-import com.android.music_player.media.MediaBrowserListener;
+import com.android.music_player.media.MediaBrowserCallBack;
 import com.android.music_player.utils.BottomSheetHelper;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogHelper;
@@ -56,7 +55,7 @@ import static com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 
 
 public class HomeActivity extends BaseActivity implements View.OnClickListener,
-        MediaBrowserListener.OnChangeMusicListener, SlidingUpPanelLayout.PanelSlideListener,
+        MediaBrowserCallBack.OnChangeMusicListener, SlidingUpPanelLayout.PanelSlideListener,
         OnConnectMediaId, OnClickItemListener {
     private RelativeLayout mViewControlMedia, mViewMusic;
     private LinearLayout mViewPanelMedia, mLayoutSeeMore, mLayoutControlSong, mLlChangeMusic;
@@ -86,13 +85,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private ChooseMusicAdapter mChooseMusicAdapter;
     public final static String FRAGMENT_TAG = "fragment_tag";
     public BottomSheetHelper bottomSheetHelper;
-    private QueueManager mQueueManager;
     public int colorEnable, colorUnEnable;
+
     @Override
     public void initManager() {
         mSharedPrefsUtils = getSharedPrefsUtils();
         mMediaManager = getMediaManager();
-        mQueueManager = QueueManager.getInstance(this);
+
         ImageHelper.getInstance(this);
     }
 
@@ -106,9 +105,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("VVV", "HomeActivity --- onStop: Enter");
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
-
+        Log.d("VVV", "HomeActivity --- onStart: Enter");
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
             setViewMusic(mMediaManager.getCurrentMusic(),PanelState.EXPANDED );
         }else if (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED){
@@ -120,6 +125,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public void onResume() {
         super.onResume();
 
+        Log.d("VVV", "HomeActivity --- onResume: Enter");
     }
 
     @Override
@@ -138,19 +144,12 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         colorUnEnable = colorUn.data;
         initManager();
         setContentView(R.layout.activity_home);
+
         initializeToolbar();
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.app_name);
         }
-        if (savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fl_placeholder ,
-                            HomeFragment.newInstance(this),
-                            FRAGMENT_TAG)
-                    .commit();
-        }
-        mQueueManager.setupAllMusic();
         initView();
         assignView();
         Log.d("III","State hiện tại: "+(mSlidingUpPanelLayout.getPanelState()));
@@ -175,7 +174,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 mediaID);
         mTextArtistPanel.setText(metadataCompat.getString(Constants.METADATA.Artist));
         mTextTitlePanel.setText(metadataCompat.getString(Constants.METADATA.Title));
-        ImageHelper.getInstance(this).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(mediaID)),
+        ImageHelper.getInstance(this).getImagePanel(String.valueOf(MusicLibrary.getAlbumRes(mediaID)),
                 mImgAlbumArtPanel);
         setPlayMedia(mediaID);
         if (state != null) {
@@ -412,13 +411,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     mChooseMusicAdapter = new ChooseMusicAdapter(HomeActivity.this);
                     mChooseMusicAdapter.setOnConnectMediaIdListener(this);
                 }
-                List<MediaBrowserCompat.MediaItem> namePlayList =
-                        ((HomeActivity)this).getQueueManager().getControllerStyle();
+                List<MediaBrowserCompat.MediaItem> namePlayList = getQueueManager().getControllerStyle();
                 if (namePlayList != null) {
                     for (int i = 0; i< namePlayList.size(); i++){
                         getControllerActivity().addQueueItem(namePlayList.get(i).getDescription());
                     }
                 }
+                Log.d("TTT", "image_view_queue: "+namePlayList.size());
                 mChooseMusicAdapter.setQueueMediaID(MusicLibrary.parseListQueueToMedia(namePlayList));
                 mChooseMusicAdapter.notifyDataSetChanged();
                 bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
@@ -549,7 +548,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case COLLAPSED:
                 Log.d("III", "enter");
-                mQueueManager.getCurrentMediaMetadata();
+                try {
+                    getQueueManager().getCurrentMediaMetadata();
+                }catch (NullPointerException e){
+                    Log.d("VVV", e.getMessage());
+                }
                 mLayoutState.setAlpha(1);
                 break;
             case DRAGGING:

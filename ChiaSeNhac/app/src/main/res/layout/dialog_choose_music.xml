@@ -27,6 +27,6 @@
         android:layout_height="0dp"
         app:fastScrollPopupBgColor="?attr/accent_color"
         app:fastScrollPopupTextColor="?attr/popup_text_color"
-        app:fastScrollThumbColor="?attr/accent_color"
-        app:fastScrollThumbInactiveColor="?attr/accent_color"/>
+        app:fastScrollThumbColor="@color/black"
+        app:fastScrollThumbInactiveColor="@color/black"/>
 </LinearLayout>

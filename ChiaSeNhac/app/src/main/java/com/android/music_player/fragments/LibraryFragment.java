@@ -58,10 +58,8 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     private HomeActivity mHomeActivity;
     private static LibraryFragment fragment = null;
     public static LibraryFragment newInstance() {
-        if (fragment == null){
-            fragment = new LibraryFragment();
+        fragment = new LibraryFragment();
 
-        }
         return fragment;
     }
     @Override
@@ -83,9 +81,7 @@ public class LibraryFragment extends Fragment implements View.OnClickListener,
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Defines the xml file for the fragment
-        if (view == null) {
-            view = inflater.inflate(R.layout.fragment_library, container, false);
-        }
+        view = inflater.inflate(R.layout.fragment_library, container, false);
         return view;
     }
 

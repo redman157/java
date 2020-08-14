@@ -35,6 +35,7 @@ import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserCallBack;
 import com.android.music_player.utils.BottomSheetHelper;
+import com.android.music_player.utils.ChangeTheme;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogHelper;
 import com.android.music_player.utils.ImageHelper;
@@ -114,6 +115,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     protected void onStart() {
         super.onStart();
         Log.d("VVV", "HomeActivity --- onStart: Enter");
+
         if (mSlidingUpPanelLayout.getPanelState() == PanelState.EXPANDED){
             setViewMusic(mMediaManager.getCurrentMusic(),PanelState.EXPANDED );
         }else if (mSlidingUpPanelLayout.getPanelState() == PanelState.COLLAPSED){
@@ -131,17 +133,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSharedPrefsUtils = new SharedPrefsUtils(this);
-        getTheme().applyStyle(mSharedPrefsUtils.getInteger(Constants.PREFERENCES.ACCENT_COLOR,
-                R.style.OverlayThemeWhite),
-                true);
-        TypedValue colorEn = new TypedValue();
-        getTheme().resolveAttribute(R.attr.select_enable, colorEn, true);
-        colorEnable = colorEn.data;
+        ChangeTheme.setThemeActivity(this);
 
-        TypedValue colorUn = new TypedValue();
-        getTheme().resolveAttribute(R.attr.text_color, colorUn, true);
-        colorUnEnable = colorUn.data;
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.select_enable, typedValue, true);
+        colorEnable = typedValue.data;
+
+        TypedValue typedValue1 = new TypedValue();
+        getTheme().resolveAttribute(R.attr.text_color, typedValue1, true);
+        colorUnEnable = typedValue1.data;
         initManager();
         setContentView(R.layout.activity_home);
 
@@ -149,13 +149,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.app_name);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fl_placeholder ,
+                            HomeFragment.newInstance(this),
+                            FRAGMENT_TAG)
+                    .commit();
         }
         initView();
         assignView();
         Log.d("III","State hiện tại: "+(mSlidingUpPanelLayout.getPanelState()));
     }
 
-    
     public void setPlayMedia(String songName){
         MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(this,
                 songName);
@@ -337,6 +341,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             case R.id.image_equalizer:
                 EqualizerFragment fragment = EqualizerFragment.newInstance();
                 fragment.show(getSupportFragmentManager(), FRAGMENT_TAG);
+//                EqualizerUtils.openEqualizer(this, MediaPlayerManager.mMediaPlayer);
                 break;
             case R.id.image_favorite:
                 bottomSheetHelper =
@@ -412,12 +417,20 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     mChooseMusicAdapter.setOnConnectMediaIdListener(this);
                 }
                 List<MediaBrowserCompat.MediaItem> namePlayList = getQueueManager().getControllerStyle();
-                if (namePlayList != null) {
+                if (namePlayList != null && namePlayList.size() > 0) {
+
+                }
+                if (namePlayList.size() == 0){
+                    ArrayList<String> playLists = new ArrayList<>(MusicLibrary.music.keySet());
+                    namePlayList = MusicLibrary.getAlbumService(playLists);
+                }
+                if (getControllerActivity() != null && getControllerActivity().getQueue().size() == 0){
                     for (int i = 0; i< namePlayList.size(); i++){
                         getControllerActivity().addQueueItem(namePlayList.get(i).getDescription());
                     }
                 }
-                Log.d("TTT", "image_view_queue: "+namePlayList.size());
+                Log.d("TTT", "namePlayList: "+namePlayList.size());
+                Log.d("TTT", "music: "+MusicLibrary.music.size());
                 mChooseMusicAdapter.setQueueMediaID(MusicLibrary.parseListQueueToMedia(namePlayList));
                 mChooseMusicAdapter.notifyDataSetChanged();
                 bottomSheetHelper = new BottomSheetHelper(DialogType.CHOOSE_MUSIC,
@@ -442,10 +455,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                     mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
                 }
                 break;
-         /*   case R.id.menu_search:
-                Intent iSearch = new Intent(this, SearchActivity.class);
-                startActivity(iSearch);
-                break;*/
         }
     }
 
@@ -548,11 +557,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case COLLAPSED:
                 Log.d("III", "enter");
-                try {
-                    getQueueManager().getCurrentMediaMetadata();
-                }catch (NullPointerException e){
-                    Log.d("VVV", e.getMessage());
-                }
+                getQueueManager().getCurrentMediaMetadata();
+
                 mLayoutState.setAlpha(1);
                 break;
             case DRAGGING:

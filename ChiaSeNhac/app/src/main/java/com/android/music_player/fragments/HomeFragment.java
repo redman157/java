@@ -50,9 +50,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private static HomeFragment fragment = null;
 
     public static HomeFragment newInstance(OnConnectMediaId onConnectMediaId) {
-        if (fragment == null){
-            fragment = new HomeFragment();
-        }
+
+        fragment = new HomeFragment();
+
         fragment.setOnConnectMediaIdListener(onConnectMediaId);
         return fragment;
     }
@@ -77,16 +77,16 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        if (view == null) {
-            view = inflater.inflate(R.layout.fragment_home, container, false);
-            initView();
-            mSwipeRefreshLayout.setRefreshing(false);
-            mHomeAdapter = new HomeFragmentAdapter((HomeActivity) getActivity(), mMusicAdapter);
-            mHomeAdapter.notifyDataSetChanged();
-            mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
-            mRcHome.setAdapter(mHomeAdapter);
-            mSwipeRefreshLayout.setOnRefreshListener(this);
-        }
+
+        view = inflater.inflate(R.layout.fragment_home, container, false);
+        initView();
+        mSwipeRefreshLayout.setRefreshing(false);
+        mHomeAdapter = new HomeFragmentAdapter((HomeActivity) getActivity(), mMusicAdapter);
+        mHomeAdapter.notifyDataSetChanged();
+        mRcHome.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRcHome.setAdapter(mHomeAdapter);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
 
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = getActivity().getTheme();
@@ -185,6 +185,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             if (mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC).equals("")) {
                 mTextPlayerSongs.setText("");
                 mImgPlayerMusic.setImageResource(R.drawable.ic_music_notes_padded);
+
             }else {
                 mTextPlayerSongs.setText(mMediaManager.getStatistic().getMusicMost(Constants.VALUE.MOST_MUSIC));
                 ImageHelper.getInstance(mHomeActivity).getSmallImageByPicasso(

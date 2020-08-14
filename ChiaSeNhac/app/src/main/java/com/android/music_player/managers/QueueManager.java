@@ -6,6 +6,7 @@ import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 
@@ -34,6 +35,13 @@ public class QueueManager {
         }
         return instance;
     }
+    private Observer<ControllerStyle> observer;
+
+    public void setNullViewModel(){
+        if (mStateViewModel != null){
+            mStateViewModel = null;
+        }
+    }
     private QueueManager(Context context){
         // TODO something code
         mContext = context;
@@ -46,6 +54,7 @@ public class QueueManager {
                 mStateViewModel = new StateViewModel(((Activity) mContext).getApplication());
                 mStateViewModel.setParentId(MusicLibrary.MEDIA_ID_ROOT);
                 mStateViewModel.setNamePlayList("");
+                mStateViewModel.setControllerStyle(ControllerStyle.ALL_MUSIC);
                 if (mSharedPrefsUtils.getString(Constants.PREFERENCES.CURRENT_MUSIC, "").equals("") && MusicLibrary.music.size() > 0) {
                     mStateViewModel.setMediaDataCurrent(MusicLibrary.music.get(MusicLibrary.music.keySet().toArray()[0]));
                 }
@@ -64,7 +73,8 @@ public class QueueManager {
     }
 
     public List<MediaBrowserCompat.MediaItem> getControllerStyle(){
-        mStateViewModel.getControllerStyle().observe((LifecycleOwner) mContext, new Observer<ControllerStyle>() {
+        Log.d("TTT", "getControllerStyle: "+(mStateViewModel.getControllerStyle() == null ? "null":"khac null"));
+        mStateViewModel.getControllerStyle().observe((AppCompatActivity) mContext, new Observer<ControllerStyle>() {
             @Override
             public void onChanged(ControllerStyle controllerStyle) {
                 Log.d("TTT", "onChanged: "+controllerStyle.toString());
@@ -116,7 +126,7 @@ public class QueueManager {
 
 
     public String getParentId(){
-        mStateViewModel.getParentId().observe((LifecycleOwner) mContext, new Observer<String>() {
+        mStateViewModel.getParentId().observe((AppCompatActivity) mContext, new Observer<String>() {
                 @Override
                 public void onChanged(String parentId) {
                     currentParent = parentId;
@@ -127,7 +137,7 @@ public class QueueManager {
     }
 
     public List<MediaBrowserCompat.MediaItem> getNamePlayList(){
-        mStateViewModel.getNamePlayList().observe((LifecycleOwner) mContext, new Observer<String>() {
+        mStateViewModel.getNamePlayList().observe((AppCompatActivity) mContext, new Observer<String>() {
             @Override
             public void onChanged(String namePlayList) {
                 try {
@@ -170,21 +180,15 @@ public class QueueManager {
     }
 
     public void setupAllMusic( ){
-        if (getStateViewModel() != null) {
-            getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_ROOT);
-            getStateViewModel().setControllerStyle(ControllerStyle.ALL_MUSIC);
+        getStateViewModel().setParentId(MusicLibrary.MEDIA_ID_ROOT);
+        getStateViewModel().setControllerStyle(ControllerStyle.ALL_MUSIC);
             Log.d("TTT", "HomeActivity --- setupallmusic: if enter");
-        }else {
-            Log.d("TTT", "HomeActivity --- setupallmusic: else enter");
-        }
 //        getStateViewModel().setNamePlayList("");
     }
 
     public void setCurrentMediaMetadata(MediaMetadataCompat metadataCompat){
         mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC,
                 metadataCompat.getString(Constants.METADATA.Title));
-        if (getStateViewModel() != null) {
-            getStateViewModel().setMediaDataCurrent(metadataCompat);
-        }
+        getStateViewModel().setMediaDataCurrent(metadataCompat);
     }
 }

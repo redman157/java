@@ -55,8 +55,6 @@ public class SplashActivity extends AppCompatActivity {
 
         setTextStatus();
         checkReadStoragePermissions();
-    //        mQueueManager = QueueManager.getInstance(this);
-    //        mQueueManager.setupAllMusic();
     }
     private void checkReadStoragePermissions() {
         if (Utils.isMarshmallow()) {

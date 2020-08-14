@@ -56,8 +56,7 @@ public class ImageHelper {
     public void getSmallImageByPicasso(String albumID, ImageView image) {
         try {
             Picasso.get().load(getSongUri(Long.parseLong(albumID)))
-                    .placeholder(Objects.requireNonNull(ContextCompat.getDrawable(mContext,
-                            R.drawable.ic_music_notes_padded)))
+                    .placeholder(R.drawable.app_icon_music)
                     .resize(400,400)
                     .onlyScaleDown()
                     .into(image);
@@ -155,8 +154,9 @@ public class ImageHelper {
         catch (IOException e) {
             //handle exception
             if (e instanceof FileNotFoundException){
-                int color = ChangeTheme.getAccent(context);
-                int accent = ContextCompat.getColor(context, color);
+                int accent = ChangeTheme.getColorFromResource(context,
+                        ChangeTheme.getAccent(context),
+                        R.color.white);
                 Log.d("GGG","FileNotFoundException Enter: "+albumId);
                 bitmap = getLargeIcon(context, accent);
             }
@@ -171,7 +171,7 @@ public class ImageHelper {
                 (VectorDrawable) context.getDrawable(R.drawable.app_icon_music);
 
         final int largeIconSize =
-                context.getResources().getDimensionPixelSize(R.dimen._240sdp);
+                context.getResources().getDimensionPixelSize(R.dimen._256sdp);
         final Bitmap bitmap = Bitmap.createBitmap(largeIconSize, largeIconSize, Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bitmap);
 

@@ -101,7 +101,7 @@
         <item name="back_ground_dialog">@color/white</item>
         <item name="back_ground_button">@color/light_grey</item>
         <item name="text_color">@color/black</item>
-        <item name="tint_color">@color/deep_purple_A400</item>
+        <item name="tint_color">@color/purple_A400</item>
         <item name="indicator_edit">@color/purple_A400</item>
         <item name="progress_bar_enable">@color/deep_purple_A400</item>
         <item name="progress_bar_unenable">@color/white</item>

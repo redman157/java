@@ -29,7 +29,7 @@
             android:layout_marginRight="7dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/text_color"
             android:textStyle="bold" />
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_marginRight="7dp"
             android:ellipsize="end"
             android:layout_below="@id/profileName"
-            android:textColor="#FFFFFF" />
+            android:textColor="?attr/text_color" />
 
         <TextView
             android:layout_marginRight="7dp"
@@ -50,7 +50,7 @@
             android:layout_alignParentBottom="true"
             android:drawablePadding="2sp"
             android:paddingBottom="@dimen/profile_misc_padding"
-            android:textColor="#FFFFFF"
+            android:textColor="?attr/text_color"
             android:maxLines="1"
             android:ellipsize="end"
             android:textStyle="bold" />

@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:weightSum="10"
     android:layout_width="match_parent"
-    android:background="?attr/back_ground_app"
+
     android:layout_height="@dimen/_80sdp"
     app:ignore="NamespaceTypo">
     <LinearLayout
@@ -45,14 +45,14 @@
                     android:id="@+id/cardView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+
                     card_view:cardCornerRadius="@dimen/_5sdp">
                     <ImageView
                         android:id="@+id/img_albumArt_panel"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_music_notes_padded" />
+                        android:scaleType="fitCenter" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
@@ -91,7 +91,7 @@
                         android:singleLine="true"
                         android:text="@string/app_name"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="?text_color"
+                        android:textColor="?accent_color"
                         android:textScaleX="1.05"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -106,7 +106,7 @@
                         android:padding="@dimen/_2sdp"
                         android:singleLine="true"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="?text_color"
+                        android:textColor="?accent_color"
                         android:textScaleX="1.05"
                         android:textSize="12sp"
                         android:textStyle="normal" />

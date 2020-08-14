@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.adapters.EqualizerAdapter;
+import com.android.music_player.managers.MediaPlayerManager;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -37,7 +39,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import java.util.ArrayList;
 
 public class EqualizerFragment extends BottomSheetDialogFragment implements View.OnClickListener,
-        EqualizerAdapter.OnClickItemListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
+        EqualizerAdapter.OnClickItemListener, SeekBar.OnSeekBarChangeListener {
     private Context context;
     private View view;
     private ImageButton mImbBackMusic;
@@ -147,7 +149,47 @@ public class EqualizerFragment extends BottomSheetDialogFragment implements View
     }
     private void assignView(){
         mBtnFlat.setOnClickListener(this);
-        mSwEnabled.setOnCheckedChangeListener(this);
+        mSwEnabled.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mSharedPrefsUtils.setBoolean(Constants.PREFERENCES.TURN_EQUALIZER, isChecked);
+                if (MediaPlayerManager.mMediaPlayer == null){
+                    Log.d("PPP", "media null");
+                    return;
+                }else {
+                    if (isChecked == true){
+                        Log.d("PPP", "isCheck true --- "+MediaPlayerManager.mMediaPlayer.getAudioSessionId());
+                        setupEqualizerFxAndUI(true);
+                    }else {
+                        Log.d("PPP", "isCheck false");
+                    }
+                   /* if (isChecked == true) {
+                        int session = MediaPlayerManager.mMediaPlayer.getAudioSessionId();
+                        Equalizer equalizer = new Equalizer(0, session);
+                        BassBoost bassBoost = new BassBoost(0, session);
+                        Virtualizer virtualizer = new Virtualizer(0, session);
+
+                        equalizer.setEnabled(isChecked);
+                        bassBoost.setEnabled(isChecked);
+                        virtualizer.setEnabled(isChecked);
+                        // saving setting for equalizer
+                        if (isChecked) {
+                            for (int index = 0; index < Constants.VALUE.MAX_SLIDERS; index++) {
+                                equalizer.setBandLevel((short) index,
+                                        (short) mSharedPrefsUtils.getInteger("profile" + mCurrentEqProfile + "Band" + index, 0));
+                            }
+                            bassBoost.setStrength((short) mSharedPrefsUtils.
+                                    getInteger("BASS_LEVEL" + mCurrentEqProfile, 0));
+                            virtualizer.setStrength((short) mSharedPrefsUtils.
+                                    getInteger("VIRTUAL_LEVEL" + mCurrentEqProfile, 0));
+                        }
+                        equalizer.release();
+                        bassBoost.release();
+                        virtualizer.release();
+                    }*/
+                }
+            }
+        });
         mImbBackMusic.setOnClickListener(this);
         mImgSelection.setOnClickListener(this);
         mEqualizerAdapter = new EqualizerAdapter(getContext(), mEqList);
@@ -158,9 +200,9 @@ public class EqualizerFragment extends BottomSheetDialogFragment implements View
         mBassBoost.setOnSeekBarChangeListener(this);
         mVirtualizer.setOnSeekBarChangeListener(this);
 
-        setupEqualizerFxAndUI(true);
+
     }
-    private void setupEqualizerFxAndUI(boolean isCheck){
+    private void setupEqualizerFxAndUI(boolean isCheck, int session){
         try {
             Equalizer equalizer = new Equalizer(0,
                     mSharedPrefsUtils.getInteger(Constants.PREFERENCES.AUDIO_SESSION_ID, 0));
@@ -273,34 +315,6 @@ public class EqualizerFragment extends BottomSheetDialogFragment implements View
         updateUI();
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        mSharedPrefsUtils.setBoolean(Constants.PREFERENCES.TURN_EQUALIZER, isChecked);
-        Equalizer equalizer = new Equalizer(0,
-                mSharedPrefsUtils.getInteger(Constants.PREFERENCES.AUDIO_SESSION_ID, 0));
-        BassBoost bassBoost = new BassBoost(0,
-                mSharedPrefsUtils.getInteger(Constants.PREFERENCES.AUDIO_SESSION_ID, 0));
-        Virtualizer virtualizer = new Virtualizer(0,
-                mSharedPrefsUtils.getInteger(Constants.PREFERENCES.AUDIO_SESSION_ID, 0));
-
-        equalizer.setEnabled(isChecked);
-        bassBoost.setEnabled(isChecked);
-        virtualizer.setEnabled(isChecked);
-        // saving setting for equalizer
-        if (isChecked){
-            for (int index = 0; index < Constants.VALUE.MAX_SLIDERS; index++){
-                equalizer.setBandLevel((short) index,
-                        (short) mSharedPrefsUtils.getInteger("profile"+mCurrentEqProfile+"Band"+ index,0));
-            }
-            bassBoost.setStrength((short) mSharedPrefsUtils.
-                    getInteger("BASS_LEVEL" + mCurrentEqProfile, 0));
-            virtualizer.setStrength((short) mSharedPrefsUtils.
-                    getInteger("VIRTUAL_LEVEL" + mCurrentEqProfile, 0));
-        }
-        equalizer.release();
-        bassBoost.release();
-        virtualizer.release();
-    }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

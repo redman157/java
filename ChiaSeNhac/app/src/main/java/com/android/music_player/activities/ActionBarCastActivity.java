@@ -40,14 +40,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 
 import com.android.music_player.R;
-import com.android.music_player.fragments.EqualizerFragment;
 import com.android.music_player.fragments.HomeFragment;
 import com.android.music_player.fragments.SettingsFragment;
+import com.android.music_player.managers.QueueManager;
+import com.android.music_player.utils.ChangeTheme;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.google.android.material.navigation.NavigationView;
-
-import static com.android.music_player.activities.HomeActivity.FRAGMENT_TAG;
 
 /**
  * Abstract activity with toolbar, navigation drawer and cast support. Needs to be extended by
@@ -79,7 +78,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     public enum STATE{
         OPEN, CLOSE, DONE, PROCESS, CONTROL, DRAWING
     }
-
+    private QueueManager mQueueManager;
     public ActionBarDrawerToggle getDrawerToggle() {
         return mDrawerToggle;
     }
@@ -178,6 +177,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Activity onCreate");
+        mQueueManager = QueueManager.getInstance(this);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
     }
 
@@ -256,10 +256,6 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                 startActivity(intent);
 
                 break;
-            case R.id.equalizer:
-                EqualizerFragment fragment = EqualizerFragment.newInstance();
-                fragment.show(getSupportFragmentManager(), FRAGMENT_TAG);
-                break;
             case R.id.changeTheme:
                 final Dialog dialog = new Dialog(this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -269,18 +265,13 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mSharedPrefsUtils.setInteger(
                                 Constants.PREFERENCES.ACCENT_COLOR, R.style.OverlayThemeBlack);
+                        ChangeTheme.setAccent(ActionBarCastActivity.this, R.color.black);
                         dialog.cancel();
-
                         Intent intent = new Intent(ActionBarCastActivity.this,
                                 SplashActivity.class); // from getIntent()
                         intent.putExtra(Constants.VALUE.SYNC,
                                 false);
                         startActivity(intent);
-
-                      /*  sThemeInverted = ChangeTheme.isThemeInverted(ActionBarCastActivity.this);
-                        mAccent = ChangeTheme.getAccent(ActionBarCastActivity.this);
-
-                        ChangeTheme.setTheme(ActionBarCastActivity.this, sThemeInverted, mAccent);*/
                     }
                 });
                 dialog.findViewById(R.id.white).setOnClickListener(new View.OnClickListener() {
@@ -288,8 +279,8 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeWhite);
+                        ChangeTheme.setAccent(ActionBarCastActivity.this, R.color.white);
                         dialog.cancel();
-
                         Intent intent = new Intent(ActionBarCastActivity.this,
                                 SplashActivity.class); // from getIntent()
                         intent.putExtra(Constants.VALUE.SYNC, false);
@@ -302,6 +293,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemePurpe);
+                        ChangeTheme.setAccent(ActionBarCastActivity.this, R.color.purple);
                         dialog.cancel();
                         Intent intent = new Intent(ActionBarCastActivity.this,
                                 SplashActivity.class); // from getIntent()
@@ -314,6 +306,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeBrown);
+                        ChangeTheme.setAccent(ActionBarCastActivity.this, R.color.brown_400);
                         dialog.cancel();
                         Intent intent = new Intent(ActionBarCastActivity.this,
                                 SplashActivity.class); // from getIntent()
@@ -326,6 +319,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeCyan);
+                        ChangeTheme.setAccent(ActionBarCastActivity.this, R.color.cyan);
                         dialog.cancel();
                         Intent intent = new Intent(ActionBarCastActivity.this,
                                 SplashActivity.class); // from getIntent()
@@ -339,6 +333,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeBlue);
+                        ChangeTheme.setAccent(ActionBarCastActivity.this, R.color.blue_A400);
                         dialog.cancel();
                         Intent intent = new Intent(ActionBarCastActivity.this,
                                 SplashActivity.class); // from getIntent()
@@ -351,6 +346,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeDeepPurple);
+                        ChangeTheme.setAccent(ActionBarCastActivity.this, R.color.deep_purple_A400);
                         dialog.cancel();
                         Intent intent = new Intent(ActionBarCastActivity.this,
                                 SplashActivity.class); // from getIntent()
@@ -363,6 +359,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeYellow);
+                        ChangeTheme.setAccent(ActionBarCastActivity.this, R.color.yellow);
                         dialog.cancel();
                         Intent intent = new Intent(ActionBarCastActivity.this,
                                 SplashActivity.class); // from getIntent()
@@ -376,6 +373,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeLime);
+                        ChangeTheme.setAccent(ActionBarCastActivity.this, R.color.green);
                         dialog.cancel();
                         Intent intent = new Intent(ActionBarCastActivity.this,
                                 SplashActivity.class); // from getIntent()
@@ -388,6 +386,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         mSharedPrefsUtils.setInteger(Constants.PREFERENCES.ACCENT_COLOR,
                                 R.style.OverlayThemeOrange);
+                        ChangeTheme.setAccent(ActionBarCastActivity.this, R.color.orange);
                         dialog.cancel();
                         Intent intent = new Intent(ActionBarCastActivity.this,
                                 SplashActivity.class); // from getIntent()

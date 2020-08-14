@@ -1,6 +1,7 @@
 package com.android.music_player.managers;
 
 import android.content.Context;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.session.MediaSession;
@@ -14,6 +15,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.android.music_player.activities.HomeActivity;
+import com.android.music_player.interfaces.OnMediaPlayer;
+import com.android.music_player.media.EqualizerUtils;
 import com.android.music_player.media.PlaybackInfoListener;
 import com.android.music_player.media.PlayerAdapter;
 import com.android.music_player.utils.Constants;
@@ -29,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnCompletionListener
         , MediaPlayer.OnPreparedListener{
     private final Context mContext;
-    private MediaPlayer mMediaPlayer;
+    public static MediaPlayer mMediaPlayer;
     private String mFilename;
     private PlaybackInfoListener mPlaybackInfoListener;
     private MediaMetadataCompat mCurrentMedia;
@@ -43,6 +46,11 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     // Work-around for a MediaPlayer bug related to the behavior of MediaPlayer.seekTo()
     // while not playing.
     private int mSeekWhileNotPlaying = -1;
+    private OnMediaPlayer onMediaPlayer;
+    public void setOnMediaPlayer(OnMediaPlayer onMediaPlayer){
+        this.onMediaPlayer = onMediaPlayer;
+    }
+
 
     public MediaPlayerManager(@NonNull Context context, PlaybackInfoListener listener) {
         super(context);
@@ -62,9 +70,16 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
     private void initializeMediaPlayer() {
         if (mMediaPlayer == null) {
             mMediaPlayer = new MediaPlayer();
+            EqualizerUtils.openAudioEffectSession(mContext, mMediaPlayer.getAudioSessionId());
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mMediaPlayer.setWakeMode(mContext.getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+            mMediaPlayer.setWakeMode(mContext, PowerManager.PARTIAL_WAKE_LOCK);
             mMediaPlayer.setOnCompletionListener(this);
+            mMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build());
+        }else {
+            mMediaPlayer.reset();
         }
     }
     // This is the main reducer for the player state machine.
@@ -191,7 +206,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         }
 
         mFilename = filename;
-        initializeMediaPlayer();
+         initializeMediaPlayer();
 
         try {
             File file = new File(mFilename);
@@ -210,6 +225,11 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
         }
 
         play();
+    }
+
+    @Override
+    public MediaPlayer getMediaPlayer() {
+        return mMediaPlayer;
     }
 
     @Override
@@ -268,6 +288,7 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
 
     private void release() {
         if (mMediaPlayer != null) {
+            EqualizerUtils.closeAudioEffectSession(mContext, mMediaPlayer.getAudioSessionId());
             mMediaPlayer.release();
             mMediaPlayer = null;
         }

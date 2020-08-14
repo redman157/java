@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.support.v4.media.MediaMetadataCompat;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,8 @@ public abstract class PlayerAdapter {
     private final AudioFocusHelper mAudioFocusHelper;
     private float volume = 0;
     private boolean mPlayOnAudioFocus = false;
+
+    public abstract MediaPlayer getMediaPlayer();
 
     private final BroadcastReceiver mAudioNoisyReceiver = new BroadcastReceiver() {
         @Override

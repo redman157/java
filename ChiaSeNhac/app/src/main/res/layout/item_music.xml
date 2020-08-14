@@ -26,7 +26,6 @@
                     android:layout_width="wrap_content"
                     android:padding="@dimen/_7sdp"
                     android:layout_margin="@dimen/_7sdp"
-                    app:cardBackgroundColor="@color/transparent"
                     android:layout_height="wrap_content">
                     <ImageView
                         android:id="@+id/item_music_img_music"
@@ -54,7 +53,7 @@
                     android:layout_weight="5"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textColor="?text_color"
+                    android:textColor="@color/black"
                     android:textSize="15sp"
                     tools:ignore="NestedWeights" />
                 <TextView
@@ -64,7 +63,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textColor="?text_color"
+                    android:textColor="@color/black"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textSize="12sp"/>
@@ -77,7 +76,7 @@
                 android:layout_weight="2"
                 android:layout_width="0dp"
                 android:textSize="12sp"
-                android:textColor="?text_color"
+                android:textColor="@color/black"
                 android:layout_height="match_parent"/>
         </LinearLayout>
 </LinearLayout>

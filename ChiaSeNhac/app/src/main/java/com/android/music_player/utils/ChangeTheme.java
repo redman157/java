@@ -29,8 +29,8 @@ public class ChangeTheme {
     public static int getAccent(@NonNull final Context context) {
         int accent;
         try {
-            accent = context.getSharedPreferences(Constants.PREFERENCES.ACCENT_PREF,
-                    Context.MODE_PRIVATE).getInt(Constants.PREFERENCES.ACCENT_VALUE, R.color.white);
+            accent = context.getSharedPreferences(Constants.PREFERENCES.ACCENT_PREF, Context.MODE_PRIVATE)
+                    .getInt(Constants.PREFERENCES.ACCENT_VALUE, R.color.white);
         } catch (Exception e) {
             e.printStackTrace();
             accent = R.color.white;
@@ -116,7 +116,14 @@ public class ChangeTheme {
         return selectedTheme;
     }
 
-    static void setThemeAccent(@NonNull final Activity activity, int accent) {
+    public static void setThemeActivity(Activity activity ){
+        SharedPrefsUtils mSharedPrefsUtils = new SharedPrefsUtils(activity);
+        activity.getTheme().applyStyle(mSharedPrefsUtils.getInteger(Constants.PREFERENCES.ACCENT_COLOR,
+                R.style.OverlayThemeWhite),
+                true);
+    }
+
+    public static void setAccent(@NonNull final Activity activity, int accent) {
         SharedPreferences preferences = activity.getSharedPreferences(Constants.PREFERENCES.ACCENT_PREF, Context.MODE_PRIVATE);
         preferences.edit().putInt(Constants.PREFERENCES.ACCENT_VALUE, accent).apply();
         activity.recreate();
@@ -168,4 +175,15 @@ public class ChangeTheme {
 //        int color = onPlaybackCompletion ? themeColor : mPlayerAdapter.isReset() ? ContextCompat.getColor(this, mAccent) : themeColor;
 //        mResetButton.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
     }
+
+    public static int getColorFromResource(@NonNull final Context context, final int resource, final int emergencyColor) {
+        int color;
+        try {
+            color = ContextCompat.getColor(context, resource);
+        } catch (Exception e) {
+            color = ContextCompat.getColor(context, emergencyColor);
+        }
+        return color;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.android.music_player.models;
 
 import android.app.Application;
 import android.support.v4.media.MediaMetadataCompat;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -48,6 +49,7 @@ public class StateViewModel extends AndroidViewModel {
     }
 
     public void setControllerStyle(ControllerStyle style) {
+        Log.d("TTT", "setControllerStyle: "+style.toString());
         mControllerStyle.setValue(style);
     }
 }

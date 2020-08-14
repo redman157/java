@@ -41,7 +41,6 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         mMediaManager = MediaManager.getInstance();
         mMediaManager.setContext(this);
         mQueueManager = QueueManager.getInstance(this);
-        mQueueManager.setupAllMusic();
         mSharedPrefsUtils = new SharedPrefsUtils(this);
         mBrowserHelper = mMediaManager.getMediaBrowserConnection();
         mMediaManager.getMediaBrowserConnection().setOnServiceConnectListener(this);

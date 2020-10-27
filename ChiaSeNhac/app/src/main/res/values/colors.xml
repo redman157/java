@@ -30,6 +30,7 @@
     <color name="red">#CC3C3C</color>
     <color name="grey">#757575</color>
     <color name="light_green">#ABE4C7</color>
+    <color name="thumbColor">#757575</color>
     <!-- App Theme -->
     <color name="line">#ABAFAF</color>
     <color name="fade_sliding_panel">#80000000</color>

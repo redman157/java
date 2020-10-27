@@ -1,6 +1,7 @@
 package com.android.music_player.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -87,6 +88,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public final static String FRAGMENT_TAG = "fragment_tag";
     public BottomSheetHelper bottomSheetHelper;
     public int colorEnable, colorUnEnable;
+    private Bundle mMainFragmentArgs = null;
+    private Dialog mProgressDialog = null;
 
     @Override
     public void initManager() {
@@ -122,12 +125,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
             setViewMusic(mMediaManager.getCurrentMusic(), PanelState.COLLAPSED);
         }
         setMediaChange(this.getClass().getSimpleName(), this);
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        Log.d("VVV", "HomeActivity --- onResume: Enter");
     }
 
     @Override
@@ -672,6 +669,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onChangeFlowType(String type, String title) {
 
+    }
+
+
+
+
+    // set bundle between 2 fragment
+    private void saveMainFragmentState(Bundle args) {
+        mMainFragmentArgs = args;
+    }
+
+    // get bundle between 2 fragment
+    public Bundle getSavedMainFragmentState() {
+        return mMainFragmentArgs;
     }
 
 

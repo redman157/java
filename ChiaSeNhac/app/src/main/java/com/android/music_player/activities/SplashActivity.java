@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ProgressBar;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.android.music_player.R;
 import com.android.music_player.managers.MediaManager;
@@ -37,11 +39,19 @@ public class SplashActivity extends AppCompatActivity {
     /* access modifiers changed from: protected */
     //Binding this Client to the AudioPlayer Service
 
+    private String[] mPermission = new String[2];
+    private void setPermission() {
+        mPermission[0] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        mPermission[1] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+    }
+
     private QueueManager mQueueManager;
     @SuppressLint({"SetTextI18n"})
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         mSharedPrefsUtils = new SharedPrefsUtils(this);
+
         getTheme().applyStyle(mSharedPrefsUtils.getInteger(Constants.PREFERENCES.ACCENT_COLOR,
                 R.style.OverlayThemeWhite), true);
         setContentView(R.layout.activity_splash);
@@ -57,12 +67,9 @@ public class SplashActivity extends AppCompatActivity {
         checkReadStoragePermissions();
     }
     private void checkReadStoragePermissions() {
+        setPermission();
         if (Utils.isMarshmallow()) {
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                showPermissionRationale();
-            } else {
-                onPermissionGranted();
-            }
+            ActivityCompat.requestPermissions(this ,mPermission, READ_FILES_CODE);
         } else {
             onPermissionGranted();
         }
@@ -82,9 +89,11 @@ public class SplashActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
 
-                        requestPermissions(new String[]{
-                                Manifest.permission.READ_EXTERNAL_STORAGE}
-                                , READ_FILES_CODE);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            requestPermissions(new String[]{
+                                    Manifest.permission.READ_EXTERNAL_STORAGE}
+                                    , READ_FILES_CODE);
+                        }
                     }
                 });
         builder.setButton(AlertDialog.BUTTON_NEGATIVE, "Exit",

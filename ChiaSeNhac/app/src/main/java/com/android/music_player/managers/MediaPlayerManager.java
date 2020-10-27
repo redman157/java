@@ -210,9 +210,11 @@ public class MediaPlayerManager extends PlayerAdapter implements MediaPlayer.OnC
 
         try {
             File file = new File(mFilename);
+
             if (file.exists()) {
-                mMediaPlayer.setDataSource(file.getPath());
+                mMediaPlayer.setDataSource(mFilename);
             }
+
         }catch (Exception e){
             throw new RuntimeException("Failed to open file: " + mFilename, e);
         }

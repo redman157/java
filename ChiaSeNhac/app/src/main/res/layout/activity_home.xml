@@ -23,7 +23,6 @@
             <!-- MAIN CONTENT -->
             <include layout="@layout/home_main_content"/>
             <!-- SLIDING LAYOUT -->
-
             <LinearLayout
                 android:orientation="vertical"
                 android:id="@+id/dragView"

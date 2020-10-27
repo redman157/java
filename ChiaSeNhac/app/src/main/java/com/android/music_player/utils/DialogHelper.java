@@ -1,6 +1,7 @@
 package com.android.music_player.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -18,6 +19,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -244,24 +247,25 @@ public class DialogHelper {
         dialog.show();
     }
 
-    public static void showAllItemLibrary(){
-//        SelectOptionsAdapter mSelectOptionsAdapter = new SelectOptionsAdapter(getContext(), SelectOptionsAdapter.initData());
-//
-//        RecyclerView mRecyclerOptions = view.findViewById(R.id.rc_selection_music);
-//        TextView mTextTitle = view.findViewById(R.id.text_title);
-//        Button mBtnCancel = view.findViewById(R.id.btn_cancel);
-//
-//        mTextTitle.setText(mMediaManager.getCurrentMediaMetadata());
-//        mRecyclerOptions.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
-//        mRecyclerOptions.hasFixedSize();
-//        mRecyclerOptions.setAdapter(mSelectOptionsAdapter);
-//
-//        mBtnCancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dismiss();
-//            }
-//        });
+    public static Dialog showProgress(Context context){
+        Dialog progressDialog = new Dialog(context);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setCancelable(false);
+        progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        progressDialog.getWindow().setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+
+        ProgressBar progressBar = new ProgressBar(context);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        params.setMargins(
+            (int)context.getResources().getDimension(R.dimen._30dp),
+            (int)context.getResources().getDimension(R.dimen._30dp),
+            (int)context.getResources().getDimension(R.dimen._30dp),
+            (int)context.getResources().getDimension(R.dimen._30dp)
+        );
+        progressBar.setLayoutParams(params);
+
+        progressDialog.setContentView(progressBar);
+        return progressDialog;
     }
 
     public static void showCreatePlayList(final Context context){

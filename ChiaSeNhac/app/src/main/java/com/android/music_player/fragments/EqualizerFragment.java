@@ -1,5 +1,6 @@
 package com.android.music_player.fragments;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.media.audiofx.BassBoost;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,7 +41,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
 
-public class EqualizerFragment extends BottomSheetDialogFragment implements View.OnClickListener,
+public class EqualizerFragment extends DialogFragment implements View.OnClickListener,
         EqualizerAdapter.OnClickItemListener, SeekBar.OnSeekBarChangeListener {
     private Context context;
     private View view;
@@ -71,6 +74,29 @@ public class EqualizerFragment extends BottomSheetDialogFragment implements View
         return fragment;
     }
 
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        view = inflater.inflate(R.layout.fragment_dialog_equalizer, null);
+
+        Dialog dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(view);
+        return dialog;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+        int width = getResources().getDimensionPixelSize(R.dimen.popup_width);
+        int height = getResources().getDimensionPixelSize(R.dimen.popup_height);
+
+        params.width = width;
+        params.height = height;
+        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,37 +107,6 @@ public class EqualizerFragment extends BottomSheetDialogFragment implements View
                 , 0);
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        getDialog().setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-
-                bottomSheet = (BottomSheetDialog) dialog;
-                View bottomSheetInternal =
-                        bottomSheet.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-                behavior = BottomSheetBehavior.from(bottomSheetInternal);
-                behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-                    @Override
-                    public void onStateChanged(@NonNull View view, int newState) {
-                        if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                        }
-                    }
-
-                    @Override
-                    public void onSlide(@NonNull View view, float v) {
-
-                    }
-                });
-                behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            }
-        });
-
-        view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_dialog_equalizer, container, false);
-        return view;
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -202,7 +197,7 @@ public class EqualizerFragment extends BottomSheetDialogFragment implements View
 
 
     }
-    private void setupEqualizerFxAndUI(boolean isCheck, int session){
+    private void setupEqualizerFxAndUI(boolean isCheck){
         try {
             Equalizer equalizer = new Equalizer(0,
                     mSharedPrefsUtils.getInteger(Constants.PREFERENCES.AUDIO_SESSION_ID, 0));

@@ -3,7 +3,9 @@ package com.android.music_player.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -41,24 +43,7 @@ public class MediaService extends MediaBrowserServiceCompat {
     private boolean mServiceStarted;
     private boolean isAutoPlay = false;
     private QueueManager mQueueManager;
-//    private final IBinder mIBinder = new LocalBinder();
-//    public class LocalBinder extends Binder {
-//        public MediaService getInstance() {
-//            return MediaService.this;
-//        }
-//    }
-//
-//    @Override
-//    public IBinder onBind(Intent intent) {
-//        return mIBinder;
-//    }
 
-    private BroadcastReceiver updateQueueItems = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-        }
-    };
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_NOT_STICKY ;
@@ -71,17 +56,8 @@ public class MediaService extends MediaBrowserServiceCompat {
     public void onCreate() {
         super.onCreate();
         // Create a new MediaSession.
-        mMediaManager = MediaManager.getInstance();
-        mMediaManager.setContext(this);
-        mQueueManager = QueueManager.getInstance(this);
         initMediaSession();
-        if (mPlayback == null){
-            mPlayback = new MediaPlayerManager(this, new MediaPlayerListener(this));
-            mMediaNotificationManager = new MediaNotificationManager(this);
 
-        }
-        Log.d(TAG, this.getClass().getSimpleName()+" --- onCreate: MusicService creating MediaSession, and " +
-                "MediaNotificationManager");
     }
 
     @Override
@@ -94,6 +70,10 @@ public class MediaService extends MediaBrowserServiceCompat {
 
 
     private void initMediaSession() {
+        mMediaManager = MediaManager.getInstance();
+        mMediaManager.setContext(this);
+        mQueueManager = QueueManager.getInstance(this);
+
         mSessionCompat = new MediaSessionCompat(this,getClass().getSimpleName());
         mSessionCompat.setMetadata(MusicLibrary.music.get(mMediaManager.getCurrentMusic()));
         mCallback = new MediaSessionCallback();
@@ -104,6 +84,13 @@ public class MediaService extends MediaBrowserServiceCompat {
                 MediaSessionCompat.FLAG_HANDLES_QUEUE_COMMANDS |
                 MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         setSessionToken(mSessionCompat.getSessionToken());
+
+        if (mPlayback == null){
+            mPlayback = new MediaPlayerManager(this, new MediaPlayerListener(this));
+            mMediaNotificationManager = new MediaNotificationManager(this);
+        }
+        Log.d(TAG, this.getClass().getSimpleName()+" --- onCreate: MusicService creating MediaSession, and " +
+                "MediaNotificationManager");
     }
 
     @Override
@@ -172,16 +159,8 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         @Override
         public void onRemoveQueueItem(MediaDescriptionCompat description) {
-     /*       queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
-              mPlayList.remove(queueItem);
-              mSessionCompat.setQueue(mPlayList);*/
             mPlayList.clear();
             mSessionCompat.setQueue(mPlayList);
-//
-//            mSessionCompat.setQueue(mPlayList);
-
-//            Log.d("XXX","onRemoveQueueItem: "+ queueItem.getDescription().getMediaId());
-//            Log.d("XXX","mSessionCompat: "+mPlayList.size());
         }
 
         @Override

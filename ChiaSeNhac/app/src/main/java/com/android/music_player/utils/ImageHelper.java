@@ -104,10 +104,8 @@ public class ImageHelper {
     }
 
     public static Uri getSongUri(Long albumID) {
-        Uri uri = ContentUris.withAppendedId(Uri
+        return ContentUris.withAppendedId(Uri
                 .parse("content://media/external/audio/albumart"), albumID);
-
-        return uri;
     }
 
     public static Bitmap getAlbumArt(Context context, Long albumId) {
@@ -131,10 +129,6 @@ public class ImageHelper {
     }
     public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableId);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
-
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
                 drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

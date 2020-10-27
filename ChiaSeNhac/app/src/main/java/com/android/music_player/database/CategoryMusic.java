@@ -25,7 +25,6 @@ public class CategoryMusic {
         mDatabase.close();
     }
 
-
     public CategoryMusic closeDatabase() {
         this.mDatabase.close();
         return this;

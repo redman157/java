@@ -16,6 +16,7 @@ import androidx.media.MediaBrowserServiceCompat;
 
 import com.android.music_player.managers.QueueManager;
 import com.android.music_player.services.MediaService;
+import com.android.music_player.services.MutilMediaService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,7 @@ public abstract class BrowserHelper {
 //    private static final String TAG = BrowserHelper.class.getSimpleName();
     private static final String TAG = "JJJ";
     private Context mContext;
-    private final Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass;
+    private final Class<? extends MediaService> mMediaBrowserService;
 
     private final Map<String, MediaControllerCompat.Callback> mCallbackList = new HashMap<>();
 
@@ -41,25 +42,25 @@ public abstract class BrowserHelper {
     private MediaBrowserCompat mMediaBrowser;
     private MediaBrowserSubscriptionCallback mMediaBrowserSubscriptionCallback;
     public BrowserHelper(Context mContext,
-                         Class<? extends MediaBrowserServiceCompat> mMediaBrowserServiceClass) {
+                         Class<? extends MediaService> mMediaBrowserService) {
         // thực hiện công việc kết nối từ activity tới service
         this.mContext = mContext;
-        this.mMediaBrowserServiceClass = mMediaBrowserServiceClass;
+        this.mMediaBrowserService = mMediaBrowserService;
+
         mMediaBrowserConnectionCallback = new MediaBrowserConnectionCallback();
         mMediaControllerCallback = new MediaControllerCallback();
         mMediaBrowserSubscriptionCallback = new MediaBrowserSubscriptionCallback();
         mQueueManager = QueueManager.getInstance(mContext);
     }
 
-    public void restore(){
-
-    }
-
+    /**
+     * start service media browerser
+     * */
     public void onStart(){
         if (mMediaBrowser == null){
             mMediaBrowser = new MediaBrowserCompat
                     (mContext,
-                    new ComponentName(mContext, mMediaBrowserServiceClass),
+                    new ComponentName(mContext, mMediaBrowserService),
                     mMediaBrowserConnectionCallback,
                             null);
             mMediaBrowser.connect();

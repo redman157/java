@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -24,6 +25,7 @@ import androidx.media.session.MediaButtonReceiver;
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.services.MediaService;
+import com.android.music_player.services.MutilMediaService;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 
@@ -44,8 +46,8 @@ public class MediaNotificationManager {
     private final NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
     @SuppressLint("WrongConstant")
-    public MediaNotificationManager(MediaService service) {
-        mMusicService = service;
+    public MediaNotificationManager(Service service) {
+        mMusicService = (MediaService) service;
         mNotificationManager =
                 (NotificationManager) mMusicService.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -122,7 +124,7 @@ public class MediaNotificationManager {
 
                     .setSmallIcon(R.drawable.app_icon_music)
                     .setLargeIcon(ImageHelper.getAlbumArtNotification(mMusicService,
-                            Long.valueOf(MusicLibrary.getAlbumRes(description.getMediaId()))))
+                            (long) MusicLibrary.getAlbumRes(description.getMediaId())))
                     .setColor(mAccent)
                     .setContentIntent(createContentIntent())
                     .setContentTitle(description.getTitle())
@@ -146,7 +148,7 @@ public class MediaNotificationManager {
                     .setContentIntent(createContentIntent())
                     .setContentText(description.getSubtitle())
                     .setLargeIcon(ImageHelper.getAlbumArtNotification(mMusicService,
-                            Long.valueOf(MusicLibrary.getAlbumRes(description.getMediaId()))))  .setSubText(MusicLibrary.getMusicFilename(description.getMediaId()))
+                            (long) MusicLibrary.getAlbumRes(description.getMediaId())))  .setSubText(MusicLibrary.getMusicFilename(description.getMediaId()))
                     .setDeleteIntent(MediaButtonReceiver.buildMediaButtonPendingIntent(
                             mMusicService, PlaybackStateCompat.ACTION_STOP))
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

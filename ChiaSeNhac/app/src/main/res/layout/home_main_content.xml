@@ -19,11 +19,7 @@
             android:focusableInTouchMode="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-           <!-- <fragment android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:name="com.android.music_player.fragments.HomeFragment"
 
-                android:id="@+id/fragment"/>-->
         </FrameLayout>
 
     </RelativeLayout>

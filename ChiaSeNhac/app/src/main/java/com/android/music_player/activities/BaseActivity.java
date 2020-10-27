@@ -21,7 +21,7 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     private MediaService mediaService;
     private SharedPrefsUtils mSharedPrefsUtils;
     private MediaManager mMediaManager;
-    private MediaControllerCompat mMediaControllerCompat;
+    public MediaControllerCompat mMediaControllerCompat;
     public BrowserHelper mBrowserHelper;
     private MediaBrowserCallBack mMediaBrowserCallBack;
     public abstract void initManager();
@@ -44,15 +44,12 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         mSharedPrefsUtils = new SharedPrefsUtils(this);
         mBrowserHelper = mMediaManager.getMediaBrowserConnection();
         mMediaManager.getMediaBrowserConnection().setOnServiceConnectListener(this);
-//        doBindService();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         mBrowserHelper.onStart();
-
-        Log.d("VVV","BaseActivity --- onStart: "+getIntent().getStringExtra("hehe"));
     }
 
     @Override
@@ -81,10 +78,6 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
         return mMediaControllerCompat;
     }
 
-    public void setControllerActivity(MediaControllerCompat controllerCompat) {
-        this.mMediaControllerCompat = controllerCompat;
-    }
-
     public MediaBrowserCompat getMediaBrowserCompat() {
         return mMediaBrowserCompat;
     }
@@ -101,7 +94,7 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     public void onConnect(final MediaControllerCompat mediaController) {
         // khi connect thành công của media browser
         // thì mới có controller chuyển cho activity sử dụng
-        setControllerActivity(mediaController);
+        mMediaControllerCompat = mediaController;
         /*VIEW MODEL CHANGE ROOT SERVICE*/
         try {
             String parentId = mQueueManager.getParentId();

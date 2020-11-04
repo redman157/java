@@ -14,6 +14,7 @@ import com.android.music_player.media.BrowserConnectionListener;
 import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserCallBack;
 import com.android.music_player.services.MediaService;
+import com.android.music_player.utils.BundleHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 
 public abstract class BaseActivity extends ActionBarCastActivity implements BrowserConnectionListener.OnServiceConnect {
@@ -27,9 +28,6 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     public abstract void initManager();
     private static final String TAG = BaseActivity.class.getSimpleName();
     private MediaBrowserCompat mMediaBrowserCompat;
-    public SharedPrefsUtils getSharedPrefsUtils(){
-        return mSharedPrefsUtils;
-    }
     private QueueManager mQueueManager;
     public MediaManager getMediaManager(){
         return mMediaManager;
@@ -89,6 +87,7 @@ public abstract class BaseActivity extends ActionBarCastActivity implements Brow
     public QueueManager getQueueManager() {
         return mQueueManager;
     }
+
 
     @Override
     public void onConnect(final MediaControllerCompat mediaController) {

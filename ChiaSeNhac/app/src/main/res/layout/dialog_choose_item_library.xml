@@ -19,14 +19,15 @@
         android:layout_marginTop="@dimen/_7sdp"
         android:layout_marginBottom="@dimen/_7sdp"
         android:background="@color/line"/>
-    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rc_all_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:fastScrollPopupBgColor="?attr/accent_color"
-        app:fastScrollPopupTextColor="?attr/popup_text_color"
-        app:fastScrollThumbColor="?attr/accent_color"
-        app:fastScrollThumbInactiveColor="?attr/accent_color"/>
+        app:fastScrollEnabled="true"
+        app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+        app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+        app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+        app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

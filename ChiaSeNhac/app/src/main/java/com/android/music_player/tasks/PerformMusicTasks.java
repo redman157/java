@@ -19,7 +19,7 @@ import com.android.music_player.utils.SharedPrefsUtils;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class PerformMusicTasks  extends AsyncTask<String, Integer, Integer> {
+public class PerformMusicTasks extends AsyncTask<String, Integer, Integer> {
     private boolean sync;
     private String tag = "PerformMusicTasksLog";
     private MediaManager mMediaManager;
@@ -32,7 +32,6 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Integer> {
         mActivity = activity;
         this.sync = sync;
         mMediaManager = MediaManager.getInstance();
-
     }
 
     @Override
@@ -79,14 +78,17 @@ public class PerformMusicTasks  extends AsyncTask<String, Integer, Integer> {
     }
     @Override
     protected void onProgressUpdate(Integer... values) {
-        ((SplashActivity) mActivity).mTextSync.setText(R.string.updating_songs);
-        ((SplashActivity) mActivity).mTextSync.setText("Loading: "+values[0]+" %");
+        if (mActivity instanceof SplashActivity) {
+            ((SplashActivity) mActivity).mTextSync.setText(R.string.updating_songs);
+            ((SplashActivity) mActivity).mTextSync.setText("Loading: " + values[0] + " %");
+        }
     }
 
     @Override
     protected void onPostExecute(Integer aLong) {
-        ((SplashActivity) mActivity).mTextSync.setText("Done");
-
+        if (mActivity instanceof SplashActivity) {
+            ((SplashActivity) mActivity).mTextSync.setText("Done");
+        }
         CountDownTimer count = new CountDownTimer(1000,3000) {
             @Override
             public void onTick(long millisUntilFinished) {

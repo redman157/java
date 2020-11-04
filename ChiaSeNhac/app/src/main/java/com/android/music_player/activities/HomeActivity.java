@@ -36,6 +36,7 @@ import com.android.music_player.managers.MusicLibrary;
 import com.android.music_player.media.BrowserHelper;
 import com.android.music_player.media.MediaBrowserCallBack;
 import com.android.music_player.utils.BottomSheetHelper;
+import com.android.music_player.utils.BundleHelper;
 import com.android.music_player.utils.ChangeTheme;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.DialogHelper;
@@ -90,13 +91,27 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public int colorEnable, colorUnEnable;
     private Bundle mMainFragmentArgs = null;
     private Dialog mProgressDialog = null;
+    private BundleHelper mBundle = null;
 
     @Override
     public void initManager() {
-        mSharedPrefsUtils = getSharedPrefsUtils();
+        mSharedPrefsUtils = new SharedPrefsUtils(this);
         mMediaManager = getMediaManager();
-
         ImageHelper.getInstance(this);
+    }
+
+    // TODO get share pref when activity
+    public SharedPrefsUtils getSharedPrefsUtils(){
+        return mSharedPrefsUtils;
+    }
+
+    // TODO Save bundle in activity
+    public void saveInstance(Bundle bundle){
+        mBundle = new BundleHelper(bundle);
+    }
+
+    public BundleHelper getSaveInstance(){
+        return mBundle;
     }
 
     @Override
@@ -158,8 +173,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     }
 
     public void setPlayMedia(String songName){
-        MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(this,
-                songName);
+        MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(this, songName);
         ImageHelper.getInstance(this).getSmallImageByPicasso(String.valueOf(MusicLibrary.getAlbumRes(songName)),
                 mImgChangeMedia);
 
@@ -171,15 +185,18 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     public void setViewMusic(String mediaID, PanelState state){
         this.nameChoose = mediaID;
-        MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(this,
-                mediaID);
-        mTextArtistPanel.setText(metadataCompat.getString(Constants.METADATA.Artist));
-        mTextTitlePanel.setText(metadataCompat.getString(Constants.METADATA.Title));
-        ImageHelper.getInstance(this).getImagePanel(String.valueOf(MusicLibrary.getAlbumRes(mediaID)),
-                mImgAlbumArtPanel);
-        setPlayMedia(mediaID);
-        if (state != null) {
-            mSlidingUpPanelLayout.setPanelState(state);
+        MediaMetadataCompat metadataCompat = mMediaManager.getMetadata(this, mediaID);
+        if (metadataCompat == null){
+            return;
+        }else {
+            mTextArtistPanel.setText(metadataCompat.getString(Constants.METADATA.Artist));
+            mTextTitlePanel.setText(metadataCompat.getString(Constants.METADATA.Title));
+            ImageHelper.getInstance(this).getImagePanel(String.valueOf(MusicLibrary.getAlbumRes(mediaID)),
+                    mImgAlbumArtPanel);
+            setPlayMedia(mediaID);
+            if (state != null) {
+                mSlidingUpPanelLayout.setPanelState(state);
+            }
         }
     }
 

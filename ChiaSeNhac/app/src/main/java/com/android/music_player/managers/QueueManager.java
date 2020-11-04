@@ -187,8 +187,10 @@ public class QueueManager {
     }
 
     public void setCurrentMediaMetadata(MediaMetadataCompat metadataCompat){
-        mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC,
-                metadataCompat.getString(Constants.METADATA.Title));
+        if (metadataCompat == null){
+            return;
+        }
+        mSharedPrefsUtils.setString(Constants.PREFERENCES.CURRENT_MUSIC, metadataCompat.getString(Constants.METADATA.Title));
         getStateViewModel().setMediaDataCurrent(metadataCompat);
     }
 }

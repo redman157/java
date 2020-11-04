@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:background="?back_ground_app"
     android:layout_height="match_parent">
-    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rc_artist_add"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -47,6 +47,7 @@ public class AllPlayList {
         return false;
     }
 
+    // TODO add row data base
     public void addRow(String namePlayList) {
         String SQL_INSERT =
                 "INSERT INTO "+ Database.ALL_PLAY_LISTS.TABLE_NAME

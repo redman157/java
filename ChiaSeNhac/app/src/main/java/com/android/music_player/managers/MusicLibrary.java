@@ -129,7 +129,8 @@ public class MusicLibrary {
         return queues;
     }
 
-    public static void createMediaMetadataCompat(MusicModel song ) {
+    public static void createMediaMetadataCompat(MusicModel song) {
+
         music.put(
                 song.getSongName(),
                 new MediaMetadataCompat.Builder()

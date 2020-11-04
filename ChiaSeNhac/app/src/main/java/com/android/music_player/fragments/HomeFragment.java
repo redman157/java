@@ -1,5 +1,6 @@
 package com.android.music_player.fragments;
 
+import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -26,12 +27,13 @@ import com.android.music_player.interfaces.DialogType;
 import com.android.music_player.interfaces.OnConnectMediaId;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.managers.MusicLibrary;
+import com.android.music_player.tasks.PerformMusicTasks;
 import com.android.music_player.utils.BottomSheetHelper;
 import com.android.music_player.utils.Constants;
 import com.android.music_player.utils.ImageHelper;
 import com.android.music_player.utils.SharedPrefsUtils;
 import com.android.music_player.utils.Utils;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
+
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
@@ -39,26 +41,23 @@ import java.util.List;
 import java.util.Random;
 
 public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    private View view;
+
     private String type;
-    private FastScrollRecyclerView mRcHome;
+    private RecyclerView mRcHome;
     private SharedPrefsUtils mSharedPrefsUtils;
     private MediaManager mMediaManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private HomeFragmentAdapter mHomeAdapter;
     private MusicAdapter mMusicAdapter;
     private static HomeFragment fragment = null;
+    private OnConnectMediaId onConnectMediaId;
 
     public static HomeFragment newInstance(OnConnectMediaId onConnectMediaId) {
-
-        fragment = new HomeFragment();
-
-        fragment.setOnConnectMediaIdListener(onConnectMediaId);
+        fragment = new HomeFragment(onConnectMediaId);
         return fragment;
     }
 
-    private OnConnectMediaId onConnectMediaId;
-    public void setOnConnectMediaIdListener(OnConnectMediaId onConnectMediaId){
+    private HomeFragment(OnConnectMediaId onConnectMediaId) {
         this.onConnectMediaId = onConnectMediaId;
     }
 
@@ -77,9 +76,18 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.fragment_home, container, false);
+    }
 
-        view = inflater.inflate(R.layout.fragment_home, container, false);
-        initView();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initView(view);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         mSwipeRefreshLayout.setRefreshing(false);
         mHomeAdapter = new HomeFragmentAdapter((HomeActivity) getActivity(), mMusicAdapter);
         mHomeAdapter.notifyDataSetChanged();
@@ -87,27 +95,19 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mRcHome.setAdapter(mHomeAdapter);
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
-
         TypedValue typedValue = new TypedValue();
         Resources.Theme theme = getActivity().getTheme();
         theme.resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
         @ColorInt int color = typedValue.data;
         mSwipeRefreshLayout.setColorSchemeColors(color);
-        return view;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-    }
-
-    private void initView(){
+    private void initView(View view){
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_container);
         mRcHome = view.findViewById(R.id.rc_home_fragment);
     }
 
-    public class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder>  {
+    private class HomeFragmentAdapter extends RecyclerView.Adapter<HomeHolder>  {
         private HomeActivity mHomeActivity;
         private MediaManager mMediaManager;
         private SharedPrefsUtils mSharedPrefsUtils;
@@ -143,6 +143,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
      @Override
     public void onRefresh() {
+        mMediaManager.setContext(getActivity());
+        mMediaManager.isSync(true);
         mMusicAdapter.notifyDataSetChanged();
         mHomeAdapter.notifyDataSetChanged();
         mSwipeRefreshLayout.setRefreshing(false);
@@ -295,4 +297,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }
     }
 
+    private void performMusic() {
+        new PerformMusicTasks((Activity)getContext(), false).execute("tasks");
+    }
 }

@@ -244,10 +244,10 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
 
                 break;
             case R.id.action_searchBtn:
-                startActivity(new Intent(this, SearchActivity.class));
+//                startActivity(new Intent(this, SearchActivity.class));
                 break;
             case R.id.sleep_timer:
-                startActivity(new Intent(this, TimerActivity.class));
+//                startActivity(new Intent(this, TimerActivity.class));
                 break;
             case R.id.sync:
                 Intent intent = new Intent(this, SplashActivity.class)

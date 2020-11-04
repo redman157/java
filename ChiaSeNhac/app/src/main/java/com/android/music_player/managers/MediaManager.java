@@ -124,8 +124,7 @@ public class MediaManager {
             if (nameSong.equals("")) {
                 ArrayList<String> keys = new ArrayList<>(MusicLibrary.music.keySet());
                 Log.d("PPP", "getCurrentMusic size: " + keys.size());
-                mQueueManager.setCurrentMediaMetadata(getMetadata(mContext,
-                        keys.get(0)));
+                mQueueManager.setCurrentMediaMetadata(getMetadata(mContext, keys.get(0)));
                 nameSong = keys.get(0);
 
             } else {
@@ -463,29 +462,6 @@ public class MediaManager {
                     int currentDuration = Math.round(Integer.parseInt(duration));
                     if (getSongFromCursorImpl(cursor).getTime() >= 5000) {
                         Log.d("SSS", "crawlData: " + getSongFromCursorImpl(cursor).getSongName());
-                  /*      String fileName = cursor
-                                .getString(
-                                        cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME))
-                                .replace("_", " ").trim().replaceAll(" +", " ");
-                        String path = cursor.getString(cursor
-                                .getColumnIndex(MediaStore.Audio.Media.DATA));
-                        String songName = cursor.getString(cursor
-                                .getColumnIndex(MediaStore.Audio.Media.TITLE));
-                        String artistName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-
-                        String albumName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                        String albumID = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID));
-
-                        // Adding song to list
-                        builder = new MusicModel.Builder();
-                        builder.setFileName(fileName);
-                        builder.setSongName(songName);
-                        builder.setArtist(artistName);
-                        builder.setAlbum(albumName);
-                        builder.setAlbumID(albumID);
-                        builder.setPath(path);
-                        builder.setTime(currentDuration);
-                        */
                         MusicLibrary.createMediaMetadataCompat(getSongFromCursorImpl(cursor));
                         buildDataTheFirst(getSongFromCursorImpl(cursor).getSongName());
 
@@ -531,7 +507,7 @@ public class MediaManager {
                     MusicLibrary.artist.get(artist).add(keys.get(index));
                     break;
                 } else {
-                    MusicLibrary.artist.put(artist, new ArrayList<String>());
+                    MusicLibrary.artist.put(artist, new ArrayList<>());
                 }
             }
 
@@ -556,34 +532,35 @@ public class MediaManager {
     }
 
     public MediaMetadataCompat getMetadata(Context context, String songName) {
+        if (!MusicLibrary.music.containsKey(songName)){
+            return null;
+        }else {
+            MediaMetadataCompat metadataWithoutBitmap = MusicLibrary.music.get(songName);
 
-        MediaMetadataCompat metadataWithoutBitmap = MusicLibrary.music.get(songName);
+            // Since MediaMetadataCompat is immutable, we need to create a copy to assignData the album art.
+            // We don't assignData it initially on all items so that they don't take unnecessary memory.
+            MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
+            for (String key : new String[]{
+                    MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
+                    MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST,
+                    MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
+                    MediaMetadataCompat.METADATA_KEY_ALBUM,
+                    MediaMetadataCompat.METADATA_KEY_ARTIST,
+                    MediaMetadataCompat.METADATA_KEY_GENRE,
+                    MediaMetadataCompat.METADATA_KEY_TITLE}) {
+                builder.putString(key, metadataWithoutBitmap.getString(key));
+            }
+            builder.putLong(
+                    MediaMetadataCompat.METADATA_KEY_DURATION,
+                    metadataWithoutBitmap.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
 
-        // Since MediaMetadataCompat is immutable, we need to create a copy to assignData the album art.
-        // We don't assignData it initially on all items so that they don't take unnecessary memory.
-        MediaMetadataCompat.Builder builder = new MediaMetadataCompat.Builder();
-        for (String key :
-                new String[]{
-                        MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
-                        MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST,
-                        MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
-                        MediaMetadataCompat.METADATA_KEY_ALBUM,
-                        MediaMetadataCompat.METADATA_KEY_ARTIST,
-                        MediaMetadataCompat.METADATA_KEY_GENRE,
-                        MediaMetadataCompat.METADATA_KEY_TITLE
-                }) {
-            builder.putString(key, metadataWithoutBitmap.getString(key));
+            if (MusicLibrary.albumID.get(songName) != null) {
+                Bitmap albumArt = ImageHelper.getAlbumArt(context,
+                        Long.valueOf(MusicLibrary.albumID.get(songName)));
+                builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt);
+            }
+            return builder.build();
         }
-        builder.putLong(
-                MediaMetadataCompat.METADATA_KEY_DURATION,
-                metadataWithoutBitmap.getLong(MediaMetadataCompat.METADATA_KEY_DURATION));
-
-        if (MusicLibrary.albumID.get(songName) != null) {
-            Bitmap albumArt = ImageHelper.getAlbumArt(context,
-                    Long.valueOf(MusicLibrary.albumID.get(songName)));
-            builder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt);
-        }
-        return builder.build();
     }
 
     public List<MediaSessionCompat.QueueItem> getShuffleQueue(MediaMetadataCompat currentMedia,

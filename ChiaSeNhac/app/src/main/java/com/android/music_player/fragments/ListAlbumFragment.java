@@ -9,17 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.music_player.R;
 import com.android.music_player.activities.HomeActivity;
 import com.android.music_player.adapters.AlbumAdapter;
 import com.android.music_player.managers.MediaManager;
 import com.android.music_player.utils.SharedPrefsUtils;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 public class ListAlbumFragment extends Fragment {
     private View view;
-    private FastScrollRecyclerView mFastScrollRecyclerView;
+    private RecyclerView mFastScrollRecyclerView;
     private MediaManager mMediaManager;
     private HomeActivity mHomeActivity;
     private SharedPrefsUtils mSharedPrefsUtils;

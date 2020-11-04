@@ -1,11 +1,7 @@
 package com.android.music_player.services;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
@@ -57,7 +53,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         super.onCreate();
         // Create a new MediaSession.
         initMediaSession();
-
     }
 
     @Override
@@ -91,11 +86,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         }
         Log.d(TAG, this.getClass().getSimpleName()+" --- onCreate: MusicService creating MediaSession, and " +
                 "MediaNotificationManager");
-    }
-
-    @Override
-    public void onCustomAction(@NonNull String action, Bundle extras, @NonNull Result<Bundle> result) {
-        super.onCustomAction(action, extras, result);
     }
 
     @Override
@@ -137,9 +127,7 @@ public class MediaService extends MediaBrowserServiceCompat {
     // MediaSession Callback: Transport Controls -> MediaPlayerManager
     public class MediaSessionCallback extends MediaSessionCompat.Callback {
         private final List<MediaSessionCompat.QueueItem> mPlayList = new ArrayList<>();
-        private List<MediaSessionCompat.QueueItem> mShuffleList = new ArrayList<>();
         private List<MediaSessionCompat.QueueItem> mMainList = new ArrayList<>();
-        private MediaSessionCompat.QueueItem queueItem;
         private MediaMetadataCompat mPreparedMedia;
         private MediaManager mMediaManager = MediaManager.getInstance();
 
@@ -149,11 +137,10 @@ public class MediaService extends MediaBrowserServiceCompat {
 
         @Override
         public void onAddQueueItem(MediaDescriptionCompat description) {
-            queueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
-            Log.d("XXX","onAddQueueItem: "+ queueItem.getDescription().getMediaId());
-            mPlayList.add(queueItem);
+            MediaSessionCompat.QueueItem mQueueItem = new MediaSessionCompat.QueueItem(description, description.hashCode());
+            Log.d("XXX","onAddQueueItem: "+ mQueueItem.getDescription().getMediaId());
+            mPlayList.add(mQueueItem);
             mSessionCompat.setQueue(mPlayList);
-
             Log.d("XXX","mSessionCompat: "+mPlayList.size());
         }
 
@@ -190,7 +177,6 @@ public class MediaService extends MediaBrowserServiceCompat {
         public void onPrepareFromMediaId(String mediaId, Bundle bundle) {
             setupMediaList();
             // set media current để chạy
-
             mPreparedMedia = mMediaManager.getMetadata(MediaService.this,
                    mediaId);
             mSessionCompat.setMetadata(mPreparedMedia);
@@ -203,11 +189,6 @@ public class MediaService extends MediaBrowserServiceCompat {
             if (!mSessionCompat.isActive()) {
                 mSessionCompat.setActive(true);
             }
-        }
-
-        @Override
-        public void onCustomAction(String action, Bundle extras) {
-            super.onCustomAction(action, extras);
         }
 
         @Override
@@ -228,7 +209,6 @@ public class MediaService extends MediaBrowserServiceCompat {
                     mSessionCompat.setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_NONE);
                     break;
                 case PlaybackStateCompat.SHUFFLE_MODE_ALL:
-
                     mSessionCompat.setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
                     break;
             }
@@ -285,7 +265,7 @@ public class MediaService extends MediaBrowserServiceCompat {
             if (mSessionCompat.getController().getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_NONE) {
                 mSessionCompat.setQueue(mPlayList);
             } else if (mSessionCompat.getController().getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_ALL) {
-                mShuffleList = mMediaManager.getShuffleQueue(mMediaManager.getMetadata(
+                List<MediaSessionCompat.QueueItem> mShuffleList = mMediaManager.getShuffleQueue(mMediaManager.getMetadata(
                         MediaService.this, mMediaManager.getCurrentMusic()), mPlayList);
                 mSessionCompat.setQueue(mShuffleList);
             }

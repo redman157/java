@@ -31,7 +31,6 @@ import com.android.music_player.view.SpeedyLinearLayoutManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
     private QueueManager mQueueManager;
     private String titleType;
     private Map<String, ArrayList<String>> items;
-    public void cancelDialgo(){
+    public void cancelDialog(){
         dismiss();
     }
 
@@ -61,8 +60,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         this.onClickItemListener = onClickItemListener;
     }
 
-    public BottomSheetHelper(DialogType type, String title, Map<String, ArrayList<String>> items,
-                             OnClickItemListener onClickItemListener){
+    public BottomSheetHelper(DialogType type, String title, Map<String, ArrayList<String>> items, OnClickItemListener onClickItemListener){
         mType = type;
         this.titleType = title;
         this.items = items;
@@ -138,8 +136,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
     @Override
     public void onShow(DialogInterface dialog) {
         mBottomSheet = (BottomSheetDialog) dialog;
-        View bottomSheetInternal =
-                mBottomSheet.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        View bottomSheetInternal = mBottomSheet.findViewById(com.google.android.material.R.id.design_bottom_sheet);
         mBehavior = BottomSheetBehavior.from(bottomSheetInternal);
         mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -159,7 +156,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
 
     private void initChooseMusic(View view,String title,  ChooseMusicAdapter chooseMusicAdapter){
         MediaManager.getInstance().setContext(getContext());
-        FastScrollRecyclerView mRecyclerChooseMusic = view.findViewById(R.id.rc_choose_music);
+        RecyclerView mRecyclerChooseMusic = view.findViewById(R.id.rc_choose_music);
         TextView textTitle = view.findViewById(R.id.text_title);
         LinearLayoutManager layoutManager = new SpeedyLinearLayoutManager(getContext(),
                 SpeedyLinearLayoutManager.VERTICAL, false);
@@ -208,7 +205,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         if (allPlayList != null && allPlayList.size() > 0) {
 
             Button btnNewPlayList = view.findViewById(R.id.btn_create_playlist);
-            FastScrollRecyclerView mRcAddPlayList = view.findViewById(R.id.rc_all_playlist);
+            RecyclerView mRcAddPlayList = view.findViewById(R.id.rc_all_playlist);
             PlayListAdapter mPlayListAdapter = new PlayListAdapter(getContext(), allPlayList);
             mPlayListAdapter.setOnClickItemListener(onClickItemListener);
 
@@ -234,7 +231,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
             textTittle.setText(title);
 
             Button btnCancel = view.findViewById(R.id.btn_create_playlist);
-            FastScrollRecyclerView mRcAddPlayList = view.findViewById(R.id.rc_all_item);
+            RecyclerView mRcAddPlayList = view.findViewById(R.id.rc_all_item);
             PlayListAdapter mPlayListAdapter = new PlayListAdapter(getContext(), items);
             mPlayListAdapter.setOnClickItemListener(onClickItemListener);
 

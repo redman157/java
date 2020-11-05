@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/stillshot_container"
+    android:visibility="visible"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <ImageView
+        android:id="@+id/stillshot_imageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:id="@+id/close_stillshot_view"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/stillshot_widget_margin_sides"
+        android:layout_marginStart="@dimen/stillshot_widget_margin_sides"
+        android:layout_marginTop="@dimen/stillshot_widget_margin_top"
+        android:animateLayoutChanges="true">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/x_white_border"
+            android:layout_centerInParent="true"/>
+
+
+    </RelativeLayout>
+    <!-- Pen Container -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="1dp"
+        android:id="@+id/pen_container"
+        android:background="@drawable/circle_white"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/stillshot_widget_margin_top"
+        android:layout_marginRight="@dimen/stillshot_widget_margin_sides"
+        android:animateLayoutChanges="true">
+
+        <ImageButton
+            android:id="@+id/init_draw_icon"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:background="@drawable/circle_white"
+            android:padding="@dimen/cam_content_inset_secondary"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_pen"
+            tools:ignore="ContentDescription"/>
+
+    </RelativeLayout>
+
+    <!-- Undo Button -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:layout_toLeftOf="@+id/pen_container"
+        android:layout_alignTop="@+id/pen_container"
+        android:layout_marginRight="@dimen/stillshot_widget_spacing"
+        android:animateLayoutChanges="true"
+        android:id="@+id/undo_container">
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:background="@drawable/circle_white"
+            >
+
+            <ImageView
+                android:id="@+id/undo_icon"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@drawable/circle_white"
+                android:padding="@dimen/cam_content_inset_secondary"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_undo"
+                tools:ignore="ContentDescription"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/color_picker_container"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/stillshot_widget_margin_top"
+        android:layout_marginRight="@dimen/stillshot_widget_margin_sides"
+        android:layout_alignStart="@+id/pen_container"
+        android:layout_below="@+id/pen_container"
+        android:visibility="visible"
+        android:animateLayoutChanges="true">
+
+        <!--  <android.ai.camera.VerticalSlideColorPicker
+              android:id="@+id/color_picker"
+              android:layout_width="20dp"
+              android:layout_height="200dp"
+              android:borderColor="@android:color/black"
+              colorpicker:borderWidth="2dp"
+              android:colors="@array/rainbow"
+              android:layout_centerHorizontal="true"/>-->
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="1dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/cam_widget_margin_bottom"
+        android:id="@+id/trash_container">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:background="@drawable/circle_white">
+
+            <ImageButton
+                android:id="@+id/trash"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:background="@drawable/cam_grey_circle_selector"
+                android:padding="@dimen/cam_content_inset_secondary"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_delete_black_24dp"
+                tools:ignore="ContentDescription"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="@dimen/stillshot_widget_margin_sides_bottom"
+        android:layout_marginBottom="@dimen/cam_widget_margin_bottom"
+        android:animateLayoutChanges="true"
+        android:id="@+id/save_container">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:background="@drawable/circle_white">
+
+            <ImageButton
+                android:id="@+id/save_stillshot"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:background="@drawable/cam_grey_circle_selector"
+                android:padding="@dimen/cam_content_inset_secondary"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_save"
+                tools:ignore="ContentDescription"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

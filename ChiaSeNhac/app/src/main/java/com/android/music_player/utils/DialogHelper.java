@@ -247,7 +247,7 @@ public class DialogHelper {
         dialog.show();
     }
 
-    public static Dialog showProgress(Context context){
+    public static void showProgress(Context context, boolean isShow){
         Dialog progressDialog = new Dialog(context);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setCancelable(false);
@@ -263,9 +263,12 @@ public class DialogHelper {
             (int)context.getResources().getDimension(R.dimen._30dp)
         );
         progressBar.setLayoutParams(params);
-
         progressDialog.setContentView(progressBar);
-        return progressDialog;
+        if (isShow){
+            progressDialog.show();
+        }else {
+            progressDialog.dismiss();
+        }
     }
 
     public static void showCreatePlayList(final Context context){
@@ -327,7 +330,6 @@ public class DialogHelper {
         });
         dialog.show();
     }
-
 
     @SuppressLint("SetTextI18n")
     public static void showAboutMusic(Context context, MusicModel musicModel){

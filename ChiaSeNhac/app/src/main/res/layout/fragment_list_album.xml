@@ -5,10 +5,14 @@
     android:layout_width="match_parent"
     android:background="?back_ground_app"
     android:layout_height="match_parent">
-    <com.android.music_player.view.FastScrollRecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rc_album_add"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+        app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+        app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+        app:fastScrollVerticalTrackDrawable="@drawable/line_drawable"
         app:fastScrollPopupBgColor="?attr/accent_color"
         app:fastScrollPopupTextColor="?attr/popup_text_color"
         app:fastScrollThumbColor="?attr/accent_color"

@@ -41,8 +41,6 @@ import java.util.List;
 import java.util.Random;
 
 public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-
-    private String type;
     private RecyclerView mRcHome;
     private SharedPrefsUtils mSharedPrefsUtils;
     private MediaManager mMediaManager;

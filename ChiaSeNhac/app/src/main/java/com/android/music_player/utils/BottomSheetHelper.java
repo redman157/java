@@ -1,19 +1,27 @@
 package com.android.music_player.utils;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.MotionEventCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -93,6 +101,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
         mBottomSheet = new BottomSheetDialog(getContext(), getTheme());
         mBottomSheet.setOnShowListener(this);
 
+
         return mBottomSheet;
     }
 
@@ -113,7 +122,7 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
             initAddMusicToPlayList(view, onClickItemListener);
         }else if (mType == DialogType.CHOOSE_MUSIC){
             view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_choose_music,
-                    null);
+                    container, false);
             initChooseMusic(view,title, mChooseMusicAdapter);
         }else if (mType == DialogType.CHOOSE_ITEM_LIBRARY){
             view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_choose_item_library,
@@ -136,8 +145,25 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
     @Override
     public void onShow(DialogInterface dialog) {
         mBottomSheet = (BottomSheetDialog) dialog;
+
         View bottomSheetInternal = mBottomSheet.findViewById(com.google.android.material.R.id.design_bottom_sheet);
         mBehavior = BottomSheetBehavior.from(bottomSheetInternal);
+
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) bottomSheetInternal.getLayoutParams();
+        Display display = ((Activity)getContext()).getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int height = size.y;
+        if (params.height > height/2){
+            bottomSheetInternal.setLayoutParams(new CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT, height/4)
+            );
+        }else {
+            bottomSheetInternal.setLayoutParams(new CoordinatorLayout.LayoutParams(
+                    CoordinatorLayout.LayoutParams.MATCH_PARENT, CoordinatorLayout.LayoutParams.WRAP_CONTENT)
+            );
+        }
+
         mBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View view, int newState) {
@@ -152,6 +178,9 @@ public class BottomSheetHelper extends BottomSheetDialogFragment implements Bott
             }
         });
         mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        mBehavior.setSkipCollapsed(true);
+        mBehavior.setHideable(true);
+        mBehavior.setPeekHeight(100);
     }
 
     private void initChooseMusic(View view,String title,  ChooseMusicAdapter chooseMusicAdapter){

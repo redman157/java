@@ -40,7 +40,6 @@ public class PerformMusicTasks extends AsyncTask<String, Integer, Integer> {
         mSharedPrefsUtils = new SharedPrefsUtils(mActivity);
         mMediaManager.setContext(mActivity);
         mMediaManager.installData();
-
     }
 
     @SuppressLint("WrongThread")

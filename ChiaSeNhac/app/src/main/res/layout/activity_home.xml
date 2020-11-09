@@ -9,7 +9,7 @@
     tools:context=".activities.HomeActivity">
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
         android:gravity="bottom"
-        android:id="@+id/activity_main"
+        android:id="@+id/activity_home"
         app:umanoFlingVelocity="1000"
         app:umanoOverlay= "false"
         app:umanoFadeColor="@color/fade_sliding_panel"

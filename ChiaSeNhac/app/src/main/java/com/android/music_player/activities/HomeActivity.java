@@ -202,7 +202,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     @SuppressLint("ResourceAsColor")
     private void initView() {
-        mSlidingUpPanelLayout = findViewById(R.id.activity_main);
+        mSlidingUpPanelLayout = findViewById(R.id.activity_home);
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
         mToolBar = findViewById(R.id.toolbar);
@@ -688,9 +688,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
     }
 
-
-
-
     // set bundle between 2 fragment
     private void saveMainFragmentState(Bundle args) {
         mMainFragmentArgs = args;
@@ -700,6 +697,4 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     public Bundle getSavedMainFragmentState() {
         return mMainFragmentArgs;
     }
-
-
 }

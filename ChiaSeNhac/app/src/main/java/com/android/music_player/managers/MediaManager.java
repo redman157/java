@@ -95,7 +95,7 @@ public class MediaManager {
         if (mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1) == -1) {
             grabIfEmpty();
         }else if (MusicLibrary.model != null && MusicLibrary.model.size() > 0){
-            if ( mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1) == MusicLibrary.model.size()){
+            if (mSharedPrefsUtils.getInteger(Constants.PREFERENCES.TOTAL_SONGS, -1) == MusicLibrary.model.size()){
                 return;
             }else {
                 crawlData();
@@ -456,11 +456,12 @@ public class MediaManager {
                     String duration = cursor
                             .getString(cursor
                                     .getColumnIndex(MediaStore.Audio.Media.DURATION));
+
                     String apps =
                             cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
 
                     int currentDuration = Math.round(Integer.parseInt(duration));
-                    if (getSongFromCursorImpl(cursor).getTime() >= 5000) {
+                    if ( getSongFromCursorImpl(cursor).getTime() >= 5000) {
                         Log.d("SSS", "crawlData: " + getSongFromCursorImpl(cursor).getSongName());
                         MusicLibrary.createMediaMetadataCompat(getSongFromCursorImpl(cursor));
                         buildDataTheFirst(getSongFromCursorImpl(cursor).getSongName());

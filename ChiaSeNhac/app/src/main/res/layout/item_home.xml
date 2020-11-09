@@ -238,6 +238,7 @@
                             android:layout_width="match_parent"
                             android:src="@drawable/ic_music_notes_padded"
                             android:scaleType="fitCenter"
+                            android:background="@drawable/corner_top_image"
                             android:adjustViewBounds="true"
                             android:layout_weight="7"
                             android:alpha="0.6"
@@ -275,6 +276,7 @@
                             android:scaleType="fitCenter"
                             android:adjustViewBounds="true"
                             android:alpha="0.6"
+                            android:background="@drawable/corner_top_image"
                             android:layout_weight="7"
                             android:layout_height="0dp"/>
 
@@ -284,15 +286,15 @@
                             android:layout_gravity="bottom"
                             android:maxLines="1"
                             android:ellipsize="end"
-                            android:drawableLeft="@drawable/app_playlist"
                             android:drawableTint="?attr/back_ground_app"
-                            android:textSize="12dp"
+                            android:textSize="12sp"
                             android:gravity="center|left"
                             android:textColor="?attr/back_ground_app"
                             android:id="@+id/text_Player_2"
                             android:layout_width="match_parent"
                             android:layout_weight="3"
-                            android:layout_height="0dp"/>
+                            android:layout_height="0dp"
+                            app:drawableLeftCompat="@drawable/app_playlist" />
                     </LinearLayout>
 
 

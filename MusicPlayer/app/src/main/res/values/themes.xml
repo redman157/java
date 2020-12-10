@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BaseTheme.Red" parent="AppTheme">
+        <item name="colorPrimary">@color/red</item>
+        <item name="colorSecondary">@color/red</item>
+    </style>
+
+    <style name="BaseTheme.Pink" parent="AppTheme">
+        <item name="colorPrimary">@color/pink</item>
+        <item name="colorSecondary">@color/pink</item>
+    </style>
+
+    <style name="BaseTheme.Purple" parent="AppTheme">
+        <item name="colorPrimary">@color/purple</item>
+        <item name="colorSecondary">@color/purple</item>
+    </style>
+
+    <style name="BaseTheme.DeepPurple" parent="AppTheme">
+        <item name="colorPrimary">@color/deep_purple</item>
+        <item name="colorSecondary">@color/deep_purple</item>
+    </style>
+
+    <style name="BaseTheme.Indigo" parent="AppTheme">
+        <item name="colorPrimary">@color/indigo</item>
+        <item name="colorSecondary">@color/indigo</item>
+    </style>
+
+    <style name="BaseTheme.Blue" parent="AppTheme">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorSecondary">@color/blue</item>
+    </style>
+
+    <style name="BaseTheme.LightBlue" parent="AppTheme">
+        <item name="colorPrimary">@color/light_blue</item>
+        <item name="colorSecondary">@color/light_blue</item>
+    </style>
+
+    <style name="BaseTheme.Cyan" parent="AppTheme">
+        <item name="colorPrimary">@color/cyan</item>
+        <item name="colorSecondary">@color/cyan</item>
+    </style>
+
+    <style name="BaseTheme.Teal" parent="AppTheme">
+        <item name="colorPrimary">@color/teal</item>
+        <item name="colorSecondary">@color/teal</item>
+    </style>
+
+    <style name="BaseTheme.Green" parent="AppTheme">
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorSecondary">@color/green</item>
+    </style>
+
+    <style name="BaseTheme.LightGreen" parent="AppTheme">
+        <item name="colorPrimary">@color/light_green</item>
+        <item name="colorSecondary">@color/light_green</item>
+    </style>
+
+    <style name="BaseTheme.Lime" parent="AppTheme">
+        <item name="colorPrimary">@color/lime</item>
+        <item name="colorSecondary">@color/lime</item>
+    </style>
+
+    <style name="BaseTheme.Yellow" parent="AppTheme">
+        <item name="colorPrimary">@color/yellow</item>
+        <item name="colorSecondary">@color/yellow</item>
+    </style>
+
+    <style name="BaseTheme.Amber" parent="AppTheme">
+        <item name="colorPrimary">@color/amber</item>
+        <item name="colorSecondary">@color/amber</item>
+    </style>
+
+    <style name="BaseTheme.Orange" parent="AppTheme">
+        <item name="colorPrimary">@color/orange</item>
+        <item name="colorSecondary">@color/orange</item>
+    </style>
+
+    <style name="BaseTheme.DeepOrange" parent="AppTheme">
+        <item name="colorPrimary">@color/deep_orange</item>
+        <item name="colorSecondary">@color/deep_orange</item>
+    </style>
+
+    <style name="BaseTheme.Brown" parent="AppTheme">
+        <item name="colorPrimary">@color/brown</item>
+        <item name="colorSecondary">@color/brown</item>
+    </style>
+
+    <style name="BaseTheme.Grey" parent="AppTheme">
+        <item name="colorPrimary">@color/grey</item>
+        <item name="colorSecondary">@color/grey</item>
+    </style>
+
+    <style name="BaseTheme.BlueGrey" parent="AppTheme">
+        <item name="colorPrimary">@color/blue_grey</item>
+        <item name="colorSecondary">@color/blue_grey</item>
+    </style>
+
+    <style name="BaseTheme.Default" parent="AppTheme">
+        <item name="colorPrimary">@android:color/background_dark</item>
+        <item name="colorSecondary">@android:color/background_dark</item>
+    </style>
+</resources>

@@ -1,0 +1,101 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        applicationId "company.ai.musicplayer"
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    //retrieve version number
+    applicationVariants.all { variant ->
+        variant.resValue "string", "versionName", variant.versionName
+    }
+
+    buildFeatures{
+        viewBinding = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        encoding = 'UTF-8'
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // For Kotlin projects
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    lintOptions {
+        disable 'MissingTranslation'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/*'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+// Kotlin
+    //https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    //https://github.com/Kotlin/kotlinx.coroutines/blob/master/CHANGES.md
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.0'
+
+// Support
+    //https://github.com/material-components/material-components-android/releases
+    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.1'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.1'
+
+    implementation 'androidx.media:media:1.2.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    // picasso
+    implementation('com.squareup.picasso:picasso:2.71828') {
+        exclude group: "com.android.support"
+    }
+    //https://github.com/reddit/IndicatorFastScroll/releases
+    implementation 'com.reddit:indicator-fast-scroll:1.3.0'
+
+    //https://github.com/afollestad/material-dialogs/releases
+    implementation 'com.afollestad.material-dialogs:core:3.3.0'
+    implementation 'com.afollestad.material-dialogs:bottomsheets:3.3.0'
+
+    //https://github.com/afollestad/recyclical/releases
+    implementation 'com.afollestad:recyclical:1.1.1'
+
+    //https://github.com/beworker/edge-to-edge/blob/master/CHANGELOG.md
+    implementation 'de.halfbit:edge-to-edge:0.10'
+
+    //https://github.com/coil-kt/coil
+    implementation 'io.coil-kt:coil:1.0.0'
+
+    //https://github.com/google/gson/blob/master/CHANGELOG.md
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+}

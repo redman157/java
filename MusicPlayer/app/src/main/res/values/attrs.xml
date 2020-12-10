@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="accent_color" format="color" />
+    <attr name="tint_color" format="color" />
+    <attr name="secondary_bg_color" format="color" />
+    <attr name="popup_text_color" format="color" />
+    <attr name="back_ground_sliding" format="color" />
+    <attr name="back_ground_app" format="color"/>
+    <attr name="back_ground_title" format="color"/>
+    <attr name="back_ground_dialog" format="color"/>
+    <attr name="back_ground_button" format="color"/>
+
+    <attr name="indicator_edit" format="color"/>
+    <attr name="progress_bar_enable" format="color"/>
+    <attr name="progress_bar_unenable" format="color"/>
+    <attr name="thumb" format="color"/>
+
+    <attr name="color_primary" format="color" />
+    <attr name="color_primary_dark" format="color" />
+    <attr name="fill_color" format="color" />
+    <attr name="text_color" format="color" />
+    <attr name="select_enable" format="color" />
+    <declare-styleable name="PlayPause">
+        <attr name="isCircleDraw" format="boolean" />
+    </declare-styleable>
+</resources>

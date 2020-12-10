@@ -1,0 +1,94 @@
+<resources>
+    <string name="app_name">Music Player</string>
+    <string name="category_audio">Audio</string>
+
+    <string name="title_activity_home">HomeActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="nullTime">--:--</string>
+
+    <!-- collapsing_profile_behavior -->
+    <string name="test_profile_image_desc">Profile Image</string>
+    <string name="collapsing_profile_behavior" translatable="false">com.android.music_player.CollapsingProfileBehavior</string>
+
+    <!-- Messages - Permission rationale -->
+    <string name="perm_rationale">Music Player needs access to your files to play music.</string>
+    <string name="slash">/</string>
+
+    <!-- Formatted strings used in RVs items and other TextViews -->
+    <string name="rates">%1d&#160;kHz,&#160;%2d&#160;kbps</string>
+    <string name="artist_and_album">%1s&#160;/&#160;%2s</string>
+    <string name="track_song">&lt;b>%1d&lt;/b>&#160;-&#160;%2s</string>
+    <string name="year_and_duration">%1s&#160;-&#160;%2s</string>
+    <string name="loved_song_subtitle">&lt;b>%1s&lt;/b>&#160;-&#160;%2s</string>
+    <string name="unknown_year">N&#x2F;A</string>
+
+    <!-- Sorting -->
+    <string name="artists_sorting_pref">artists_sorting_pref</string>
+    <string name="albums_sorting_pref">albums_sorting_pref</string>
+    <string name="folders_sorting_pref">folders_sorting_pref</string>
+    <string name="all_music_sorting_pref">all_music_sorting_pref</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_media_buttons">Something went wrong! :( Please restart playback from the app.</string>
+    <string name="category_ui">UI</string>
+
+    <!-- Preferences - Themes -->
+    <string name="theme_pref_title">Theme</string>
+    <string name="theme_pref_light_title">Light</string>
+    <string name="theme_pref_dark_title">Dark</string>
+    <string name="theme_pref_auto_title">Automatic</string>
+
+    <!-- Preferences - Accent -->
+    <string name="accent_pref_title">Accent</string>
+
+    <!-- Preferences - Custom Equalizer note -->
+    <string name="eq_pref_note_summary">Note: The system equalizer will be preferred unless you turn off the app \"system equalizer\" from the system settings. :)</string>
+
+    <!-- Equalizer -->
+    <string name="equalizer">Equalizer</string>
+    <string name="equalizer_bb">Bass boost</string>
+    <string name="equalizer_v">Surround audio</string>
+
+    <!-- Notifications -->
+    <string name="song_title_notification">&lt;b>%1s&lt;/b></string>
+
+    <!-- Other preferences keys -->
+    <string name="saved_eq_settings">saved_eq_settings_pref</string>
+    <string name="latest_played_song_pref">restore_song_pref</string>
+    <string name="loved_songs_pref">bookmarked_songs_pref</string>
+    <string name="latest_volume_pref">latest_volume_pref</string>
+    <string name="song_visual_pref">song_visual_pref</string>
+
+    <!-- Preferences keys used in settings-->
+    <string name="open_git_pref">open_git_pref</string>
+    <string name="faq_pref">faq_pref</string>
+    <string name="found_songs_pref">found_songs_pref</string>
+    <string name="theme_pref">theme_pref</string>
+    <string name="theme_pref_light">theme_pref_light</string>
+    <string name="theme_pref_dark">theme_pref_dark</string>
+    <string name="theme_pref_auto">theme_pref_auto</string>
+    <string name="accent_pref">accent_pref</string>
+    <string name="edge_pref">edge_pref</string>
+    <string name="covers_pref">covers_pref</string>
+    <string name="active_fragments_pref">visible_fragments_pref</string>
+    <string name="on_list_ended_pref">on_list_ended_pref</string>
+    <string name="fast_seeking_actions_pref">fast_seeking_actions_pref</string>
+    <string name="fast_seeking_pref">fast_seeking_pref</string>
+    <string name="precise_volume_pref">precise_volume_pref</string>
+    <string name="focus_pref">focus_pref</string>
+    <string name="headset_pref">headsets_pref</string>
+    <string name="filter_pref">filter_pref</string>
+
+    <!-- Messages - Repeat -->
+    <string name="repeat_enabled">Single repetition on.</string>
+    <string name="repeat_loop_enabled">Repeat &#8734; on.</string>
+    <string name="repeat_disabled">Repeat &#8734; off.</string>
+
+    <string name="error_bad_id">Play a song first.</string>
+</resources>

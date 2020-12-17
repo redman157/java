@@ -2,7 +2,6 @@ package company.ai.musicplayer.extensions
 
 import android.content.ContentUris
 import android.content.Context
-import android.graphics.*
 import android.net.Uri
 import android.view.View
 import android.view.ViewTreeObserver
@@ -27,6 +26,11 @@ inline fun <T : View> T.afterMeasured(crossinline f: T.() -> Unit) {
             }
         }
     })
+}
+
+fun FragmentManager.isFragment(fragmentTag: String): Boolean {
+    val df = findFragmentByTag(fragmentTag)
+    return df != null && df.isVisible && df.isAdded
 }
 
 fun View.handleViewVisibility(show: Boolean) {

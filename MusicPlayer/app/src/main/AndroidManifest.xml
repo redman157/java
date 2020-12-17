@@ -15,8 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="company.ai.musicplayer.activiy.HomeActivity"
-            android:label="@string/title_activity_home">
+            android:name="company.ai.musicplayer.activiy.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

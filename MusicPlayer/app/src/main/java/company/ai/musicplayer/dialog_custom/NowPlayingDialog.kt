@@ -24,6 +24,7 @@ import company.ai.musicplayer.player.MediaPlayerHolder
 import company.ai.musicplayer.player.MediaPlayerInterface
 import company.ai.musicplayer.service.PlayerService
 import company.ai.musicplayer.utils.Constants
+import company.ai.musicplayer.utils.EqualizerHelper
 import company.ai.musicplayer.utils.ThemeHelper
 
 class NowPlayingDialog(var mPlayerService: PlayerService,var position: Int): BottomSheetDialogFragment(), View.OnClickListener, View.OnLongClickListener,MediaPlayerInterface {
@@ -31,16 +32,16 @@ class NowPlayingDialog(var mPlayerService: PlayerService,var position: Int): Bot
     private lateinit var mContext: Context
     private lateinit var mediaController: MediaControllerInterface
     private lateinit var mMediaPlayerHolder: MediaPlayerHolder
+
     override fun getTheme(): Int {
         return R.style.BottomSheetDialogTheme
     }
 
-
     override fun onAttach(context: Context){
         super.onAttach(context)
         mContext = context
-    }
 
+    }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -93,6 +94,7 @@ class NowPlayingDialog(var mPlayerService: PlayerService,var position: Int): Bot
         mDialogMedia = DialogMediaBinding.inflate(layoutInflater)
         mDialogMedia.root.fitsSystemWindows = true
         mMediaPlayerHolder = mPlayerService.mediaPlayerHolder
+        mMediaPlayerHolder.mediaPlayerInterface = this
         return mDialogMedia.root
     }
 
@@ -102,20 +104,38 @@ class NowPlayingDialog(var mPlayerService: PlayerService,var position: Int): Bot
 
     override fun onDismiss(dialog: DialogInterface){
         super.onDismiss(dialog)
-        mediaController.onDismissDialog()
+        mediaController.onCancelDialog()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
         assignView()
-        mMediaPlayerHolder.mediaPlayerInterface = this
     }
 
 
     override fun onClick(view: View) {
         when (view){
-
+            mDialogMedia.imgPlayPause -> {
+                mediaController.onResumeOrPause()
+                mMediaPlayerHolder.setStatusPlaying()
+            }
+            mDialogMedia.imgClose -> {
+                dismiss()
+            }
+            mDialogMedia.imgNext -> {
+                mediaController.onSkip(true)
+            }
+            mDialogMedia.imgPrev -> {
+                mediaController.onSkip(false)
+            }
+            mDialogMedia.imgRepeat -> {
+                mDialogMedia.imgRepeat.setImageResource(ThemeHelper.getRepeatIcon(mMediaPlayerHolder))
+                setRepeat()
+            }
+            mDialogMedia.imgEqualizer -> {
+                openEqualizer()
+            }
         }
     }
 
@@ -124,38 +144,97 @@ class NowPlayingDialog(var mPlayerService: PlayerService,var position: Int): Bot
         return true
     }
 
+    private fun setRepeat() {
+        mMediaPlayerHolder.repeat(mMediaPlayerHolder.isPlaying)
+    }
+
     private fun initView(){
         mMediaPlayerHolder.currentSong.first?.let {
-            mDialogMedia.textDisplayName.text = it.displayName
+            mDialogMedia.textSubTitle.text = it.displayName
             mDialogMedia.textAlbumArtist.text = requireActivity().resources.getString(R.string.artist_and_album, it.artist, it.album)
             mDialogMedia.imageAlbumArt.imageByPicasso(it.albumID)
+
         }
+        mMediaPlayerHolder.setStatusPlaying()
+
+    }
+
+    private fun MediaPlayerHolder.setStatusPlaying(){
+        if (isPlaying) mDialogMedia.imgPlayPause.setIconPlay() else mDialogMedia.imgPlayPause.setIconPause()
     }
 
     private fun assignView(){
-        mDialogMedia.imagePrev.setOnClickListener(this)
-        mDialogMedia.imageNext.setOnClickListener(this)
-        mDialogMedia.imageReplay.setOnClickListener(this)
-        mDialogMedia.imagePlayPause.setOnClickListener(this)
-        mDialogMedia.imageMore.setOnClickListener(this)
-        mDialogMedia.imageAbout.setOnClickListener(this)
-        mDialogMedia.imageSetTime.setOnClickListener(this)
-        mDialogMedia.imageAddToPlaylist.setOnClickListener(this)
-        mDialogMedia.imageEqualizer.setOnClickListener(this)
-        mDialogMedia.imageFavorite.setOnClickListener(this)
-        mDialogMedia.imageShuffle.setOnClickListener(this)
-        mDialogMedia.imageClosePanel.setOnClickListener(this)
-        mDialogMedia.imageViewQueue.setOnClickListener(this)
+        mDialogMedia.imgPrev.setOnClickListener(this)
+        mDialogMedia.imgNext.setOnClickListener(this)
+        mDialogMedia.imgRepeat.setOnClickListener(this)
+        mDialogMedia.imgPlayPause.setOnClickListener(this)
+        mDialogMedia.imgMore.setOnClickListener(this)
+        mDialogMedia.imgAbout.setOnClickListener(this)
+        mDialogMedia.imgSetTime.setOnClickListener(this)
+        mDialogMedia.imgAddToPlaylist.setOnClickListener(this)
+        mDialogMedia.imgEqualizer.setOnClickListener(this)
+        mDialogMedia.imgFavorite.setOnClickListener(this)
+        mDialogMedia.imgShuffle.setOnClickListener(this)
+        mDialogMedia.imgClose.setOnClickListener(this)
+        mDialogMedia.imgViewQueue.setOnClickListener(this)
 
         setSeekBarProgressListener()
     }
 
+    private fun updateNowPlayingInfo(){
+        mMediaPlayerHolder.currentSong.first?.let {
+            mDialogMedia.seekbarTimer.progress = 0
+            mDialogMedia.seekbarTimer.max = it.duration.toInt()
+            mDialogMedia.textStart.text = mDialogMedia.seekbarTimer.progress.toLong().toFormattedDuration(isAlbum = false, isSeekBar = false)
+            mDialogMedia.textEnd.text = it.duration.toFormattedDuration(isAlbum = false, isSeekBar = false)
+            mDialogMedia.textSubTitle.text = it.displayName
+            mDialogMedia.textAlbumArtist.text = requireActivity().resources.getString(R.string.artist_and_album, it.artist, it.album)
+            mDialogMedia.imageAlbumArt.imageByPicasso(it.albumID)
+
+        }
+        mMediaPlayerHolder.setStatusPlaying()
+    }
+
+    private fun openEqualizer(){
+        if (EqualizerHelper.hasEqualizer(mContext)){
+            mMediaPlayerHolder.openEqualizer(mContext as Activity)
+        }else{
+
+        }
+    }
+
+    /*private fun closeEqualizerFragment() {
+        if (!sRevealAnimationRunning) {
+            mEqualizerFragment.onHandleBackPressed().apply {
+                sRevealAnimationRunning = true
+                doOnEnd {
+                    synchronized(super.onBackPressed()) {
+                        sRevealAnimationRunning = false
+                        setTabLayoutEnabled(isFirstSetup = false, isTabsEnabled = true)
+                    }
+                }
+            }
+        }
+    }*/
+
+
+    private fun updatePlayingStatus(){
+        val isPlaying = mMediaPlayerHolder.state != Constants.PAUSED
+
+        if (isPlaying) mDialogMedia.imgPlayPause.setIconPlay() else mDialogMedia.imgPlayPause.setIconPause()
+    }
+
+
     private fun setSeekBarProgressListener(){
-        val max = mMediaPlayerHolder.currentSong.first!!.duration
-        mDialogMedia.seekbarTimer.max = max.toInt()
-        mDialogMedia.seekbarTimer.progress = position
-        mDialogMedia.textStart.text = position.toLong().toFormattedDuration(isAlbum = false, isSeekBar = false)
-        mDialogMedia.textEnd.text = max.toFormattedDuration(isAlbum = false, isSeekBar = false)
+
+        mMediaPlayerHolder.currentSong.first?.let {
+            mDialogMedia.seekbarTimer.max = it.duration.toInt()
+            mDialogMedia.seekbarTimer.progress = position
+            Log.d("NNN", "NowPlayingDialog: ${position}")
+            mDialogMedia.textStart.text = mDialogMedia.seekbarTimer.progress.toLong().toFormattedDuration(isAlbum = false, isSeekBar = false)
+            mDialogMedia.textEnd.text = it.duration.toFormattedDuration(isAlbum = false, isSeekBar = false)
+        }
+
         mDialogMedia.seekbarTimer.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             val defaultPositionColor = mDialogMedia.textStart.currentTextColor
             var userSelectedPosition = 0
@@ -202,47 +281,53 @@ class NowPlayingDialog(var mPlayerService: PlayerService,var position: Int): Bot
     }
 
     override fun onPositionChanged(position: Int) {
+        Log.d("NNN", "NowPlayingDialog onPositionChanged: ${position}")
         mDialogMedia.seekbarTimer.progress = position
     }
 
     override fun onStateChanged() {
-        TODO("Not yet implemented")
+        updatePlayingStatus()
+        Log.d("NNN", "NowPlayingDialog onStateChanged: ${mMediaPlayerHolder.currentSong.first!!.displayName}")
+        if (mMediaPlayerHolder.state != Constants.RESUMED && mMediaPlayerHolder.state != Constants.PAUSED){
+            updateNowPlayingInfo()
+        }
+
     }
 
     override fun onPlaybackCompleted() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onClose() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onUpdateRepeatStatus() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onQueueEnabled() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onQueueCleared() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onQueueStartedOrEnded(started: Boolean) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onSaveSong() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onFocusLoss() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onPlaylistEnded() {
-        TODO("Not yet implemented")
+
     }
 
 }

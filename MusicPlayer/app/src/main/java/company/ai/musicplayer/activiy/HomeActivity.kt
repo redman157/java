@@ -1,5 +1,6 @@
 package company.ai.musicplayer.activiy
 
+import android.app.AlertDialog
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -10,14 +11,18 @@ import android.media.audiofx.Equalizer
 import android.media.audiofx.Virtualizer
 import android.os.Bundle
 import android.os.IBinder
+import android.provider.OpenableColumns
 import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import company.ai.musicplayer.MusicViewModel
+import company.ai.musicplayer.QueueAdapter
 import company.ai.musicplayer.R
 import company.ai.musicplayer.controller.MediaControllerInterface
 import company.ai.musicplayer.controller.UIControlInterface
@@ -27,16 +32,15 @@ import company.ai.musicplayer.dialog_custom.NowPlayingDialog
 import company.ai.musicplayer.extensions.*
 import company.ai.musicplayer.fragment.HomeFragment
 import company.ai.musicplayer.fragment.LibraryFragment
+import company.ai.musicplayer.mPreferences
 import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.player.MediaPlayerHolder
 import company.ai.musicplayer.player.MediaPlayerInterface
 import company.ai.musicplayer.service.PlayerService
-import company.ai.musicplayer.utils.Constants
-import company.ai.musicplayer.utils.MusicOrg
-import company.ai.musicplayer.utils.PermissionHelper
-import company.ai.musicplayer.utils.ThemeHelper
+import company.ai.musicplayer.utils.*
+import kotlin.system.exitProcess
 
-class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInterface {
+class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterface {
     lateinit var mHomeBinding: ActivityHomeBinding
     private lateinit var mLayoutMain: LayoutMainBinding
     private lateinit var mLayoutSplash: LayoutSplashBinding
@@ -55,10 +59,14 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
     private val isNowPlaying get() = ::mNowPlayingDialog.isInitialized && mNowPlayingDialog.isShowing()!!
     private lateinit var mBindingIntent: Intent
 
+    private var sAppearanceChanged = false
+    private var sRestoreSettingsFragment = false
     // View model
     private val mMusicViewModel: MusicViewModel by viewModels()
     private var mBundle: Bundle? = null
 
+    lateinit var songOri: Music
+    private lateinit var mQueueAdapter: QueueAdapter
     // Colors
     private val mResolvedAccentColor by lazy { ThemeHelper.resolveThemeAccent(this) }
     private val mResolvedAlphaAccentColor by lazy {
@@ -71,11 +79,47 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         if (!isMediaPlayer && !isSongRestoredFromPrefs && showError) {
             getString(
                 R.string.error_bad_id
-            ).toToast(
-                this@HomeActivity
-            )
+            ).toToast(this@HomeActivity)
         }
     }.isMediaPlayer
+
+    private fun MediaPlayerHolder.setStatusPlayed(){
+        if (isPlay) {
+            mLayoutMain.imgPlayPause.setIconPlay()
+        } else {
+            mLayoutMain.imgPlayPause.setIconPause()
+        }
+    }
+
+    private fun MediaPlayerHolder.setStatusPlaying(){
+        if (isPlaying) {
+            mLayoutMain.imgPlayPause.setIconPlay()
+        } else {
+            mLayoutMain.imgPlayPause.setIconPause()
+        }
+    }
+
+    private val sEqFragmentExpanded get() = supportFragmentManager.isFragment(Constants.TAG_FRAGMENT)
+
+    private val mMediaControllerInterface: MediaControllerInterface = object : MediaControllerInterface {
+        override fun onCurrentPosition(pos: Int) {
+            mHomeBinding.layoutMain.songProgress.progress = pos
+        }
+
+        override fun onResumeOrPause() {
+            resumeOrPause()
+            mMediaPlayerHolder.setStatusPlaying()
+        }
+
+        override fun onCancelDialog() {
+            mMediaPlayerHolder.mediaPlayerInterface = mMediaPlayerInterface
+        }
+
+        override fun onSkip(isNext: Boolean) {
+            skip(isNext)
+            updateNowPlayingInfo(false)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,6 +127,12 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         setContentView(mHomeBinding.root)
         initView()
         assignView()
+        sRestoreSettingsFragment =
+            savedInstanceState?.getBoolean(Constants.RESTORE_SETTINGS_FRAGMENT)
+                ?: intent.getBooleanExtra(
+                    Constants.RESTORE_SETTINGS_FRAGMENT,
+                    false
+                )
         if (PermissionHelper.hasToAskStoragePermission(this)) {
             PermissionHelper.manageAskForReadStoragePermission(
                 activity = this, uiControlInterface = this
@@ -90,6 +140,7 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         } else {
             doBindService()
         }
+
     }
 
     override fun onPause(){
@@ -109,6 +160,23 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         super.onStop()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (isMediaPlayerHolder && mMediaPlayerHolder.isMediaPlayer) {
+            mMediaPlayerHolder.onRestartSeekBarCallback()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        if (sAppearanceChanged) {
+            super.onSaveInstanceState(outState)
+            outState.putBoolean(
+                Constants.RESTORE_SETTINGS_FRAGMENT,
+                true
+            )
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mMusicViewModel.cancel()
@@ -118,6 +186,29 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         if (isMediaPlayerHolder && !mMediaPlayerHolder.isPlaying && ::mPlayerService.isInitialized && mPlayerService.isRunning) {
             mPlayerService.stopForeground(true)
             stopService(mBindingIntent)
+        }
+    }
+
+    override fun onBackPressed() {
+        baseBackPressed()
+    }
+
+    private fun baseBackPressed() {
+        // Otherwise, it may return to the previous fragment stack
+        val fragmentManager = supportFragmentManager
+        if (fragmentManager.backStackEntryCount > 1) {
+            fragmentManager.popBackStack()
+        } else {
+            // Lastly, it will rely on the system behavior for back
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Bạn có muốn thoát App không ?")
+            builder.setNegativeButton(
+                "Không"
+            ) { dialog, _ -> dialog.cancel() }
+            builder.setPositiveButton(
+                "Có"
+            ) { _, _ -> exitProcess(1) }
+            builder.show()
         }
     }
 
@@ -134,6 +225,8 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         mLayoutMain.btnLibrary.setOnClickListener(this)
         mLayoutMain.btnHome.setOnClickListener(this)
         mLayoutMain.imgPlayPause.setOnClickListener(this)
+        mLayoutMain.linearNext.setOnClickListener(this)
+
     }
 
     public fun saveInstance(bundle: Bundle){
@@ -171,17 +264,13 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
             sBound = true
             mMediaPlayerHolder = mPlayerService.mediaPlayerHolder.apply {
                 mediaPlayerInterface = mMediaPlayerInterface
-                if (isPlay) {
-                    mLayoutMain.imgPlayPause.setIconPlay()
-                } else {
-                    mLayoutMain.imgPlayPause.setIconPause()
-                }
+                setStatusPlayed()
             }
 
             mMusicViewModel.mDeviceMusic.observe(
                 this@HomeActivity,
-
-                Observer<MutableList<Music>?> { returnedMusic -> finishSetup(returnedMusic) }
+                Observer<MutableList<Music>?> { returnedMusic ->
+                    finishSetup(returnedMusic) }
             )
             mMusicViewModel.getDeviceMusic()
         }
@@ -196,23 +285,13 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
     override fun onClick(view: View?) {
         when (view){
             mLayoutMain.relativeInfoMusic -> {
+                Log.d("NNN", "HomeActivity onClick: ${mHomeBinding.layoutMain.songProgress.progress}")
                 if (checkIsPlayer(true) && mMediaPlayerHolder.isCurrentSong) {
                     mNowPlayingBinding = NowPlayingDialog(mPlayerService, mHomeBinding.layoutMain.songProgress.progress)
                     mNowPlayingBinding.apply {
-                        setMediaController(object : MediaControllerInterface{
-                            override fun onCurrentPosition(pos: Int) {
-                                mHomeBinding.layoutMain.songProgress.progress = pos
-                            }
-
-                            override fun onDismissDialog() {
-                                mMediaPlayerHolder.mediaPlayerInterface = mMediaPlayerInterface
-                            }
-
-                        })
-
-                        show(supportFragmentManager, Constants.DIALOG_FRAGMENT)
+                        setMediaController(mMediaControllerInterface)
+                        show(supportFragmentManager, Constants.NOW_PLAY_DIALOG_FRAGMENT)
                     }
-
                 }
             }
             mLayoutMain.btnHome -> {
@@ -233,7 +312,11 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
             }
             mLayoutMain.imgPlayPause -> {
                 resumeOrPause()
-                if (mMediaPlayerHolder.isPlaying) mLayoutMain.imgPlayPause.setIconPlay() else mLayoutMain.imgPlayPause.setIconPause()
+                mMediaPlayerHolder.setStatusPlaying()
+
+            }
+            mLayoutMain.linearNext -> {
+                skip(true)
             }
         }
     }
@@ -263,14 +346,28 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         }
     }
 
-    private fun updateNowPlayingInfo(){
-        val selectedSong = mMediaPlayerHolder.currentSong.first
-        val selectedSongDuration = selectedSong?.duration!!
-
+    private fun skip(isNext: Boolean){
+        if (checkIsPlayer(true)){
+            if (!mMediaPlayerHolder.isPlay){
+                mMediaPlayerHolder.isPlay = true
+            }
+            if (isNext) {
+                mMediaPlayerHolder.skip(true)
+            } else {
+                Log.d("CCC", "Skip false")
+                mMediaPlayerHolder.instantReset()
+            }
+            if (mMediaPlayerHolder.isSongRestoredFromPrefs) {
+                mMediaPlayerHolder.isSongRestoredFromPrefs = false
+            }
+        }
     }
 
-    private fun updatePlayingStatus(){
-
+    private fun updateNowPlayingInfo(isRestore: Boolean){
+        val selectedSong = mMediaPlayerHolder.currentSong.first
+        mLayoutMain.songProgress.progress = 0
+        setUiCurrentSong(selectedSong)
+        mMediaPlayerHolder.setStatusPlayed()
     }
 
     private fun finishSetup(allMusic: MutableList<Music>?){
@@ -279,7 +376,10 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
             mLayoutMain.home.handleViewVisibility(true)
 
             synchronized(handlerRestore()){
-
+                mLayoutMain.controller.animate().apply {
+                    duration = 500
+                    alpha(1.0F)
+                }
             }
         }
     }
@@ -287,7 +387,9 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
     private fun handlerRestore(){
         if (intent != null && Intent.ACTION_VIEW == intent.action && intent.data != null){
             handleIntent(intent)
+            Log.d("XXX","enter if")
         }else{
+            Log.d("XXX","enter else")
             restorePlayerStatus()
         }
     }
@@ -296,11 +398,16 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         intent.data?.let { returnUri ->
             contentResolver.query(returnUri, null, null, null, null)
         }?.use { cursor ->
-         /*   try {
-                val displayNameIndex =
+            try {
+                val displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                cursor.moveToFirst()
+                val song = mMusicViewModel.getSongFromIntent(cursor.getString(displayNameIndex))
+                val allMusic = ListsHelper.getSortedMusicList(Constants.DESCENDING_SORTING, mMusicViewModel.mDeviceMusicFiltered)
+                onSongSelected(song, allMusic, Constants.ARTIST_VIEW)
+                //get album songs and sort them
             }catch (e: Exception){
                 e.printStackTrace()
-            }*/
+            }
 
         }
     }
@@ -318,8 +425,37 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         }
     }
 
+    private fun getLatestSongLaunchedBy() = mPreferences.latestPlayedSong?.launchedBy ?: Constants.ARTIST_VIEW
+
     private fun restorePlayerStatus(){
-//        if (isMe)
+        if(isMediaPlayerHolder){
+            // If we are playing and the activity was restarted
+            // update the controls panel
+            mMediaPlayerHolder.apply {
+                if (isMediaPlayer && mMediaPlayerHolder.isPlaying) {
+                   /* onRestartSeekBarCallback()
+                    updatePlayingInfo(true)*/
+                } else {
+                    isSongRestoredFromPrefs = mPreferences.latestPlayedSong != null
+                    songOri =
+                        if (isSongRestoredFromPrefs){
+                            MusicOrg.getSongForRestore(mPreferences.latestPlayedSong, mMusicViewModel.mDeviceMusicList)
+                        }else{
+                            mMusicViewModel.mRandomMusic
+                        }
+                    val allMusic = ListsHelper.getSortedMusicList(Constants.DESCENDING_SORTING, mMusicViewModel.mDeviceMusicFiltered)
+                    if (!allMusic.isNullOrEmpty()){
+                        isPlay = false
+                        startPlayback(
+                            songOri,
+                            allMusic,
+                            getLatestSongLaunchedBy()
+                        )
+                        updatePlayingInfo()
+                    }
+                }
+            }
+        }
     }
 
     private fun setUiCurrentSong(song: Music?){
@@ -332,7 +468,7 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
             )
             mHomeBinding.layoutMain.songProgress.max = it.duration.toInt()
             mLayoutMain.imgAlbumArt.setImageBitmap(song.getAlbumArt(this))
-            if (mMediaPlayerHolder.isPlay) mLayoutMain.imgPlayPause.setIconPlay() else mLayoutMain.imgPlayPause.setIconPause()
+
         }
     }
 
@@ -343,9 +479,17 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         }
     }
 
+    private fun updatePlayingStatus(){
+        val isPlaying = mMediaPlayerHolder.state != Constants.PAUSED
+        Log.d("NNN","HomeActivity --- updatePlayingStatus: ${isPlaying}")
+        if (isPlaying) mLayoutMain.imgPlayPause.setIconPlay() else mLayoutMain.imgPlayPause.setIconPause()
+
+    }
+
     private fun updatePlayingInfo(){
         val selectedSong = mMediaPlayerHolder.currentSong.first
-
+        mLayoutMain.songProgress.progress = 0
+        setUiCurrentSong(selectedSong)
 
     }
 
@@ -357,7 +501,12 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         }
 
         override fun onStateChanged() {
-
+            Log.d("NNN", "HomeActivity: ${mMediaPlayerHolder.currentSong.first!!.displayName}")
+            Log.d("NNN", "HomeActivity --- State: ${mMediaPlayerHolder.state}")
+            updatePlayingStatus()
+            if (mMediaPlayerHolder.state != Constants.RESUMED && mMediaPlayerHolder.state != Constants.PAUSED){
+                updateNowPlayingInfo(false)
+            }
         }
 
         override fun onPlaybackCompleted() {
@@ -385,11 +534,11 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
         }
 
         override fun onSaveSong() {
-
+            saveSongToPref()
         }
 
         override fun onFocusLoss() {
-
+            saveSongToPref()
         }
 
         override fun onPlaylistEnded() {
@@ -399,11 +548,21 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
     }
 
     override fun onAppearanceChanged(isAccentChanged: Boolean, restoreSettings: Boolean) {
-
+        sAppearanceChanged = true
+        synchronized(saveSongToPref()) {
+            ThemeHelper.applyChanges(this)
+        }
     }
 
     override fun onThemeChanged() {
-
+        sAppearanceChanged = true
+        synchronized(saveSongToPref()) {
+            AppCompatDelegate.setDefaultNightMode(
+                ThemeHelper.getDefaultNightMode(
+                    this
+                )
+            )
+        }
     }
 
     override fun onArtistOrFolderSelected(artistOrFolder: String, launchedBy: String) {
@@ -453,7 +612,10 @@ class HomeActivity : ActionBarCastActivity(), View.OnClickListener, UIControlInt
     }
 
     override fun onHandleNotificationUpdate(isAdditionalActionsChanged: Boolean) {
-
+        Log.d("NNN", "HomeActivity --- onHandleNotificationUpdate: $isAdditionalActionsChanged")
+        if (isMediaPlayerHolder) {
+            mMediaPlayerHolder.onHandleNotificationUpdate(isAdditionalActionsChanged)
+        }
     }
 
     override fun onGetEqualizer(): Triple<Equalizer, BassBoost, Virtualizer> {

@@ -9,7 +9,7 @@
 
     <ImageView
         android:layout_alignParentEnd="true"
-        android:id="@+id/image_close_panel"
+        android:id="@+id/img_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
@@ -54,7 +54,7 @@
 
 
                 <TextView
-                    android:id="@+id/text_display_name"
+                    android:id="@+id/text_sub_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/text_title"
@@ -72,7 +72,7 @@
                     android:id="@+id/text_album_artist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/text_display_name"
+                    android:layout_below="@+id/text_sub_title"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
                     android:fontFamily="sans-serif-condensed"
@@ -88,7 +88,7 @@
                 android:layout_weight="1.5">
 
                 <ImageView
-                    android:id="@+id/image_view_queue"
+                    android:id="@+id/img_view_queue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -106,7 +106,7 @@
                 android:layout_weight="1.5">
 
                 <ImageView
-                    android:id="@+id/image_add_to_playlist"
+                    android:id="@+id/img_add_to_playlist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -142,7 +142,7 @@
 
          <ImageView
              android:adjustViewBounds="true"
-             android:id="@+id/image_about"
+             android:id="@+id/img_about"
              android:layout_width="wrap_content"
              android:padding="@dimen/_5sdp"
              android:layout_centerInParent="true"
@@ -162,7 +162,7 @@
 
          <ImageView
              android:adjustViewBounds="true"
-             android:id="@+id/image_set_time"
+             android:id="@+id/img_set_time"
              android:layout_width="wrap_content"
              android:padding="@dimen/_5sdp"
              android:layout_centerInParent="true"
@@ -182,7 +182,7 @@
 
          <ImageView
              android:adjustViewBounds="true"
-             android:id="@+id/image_shuffle"
+             android:id="@+id/img_shuffle"
              android:layout_width="wrap_content"
              android:padding="@dimen/_5sdp"
              android:layout_centerInParent="true"
@@ -201,7 +201,7 @@
          android:gravity="center">
 
          <ImageView
-             android:id="@+id/image_equalizer"
+             android:id="@+id/img_equalizer"
              android:layout_width="@dimen/_32sdp"
              android:padding="@dimen/_5sdp"
              android:layout_centerInParent="true"
@@ -222,7 +222,7 @@
 
          <ImageView
              android:adjustViewBounds="true"
-             android:id="@+id/image_favorite"
+             android:id="@+id/img_favorite"
              android:layout_width="wrap_content"
              android:padding="@dimen/_5sdp"
              android:layout_centerInParent="true"
@@ -310,7 +310,7 @@
 
                  <ImageView
                      android:adjustViewBounds="true"
-                     android:id="@+id/image_replay"
+                     android:id="@+id/img_repeat"
                      android:padding="@dimen/_5sdp"
                      android:layout_centerInParent="true"
                      android:clickable="true"
@@ -329,7 +329,7 @@
                  android:layout_gravity="center"
                  android:gravity="center">
                  <ImageView
-                     android:id="@+id/image_prev"
+                     android:id="@+id/img_prev"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:padding="@dimen/_5sdp"
@@ -351,7 +351,7 @@
 
 
                  <company.ai.musicplayer.custom_view.PlayPauseView
-                     android:id="@+id/image_play_pause"
+                     android:id="@+id/img_play_pause"
                      android:layout_width="48dp"
                      android:layout_height="56dp"
                      android:layout_centerInParent="true"
@@ -369,7 +369,7 @@
                  android:gravity="center">
 
                  <ImageView
-                     android:id="@+id/image_next"
+                     android:id="@+id/img_next"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:padding="@dimen/_5sdp"
@@ -389,7 +389,7 @@
 
                  android:gravity="center">
                  <ImageView
-                     android:id="@+id/image_more"
+                     android:id="@+id/img_more"
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:padding="@dimen/_5sdp"

@@ -25,6 +25,9 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
         mDeviceMusic.value = null
     }
 
+    fun getSongFromIntent(queriedDisplayName: String) =
+        mDeviceMusicList.firstOrNull { s -> s.displayName == queriedDisplayName }
+
     private val uiDispatcher = Dispatchers.Main
     private val ioDispatcher = Dispatchers.IO + mViewModelJob + mHandler
     private val uiScope = CoroutineScope(uiDispatcher)
@@ -65,6 +68,7 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
         uiScope.launch {
             withContext(ioDispatcher) {
                 val music = getMusic(getApplication()) // get music from MediaStore on IO thread
+
                 withContext(uiDispatcher) {
                     mDeviceMusic.value = music // post values on Main thread
                 }
@@ -78,7 +82,6 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
                 MusicOrg.getMusicCursor(
                     application.contentResolver
                 )
-
             // Query the storage for music files
             musicCursor?.use { cursor ->
 
@@ -104,7 +107,6 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
                     cursor.getColumnIndexOrThrow(MusicOrg.getPathColumn())
 
                 while (cursor.moveToNext()) {
-
                     // Now loop through the music files
                     val audioId = cursor.getLong(idIndex)
                     val audioArtist = cursor.getString(artistIndex)
@@ -147,9 +149,9 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
                             id = audioId
                         )
                     )
+
                 }
             }
-
             mDeviceMusicList
 
         } catch (e: Exception) {
@@ -166,7 +168,7 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
 
         mDeviceMusicFiltered?.let { dsf ->
             // group music by artist
-            mDeviceMusicByArtist = dsf.groupBy { it.artist }
+            mDeviceMusicByArtist = dsf.groupBy { it.artist!!.split(",",";")[0] }
             mDeviceMusicByAlbum = dsf.groupBy { it.album }
             mDeviceMusicByFolder = dsf.groupBy { it.relativePath!! }
         }
@@ -183,8 +185,10 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
     }
 
     private fun getMusic(application: Application): MutableList<Music> {
+
         queryForMusic(application)?.let { fm ->
             mDeviceMusicList = fm
+
         }
         buildLibrary(application.resources)
         return mDeviceMusicList

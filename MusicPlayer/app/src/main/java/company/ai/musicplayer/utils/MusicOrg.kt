@@ -9,6 +9,7 @@ import company.ai.musicplayer.extensions.toSavedMusic
 import company.ai.musicplayer.mPreferences
 import company.ai.musicplayer.models.Album
 import company.ai.musicplayer.models.Music
+import company.ai.musicplayer.models.SavedMusic
 import company.ai.musicplayer.player.MediaPlayerHolder
 
 object MusicOrg {
@@ -34,6 +35,7 @@ object MusicOrg {
             MediaStore.Audio.AudioColumns.DURATION, //5,
             MediaStore.Audio.AudioColumns.ALBUM, // 6
             MediaStore.Audio.AudioColumns.ALBUM_ID, // 7
+            MediaStore.Audio.AudioColumns.ALBUM_ARTIST, //8
             getPathColumn(), // 8
             MediaStore.Audio.AudioColumns._ID //9
         ),
@@ -41,6 +43,14 @@ object MusicOrg {
         null,
         MediaStore.Audio.Media.DEFAULT_SORT_ORDER
     )
+
+    @JvmStatic
+    fun getSongForRestore(savedMusic: SavedMusic?, deviceSongs: MutableList<Music>): Music {
+        return deviceSongs.firstOrNull { s ->
+            s.artist == savedMusic?.artist && s.title == savedMusic?.title && s.displayName == savedMusic?.displayName
+                    && s.year == savedMusic?.year && s.duration == savedMusic.duration && s.album == savedMusic.album
+        } ?: deviceSongs.random()
+    }
 
     @JvmStatic
     fun buildSortedArtistAlbums(resources: Resources, artistSongs: List<Music>?): List<Album>{

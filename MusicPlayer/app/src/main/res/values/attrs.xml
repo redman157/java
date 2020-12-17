@@ -23,4 +23,5 @@
     <declare-styleable name="PlayPause">
         <attr name="isCircleDraw" format="boolean" />
     </declare-styleable>
+
 </resources>

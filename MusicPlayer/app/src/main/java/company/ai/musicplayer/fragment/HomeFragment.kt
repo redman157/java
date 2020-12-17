@@ -3,12 +3,11 @@ package company.ai.musicplayer.fragment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -20,7 +19,6 @@ import com.afollestad.recyclical.withItem
 import company.ai.musicplayer.MusicViewModel
 import company.ai.musicplayer.MusicsViewHolder
 import company.ai.musicplayer.R
-import company.ai.musicplayer.activiy.ActionBarCastActivity
 import company.ai.musicplayer.controller.UIControlInterface
 import company.ai.musicplayer.databinding.FragmentHomeBinding
 import company.ai.musicplayer.extensions.afterMeasured
@@ -35,7 +33,7 @@ import company.ai.musicplayer.utils.ListsHelper
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class HomeFragment : Fragment() {
-    private lateinit var mHomeFragment: FragmentHomeBinding
+    private lateinit var mBinding: FragmentHomeBinding
     // View model
     private lateinit var mMusicViewModel: MusicViewModel
 
@@ -73,14 +71,46 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun initializeToolbar() {
+        mBinding.toolbarContainer.toolbar.apply {
+            popupTheme = R.style.AppTheme_CustomActionBar
+            title = this@HomeFragment.getString(R.string.app_name)
+            inflateMenu(R.menu.main)
+            setHasOptionsMenu(true)
+            (activity as AppCompatActivity).setSupportActionBar(this)
+        }
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // If not handled by drawerToggle, home needs to be handled by returning to previous
+        when (item.itemId) {
+            android.R.id.home -> {
+            }
+            R.id.sleep_timer -> {
+            }
+            R.id.sync -> {
+
+            }
+            R.id.changeTheme -> {
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater ) {
+        inflater.inflate(R.menu.main, menu)
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        mHomeFragment = FragmentHomeBinding.inflate(layoutInflater)
-        (activity as ActionBarCastActivity).initializeToolbar(true)
-        return mHomeFragment.root
+        mBinding = FragmentHomeBinding.inflate(layoutInflater)
+        initializeToolbar()
+        return mBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -91,7 +121,8 @@ class HomeFragment : Fragment() {
             viewLifecycleOwner,
             Observer {returnedMusic ->
                 if (!returnedMusic.isNullOrEmpty()){
-                    mAllMusic = ListsHelper.getSortedMusicList(Constants.DESCENDING_SORTING, mMusicViewModel.mDeviceMusicFiltered)
+                    mAllMusic = ListsHelper.getRecentlyMusicAdd(returnedMusic)
+                    Log.d("XXX","HomeFragment: ${mAllMusic!!.size}")
                     setMusicDataSource(mAllMusic)
                     assignView()
                 }
@@ -105,13 +136,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun initView(){
-        mImageShuffle = mHomeFragment.imageShuffleAll
-        mImageMost = mHomeFragment.imageMostPlayer
-        mImageRecently = mHomeFragment.imageRecentlyAdd
-        mLinearMusicMost = mHomeFragment.linearMusicMost
-        mLinearPlayer1 = mHomeFragment.linearPlayer1
-        mLinearPlayer2 = mHomeFragment.linearPlayer2
-        mRecentlyAdd = mHomeFragment.recyclerRecentlyAdd
+        mImageShuffle = mBinding.imageShuffleAll
+        mImageMost = mBinding.imageMostPlayer
+        mImageRecently = mBinding.imageRecentlyAdd
+        mLinearMusicMost = mBinding.linearMusicMost
+        mLinearPlayer1 = mBinding.linearPlayer1
+        mLinearPlayer2 = mBinding.linearPlayer2
+        mRecentlyAdd = mBinding.recyclerRecentlyAdd
     }
 
     private fun assignView(){

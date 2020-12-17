@@ -6,7 +6,8 @@ import android.support.v4.media.session.PlaybackStateCompat
 object Constants {
     const val TAG_FRAGMENT: String = "TAG_FRAGMENT"
     const val RESTORE_SETTINGS_FRAGMENT = "RESTORE_SETTINGS_FRAGMENT"
-    const val DIALOG_FRAGMENT: String = "DIALOG_FRAGMENT"
+    const val NOW_PLAY_DIALOG_FRAGMENT: String = "NOW_PLAY_DIALOG_FRAGMENT"
+    const val LIST_DIALOG_FRAGMENT: String = "LIST_DIALOG_FRAGMENT"
     const val PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 2588
 
     // on list ended option

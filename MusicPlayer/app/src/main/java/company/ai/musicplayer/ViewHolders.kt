@@ -9,5 +9,21 @@ class MusicsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val icon: ImageView = itemView.findViewById(R.id.image_icon)
     val title: TextView = itemView.findViewById(R.id.text_title)
     val duration: TextView = itemView.findViewById(R.id.text_suptitle)
-    val subtitle: TextView = itemView.findViewById(R.id.text_display_name)
+    val subtitle: TextView = itemView.findViewById(R.id.text_sub_title)
+}
+
+class GenericViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val title: TextView = itemView.findViewById(R.id.text_title)
+    val subtitle: TextView = itemView.findViewById(R.id.text_sub_title)
+    val icon: ImageView = itemView.findViewById(R.id.image_icon)
+}
+
+class AlbumArtistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val title: TextView = itemView.findViewById(R.id.text_title)
+    val subtitle: TextView = itemView.findViewById(R.id.text_sub_title)
+    val icon: ImageView = itemView.findViewById(R.id.image_icon)
+}
+
+class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val title: TextView = itemView.findViewById(R.id.text_title)
 }

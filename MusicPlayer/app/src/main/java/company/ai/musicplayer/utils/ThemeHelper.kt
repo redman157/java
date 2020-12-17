@@ -1,15 +1,36 @@
 package company.ai.musicplayer.utils
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.graphics.ColorUtils
+import androidx.core.os.bundleOf
 import company.ai.musicplayer.R
+import company.ai.musicplayer.activiy.HomeActivity
 import company.ai.musicplayer.extensions.decodeColor
 import company.ai.musicplayer.mPreferences
 import company.ai.musicplayer.player.MediaPlayerHolder
 
 object ThemeHelper {
+    @JvmStatic
+    fun applyChanges(activity: Activity) {
+        val intent = Intent(activity, HomeActivity::class.java)
+
+        val bundle = bundleOf(Pair(Constants.RESTORE_SETTINGS_FRAGMENT, true))
+        intent.putExtras(bundle)
+        intent.addFlags(
+            Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    or Intent.FLAG_ACTIVITY_NEW_TASK
+        )
+        activity.apply {
+            finishAfterTransition()
+            startActivity(intent)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
+    }
     // Fixed array of pairs (first: accent, second: theme, third: color primary dark)
     @JvmStatic
     val accents = arrayOf(

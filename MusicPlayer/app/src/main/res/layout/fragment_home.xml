@@ -7,6 +7,8 @@
     tools:context=".fragment.HomeFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar_container"/>
     <ScrollView
         android:scrollbars="vertical"
         android:scrollbarThumbVertical="@drawable/thumb"

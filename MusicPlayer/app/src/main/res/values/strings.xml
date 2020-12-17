@@ -2,7 +2,7 @@
     <string name="app_name">Music Player</string>
     <string name="category_audio">Audio</string>
 
-    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_home">Music Player</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -13,7 +13,7 @@
 
     <!-- collapsing_profile_behavior -->
     <string name="test_profile_image_desc">Profile Image</string>
-    <string name="collapsing_profile_behavior" translatable="false">com.android.music_player.CollapsingProfileBehavior</string>
+    <string name="collapsing_profile_behavior" translatable="false">company.ai.musicplayer.CollapsingProfileBehavior</string>
 
     <!-- Messages - Permission rationale -->
     <string name="perm_rationale">Music Player needs access to your files to play music.</string>
@@ -61,7 +61,7 @@
     <!-- Other preferences keys -->
     <string name="saved_eq_settings">saved_eq_settings_pref</string>
     <string name="latest_played_song_pref">restore_song_pref</string>
-    <string name="loved_songs_pref">bookmarked_songs_pref</string>
+    <string name="device_songs_pref">device_songs_pref</string>
     <string name="latest_volume_pref">latest_volume_pref</string>
     <string name="song_visual_pref">song_visual_pref</string>
 

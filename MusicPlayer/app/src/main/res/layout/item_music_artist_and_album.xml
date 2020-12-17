@@ -38,11 +38,9 @@
         android:layout_toEndOf="@id/card_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="10">
+        android:orientation="horizontal">
         <LinearLayout
-            android:layout_weight="8"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="match_parent">
             <TextView
@@ -74,13 +72,6 @@
                 android:background="@color/silver_chalice"
                 android:layout_height="1dp"/>
         </LinearLayout>
-        <TextView
-            android:id="@+id/text_suptitle"
-            android:textSize="@dimen/_13sdp"
-            android:gravity="center"
-            android:layout_weight="2"
-            android:layout_width="0dp"
-            android:textColor="@color/black"
-            android:layout_height="match_parent"/>
+
     </LinearLayout>
 </RelativeLayout>

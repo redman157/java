@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        android:drawableLeft="@drawable/ic_music_note"
+        android:drawablePadding="@dimen/_5sdp"
+        android:gravity="left|center"
+        android:layout_gravity="left|center"
+        android:id="@+id/text_title"
+        android:padding="@dimen/_5sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

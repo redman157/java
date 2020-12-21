@@ -120,4 +120,10 @@
     <!-- Preferences - Categories -->
     <string name="settings">Settings</string>
     <string name="category_general">General</string>
+
+    <!-- ListFragment Dialog - Title -->
+    <string name="album_list">Album List Music</string>
+    <string name="artist_list">Artist List Music</string>
+    <string name="folder_list">Folder List Music</string>
+
 </resources>

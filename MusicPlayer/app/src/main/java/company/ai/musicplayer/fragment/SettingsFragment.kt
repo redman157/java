@@ -17,10 +17,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [SettingFragment.newInstance] factory method to
+ * Use the [SettingsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SettingFragment : Fragment() {
+class SettingsFragment : Fragment() {
     private lateinit var mBinding: FragmentSettingBinding
     private lateinit var mUIControlInterface: UIControlInterface
 
@@ -51,6 +51,9 @@ class SettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
+        mBinding.toolbar.setNavigationOnClickListener {
+            mUIControlInterface.onCloseActivity(this@SettingsFragment)
+        }
         childFragmentManager.beginTransaction().apply {
             replace(R.id.fragment_layout, PreferencesFragment.newInstance())
             commit()
@@ -59,6 +62,6 @@ class SettingFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = SettingFragment()
+        fun newInstance() = SettingsFragment()
     }
 }

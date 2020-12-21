@@ -26,12 +26,13 @@ fun Long.toContentUri(): Uri = ContentUris.withAppendedId(
 
 fun String.toMusic(allMusic: MutableList<Music>?): Music? {
     for (index in allMusic!!){
-        if (this == index.displayName){
+        if (this == index.displayName || this == index.album){
             return index
         }
     }
     return null
 }
+
 
 fun Long.toFormattedDuration(isAlbum: Boolean, isSeekBar: Boolean) = try {
     val defaultFormat = if (isAlbum) {

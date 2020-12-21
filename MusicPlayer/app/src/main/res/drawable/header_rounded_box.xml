@@ -8,7 +8,7 @@
         android:right="2dp"
         android:top="2dp" />
 
-    <solid android:color="@color/whiteOpaqueX6" />
+    <solid android:color="@color/white" />
 
     <corners
         android:bottomLeftRadius="2dp"

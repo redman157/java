@@ -29,6 +29,7 @@ import company.ai.musicplayer.mPreferences
 import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.utils.Constants
 import company.ai.musicplayer.utils.ListsHelper
+import kotlinx.android.synthetic.main.custom_preference_category.*
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -92,7 +93,7 @@ class HomeFragment : Fragment() {
             }
             R.id.settings -> {
 
-                requireActivity().supportFragmentManager.addFragment(requireActivity().supportFragmentManager.fragments[3], Constants.TAG_FRAGMENT, true)
+                requireActivity().supportFragmentManager.addFragment(SettingsFragment.newInstance(), Constants.TAG_FRAGMENT, true)
             }
             R.id.changeTheme -> {
             }

@@ -5,17 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.SettingFragment">
+    tools:context=".fragment.SettingsFragment">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/search_toolbar"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/windowBackground"
         android:elevation="@dimen/_2sdp"
-
-        app:navigationIcon="@drawable/ic_close"
-        app:subtitle="@string/versionName"
+        app:navigationIcon="@drawable/ic_back"
         app:subtitleTextAppearance="@style/ToolbarStyle.Subtitle"
         app:title="@string/settings"
         app:titleTextColor="?android:attr/textColorPrimary" />

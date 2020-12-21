@@ -19,6 +19,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import company.ai.musicplayer.MusicViewModel
@@ -32,7 +33,7 @@ import company.ai.musicplayer.dialog_custom.NowPlayingDialog
 import company.ai.musicplayer.extensions.*
 import company.ai.musicplayer.fragment.HomeFragment
 import company.ai.musicplayer.fragment.LibraryFragment
-import company.ai.musicplayer.fragment.SettingFragment
+import company.ai.musicplayer.fragment.SettingsFragment
 import company.ai.musicplayer.mPreferences
 import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.player.MediaPlayerHolder
@@ -106,7 +107,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
     private fun setFragment(){
         supportFragmentManager.fragments.add(HomeFragment())
         supportFragmentManager.fragments.add(LibraryFragment())
-        supportFragmentManager.fragments.add(SettingFragment())
+        supportFragmentManager.fragments.add(SettingsFragment())
     }
 
     private val sEqFragmentExpanded get() = supportFragmentManager.isFragment(Constants.TAG_FRAGMENT)
@@ -137,7 +138,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         setContentView(mHomeBinding.root)
         initView()
         assignView()
-        setFragment()
+
         sRestoreSettingsFragment =
             savedInstanceState?.getBoolean(Constants.RESTORE_SETTINGS_FRAGMENT)
                 ?: intent.getBooleanExtra(
@@ -607,8 +608,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
 
     }
 
-    override fun onCloseActivity() {
-
+    override fun onCloseActivity(fragment: Fragment) {
+        if (fragment is SettingsFragment){
+            supportFragmentManager.addFragment(HomeFragment(), Constants.TAG_FRAGMENT, true)
+        }
     }
 
     override fun onAddToQueue(song: Music?) {

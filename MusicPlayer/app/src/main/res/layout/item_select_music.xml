@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     android:clickable="true"
     android:focusable="true"
     android:background="?attr/selectableItemBackground"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/image_profile"
+        android:layout_alignParentStart="true"
+        android:layout_width="@dimen/_32sdp"
+        android:padding="@dimen/_4sdp"
+        android:scaleType="fitCenter"
+        android:layout_centerVertical="true"
+        android:layout_height="@dimen/_32sdp"/>
     <TextView
+        android:layout_toEndOf="@id/image_profile"
+        android:layout_alignParentEnd="true"
         android:textColor="@color/black"
+        android:layout_centerVertical="true"
+        android:text="@string/app_name"
         android:textSize="@dimen/_12sdp"
-        android:drawableLeft="@drawable/ic_music_note"
         android:drawablePadding="@dimen/_5sdp"
         android:gravity="left|center"
         android:layout_gravity="left|center"
         android:id="@+id/text_title"
         android:padding="@dimen/_5sdp"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-</LinearLayout>
+</RelativeLayout>

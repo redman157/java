@@ -14,18 +14,20 @@ import androidx.fragment.app.*
 import androidx.viewpager.widget.ViewPager
 import com.afollestad.recyclical.datasource.emptyDataSource
 import com.google.android.material.tabs.TabLayout
+import company.ai.musicplayer.CollapsingProfileHeaderView
 import company.ai.musicplayer.MusicViewModel
 import company.ai.musicplayer.R
 import company.ai.musicplayer.activiy.HomeActivity
 import company.ai.musicplayer.controller.LibrarySelectInterface
 import company.ai.musicplayer.controller.UIControlInterface
-import company.ai.musicplayer.databinding.CollapsingProfileHeaderBinding
+
 import company.ai.musicplayer.databinding.FragmentLibraryBinding
 import company.ai.musicplayer.dialog_custom.ListDialog
 import company.ai.musicplayer.extensions.imageByPicasso
 import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.utils.Constants
 import company.ai.musicplayer.utils.ThemeHelper
+import kotlinx.android.synthetic.main.view_collapsing_profile_header.view.*
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -35,7 +37,7 @@ class LibraryFragment : Fragment(), TabLayout.OnTabSelectedListener, LibrarySele
     private lateinit var mViewPager: ViewPager
     private lateinit var mTabLayout: TabLayout
     private lateinit var mBackGroundHeader: ImageView
-    private lateinit var mHeaderView: CollapsingProfileHeaderBinding
+    private lateinit var mHeaderView: CollapsingProfileHeaderView
     private lateinit var mFragments: ArrayList<MusicControllerListFragment>
     // View model
     private lateinit var mMusicViewModel: MusicViewModel
@@ -88,15 +90,9 @@ class LibraryFragment : Fragment(), TabLayout.OnTabSelectedListener, LibrarySele
         mTabLayout = mBinding.tabController
         mBackGroundHeader = mBinding.imgAlbumId
         (activity as HomeActivity).songOri.let {
-            mHeaderView.profileImage.imageByPicasso(it.albumID)
-            mHeaderView.profileName.text = it.displayName!!.removeRange(it.displayName.length - 4, it.displayName.length)
-            mHeaderView.profileSubtitle.text = it.artist
-            mHeaderView.profileMisc.text = it.album
+            mHeaderView.applyAttributes(it)
             mBinding.imgAlbumId.imageByPicasso(it.albumID)
         }
-
-
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -182,10 +178,7 @@ class LibraryFragment : Fragment(), TabLayout.OnTabSelectedListener, LibrarySele
     override fun onSelectMusic(song: Music?) {
         Log.d("NNN", "LibraryFragment --- onChoose: ${song!!.displayName}")
         song.let {
-            mHeaderView.profileImage.imageByPicasso(it.albumID)
-            mHeaderView.profileName.text = it.displayName!!.removeRange(it.displayName.length - 4, it.displayName.length)
-            mHeaderView.profileSubtitle.text = it.artist
-            mHeaderView.profileMisc.text = it.album
+            mHeaderView.applyAttributes(song)
             mBinding.imgAlbumId.imageByPicasso(it.albumID)
         }
 

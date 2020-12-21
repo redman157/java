@@ -28,10 +28,12 @@
         android:layout_width="match_parent"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        app:titleTextColor="@color/black"
         android:animateLayoutChanges="true"
         app:layout_collapseMode="pin"
         android:theme="@style/toolBarStyle"
-        app:popupTheme="@style/popupStyle"/>
+        app:popupTheme="@style/popupStyle"
+        app:subtitleTextAppearance="@style/ToolbarStyle.Subtitle"
+        app:title="@string/app_name"
+        app:titleTextColor="?android:attr/textColorPrimary" />
 
 </com.google.android.material.appbar.AppBarLayout>

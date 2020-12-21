@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -26,6 +27,7 @@ import company.ai.musicplayer.MusicViewModel
 import company.ai.musicplayer.R
 import company.ai.musicplayer.controller.UIControlInterface
 import company.ai.musicplayer.databinding.FragmentListBinding
+import company.ai.musicplayer.extensions.imageByPicasso
 import company.ai.musicplayer.fragment.LibraryFragment
 import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.utils.Constants
@@ -153,13 +155,13 @@ class ListDialog(var launchedBy: String, var musics: List<Music>?) : BottomSheet
         mBinding.textTitle.apply {
             when (launchedBy){
                 Constants.FOLDER_VIEW -> {
-                    text = "Folder List"
+                    text = getString(R.string.folder_list)
                 }
                 Constants.ARTIST_VIEW -> {
-                    text = "Artist List"
+                    text = getString(R.string.album_list)
                 }
                 Constants.ALBUM_VIEW -> {
-                    text = "Album List"
+                    text = getString(R.string.album_list)
                 }
             }
         }
@@ -171,6 +173,7 @@ class ListDialog(var launchedBy: String, var musics: List<Music>?) : BottomSheet
                 withItem<Music, ListViewHolder>(R.layout.item_select_music){
                     onBind(::ListViewHolder) { _, item ->
                         // GenericViewHolder is `this` here
+                        image.imageByPicasso(item.albumID)
                         title.text = item.displayName!!.removeRange(
                             item.displayName.length - 4,
                             item.displayName.length

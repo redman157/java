@@ -16,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import company.ai.musicplayer.R
+import company.ai.musicplayer.activiy.HomeActivity
 import company.ai.musicplayer.controller.MediaControllerInterface
 import company.ai.musicplayer.databinding.DialogMediaBinding
 import company.ai.musicplayer.extensions.imageByPicasso
@@ -136,6 +137,14 @@ class NowPlayingDialog(var mPlayerService: PlayerService,var position: Int): Bot
             mDialogMedia.imgEqualizer -> {
                 openEqualizer()
             }
+            mDialogMedia.imgAbout -> {
+                val dialog = SampleFragment.newInstance("Information Music",mMediaPlayerHolder.currentSong.first)
+                dialog.show(requireActivity().supportFragmentManager, Constants.LIST_DIALOG_FRAGMENT)
+            }
+            mDialogMedia.imgViewQueue -> {
+                val dialog = SampleFragment.newInstance("List Music",(requireActivity() as HomeActivity).currentListMusic!!.toMutableList(), (requireActivity() as HomeActivity).currentLaunchedBy)
+                dialog.show(requireActivity().supportFragmentManager, Constants.LIST_DIALOG_FRAGMENT)
+            }
         }
     }
 
@@ -168,9 +177,7 @@ class NowPlayingDialog(var mPlayerService: PlayerService,var position: Int): Bot
         mDialogMedia.imgNext.setOnClickListener(this)
         mDialogMedia.imgRepeat.setOnClickListener(this)
         mDialogMedia.imgPlayPause.setOnClickListener(this)
-        mDialogMedia.imgMore.setOnClickListener(this)
         mDialogMedia.imgAbout.setOnClickListener(this)
-        mDialogMedia.imgSetTime.setOnClickListener(this)
         mDialogMedia.imgAddToPlaylist.setOnClickListener(this)
         mDialogMedia.imgEqualizer.setOnClickListener(this)
         mDialogMedia.imgFavorite.setOnClickListener(this)

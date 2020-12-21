@@ -32,6 +32,7 @@ import company.ai.musicplayer.dialog_custom.NowPlayingDialog
 import company.ai.musicplayer.extensions.*
 import company.ai.musicplayer.fragment.HomeFragment
 import company.ai.musicplayer.fragment.LibraryFragment
+import company.ai.musicplayer.fragment.SettingFragment
 import company.ai.musicplayer.mPreferences
 import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.player.MediaPlayerHolder
@@ -75,6 +76,9 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
             ThemeHelper.getAlphaForAccent()
         )
     }
+
+    lateinit var currentLaunchedBy: String
+    var currentListMusic: List<Music>? = null
     private fun checkIsPlayer(showError: Boolean) = mMediaPlayerHolder.apply {
         if (!isMediaPlayer && !isSongRestoredFromPrefs && showError) {
             getString(
@@ -97,6 +101,12 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         } else {
             mLayoutMain.imgPlayPause.setIconPause()
         }
+    }
+
+    private fun setFragment(){
+        supportFragmentManager.fragments.add(HomeFragment())
+        supportFragmentManager.fragments.add(LibraryFragment())
+        supportFragmentManager.fragments.add(SettingFragment())
     }
 
     private val sEqFragmentExpanded get() = supportFragmentManager.isFragment(Constants.TAG_FRAGMENT)
@@ -127,6 +137,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         setContentView(mHomeBinding.root)
         initView()
         assignView()
+        setFragment()
         sRestoreSettingsFragment =
             savedInstanceState?.getBoolean(Constants.RESTORE_SETTINGS_FRAGMENT)
                 ?: intent.getBooleanExtra(
@@ -179,6 +190,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
 
     override fun onDestroy() {
         super.onDestroy()
+
         mMusicViewModel.cancel()
         if (sBound) {
             unbindService(connection)
@@ -187,6 +199,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
             mPlayerService.stopForeground(true)
             stopService(mBindingIntent)
         }
+
     }
 
     override fun onBackPressed() {
@@ -412,12 +425,15 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         }
     }
 
+
     private fun startPlayback(song: Music?, songs: List<Music>?, launchedBy: String){
         if (isMediaPlayerHolder){
             if(::mPlayerService.isInitialized && !mPlayerService.isRunning){
                 startService(mBindingIntent)
             }
             mMediaPlayerHolder.apply {
+                currentLaunchedBy = launchedBy
+                currentListMusic = songs
                 setServiceCurrentSong(song, songs, isFromQueue = false, isFolderAlbum = launchedBy)
                 initMediaPlayer(song)
                 setUiCurrentSong(song)

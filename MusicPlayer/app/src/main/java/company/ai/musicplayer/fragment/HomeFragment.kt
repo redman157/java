@@ -21,6 +21,7 @@ import company.ai.musicplayer.MusicsViewHolder
 import company.ai.musicplayer.R
 import company.ai.musicplayer.controller.UIControlInterface
 import company.ai.musicplayer.databinding.FragmentHomeBinding
+import company.ai.musicplayer.extensions.addFragment
 import company.ai.musicplayer.extensions.afterMeasured
 import company.ai.musicplayer.extensions.imageByPicasso
 import company.ai.musicplayer.extensions.toFormattedDuration
@@ -87,10 +88,11 @@ class HomeFragment : Fragment() {
         when (item.itemId) {
             android.R.id.home -> {
             }
-            R.id.sleep_timer -> {
+            R.id.night_mode -> {
             }
-            R.id.sync -> {
+            R.id.settings -> {
 
+                requireActivity().supportFragmentManager.addFragment(requireActivity().supportFragmentManager.fragments[3], Constants.TAG_FRAGMENT, true)
             }
             R.id.changeTheme -> {
             }
@@ -143,6 +145,11 @@ class HomeFragment : Fragment() {
         mLinearPlayer1 = mBinding.linearPlayer1
         mLinearPlayer2 = mBinding.linearPlayer2
         mRecentlyAdd = mBinding.recyclerRecentlyAdd
+        mBinding.refreshData.setOnRefreshListener {
+            mBinding.refreshData.isRefreshing = false
+            mMusicViewModel.syncMusic(requireActivity().application)
+            setMusicDataSource(ListsHelper.recentlyMusic)
+        }
     }
 
     private fun assignView(){

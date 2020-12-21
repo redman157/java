@@ -79,17 +79,13 @@ object ListsHelper {
             Log.d("XXX","enter if")
             Log.d("XXX","${mPreferences.deviceSongs!![0].displayName}")
             Log.d("XXX","${mPreferences.deviceSongs!!.size}")
-            val deviceSongs = mPreferences.deviceSongs
-            val recentlyAdd: MutableList<Music> = mutableListOf()
-            allMusics.forEachIndexed { index, value -> if (deviceSongs!![index] != value) {
-                recentlyAdd.add(value)
-            }
-            }
-            recentlyMusic = recentlyAdd
-            recentlyAdd
+            //https://www.techiedelight.com/difference-between-two-lists-kotlin/
+            val difference = allMusics.minus(mPreferences.deviceSongs!!.toHashSet())
+            recentlyMusic = difference.toMutableList()
+            return recentlyMusic
         }else{
             Log.d("XXX","enter else")
-
+            mPreferences.deviceSongs = allMusics
             allMusics
         }
     }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.SettingFragment">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/search_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/windowBackground"
+        android:elevation="@dimen/_2sdp"
+
+        app:navigationIcon="@drawable/ic_close"
+        app:subtitle="@string/versionName"
+        app:subtitleTextAppearance="@style/ToolbarStyle.Subtitle"
+        app:title="@string/settings"
+        app:titleTextColor="?android:attr/textColorPrimary" />
+
+    <!--android:theme="@style/ToolbarStyle"
+    app:titleTextAppearance="@style/ToolbarStyle.Title"-->
+    <FrameLayout
+        android:id="@+id/fragment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

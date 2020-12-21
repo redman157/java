@@ -6,7 +6,6 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.graphics.drawable.VectorDrawable
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
@@ -18,6 +17,7 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 fun Long.toContentUri(): Uri = ContentUris.withAppendedId(
     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -124,16 +124,16 @@ fun Music.getAlbumArt(context: Context): Bitmap {
 
 //https://gist.github.com/Gnzlt/6ddc846ef68c587d559f1e1fcd0900d3
 private fun getLargeIcon(context: Context): Bitmap {
-    val vectorDrawable = context.getDrawable(R.drawable.app_icon_music) as VectorDrawable?
-    val largeIconSize = context.resources.getDimensionPixelSize(R.dimen._256sdp)
-    val bitmap = Bitmap.createBitmap(largeIconSize, largeIconSize, Bitmap.Config.ARGB_8888)
+    val drawable = ContextCompat.getDrawable(context, R.drawable.app_icon_music)
+
+    val bitmap = Bitmap.createBitmap(
+        drawable!!.intrinsicWidth,
+        drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
+    )
     val canvas = Canvas(bitmap)
-    if (vectorDrawable != null) {
-        vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
-        vectorDrawable.setTint(ContextCompat.getColor(context,R.color.black))
-        vectorDrawable.alpha = 100
-        vectorDrawable.draw(canvas)
-    }
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+
     return bitmap
 }
 

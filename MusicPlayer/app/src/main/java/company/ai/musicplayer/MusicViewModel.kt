@@ -1,13 +1,16 @@
 package company.ai.musicplayer
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Application
 import android.content.res.Resources
 import android.provider.MediaStore
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import company.ai.musicplayer.models.Album
 import company.ai.musicplayer.models.Music
+import company.ai.musicplayer.utils.ListsHelper
 import company.ai.musicplayer.utils.MusicOrg
 import company.ai.musicplayer.utils.VersioningHelper
 import kotlinx.coroutines.*
@@ -68,13 +71,15 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
         uiScope.launch {
             withContext(ioDispatcher) {
                 val music = getMusic(getApplication()) // get music from MediaStore on IO thread
-
+                Log.d("XXX", "file âm thanh: ${music.size} ")
                 withContext(uiDispatcher) {
+                    Log.d("XXX", "file âm thanh: ${music.size} ")
                     mDeviceMusic.value = music // post values on Main thread
                 }
             }
         }
     }
+
     @SuppressLint("InlinedApi")
     fun queryForMusic(application: Application) =
         try {
@@ -185,12 +190,19 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
     }
 
     private fun getMusic(application: Application): MutableList<Music> {
-
         queryForMusic(application)?.let { fm ->
             mDeviceMusicList = fm
-
         }
         buildLibrary(application.resources)
         return mDeviceMusicList
+    }
+
+    fun syncMusic(application: Application){
+        mViewModelJob.cancel()
+        mDeviceMusic.value = null
+        mDeviceMusicList.clear()
+        mDeviceMusicList = mutableListOf<Music>()
+        mDeviceMusic.value = getMusic(application)
+        ListsHelper.getRecentlyMusicAdd(mDeviceMusic.value!!)
     }
 }

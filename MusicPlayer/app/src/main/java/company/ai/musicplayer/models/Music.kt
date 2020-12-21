@@ -1,5 +1,7 @@
 package company.ai.musicplayer.models
 
+import java.io.Serializable
+
 data class Music(
     val artist: String?,
     val year: Int,
@@ -11,4 +13,4 @@ data class Music(
     val albumID: Long?,
     val relativePath: String?,
     val id: Long?
-)
+) : Serializable

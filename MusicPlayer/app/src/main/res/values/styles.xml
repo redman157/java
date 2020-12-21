@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/widgetsColor</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/accentColor</item>
         <item name="windowActionBar">false</item>
@@ -95,4 +96,8 @@
         <item name="android:background">@drawable/background_corner_top</item>
     </style>
 
+    <style name="ToolbarStyle.Subtitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle" />
+    <style name="ToolbarStyle.Title" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

@@ -67,7 +67,6 @@
                         android:id="@+id/cardView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-
                         app:cardCornerRadius="@dimen/_5sdp">
                         <ImageView
                             android:id="@+id/img_album_art"

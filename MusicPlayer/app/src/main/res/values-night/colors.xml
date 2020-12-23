@@ -19,25 +19,47 @@
     <color name="silver_chalice">#A9A9A9</color>
     <color name="light_grey">#C5C5C5</color>
 
-    <color name="red">#ef9a9a</color>
-    <color name="pink">#f48fb1</color>
-    <color name="purple">#ce93d8</color>
-    <color name="deep_purple">#b39ddb</color>
-    <color name="indigo">#9fa8da</color>
-    <color name="blue">#90caf9</color>
-    <color name="light_blue">#81d4fa</color>
-    <color name="cyan">#80deea</color>
-    <color name="teal">#80cbc4</color>
-    <color name="green">#a5d6a7</color>
-    <color name="light_green">#c5e1a5</color>
-    <color name="lime">#e6ee9c</color>
-    <color name="yellow">#fff59d</color>
-    <color name="amber">#ffe082</color>
-    <color name="orange">#ffcc80</color>
-    <color name="deep_orange">#ffab91</color>
-    <color name="brown">#bcaaa4</color>
-    <color name="grey">#eeeeee</color>
-    <color name="blue_grey">#b0bec5</color>
+// theme color 800
+    <color name="secondary_red">#8e0000</color>
+    <color name="secondary_pink">#78002e</color>
+    <color name="secondary_purple">#38006b</color>
+    <color name="secondary_deep_purple">#000070</color>
+    <color name="secondary_indigo">#001064</color>
+    <color name="secondary_blue">#003c8f</color>
+    <color name="secondary_light_blue">#004c8c</color>
+    <color name="secondary_cyan">#005662</color>
+    <color name="secondary_teal">#003d33</color>
+    <color name="secondary_green">#005005</color>
+    <color name="secondary_light_green">#255d00</color>
+    <color name="secondary_lime">#6c6f00</color>
+    <color name="secondary_yellow">#c17900</color>
+    <color name="secondary_amber">#c56000</color>
+    <color name="secondary_orange">#b53d00</color>
+    <color name="secondary_deep_orange">#9f0000</color>
+    <color name="secondary_brown">#260e04</color>
+    <color name="secondary_grey">#1b1b1b</color>
+    <color name="secondary_blue_grey">#102027</color>
+
+// theme color 500
+    <color name="primary_red">#ef9a9a</color>
+    <color name="primary_pink">#f48fb1</color>
+    <color name="primary_purple">#ce93d8</color>
+    <color name="primary_deep_purple">#b39ddb</color>
+    <color name="primary_indigo">#9fa8da</color>
+    <color name="primary_blue">#90caf9</color>
+    <color name="primary_light_blue">#81d4fa</color>
+    <color name="primary_cyan">#80deea</color>
+    <color name="primary_teal">#80cbc4</color>
+    <color name="primary_green">#a5d6a7</color>
+    <color name="primary_light_green">#c5e1a5</color>
+    <color name="primary_lime">#e6ee9c</color>
+    <color name="primary_yellow">#fff59d</color>
+    <color name="primary_amber">#ffe082</color>
+    <color name="primary_orange">#ffcc80</color>
+    <color name="primary_deep_orange">#ffab91</color>
+    <color name="primary_brown">#bcaaa4</color>
+    <color name="primary_grey">#eeeeee</color>
+    <color name="primary_blue_grey">#b0bec5</color>
 
     <color name="seekBarBgColorDark">#10000000</color>
     <color name="seekBarBgColorLight">#20000000</color>

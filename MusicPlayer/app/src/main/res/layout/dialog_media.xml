@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_below="@+id/layout_panel_home"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     xmlns:playpauseview="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
@@ -315,6 +316,7 @@
                      android:layout_height="56dp"
                      android:layout_centerInParent="true"
                      android:clickable="true"
+
                      android:background="?android:attr/selectableItemBackgroundBorderless"
                      playpauseview:isCircleDraw="false" />
              </RelativeLayout>

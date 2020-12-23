@@ -1,11 +1,14 @@
 package company.ai.musicplayer.custom_view;
 
+import company.ai.musicplayer.MusicApplication;
 import company.ai.musicplayer.R;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -22,6 +25,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import androidx.annotation.ColorInt;
+import androidx.core.content.ContextCompat;
 
 public class PlayPauseView extends FrameLayout {
 
@@ -55,13 +59,13 @@ public class PlayPauseView extends FrameLayout {
         setWillNotDraw(false);
 
         TypedValue colorTheme = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.accent_color, colorTheme, true);
+        context.getTheme().resolveAttribute(R.attr.colorAccent, colorTheme, true);
 
         mBackgroundColor = colorTheme.data;
         @ColorInt int color = colorTheme.data;
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
-        mDrawable = new PlayPauseDrawable(context, R.color.black);
+        mDrawable = new PlayPauseDrawable(context, color);
         mDrawable.setCallback(this);
 
         mPauseBackgroundColor = colorTheme.data;

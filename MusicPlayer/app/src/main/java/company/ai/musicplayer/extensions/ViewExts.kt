@@ -15,6 +15,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import coil.transform.BlurTransformation
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import com.squareup.picasso.Picasso.LoadedFrom
@@ -36,17 +37,17 @@ inline fun <T : View> T.afterMeasured(crossinline f: T.() -> Unit) {
     })
 }
 
-fun FragmentManager.isFragment(fragmentTag: String): Boolean {
-    val df = findFragmentByTag(fragmentTag)
-    return df != null && df.isVisible && df.isAdded
-}
-
 fun View.handleViewVisibility(show: Boolean) {
     visibility = if (show) {
         View.VISIBLE
     } else {
         View.GONE
     }
+}
+
+fun FragmentManager.isFragment(fragmentTag: String): Boolean {
+    val df = findFragmentByTag(fragmentTag)
+    return df != null && df.isVisible && df.isAdded
 }
 
 fun FragmentManager.addFragment(fragment: Fragment, tag: String?, isReplace: Boolean) {
@@ -65,9 +66,7 @@ fun FragmentManager.addFragment(fragment: Fragment, tag: String?, isReplace: Boo
     }
 }
 
-fun String.toToast(
-    context: Context
-) {
+fun String.toToast(context: Context) {
     Toast.makeText(context, this, Toast.LENGTH_LONG).show()
 }
 
@@ -79,7 +78,6 @@ fun ImageView.imageByPicasso(albumID: Long?){
         .onlyScaleDown()
         .into(this)
 }
-
 
 private fun getSongUri(albumID: Long?): Uri? {
     return if (albumID == null){

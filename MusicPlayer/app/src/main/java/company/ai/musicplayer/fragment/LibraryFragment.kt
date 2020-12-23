@@ -1,7 +1,9 @@
 package company.ai.musicplayer.fragment
 
+import android.content.ContentUris
 import android.content.Context
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,11 +14,11 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.*
 import androidx.viewpager.widget.ViewPager
+import coil.transform.BlurTransformation
 import com.afollestad.recyclical.datasource.emptyDataSource
 import com.google.android.material.tabs.TabLayout
-import company.ai.musicplayer.CollapsingProfileHeaderView
-import company.ai.musicplayer.MusicViewModel
-import company.ai.musicplayer.R
+import com.squareup.picasso.Picasso
+import company.ai.musicplayer.*
 import company.ai.musicplayer.activiy.HomeActivity
 import company.ai.musicplayer.controller.LibrarySelectInterface
 import company.ai.musicplayer.controller.UIControlInterface
@@ -122,9 +124,8 @@ class LibraryFragment : Fragment(), TabLayout.OnTabSelectedListener, LibrarySele
     private fun ViewPager.getTabSong(position: Int): View {
         val view: View = LayoutInflater.from(context).inflate(R.layout.item_tablayout_home, null)
         val title = view.findViewById<TextView>(R.id.item_tl_text_home)
-        if (position == 0) {
-            title.setTextColor(ContextCompat.getColor(mContext, R.color.red))
-        }
+        if (position == 0)
+            title.setTextColor(ContextCompat.getColor(requireContext(),mPreferences.accent))
         title.text = titleSongList()[position]
         return view
     }
@@ -162,7 +163,7 @@ class LibraryFragment : Fragment(), TabLayout.OnTabSelectedListener, LibrarySele
         for (i in 0 until mTabLayout.tabCount) {
             val view: View = mTabLayout.getTabAt(i)?.customView!!
             val title = view.findViewById<TextView>(R.id.item_tl_text_home)
-            val color = if (i == tab!!.position) R.color.red else R.color.white
+            val color = if (i == tab!!.position) mPreferences.accent else R.color.white
             title.setTextColor(ContextCompat.getColor(mContext, color))
         }
     }

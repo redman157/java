@@ -182,7 +182,7 @@
                     android:id="@+id/text_home"
                     android:text="Home"
                     android:textSize="@dimen/_13sdp"
-                    android:textColor="@color/red_alpha_100"
+                    android:textColor="?attr/colorAccent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>

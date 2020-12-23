@@ -134,6 +134,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(ThemeHelper.getAccentedTheme().first)
         mHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(mHomeBinding.root)
         initView()
@@ -309,7 +310,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
                 }
             }
             mLayoutMain.btnHome -> {
-                mLayoutMain.textHome.setTextColor(ContextCompat.getColor(this, R.color.red_alpha_100))
+                mLayoutMain.textHome.setTextColor(ContextCompat.getColor(this, mPreferences.accent))
                 mLayoutMain.textLibrary.setTextColor(ContextCompat.getColor(this, R.color.black))
                 supportFragmentManager.beginTransaction().apply {
                     setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -318,7 +319,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
             }
             mLayoutMain.btnLibrary -> {
                 mLayoutMain.textHome.setTextColor(ContextCompat.getColor(this, R.color.black))
-                mLayoutMain.textLibrary.setTextColor(ContextCompat.getColor(this, R.color.red_alpha_100))
+                mLayoutMain.textLibrary.setTextColor(ContextCompat.getColor(this, mPreferences.accent))
                 supportFragmentManager.beginTransaction().apply {
                     setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     replace(mHomeContent.container.id, LibraryFragment(), Constants.TAG_FRAGMENT).commit()
@@ -611,6 +612,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
     override fun onCloseActivity(fragment: Fragment) {
         if (fragment is SettingsFragment){
             supportFragmentManager.addFragment(HomeFragment(), Constants.TAG_FRAGMENT, true)
+
         }
     }
 

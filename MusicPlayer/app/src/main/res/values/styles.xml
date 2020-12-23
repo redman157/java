@@ -1,10 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/widgetsColor</item>
+<!--        <item name="colorPrimary">@color/widgetsColor</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/accentColor</item>
+        <item name="colorAccent">@color/accentColor</item>-->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@android:color/transparent</item>
@@ -17,6 +17,18 @@
         <item name="overlapAnchor">false</item>
         <item name="android:dropDownVerticalOffset">5.0dp</item>
         <!--<item name="android:popupBackground">#FFF</item>-->
+    </style>
+
+    <style name="AppTheme.TabLayout" parent="android:Widget">
+        <item name="tabPaddingStart">@dimen/_1sdp</item>
+        <item name="tabPaddingEnd">@dimen/_1sdp</item>
+        <item name="tabBackground">@drawable/custom_background_tab_layout</item>
+        <item name="tabSelectedTextColor">?attr/colorSecondary</item>
+        <item name="tabIndicatorColor">?attr/colorAccent</item>
+        <item name="tabIndicatorGravity">bottom</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabGravity">fill</item>
+        <item name="tabIndicatorHeight">@dimen/_2sdp</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -99,5 +111,9 @@
     <style name="ToolbarStyle.Subtitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle" />
     <style name="ToolbarStyle.Title" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@android:color/transparent</item>
     </style>
 </resources>

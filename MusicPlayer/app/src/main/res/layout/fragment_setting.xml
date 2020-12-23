@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.SettingsFragment">
 
@@ -18,8 +18,6 @@
         app:title="@string/settings"
         app:titleTextColor="?android:attr/textColorPrimary" />
 
-    <!--android:theme="@style/ToolbarStyle"
-    app:titleTextAppearance="@style/ToolbarStyle.Title"-->
     <FrameLayout
         android:id="@+id/fragment_layout"
         android:layout_width="match_parent"

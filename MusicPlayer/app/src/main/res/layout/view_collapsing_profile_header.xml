@@ -25,18 +25,22 @@
 
         <TextView
             android:id="@+id/text_title"
+            android:lines="1"
+            android:ellipsize="end"
             android:layout_width="wrap_content"
             android:layout_marginEnd="@dimen/_7sdp"
+            android:textSize="@dimen/_13sdp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:textColor="@color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/text_album"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
+            android:textSize="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_7sdp"
             android:ellipsize="end"
             android:layout_below="@id/text_title"
@@ -50,9 +54,9 @@
             android:layout_alignParentBottom="true"
             android:drawablePadding="2sp"
             android:paddingBottom="@dimen/profile_misc_padding"
+            android:textSize="@dimen/_10sdp"
             android:textColor="@color/white"
             android:maxLines="1"
-            android:ellipsize="end"
-            android:textStyle="bold" />
+            android:ellipsize="end" />
     </RelativeLayout>
 </LinearLayout>

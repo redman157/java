@@ -17,7 +17,6 @@
 
     <!-- Messages - Permission rationale -->
     <string name="perm_rationale">Music Player needs access to your files to play music.</string>
-    <string name="slash">/</string>
 
     <!-- Formatted strings used in RVs items and other TextViews -->
     <string name="rates">%1d&#160;kHz,&#160;%2d&#160;kbps</string>
@@ -25,7 +24,6 @@
     <string name="track_song">&lt;b>%1d&lt;/b>&#160;-&#160;%2s</string>
     <string name="year_and_duration">%1s&#160;-&#160;%2s</string>
     <string name="loved_song_subtitle">&lt;b>%1s&lt;/b>&#160;-&#160;%2s</string>
-    <string name="unknown_year">N&#x2F;A</string>
 
     <!-- Sorting -->
     <string name="artists_sorting_pref">artists_sorting_pref</string>
@@ -125,5 +123,38 @@
     <string name="album_list">Album List Music</string>
     <string name="artist_list">Artist List Music</string>
     <string name="folder_list">Folder List Music</string>
+
+    <!-- Preferences - Found songs -->
+    <string name="found_songs_pref_title">Songs found: %1d</string>
+
+    <!-- Formatting symbols -->
+    <string name="space_delimiter">&#160;</string>
+    <string name="underscore_delimiter">&#95;</string>
+    <string name="slash">/</string>
+    <string name="unknown_year">N&#x2F;A</string>
+    <string name="accent_and_hex">%1s :&#160;%2s</string>
+    <string name="freq_k">%1dk</string>
+
+    <!-- Title Color -->
+    <string name="red">Red</string>
+    <string name="pink">Pink</string>
+    <string name="purple">Purple</string>
+    <string name="deep_purple">Deep Purple</string>
+    <string name="indigo">Indigo</string>
+    <string name="blue">Blue</string>
+    <string name="light_blue">Light Blue</string>
+    <string name="cyan">Cyan</string>
+    <string name="teal">Teal</string>
+    <string name="green">Green</string>
+    <string name="light_green">Light Green</string>
+    <string name="lime">Lime</string>
+    <string name="yellow">Yellow</string>
+    <string name="amber">Amber</string>
+    <string name="orange">Orange</string>
+    <string name="deep_orange">Deep Orange</string>
+    <string name="brown">Brown</string>
+    <string name="grey">Grey</string>
+    <string name="blue_grey">Blue Grey</string>
+
 
 </resources>

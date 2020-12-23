@@ -33,7 +33,6 @@ fun String.toMusic(allMusic: MutableList<Music>?): Music? {
     return null
 }
 
-
 fun Long.toFormattedDuration(isAlbum: Boolean, isSeekBar: Boolean) = try {
     val defaultFormat = if (isAlbum) {
         "%02dm:%02ds"

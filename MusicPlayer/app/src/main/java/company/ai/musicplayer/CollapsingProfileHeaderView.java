@@ -90,7 +90,7 @@ public class CollapsingProfileHeaderView extends LinearLayout {
                 .resize(400, 400)
                 .onlyScaleDown()
                 .into(mImageProfile);
-        mTextTitle.setText(musicModel.getDisplayName().substring(0, musicModel.getDisplayName().length() - 4));
+        mTextTitle.setText(musicModel.getDisplayName().substring(0, musicModel.getDisplayName().length() - 4).split("-")[0]);
         mTextArtist.setText(musicModel.getAlbum());
         mTextAlbums.setText(musicModel.getArtist());
     }

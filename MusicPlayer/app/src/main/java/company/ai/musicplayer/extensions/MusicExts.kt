@@ -124,7 +124,7 @@ fun Music.getAlbumArt(context: Context): Bitmap {
 
 //https://gist.github.com/Gnzlt/6ddc846ef68c587d559f1e1fcd0900d3
 private fun getLargeIcon(context: Context): Bitmap {
-    val drawable = ContextCompat.getDrawable(context, R.drawable.app_icon_music)
+    val drawable = ContextCompat.getDrawable(context, R.drawable.ic_music_note)
 
     val bitmap = Bitmap.createBitmap(
         drawable!!.intrinsicWidth,
@@ -138,6 +138,18 @@ private fun getLargeIcon(context: Context): Bitmap {
 }
 
 fun Music.toSavedMusic(playerPosition: Int, launchedBy: String) =
+    SavedMusic(
+        artist,
+        title,
+        displayName,
+        year,
+        playerPosition,
+        duration,
+        album,
+        launchedBy
+    )
+
+fun SavedMusic.toMusic(playerPosition: Int, launchedBy: String) =
     SavedMusic(
         artist,
         title,

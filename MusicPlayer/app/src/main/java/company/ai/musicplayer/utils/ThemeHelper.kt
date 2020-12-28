@@ -12,7 +12,6 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.util.Log
 import android.widget.ImageButton
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate
@@ -21,7 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.os.bundleOf
 import company.ai.musicplayer.R
-import company.ai.musicplayer.activiy.HomeActivity
+import company.ai.musicplayer.ui.HomeActivity
 import company.ai.musicplayer.extensions.decodeColor
 import company.ai.musicplayer.mPreferences
 import company.ai.musicplayer.player.MediaPlayerHolder

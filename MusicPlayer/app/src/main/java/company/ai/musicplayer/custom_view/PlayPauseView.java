@@ -132,6 +132,10 @@ public class PlayPauseView extends FrameLayout {
         return mIsPlay;
     }
 
+    public void setIsPlay(boolean isPlay){
+        mIsPlay = isPlay;
+    }
+
     public void toggle() {
         if (mAnimatorSet != null) {
             mAnimatorSet.cancel();

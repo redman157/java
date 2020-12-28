@@ -6,7 +6,7 @@
         <shape android:shape="rectangle">
             <corners android:radius="@dimen/_5sdp" />
             <size android:height="6dp"/>
-            <solid android:color="@color/white" />
+            <solid android:color="@color/windowBackground" />
             <stroke android:color="#000" android:width="1dp"/>
         </shape>
     </item>
@@ -17,7 +17,7 @@
                 <size android:height="6dp"/>
                 <stroke android:color="#000" android:width="1dp"/>
                 <corners android:radius="@dimen/_5sdp"/>
-                <solid android:color="@color/colorPrimary" />
+                <solid android:color="?attr/colorAccent" />
             </shape>
         </clip>
     </item>

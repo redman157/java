@@ -8,7 +8,7 @@
         android:right="2dp"
         android:top="2dp" />
 
-    <solid android:color="@color/white" />
+    <solid android:color="@color/widgetsColor" />
 
     <corners
         android:bottomLeftRadius="2dp"

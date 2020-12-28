@@ -1,102 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="BaseTheme.Red" parent="AppTheme">
-        <item name="colorPrimaryDark">@color/secondary_grey</item>
+        <item name="colorPrimaryDark">@color/secondary_red</item>
         <item name="colorPrimary">@color/primary_red</item>
+        <item name="colorOnPrimary">@color/effect_red</item>
         <item name="colorSecondary">@color/primary_red</item>
+        <item name="colorOnBackground">@color/white</item>
     </style>
 
     <style name="BaseTheme.Pink" parent="AppTheme">
-        <item name="colorPrimaryDark">@color/secondary_cyan</item>
+        <item name="colorPrimaryDark">@color/secondary_pink</item>
         <item name="colorPrimary">@color/primary_pink</item>
+        <item name="colorOnPrimary">@color/effect_pink</item>
         <item name="colorSecondary">@color/primary_pink</item>
     </style>
 
     <style name="BaseTheme.Purple" parent="AppTheme">
-        <item name="colorPrimaryDark">@color/secondary_blue_grey</item>
+        <item name="colorPrimaryDark">@color/secondary_purple</item>
         <item name="colorPrimary">@color/primary_purple</item>
+        <item name="colorOnPrimary">@color/effect_purple</item>
         <item name="colorSecondary">@color/primary_purple</item>
     </style>
 
     <style name="BaseTheme.DeepPurple" parent="AppTheme">
         <item name="colorPrimaryDark">@color/secondary_deep_purple</item>
         <item name="colorPrimary">@color/primary_deep_purple</item>
+        <item name="colorOnPrimary">@color/effect_deep_purple</item>
         <item name="colorSecondary">@color/primary_deep_purple</item>
-
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:colorBackground">@color/white</item>
+        <item name="colorOnBackground">@color/black</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
     </style>
 
     <style name="BaseTheme.Indigo" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_indigo</item>
         <item name="colorPrimary">@color/primary_indigo</item>
+        <item name="colorOnPrimary">@color/effect_indigo</item>
         <item name="colorSecondary">@color/primary_indigo</item>
     </style>
 
     <style name="BaseTheme.Blue" parent="AppTheme">
+        <item name="colorAccent">@color/primary_blue</item>
+        <item name="colorPrimaryDark">@color/secondary_blue</item>
         <item name="colorPrimary">@color/primary_blue</item>
+        <item name="colorOnPrimary">@color/effect_blue</item>
         <item name="colorSecondary">@color/primary_blue</item>
     </style>
 
     <style name="BaseTheme.LightBlue" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_light_blue</item>
         <item name="colorPrimary">@color/primary_light_blue</item>
+        <item name="colorOnPrimary">@color/effect_light_blue</item>
         <item name="colorSecondary">@color/primary_light_blue</item>
     </style>
 
     <style name="BaseTheme.Cyan" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_cyan</item>
         <item name="colorPrimary">@color/primary_cyan</item>
+        <item name="colorOnPrimary">@color/effect_cyan</item>
         <item name="colorSecondary">@color/primary_cyan</item>
     </style>
 
     <style name="BaseTheme.Teal" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_teal</item>
         <item name="colorPrimary">@color/primary_teal</item>
+        <item name="colorOnPrimary">@color/effect_teal</item>
         <item name="colorSecondary">@color/primary_teal</item>
     </style>
 
     <style name="BaseTheme.Green" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_green</item>
         <item name="colorPrimary">@color/primary_green</item>
+        <item name="colorOnPrimary">@color/effect_green</item>
         <item name="colorSecondary">@color/primary_green</item>
     </style>
 
     <style name="BaseTheme.LightGreen" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_light_green</item>
         <item name="colorPrimary">@color/primary_light_green</item>
+        <item name="colorOnPrimary">@color/effect_light_green</item>
         <item name="colorSecondary">@color/primary_light_green</item>
     </style>
 
     <style name="BaseTheme.Lime" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_lime</item>
         <item name="colorPrimary">@color/primary_lime</item>
+        <item name="colorOnPrimary">@color/effect_lime</item>
         <item name="colorSecondary">@color/primary_lime</item>
     </style>
 
     <style name="BaseTheme.Yellow" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_yellow</item>
         <item name="colorPrimary">@color/primary_yellow</item>
+        <item name="colorOnPrimary">@color/effect_yellow</item>
         <item name="colorSecondary">@color/primary_yellow</item>
     </style>
 
     <style name="BaseTheme.Amber" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_amber</item>
         <item name="colorPrimary">@color/primary_amber</item>
+        <item name="colorOnPrimary">@color/effect_amber</item>
         <item name="colorSecondary">@color/primary_amber</item>
     </style>
 
     <style name="BaseTheme.Orange" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_orange</item>
         <item name="colorPrimary">@color/primary_orange</item>
+        <item name="colorOnPrimary">@color/effect_orange</item>
         <item name="colorSecondary">@color/primary_orange</item>
     </style>
 
     <style name="BaseTheme.DeepOrange" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_deep_orange</item>
         <item name="colorPrimary">@color/primary_deep_orange</item>
+        <item name="colorOnPrimary">@color/effect_deep_orange</item>
         <item name="colorSecondary">@color/primary_deep_orange</item>
     </style>
 
     <style name="BaseTheme.Brown" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_brown</item>
         <item name="colorPrimary">@color/primary_brown</item>
+        <item name="colorOnPrimary">@color/effect_brown</item>
         <item name="colorSecondary">@color/primary_brown</item>
     </style>
 
     <style name="BaseTheme.Grey" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_grey</item>
         <item name="colorPrimary">@color/primary_grey</item>
+        <item name="colorOnPrimary">@color/effect_grey</item>
         <item name="colorSecondary">@color/primary_grey</item>
+
     </style>
 
     <style name="BaseTheme.BlueGrey" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/secondary_blue_grey</item>
         <item name="colorPrimary">@color/primary_blue_grey</item>
+        <item name="colorOnPrimary">@color/effect_blue_grey</item>
         <item name="colorSecondary">@color/primary_blue_grey</item>
     </style>
 

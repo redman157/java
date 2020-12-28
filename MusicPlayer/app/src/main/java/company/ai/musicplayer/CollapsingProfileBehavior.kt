@@ -15,7 +15,7 @@ import com.google.android.material.appbar.AppBarLayout
 
 @Suppress("unused")
 class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSet) :
-        CoordinatorLayout.Behavior<LinearLayout>(context, attrs) {
+        CoordinatorLayout.Behavior<CoordinatorLayout>(context, attrs) {
 
     private lateinit var appBar: View
     private lateinit var headerProfile: View
@@ -52,7 +52,11 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
         mImageMaxMargin = context.resources.getDimension(R.dimen.profile_image_margin_max).toInt()
     }
 
-    override fun layoutDependsOn(parent: CoordinatorLayout, child: LinearLayout, dependency: View): Boolean {
+    override fun layoutDependsOn(
+        parent: CoordinatorLayout,
+        child: CoordinatorLayout,
+        dependency: View
+    ): Boolean {
         val isDependencyAnAppBar = dependency is AppBarLayout
         if (isDependencyAnAppBar) {
             initialize(child, dependency)
@@ -60,7 +64,7 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
         return isDependencyAnAppBar
     }
 
-    private fun initialize(child: LinearLayout, dependency: View) {
+    private fun initialize(child: CoordinatorLayout, dependency: View) {
         windowSize = displaySize
         appBar = dependency
         mAppBarHeight = appBar.height
@@ -90,7 +94,11 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
         return textView.measuredHeight
     }
 
-    override fun onDependentViewChanged(parent: CoordinatorLayout, child: LinearLayout, dependency: View): Boolean {
+    override fun onDependentViewChanged(
+        parent: CoordinatorLayout,
+        child: CoordinatorLayout,
+        dependency: View
+    ): Boolean {
         val isDependencyAnAppBar = dependency is AppBarLayout
         if (isDependencyAnAppBar) {
             toolBarHeight = appBar.findViewById<View>(R.id.all_toolbar).height

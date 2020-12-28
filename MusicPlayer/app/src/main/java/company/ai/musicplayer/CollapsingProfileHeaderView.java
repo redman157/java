@@ -12,12 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.squareup.picasso.Picasso;
 
 import company.ai.musicplayer.models.Music;
 
-public class CollapsingProfileHeaderView extends LinearLayout {
+public class CollapsingProfileHeaderView extends CoordinatorLayout {
     private int profileDrawable,miscIcon, profileNameTextSize, profileSubtitleTextSize, profileMiscTextSize;
     private String profileName, subtitle,misc;
     private Context context;
@@ -36,8 +37,7 @@ public class CollapsingProfileHeaderView extends LinearLayout {
                 R.styleable.CollapsingProfileHeaderView, 0 ,0);
 
         try {
-            profileDrawable =
-                    a.getResourceId(R.styleable.CollapsingProfileHeaderView_profileImage, 0);
+            profileDrawable = a.getResourceId(R.styleable.CollapsingProfileHeaderView_profileImage, 0);
             profileName = a.getString(R.styleable.CollapsingProfileHeaderView_profileName);
             subtitle = a.getString(R.styleable.CollapsingProfileHeaderView_profileSubtitle);
             misc = a.getString(R.styleable.CollapsingProfileHeaderView_profileMisc);
@@ -52,11 +52,9 @@ public class CollapsingProfileHeaderView extends LinearLayout {
             a.recycle();
         }
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.view_collapsing_profile_header, this,
-                true);
+        inflater.inflate(R.layout.view_collapsing_profile_header, this, true);
         loadViews();
     }
-
 
     public void applyAttributes() {
         mImageProfile.setImageResource(profileDrawable);
@@ -68,6 +66,7 @@ public class CollapsingProfileHeaderView extends LinearLayout {
         mTextAlbums.setCompoundDrawablesWithIntrinsicBounds(miscIcon, 0, 0, 0);
         mTextAlbums.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
     }
+
     private void loadViews() {
         mImageProfile = this.findViewById(R.id.image_player);
         mTextTitle = this.findViewById(R.id.text_title);

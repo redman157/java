@@ -73,7 +73,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
-                            android:scaleType="fitCenter" />
+                            android:scaleType="fitCenter"/>
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
 
@@ -103,7 +103,7 @@
                         android:singleLine="true"
                         android:text="@string/app_name"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/colorPrimary"
                         android:textScaleX="1.05"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -118,8 +118,6 @@
                         android:ellipsize="end"
                         android:padding="@dimen/_2sdp"
                         android:singleLine="true"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/black"
                         android:textScaleX="1.05"
                         android:textSize="12sp"
                         android:textStyle="normal" />
@@ -177,12 +175,12 @@
                 android:gravity="center"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackground">
+                android:background="@drawable/selection_item">
                 <TextView
                     android:id="@+id/text_home"
                     android:text="Home"
                     android:textSize="@dimen/_13sdp"
-                    android:textColor="?attr/colorAccent"
+                    android:textColor="?attr/colorPrimary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -194,7 +192,7 @@
             <LinearLayout
                 android:id="@+id/btn_library"
                 android:layout_weight="1"
-                android:background="?attr/selectableItemBackground"
+                android:background="@drawable/selection_item"
                 android:layout_width="0dp"
                 android:gravity="center"
                 android:layout_gravity="center"

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_below="@+id/layout_panel_home"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/windowBackground"
     xmlns:playpauseview="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
@@ -23,30 +23,32 @@
         android:id="@+id/image_album_art"
         android:layout_width="@dimen/_120sdp"
         android:layout_height="@dimen/_120sdp"
-        android:alpha="0.7"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_music_note"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true" />
 
-    <LinearLayout
-        android:id="@+id/linear_info_music"
+    <RelativeLayout
         android:layout_below="@id/image_album_art"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="@dimen/_4sdp"
-        android:orientation="horizontal">
+        android:background="@android:color/transparent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/linear_info_music"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:paddingBottom="@dimen/_4sdp"
+            android:orientation="horizontal">
 
 
             <RelativeLayout
                 android:id="@+id/relativeLayout6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:paddingLeft="@dimen/_8sdp"
                 android:paddingRight="@dimen/_8sdp">
-
 
                 <TextView
                     android:id="@+id/text_sub_title"
@@ -59,7 +61,6 @@
                     android:fontFamily="sans-serif-condensed"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:singleLine="true"
-                    android:textColor="@color/black"
                     android:textScaleX="1.1"
                     android:textSize="14sp" />
 
@@ -72,275 +73,65 @@
                     android:layout_alignParentEnd="true"
                     android:fontFamily="sans-serif-condensed"
                     android:maxLines="1"
-                    android:textColor="@color/black"
                     android:textScaleX="1.1"
                     android:textSize="14sp" />
             </RelativeLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_below="@+id/linear_info_music"
-        android:id="@+id/linear_see_more"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="5"
-        android:layout_marginLeft="@dimen/_20sdp"
-        android:layout_marginRight="@dimen/_20sdp"
-        android:layout_height="@dimen/_40sdp">
-        <RelativeLayout
-             android:layout_width="0dp"
-             android:layout_height="wrap_content"
-             android:layout_weight="1"
-             android:layout_gravity="center"
-             android:gravity="center">
-
-             <ImageView
-                 android:adjustViewBounds="true"
-                 android:id="@+id/img_about"
-                 android:layout_width="wrap_content"
-                 android:padding="@dimen/_5sdp"
-                 android:layout_centerInParent="true"
-                 android:layout_height="wrap_content"
-                 android:clickable="true"
-                 android:scaleType="center"
-                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                 android:src="@drawable/ic_info_outline" />
-        </RelativeLayout>
-
-
-
-
-        <RelativeLayout
-         android:layout_width="0dp"
-         android:layout_height="match_parent"
-         android:layout_weight="1"
-         android:layout_gravity="center"
-         android:gravity="center">
-
-         <ImageView
-             android:id="@+id/img_equalizer"
-             android:layout_width="@dimen/_32sdp"
-             android:padding="@dimen/_5sdp"
-             android:layout_centerInParent="true"
-             android:layout_height="wrap_content"
-             android:scaleType="center"
-             android:clickable="true"
-             android:background="?android:attr/selectableItemBackgroundBorderless"
-             android:src="@drawable/ic_equalizer"
-             />
-        </RelativeLayout>
-
-        <RelativeLayout
-         android:layout_width="0dp"
-         android:layout_height="match_parent"
-         android:layout_weight="1"
-         android:layout_gravity="center"
-         android:gravity="center">
-
-             <ImageView
-                 android:adjustViewBounds="true"
-                 android:id="@+id/img_favorite"
-                 android:layout_width="wrap_content"
-                 android:padding="@dimen/_5sdp"
-                 android:layout_centerInParent="true"
-                 android:layout_height="wrap_content"
-                 android:scaleType="center"
-                 android:clickable="true"
-                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                 android:src="@drawable/ic_favorite" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/img_view_queue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:clickable="true"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="@dimen/_5sdp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_list" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/img_add_to_playlist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:clickable="true"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="@dimen/_5sdp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_add_playlist"
-                />
-        </RelativeLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linear_control_song"
-        android:layout_below="@+id/linear_see_more"
-        android:layout_marginLeft="@dimen/_15sdp"
-        android:layout_marginRight="@dimen/_15sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:alpha="1"
-        android:weightSum="10"
-        android:background="@color/transparent"
-        android:layout_height="@dimen/_100sdp">
-        <LinearLayout
-             android:layout_gravity="center"
-             android:gravity="center"
-             android:id="@+id/relative_lowerTwo"
-             android:layout_weight="3.5"
-             android:weightSum="10"
-             android:orientation="horizontal"
-             android:layout_width="match_parent"
-             android:layout_height="0dp">
-             <TextView
-                 android:layout_weight="1.5"
-                 android:id="@+id/text_start"
-                 android:layout_width="0dp"
-                 android:layout_height="wrap_content"
-                 android:text="00 : 00"
-                 android:paddingLeft="@dimen/_5sdp"
-                 android:layout_gravity="center"
-                 android:gravity="center"
-                 android:textColor="@color/black"
-                 android:textSize="@dimen/_10sdp" />
-
-             <SeekBar
-                 android:layout_weight="7"
-                 android:id="@+id/seekbar_timer"
-                 android:layout_width="0dp"
-                 android:layout_height="match_parent"
-                 android:layout_gravity="center"
-                 android:background="@null"
-                 android:progressDrawable="@drawable/progress_bar_accent"
-                 android:thumb="@drawable/custom_thum_seekbar"
-                 android:thumbOffset="0dp" />
-
-             <TextView
-                 android:id="@+id/text_end"
-                 android:layout_width="0dp"
-                 android:layout_height="wrap_content"
-                 android:layout_weight="1.5"
-                 android:focusable="false"
-                 android:gravity="center"
-                 android:paddingRight="@dimen/_5sdp"
-                 android:layout_gravity="center"
-                 android:text="@string/nullTime"
-                 android:textColor="@color/black"
-                 android:textSize="@dimen/_10sdp" />
-
         </LinearLayout>
 
         <LinearLayout
-             android:layout_weight="6.5"
-             android:layout_width="match_parent"
-             android:layout_height="0dp"
-             android:orientation="horizontal"
-             android:weightSum="5"
-             android:baselineAligned="true"
-             android:padding="8dp">
-             <RelativeLayout
-                 android:layout_width="0dp"
-                 android:layout_height="match_parent"
-                 android:layout_weight="1"
-                 android:layout_gravity="center"
-                 android:gravity="center">
+            android:layout_below="@+id/linear_info_music"
+            android:id="@+id/linear_see_more"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:weightSum="5"
+            android:paddingLeft="@dimen/_20sdp"
+            android:paddingRight="@dimen/_20sdp"
+            android:layout_height="@dimen/_40sdp">
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center">
 
-                 <ImageView
-                     android:adjustViewBounds="true"
-                     android:id="@+id/img_repeat"
-                     android:padding="@dimen/_5sdp"
-                     android:layout_centerInParent="true"
-                     android:clickable="true"
-                     android:scaleType="center"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                     android:src="@drawable/ic_repeat" />
-             </RelativeLayout>
+                <ImageView
+                    android:adjustViewBounds="true"
+                    android:id="@+id/img_about"
+                    android:layout_width="wrap_content"
+                    android:padding="@dimen/_5sdp"
+                    android:layout_centerInParent="true"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_info_outline"
+                    playpauseview:tint="?attr/colorAccent" />
+            </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center">
 
-             <RelativeLayout
-                 android:layout_width="0dp"
-                 android:layout_height="match_parent"
-                 android:layout_weight="1"
-                 android:layout_gravity="center"
-                 android:gravity="center">
-                 <ImageView
-                     android:id="@+id/img_prev"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:padding="@dimen/_5sdp"
-                     android:clickable="true"
-                     android:scaleType="center"
-                     android:layout_centerInParent="true"
-                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                     android:src="@drawable/ic_previous" />
-             </RelativeLayout>
-
-             <RelativeLayout
-                 android:id="@+id/relpo"
-                 android:layout_width="0dp"
-                 android:layout_height="match_parent"
-                 android:layout_weight="1"
-                 xmlns:playpauseview="http://schemas.android.com/apk/res-auto"
-                 android:layout_gravity="center"
-                 android:gravity="center">
-
-
-                 <company.ai.musicplayer.custom_view.PlayPauseView
-                     android:id="@+id/img_play_pause"
-                     android:layout_width="48dp"
-                     android:layout_height="56dp"
-                     android:layout_centerInParent="true"
-                     android:clickable="true"
-
-                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                     playpauseview:isCircleDraw="false" />
-             </RelativeLayout>
-
-
-             <RelativeLayout
-                 android:layout_width="0dp"
-                 android:layout_height="match_parent"
-                 android:layout_weight="1"
-                 android:layout_gravity="center"
-                 android:gravity="center">
-
-                 <ImageView
-                     android:id="@+id/img_next"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:padding="@dimen/_5sdp"
-                     android:clickable="true"
-                     android:scaleType="center"
-                     android:layout_centerInParent="true"
-                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                     android:src="@drawable/ic_next_white"
-                     />
-             </RelativeLayout>
+                <ImageView
+                    android:id="@+id/img_equalizer"
+                    android:layout_width="wrap_content"
+                    android:padding="@dimen/_5sdp"
+                    android:layout_centerInParent="true"
+                    android:layout_height="wrap_content"
+                    android:scaleType="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_equalizer"
+                    playpauseview:tint="?attr/colorAccent"
+                    />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="0dp"
@@ -351,17 +142,242 @@
 
                 <ImageView
                     android:adjustViewBounds="true"
-                    android:id="@+id/img_shuffle"
+                    android:id="@+id/img_favorite"
                     android:layout_width="wrap_content"
                     android:padding="@dimen/_5sdp"
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content"
                     android:scaleType="center"
                     android:clickable="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_shuffle_unactive" />
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    playpauseview:tint="?attr/colorAccent"
+                    android:src="@drawable/ic_favorite" />
             </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/img_view_queue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    playpauseview:tint="?attr/colorAccent"
+                    android:padding="@dimen/_5sdp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_list" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/img_add_to_playlist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="@dimen/_5sdp"
+                    playpauseview:tint="?attr/colorAccent"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_add_playlist"
+                    />
+            </RelativeLayout>
         </LinearLayout>
- </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_control_song"
+            android:layout_below="@+id/linear_see_more"
+            android:paddingLeft="@dimen/_15sdp"
+            android:paddingRight="@dimen/_15sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:alpha="1"
+            android:weightSum="10"
+            android:background="@color/transparent"
+            android:layout_height="@dimen/_100sdp">
+            <LinearLayout
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:id="@+id/relative_lowerTwo"
+                android:layout_weight="3.5"
+                android:weightSum="10"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+                <TextView
+                    android:layout_weight="1.5"
+                    android:id="@+id/text_start"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="00 : 00"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textSize="@dimen/_10sdp" />
+
+                <SeekBar
+                    android:layout_weight="7"
+                    android:id="@+id/seekbar_timer"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="@null"
+                    android:progressDrawable="@drawable/progress_bar_accent"
+                    android:thumb="@drawable/custom_thum_seekbar"
+                    android:thumbOffset="0dp" />
+
+                <TextView
+                    android:id="@+id/text_end"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:layout_gravity="center"
+                    android:text="@string/nullTime"
+                    android:textSize="@dimen/_10sdp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="6.5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                android:weightSum="5"
+                android:baselineAligned="true"
+                android:padding="8dp">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:adjustViewBounds="true"
+                        android:id="@+id/img_repeat"
+                        android:padding="@dimen/_5sdp"
+                        android:layout_centerInParent="true"
+                        android:clickable="true"
+                        android:scaleType="center"
+                        android:layout_width="wrap_content"
+                        playpauseview:tint="?attr/colorAccent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_repeat" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+                    <ImageView
+                        android:id="@+id/img_prev"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/_5sdp"
+                        android:scaleType="center"
+                        android:layout_centerInParent="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        playpauseview:tint="?attr/colorAccent"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_previous" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relpo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    xmlns:playpauseview="http://schemas.android.com/apk/res-auto"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+
+                    <company.ai.musicplayer.custom_view.PlayPauseView
+                        android:id="@+id/img_play_pause"
+                        android:layout_width="48dp"
+                        android:layout_height="56dp"
+                        android:layout_centerInParent="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:backgroundTint="?attr/colorAccent"
+                        playpauseview:isCircleDraw="false" />
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/img_next"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/_5sdp"
+                        android:scaleType="center"
+                        android:layout_centerInParent="true"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        playpauseview:tint="?attr/colorAccent"
+                        android:src="@drawable/ic_next_white"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:adjustViewBounds="true"
+                        android:id="@+id/img_shuffle"
+                        android:layout_width="wrap_content"
+                        android:padding="@dimen/_5sdp"
+                        android:layout_centerInParent="true"
+                        android:layout_height="wrap_content"
+                        android:scaleType="center"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        playpauseview:tint="?attr/colorAccent"
+                        android:src="@drawable/ic_shuffle_active" />
+                </RelativeLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
 </RelativeLayout>

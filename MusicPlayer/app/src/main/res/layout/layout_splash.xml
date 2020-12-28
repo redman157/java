@@ -23,7 +23,6 @@
         android:layout_height="wrap_content"
         android:text="Loading..."
         android:textSize="@dimen/_13sdp"
-        android:textColor="@color/black"
         android:layout_marginBottom="@dimen/_30sdp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"/>

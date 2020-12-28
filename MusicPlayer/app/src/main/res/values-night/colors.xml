@@ -16,7 +16,7 @@
     <color name="white">#FFFFFF</color>
 
     <color name="red_alpha_100">#EC3131</color>
-    <color name="silver_chalice">#A9A9A9</color>
+    <color name="silver_chalice">#32A9A9A9</color>
     <color name="light_grey">#C5C5C5</color>
 
 // theme color 800
@@ -65,7 +65,7 @@
     <color name="seekBarBgColorLight">#20000000</color>
 
     <color name="windowBackground">#151515</color>
-    <color name="dialogsBackground">#212121</color>
+    <color name="dialogsBackground">#fafafa</color>
     <color name="widgetsColor">#fafafa</color>
     <color name="navBarColor">@android:color/background_dark</color>
 </resources>

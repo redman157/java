@@ -19,6 +19,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        card_view:cardBackgroundColor="@color/widgetsColor"
         card_view:cardCornerRadius="5dp"
         card_view:cardPreventCornerOverlap = "false"
         card_view:cardElevation="6dp">
@@ -51,7 +52,6 @@
                 android:lines="1"
                 android:ellipsize="end"
                 android:gravity="start|center"
-                android:textColor="@color/black"
                 android:id="@+id/text_title"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -62,7 +62,6 @@
                 android:layout_weight="1"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:id="@+id/text_sub_title"
                 android:layout_height="0dp"/>
@@ -80,7 +79,6 @@
             android:gravity="center"
             android:layout_weight="2"
             android:layout_width="0dp"
-            android:textColor="@color/black"
             android:layout_height="match_parent"/>
     </LinearLayout>
 </RelativeLayout>

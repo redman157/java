@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".fragment.MusicControllerListFragment"
+    tools:context=".ui.MusicControllerListFragment"
     android:layout_height="wrap_content"
+    android:background="@color/windowBackground"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rc_controller_music"

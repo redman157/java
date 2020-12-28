@@ -4,15 +4,16 @@
     android:layout_width="match_parent"
     android:padding="@dimen/_7sdp"
     android:layout_height="match_parent"
-    tools:context=".dialog_custom.SampleFragment">
+    android:background="@color/dialogsBackground"
+    tools:context=".dialog.SampleFragment">
 
     <ImageView
         android:layout_alignParentEnd="true"
         android:id="@+id/img_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:padding="@dimen/_15sdp"
+        android:background="@drawable/selection_item"
+        android:padding="@dimen/_10sdp"
         android:clickable="true"
         android:src="@drawable/ic_close" />
 
@@ -24,7 +25,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorPrimary"
         android:textSize="@dimen/_15sdp" />
 
     <View
@@ -32,7 +33,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="@dimen/_8sdp"
-
         android:id="@+id/line"
         android:background="@color/silver_chalice" />
     <androidx.recyclerview.widget.RecyclerView
@@ -46,10 +46,8 @@
 
     <TextView
         android:layout_marginTop="@dimen/_8sdp"
-
         android:id="@+id/text_about"
         android:layout_below="@id/line"
-        android:textColor="@color/black"
         android:textSize="@dimen/_12sdp"
         android:layout_margin="@dimen/_5sdp"
         android:layout_width="wrap_content"

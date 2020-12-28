@@ -22,7 +22,7 @@ class PlayerService: Service() {
     private val binder = LocalBinder()
 
     // notification music
-    lateinit var musicNotificationManager: MusicNotificationManager
+    public lateinit var musicNotificationManager: MusicNotificationManager
 
     // Media player
     lateinit var mediaPlayerHolder: MediaPlayerHolder

@@ -17,7 +17,6 @@
 
     <TextView
         android:textSize="@dimen/_13sdp"
-        android:textColor="@color/black"
         android:text="Loading..."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

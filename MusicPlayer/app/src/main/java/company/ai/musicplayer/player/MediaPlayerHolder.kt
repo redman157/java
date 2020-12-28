@@ -37,6 +37,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import kotlin.math.ln
+import kotlin.reflect.KProperty0
 
 /**
  * Exposes the functionality of the [MediaPlayer]
@@ -773,7 +774,7 @@ class MediaPlayerHolder(private val playerService: PlayerService): MediaPlayer.O
                             }
                         }
 
-                    Intent.ACTION_HEADSET_PLUG -> if (isCurrentSong && mPreferences.isHeadsetPlugEnabled) {
+                    Intent.ACTION_HEADSET_PLUG -> if (isCurrentSong && mPreferences.isHeadsetPlugEnabled){
                         when (intent.getIntExtra("state", -1)) {
                             // 0 means disconnected
                             HEADSET_DISCONNECTED -> if (isCurrentSong && mPreferences.isHeadsetPlugEnabled) {

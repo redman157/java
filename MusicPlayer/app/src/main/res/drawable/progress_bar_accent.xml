@@ -17,7 +17,7 @@
                 <size android:height="6dp"/>
                 <stroke android:color="#000" android:width="1dp"/>
                 <corners android:radius="@dimen/_5sdp"/>
-                <solid android:color="?attr/colorAccent" />
+                <solid android:color="?attr/colorSecondary" />
             </shape>
         </clip>
     </item>

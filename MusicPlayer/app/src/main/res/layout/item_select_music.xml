@@ -23,7 +23,6 @@
         android:gravity="left|center"
         android:layout_gravity="left|center"
         android:id="@+id/text_title"
-        android:textColor="@color/windowBackground"
         android:padding="@dimen/_5sdp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>

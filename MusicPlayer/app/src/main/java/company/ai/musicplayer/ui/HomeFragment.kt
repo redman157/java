@@ -91,8 +91,6 @@ class HomeFragment : Fragment() {
         when (item.itemId) {
             android.R.id.home -> {
             }
-            R.id.night_mode -> {
-            }
             R.id.settings -> {
 
                 requireActivity().supportFragmentManager.addFragment(
@@ -100,8 +98,6 @@ class HomeFragment : Fragment() {
                     Constants.TAG_FRAGMENT,
                     isSettingsFragment
                 )
-            }
-            R.id.changeTheme -> {
             }
         }
         return super.onOptionsItemSelected(item)

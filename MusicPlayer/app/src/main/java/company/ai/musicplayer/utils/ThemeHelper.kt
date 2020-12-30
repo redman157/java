@@ -12,13 +12,16 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.util.TypedValue
 import android.widget.ImageButton
+import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.os.bundleOf
+import androidx.core.widget.ImageViewCompat
 import company.ai.musicplayer.R
 import company.ai.musicplayer.ui.HomeActivity
 import company.ai.musicplayer.extensions.decodeColor
@@ -42,6 +45,43 @@ object ThemeHelper {
             startActivity(intent)
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
+    }
+
+    @JvmStatic
+    fun getPreciseVolumeIcon(volume: Int) = when (volume) {
+        in 1..33 -> R.drawable.ic_volume_mute
+        in 34..67 -> R.drawable.ic_volume_down
+        in 68..100 -> R.drawable.ic_volume_up
+        else -> R.drawable.ic_volume_off
+    }
+
+    @JvmStatic
+    private fun resolveThemeAttr(context: Context, @AttrRes attrRes: Int) =
+        TypedValue().apply { context.theme.resolveAttribute(attrRes, this, true) }
+
+    @ColorInt
+    @JvmStatic
+    fun resolveColorAttr(context: Context, @AttrRes colorAttr: Int): Int {
+        val resolvedAttr: TypedValue =
+            resolveThemeAttr(
+                context,
+                colorAttr
+            )
+        // resourceId is used if it's a ColorStateList, and data if it's a color reference or a hex color
+        val colorRes =
+            if (resolvedAttr.resourceId != 0) {
+                resolvedAttr.resourceId
+            } else {
+                resolvedAttr.data
+            }
+        return colorRes.decodeColor(context)
+    }
+
+    @JvmStatic
+    fun updateIconTint(imageButton: ImageButton, tint: Int) {
+        ImageViewCompat.setImageTintList(
+            imageButton, ColorStateList.valueOf(tint)
+        )
     }
 
     @JvmStatic

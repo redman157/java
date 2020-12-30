@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.squareup.picasso.Picasso;
@@ -24,7 +25,7 @@ public class CollapsingProfileHeaderView extends CoordinatorLayout {
     private Context context;
     private TextView mTextTitle, mTextArtist, mTextAlbums;
     private ImageView mImageProfile;
-
+    private CardView mCardImage;
     public CollapsingProfileHeaderView(Context context) {
         super(context);
         this.context = context;

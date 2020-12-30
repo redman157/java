@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-
+apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
@@ -101,4 +101,15 @@ dependencies {
     //https://github.com/google/gson/blob/master/CHANGELOG.md
     implementation 'com.google.code.gson:gson:2.8.6'
 
+    // room
+    def room_version = "2.2.6"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
+
+    // optional - Test helpers
+    testImplementation "androidx.room:room-testing:$room_version"
 }

@@ -5,7 +5,7 @@
 <!--        <item name="colorPrimary">@color/widgetsColor</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/accentColor</item>-->
-        <item name="colorPrimaryDark">@color/white</item>
+
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@android:color/transparent</item>

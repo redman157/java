@@ -85,7 +85,7 @@
             android:visibility="visible"
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:weightSum="5"
+            android:weightSum="4"
             android:paddingLeft="@dimen/_20sdp"
             android:paddingRight="@dimen/_20sdp"
             android:layout_height="@dimen/_40sdp">
@@ -96,7 +96,7 @@
                 android:layout_gravity="center"
                 android:gravity="center">
 
-                <ImageView
+                <ImageButton
                     android:adjustViewBounds="true"
                     android:id="@+id/img_about"
                     android:layout_width="wrap_content"
@@ -105,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:background="?android:attr/actionBarItemBackground"
                     android:scaleType="center"
                     android:src="@drawable/ic_info_outline"
                     playpauseview:tint="?attr/colorAccent" />
@@ -115,45 +115,25 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/actionBarItemBackground"
                 android:layout_gravity="center"
                 android:gravity="center">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/img_equalizer"
                     android:layout_width="wrap_content"
                     android:padding="@dimen/_5sdp"
                     android:layout_centerInParent="true"
                     android:layout_height="wrap_content"
                     android:scaleType="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:background="@android:color/transparent"
                     android:src="@drawable/ic_equalizer"
-                    playpauseview:tint="?attr/colorAccent"
                     />
             </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_gravity="center"
-                android:gravity="center">
 
-                <ImageView
-                    android:adjustViewBounds="true"
-                    android:id="@+id/img_favorite"
-                    android:layout_width="wrap_content"
-                    android:padding="@dimen/_5sdp"
-                    android:layout_centerInParent="true"
-                    android:layout_height="wrap_content"
-                    android:scaleType="center"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    playpauseview:tint="?attr/colorAccent"
-                    android:src="@drawable/ic_favorite" />
-            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="0dp"
@@ -162,7 +142,7 @@
                 android:layout_gravity="center"
                 android:gravity="center">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/img_view_queue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -170,7 +150,7 @@
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:background="?android:attr/actionBarItemBackground"
                     playpauseview:tint="?attr/colorAccent"
                     android:padding="@dimen/_5sdp"
                     android:scaleType="fitCenter"
@@ -184,7 +164,7 @@
                 android:layout_gravity="center"
                 android:gravity="center">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/img_add_to_playlist"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -192,7 +172,7 @@
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:background="?android:attr/actionBarItemBackground"
                     android:padding="@dimen/_5sdp"
                     playpauseview:tint="?attr/colorAccent"
                     android:scaleType="fitCenter"
@@ -212,7 +192,7 @@
             android:alpha="1"
             android:weightSum="10"
             android:background="@color/transparent"
-            android:layout_height="@dimen/_100sdp">
+            android:layout_height="@dimen/_150sdp">
             <LinearLayout
                 android:layout_gravity="center"
                 android:gravity="center"
@@ -273,7 +253,7 @@
                     android:layout_gravity="center"
                     android:gravity="center">
 
-                    <ImageView
+                    <ImageButton
                         android:adjustViewBounds="true"
                         android:id="@+id/img_repeat"
                         android:padding="@dimen/_5sdp"
@@ -284,7 +264,7 @@
                         playpauseview:tint="?attr/colorAccent"
                         android:layout_height="wrap_content"
                         android:focusable="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:background="?android:attr/actionBarItemBackground"
                         android:src="@drawable/ic_repeat" />
                 </RelativeLayout>
 
@@ -295,7 +275,7 @@
                     android:layout_weight="1"
                     android:layout_gravity="center"
                     android:gravity="center">
-                    <ImageView
+                    <ImageButton
                         android:id="@+id/img_prev"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -339,7 +319,7 @@
                     android:layout_gravity="center"
                     android:gravity="center">
 
-                    <ImageView
+                    <ImageButton
                         android:id="@+id/img_next"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -361,7 +341,7 @@
                     android:layout_gravity="center"
                     android:gravity="center">
 
-                    <ImageView
+                    <ImageButton
                         android:adjustViewBounds="true"
                         android:id="@+id/img_shuffle"
                         android:layout_width="wrap_content"
@@ -375,6 +355,61 @@
                         playpauseview:tint="?attr/colorAccent"
                         android:src="@drawable/ic_shuffle_active" />
                 </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="10"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+
+                    android:gravity="center">
+
+                    <ImageButton
+                        android:adjustViewBounds="true"
+                        android:id="@+id/img_favorite"
+                        android:layout_width="wrap_content"
+                        android:padding="@dimen/_5sdp"
+                        android:layout_centerInParent="true"
+                        android:layout_height="wrap_content"
+                        android:scaleType="center"
+                        playpauseview:tint="?attr/colorAccent"
+                        android:src="@drawable/ic_favorite" />
+                </RelativeLayout>
+                <!-- VOLUME SEEKBAR -->
+                <SeekBar
+                    android:id="@+id/np_volume_seek"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="8"
+                    android:clickable="true"
+                    android:progressDrawable="@drawable/progress_bar_accent"
+                    android:thumb="@drawable/custom_thum_seekbar"
+                    android:thumbOffset="0dp"
+                    android:focusable="true" />
+
+                <ImageButton
+                    android:id="@+id/np_volume"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="16dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_volume_up"
+                    tools:ignore="ContentDescription" />
 
             </LinearLayout>
         </LinearLayout>

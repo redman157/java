@@ -710,7 +710,6 @@ class MediaPlayerHolder(private val playerService: PlayerService): MediaPlayer.O
 
     /* Sets the volume of the media player */
     fun setPreciseVolume(percent: Int) {
-
         currentVolumeInPercent = percent
 
         if (isMediaPlayer) {

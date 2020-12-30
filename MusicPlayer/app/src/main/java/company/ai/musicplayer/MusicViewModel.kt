@@ -142,13 +142,13 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
                     // Add the current music to the list
                     mDeviceMusicList.add(
                         Music(
+                            displayName = audioDisplayName,
                             artist = audioArtist,
+                            album = audioAlbum,
                             year = audioYear,
                             track = audioTrack,
                             title = audioTitle,
-                            displayName = audioDisplayName,
                             duration = audioDuration,
-                            album = audioAlbum,
                             albumID = audioAlbumId.toLong(),
                             relativePath = audioFolderName,
                             id = audioId

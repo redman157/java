@@ -19,7 +19,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        card_view:cardBackgroundColor="@color/widgetsColor"
+        card_view:cardBackgroundColor="@color/windowBackground"
         card_view:cardCornerRadius="5dp"
         card_view:cardPreventCornerOverlap = "false"
         card_view:cardElevation="6dp">

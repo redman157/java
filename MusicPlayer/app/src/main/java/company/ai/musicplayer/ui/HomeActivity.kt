@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.provider.OpenableColumns
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
@@ -36,6 +37,7 @@ import company.ai.musicplayer.player.MediaPlayerHolder
 import company.ai.musicplayer.player.MediaPlayerInterface
 import company.ai.musicplayer.service.PlayerService
 import company.ai.musicplayer.utils.*
+import kotlinx.android.synthetic.main.dialog_media.*
 import kotlin.system.exitProcess
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterface {
@@ -48,12 +50,11 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
     // Our PlayerService shit
     private lateinit var mPlayerService: PlayerService
     private var sBound = false
-    private lateinit var mNowPlayingBinding: NowPlayingDialog
+    private var mNowPlayingDialog: NowPlayingDialog? = null
 
     // The player
     lateinit var mMediaPlayerHolder: MediaPlayerHolder
     private val isMediaPlayerHolder get() = ::mMediaPlayerHolder.isInitialized
-    private lateinit var mNowPlayingDialog: NowPlayingDialog
     private lateinit var mBindingIntent: Intent
 
     private var sAppearanceChanged = false
@@ -97,6 +98,33 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         } else {
             mLayoutMain.imgPlayPause.setIconPause()
         }
+    }
+
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+       /* if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            // Do something
+            if (mNowPlayingDialog != null && mNowPlayingDialog!!.dialog!!.isShowing){
+                Log.d("MMM", "KEYCODE_VOLUME_DOWN")
+
+                mNowPlayingDialog!!.mDialogBinding.npVolumeSeek.apply {
+                    progress -= 1
+                }
+            }else{
+                Log.d("MMM", "KEYCODE_VOLUME_DOWN: not show")
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
+
+            if (mNowPlayingDialog != null && mNowPlayingDialog!!.dialog!!.isShowing){
+                Log.d("MMM", "KEYCODE_VOLUME_UP")
+                mNowPlayingDialog!!.mDialogBinding.npVolumeSeek.apply {
+                    progress += 1
+                }
+            }else{
+                Log.d("MMM", "KEYCODE_VOLUME_UP: not show")
+            }
+        }*/
+        return true
     }
 
     private val isSettingsFragment get() = supportFragmentManager.isFragment(Constants.TAG_FRAGMENT)
@@ -300,11 +328,11 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
             mLayoutMain.relativeInfoMusic -> {
                 Log.d("NNN", "HomeActivity onClick: ${mHomeBinding.layoutMain.songProgress.progress}")
                 if (checkIsPlayer(true) && mMediaPlayerHolder.isCurrentSong) {
-                    mNowPlayingBinding = NowPlayingDialog(mPlayerService, mHomeBinding.layoutMain.songProgress.progress)
-                    mNowPlayingBinding.apply {
+                    mNowPlayingDialog = NowPlayingDialog(mPlayerService, mHomeBinding.layoutMain.songProgress.progress)
+                    mNowPlayingDialog?.apply {
                         setMediaController(mMediaControllerInterface)
                         show(supportFragmentManager, Constants.NOW_PLAY_DIALOG_FRAGMENT)
-                    }
+                    }!!
                 }
             }
             mLayoutMain.btnHome -> {
@@ -483,7 +511,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
             )
             mHomeBinding.layoutMain.songProgress.max = it.duration.toInt()
             mLayoutMain.imgAlbumArt.setImageBitmap(song.getAlbumArt(this))
-
         }
     }
 
@@ -618,6 +645,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
                 if (!isPlay) isPlay = true
                 if (isQueue) setQueueEnabled(false)
                 startPlayback(song, songs, launchedBy)
+                setStatusPlaying()
             }
         }else{
             Log.d("BBB","HomeActivity else: ${song?.displayName}")

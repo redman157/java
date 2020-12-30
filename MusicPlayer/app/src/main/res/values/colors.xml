@@ -87,7 +87,7 @@
     <color name="seekBarBgColorLight">#20ffffff</color>
 
     <color name="windowBackground">#fafafa</color>
-    <color name="dialogsBackground">#212121</color>
+    <color name="dialogsBackground">#fafafa</color>
     <color name="navBarColor">@android:color/darker_gray</color>
     <color name="widgetsColor">#212121</color>
 

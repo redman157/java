@@ -1,16 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item
-        android:id="@+id/night_mode"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="Set Night Mode"/>
-
-    <item android:id="@+id/changeTheme"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="Change Theme"/>
+    
     <item
         android:id="@+id/settings"
         android:orderInCategory="100"

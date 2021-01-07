@@ -22,11 +22,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCa
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import company.ai.musicplayer.ListViewHolder
-import company.ai.musicplayer.MusicViewModel
+import company.ai.musicplayer.database.MusicViewModel
 import company.ai.musicplayer.R
 import company.ai.musicplayer.controller.UIControlInterface
 import company.ai.musicplayer.databinding.FragmentListBinding
-import company.ai.musicplayer.extensions.imageByPicasso
+import company.ai.musicplayer.extensions.getAlbumArt
 import company.ai.musicplayer.ui.LibraryFragment
 import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.utils.Constants
@@ -172,11 +172,8 @@ class ListDialog(var launchedBy: String, var musics: List<Music>?) : BottomSheet
                 withItem<Music, ListViewHolder>(R.layout.item_select_music){
                     onBind(::ListViewHolder) { _, item ->
                         // GenericViewHolder is `this` here
-                        image.imageByPicasso(item.albumID)
-                        title.text = item.displayName!!.removeRange(
-                            item.displayName.length - 4,
-                            item.displayName.length
-                        )
+                        image.setImageBitmap(item.getAlbumArt(requireContext()))
+                        title.text = item.displayName!!.split("-")[0]
                     }
                     onClick {
                         val fragment = requireActivity().supportFragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT)

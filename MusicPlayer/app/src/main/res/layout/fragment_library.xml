@@ -10,13 +10,21 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:stateListAnimator="@animator/show_toolbar"
         android:layout_height="@dimen/_150sdp">
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:contentScrim="?attr/colorSurface"
+            app:statusBarScrim="?attr/colorSurface"
             app:expandedTitleGravity="center_horizontal"
             app:layout_collapseMode="pin"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            app:collapsedTitleGravity="center"
+            app:titleEnabled="false"
+            app:toolbarId="@id/all_toolbar"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
                 android:id="@+id/img_album_id"
@@ -25,6 +33,7 @@
                 android:adjustViewBounds="true"
                 android:minHeight="@dimen/app_bar_height"
                 android:scaleType="fitXY"
+                android:fitsSystemWindows="true"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.8"
                 app:layout_scrollFlags="scroll|enterAlwaysCollapsed|exitUntilCollapsed"
@@ -33,16 +42,14 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/all_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_50sdp"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/transparent"
                 android:layout_alignParentTop="true"
                 android:animateLayoutChanges="true"
-                android:background="@color/transparent"
                 android:elevation="4dp"
                 android:gravity="center"
-                android:theme="@style/toolBarStyle"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/popupStyle"
-                app:titleTextColor="@color/black" />
+                app:contentInsetStartWithNavigation="0dp" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -58,9 +65,9 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_height="wrap_content">
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_controller"
             android:layout_width="match_parent"
@@ -71,6 +78,8 @@
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -110,7 +110,9 @@ object ThemeHelper {
         Pair(R.string.deep_orange ,Pair(R.color.primary_deep_orange, R.style.BaseTheme_DeepOrange)),
         Pair(R.string.brown ,Pair(R.color.primary_brown, R.style.BaseTheme_Brown)),
         Pair(R.string.grey ,Pair(R.color.primary_grey, R.style.BaseTheme_Grey)),
-        Pair(R.string.blue_grey ,Pair(R.color.primary_blue_grey, R.style.BaseTheme_BlueGrey))
+        Pair(R.string.blue_grey ,Pair(R.color.primary_blue_grey, R.style.BaseTheme_BlueGrey)),
+        Pair(R.string.black ,Pair(R.color.primary_default, R.style.BaseTheme_Default))
+
     )
 
     @JvmStatic

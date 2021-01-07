@@ -26,7 +26,7 @@ class Preferences (context: Context){
 
     private val prefsLatestVolume = context.getString(R.string.latest_volume_pref)
     private val prefsLatestPlayedSong = context.getString(R.string.latest_played_song_pref)
-
+    private val prefsCurrentPlayedSong = context.getString(R.string.current_played_song_pref)
     private val prefsActiveFragments = context.getString(R.string.active_fragments_pref)
     val prefsActiveFragmentsDef = setOf(0, 1, 2, 3, 4)
 
@@ -80,6 +80,13 @@ class Preferences (context: Context){
         set(value) = mPrefs.edit().putInt(prefsLatestVolume, value).apply()
 
     var latestPlayedSong: SavedMusic?
+        get() = getObject(
+            prefsLatestPlayedSong,
+            typeLastPlayedSong
+        )
+        set(value) = putObject(prefsLatestPlayedSong, value)
+
+    var currentPlayedSong: SavedMusic?
         get() = getObject(
             prefsLatestPlayedSong,
             typeLastPlayedSong

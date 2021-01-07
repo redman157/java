@@ -3,11 +3,11 @@ package company.ai.musicplayer.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.recyclical.datasource.emptyDataSource
@@ -16,8 +16,9 @@ import com.afollestad.recyclical.withItem
 import company.ai.musicplayer.*
 import company.ai.musicplayer.controller.LibrarySelectInterface
 import company.ai.musicplayer.controller.UIControlInterface
+import company.ai.musicplayer.database.MusicViewModel
 import company.ai.musicplayer.databinding.FragmentMusicControllerListBinding
-import company.ai.musicplayer.extensions.imageByPicasso
+import company.ai.musicplayer.extensions.getAlbumArt
 import company.ai.musicplayer.extensions.toFormattedDuration
 import company.ai.musicplayer.extensions.toMusic
 import company.ai.musicplayer.models.Music
@@ -29,11 +30,17 @@ import company.ai.musicplayer.utils.ListsHelper
  * Use the [MusicControllerListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class MusicControllerListFragment(var mUiControlInterface: UIControlInterface, var librarySelectInterface: LibrarySelectInterface) : Fragment(R.layout.fragment_music_controller_list) {
+class MusicControllerListFragment(
+  /*  var mLaunchedBy: String,
+    var mUiControlInterface: UIControlInterface,
+    var mSelectMusicInterface: LibrarySelectInterface*/
+    private var mLaunchedBy: String
+    ) : Fragment() {
+    private lateinit var mUiControlInterface: UIControlInterface
+    lateinit var mSelectMusicInterface: LibrarySelectInterface
     private lateinit var mBinding: FragmentMusicControllerListBinding
     private lateinit var mMusicViewModel: MusicViewModel
     private val mDataSource = emptyDataSource()
-    private var mLaunchedBy = Constants.ARTIST_VIEW
     private var mAllMusic: MutableList<Music>? = null
 
     @SuppressLint("SetTextI18n")
@@ -52,9 +59,11 @@ class MusicControllerListFragment(var mUiControlInterface: UIControlInterface, v
                             onBind(::MusicsViewHolder) { _, item ->
                                 // GenericViewHolder is `this` here
                                 val music = item.toMusic(mAllMusic)
-                                title.text = music!!.let { it.displayName!!.removeRange(it.displayName.length - 4, it.displayName.length) }
+                                Log.d("NNN","${music!!.displayName!!.split("-")[0]}")
+                                title.text = music!!.displayName!!.split(" - ")[0]
                                 subtitle.text = getString(R.string.artist_and_album, music.artist, music.album)
-                                icon.imageByPicasso(music.albumID)
+
+                                icon.setImageBitmap(music.getAlbumArt(requireContext()))
                                 duration.text = music.duration.toFormattedDuration(
                                     isAlbum = false,
                                     isSeekBar = false
@@ -62,7 +71,7 @@ class MusicControllerListFragment(var mUiControlInterface: UIControlInterface, v
                             }
                             onClick {
                                 val music = item.toMusic(mAllMusic)
-                                librarySelectInterface.onSelectMusic(music)
+                                mSelectMusicInterface.onSelectMusic(music)
                                 mUiControlInterface.onSongSelected(music,mAllMusic, mLaunchedBy)
                             }
                         }
@@ -77,7 +86,7 @@ class MusicControllerListFragment(var mUiControlInterface: UIControlInterface, v
                                 subtitle.text =  "${mMusicViewModel.mDeviceMusicByFolder?.getValue(item)?.size} songs"
                             }
                             onClick {
-                                librarySelectInterface.onSelectGroup(mMusicViewModel.mDeviceMusicByFolder?.getValue(item), mLaunchedBy)
+                                mSelectMusicInterface.onSelectGroup(mMusicViewModel.mDeviceMusicByFolder?.getValue(item), mLaunchedBy)
                             }
                         }
                     }
@@ -93,17 +102,16 @@ class MusicControllerListFragment(var mUiControlInterface: UIControlInterface, v
                                 }else{
                                     icon.setImageResource(R.drawable.ic_artists)
                                     subtitle.text =  "${mMusicViewModel.mDeviceMusicByArtist?.getValue(item)?.size} songs"
-
                                 }
 
                             }
                             if (mLaunchedBy == Constants.ALBUM_VIEW){
                                 onClick {
-                                    librarySelectInterface.onSelectGroup(mMusicViewModel.mDeviceMusicByAlbum?.getValue(item), mLaunchedBy)
+                                    mSelectMusicInterface.onSelectGroup(mMusicViewModel.mDeviceMusicByAlbum?.getValue(item), mLaunchedBy)
                                 }
                             }else{
                                 onClick {
-                                    librarySelectInterface.onSelectGroup(mMusicViewModel.mDeviceMusicByArtist?.getValue(item), mLaunchedBy)
+                                    mSelectMusicInterface.onSelectGroup(mMusicViewModel.mDeviceMusicByArtist?.getValue(item), mLaunchedBy)
                                 }
                             }
 
@@ -118,11 +126,7 @@ class MusicControllerListFragment(var mUiControlInterface: UIControlInterface, v
         super.onAttach(context)
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
-
-        arguments?.getString(TAG_LAUNCHED_BY)?.let { launchedBy ->
-            mLaunchedBy = launchedBy
-        }
-
+        mUiControlInterface = activity as UIControlInterface
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,15 +145,15 @@ class MusicControllerListFragment(var mUiControlInterface: UIControlInterface, v
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mMusicViewModel = ViewModelProvider(requireActivity()).get(MusicViewModel::class.java)
+       /* mMusicViewModel = ViewModelProvider(requireActivity()).get(MusicViewModel::class.java)
         mMusicViewModel.mDeviceMusic.observe(
             viewLifecycleOwner,
-            Observer {returnedMusic ->
+            {returnedMusic ->
                 if (!returnedMusic.isNullOrEmpty()){
                     setMusicDataSource(setupData(mLaunchedBy))
                     assignView()
                 }
-            })
+            })*/
     }
 
     private fun setMusicDataSource(musicList: List<String>?) {
@@ -202,11 +206,10 @@ class MusicControllerListFragment(var mUiControlInterface: UIControlInterface, v
         private const val TAG_LAUNCHED_BY = "SELECTED_FRAGMENT"
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(launchedBy: String, uiControlInterface: UIControlInterface,librarySelectInterface: LibrarySelectInterface) =
-            MusicControllerListFragment(uiControlInterface, librarySelectInterface).apply {
-                arguments = Bundle().apply {
-                    putString(TAG_LAUNCHED_BY, launchedBy)
-                }
-            }
+        fun newInstance(launchedBy: String): MusicControllerListFragment {
+//            MusicControllerListFragment(launchedBy,uiControlInterface, librarySelectInterface)
+
+            return MusicControllerListFragment(launchedBy)
+        }
     }
 }

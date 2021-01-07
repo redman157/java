@@ -59,6 +59,7 @@
     <!-- Other preferences keys -->
     <string name="saved_eq_settings">saved_eq_settings_pref</string>
     <string name="latest_played_song_pref">restore_song_pref</string>
+    <string name="current_played_song_pref">save_current_played</string>
     <string name="device_songs_pref">device_songs_pref</string>
     <string name="latest_volume_pref">latest_volume_pref</string>
     <string name="song_visual_pref">song_visual_pref</string>
@@ -118,6 +119,7 @@
     <!-- Preferences - Categories -->
     <string name="settings">Settings</string>
     <string name="category_general">General</string>
+    <string name="error_eq">Ooops, an error occurred!</string>
 
     <!-- ListFragment Dialog - Title -->
     <string name="album_list">Album List Music</string>
@@ -155,6 +157,6 @@
     <string name="brown">Brown</string>
     <string name="grey">Grey</string>
     <string name="blue_grey">Blue Grey</string>
-
+    <string name="black">Default</string>
 
 </resources>

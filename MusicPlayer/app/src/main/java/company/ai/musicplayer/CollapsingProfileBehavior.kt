@@ -6,11 +6,15 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import com.google.android.material.appbar.AppBarLayout
+import company.ai.musicplayer.utils.ThemeHelper
 
 
 @Suppress("unused")
@@ -19,11 +23,11 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
 
     private lateinit var appBar: View
     private lateinit var headerProfile: View
-    private lateinit var mImageProfile: View
+    private lateinit var mImageProfile: ImageView
     private lateinit var mTextContainer: View
-    private lateinit var mDisplayName: View
-    private lateinit var mAlbum: View
-    private lateinit var mArtist: View
+    private lateinit var mDisplayName: TextView
+    private lateinit var mAlbum: TextView
+    private lateinit var mArtist: TextView
 
     private lateinit var windowSize: Point
     private var mAppBarHeight: Int = 0
@@ -118,6 +122,20 @@ class CollapsingProfileBehavior(private val context: Context, attrs: AttributeSe
         )
 
         normalizedRange = 1f - normalizedRange
+        if (normalizedRange > 0.54f){
+            mDisplayName.setTextColor(ContextCompat.getColorStateList(context, R.color.windowBackground))
+        }else{
+            mDisplayName.setTextColor(ContextCompat.getColorStateList(context, R.color.windowBackground))
+            mAlbum.setTextColor(ContextCompat.getColorStateList(context, R.color.windowBackground))
+            mArtist.setTextColor(ContextCompat.getColorStateList(context, R.color.windowBackground))
+           /* if (ThemeHelper.getDefaultNightMode(context.applicationContext) == AppCompatDelegate.MODE_NIGHT_YES){
+                mDisplayName.setTextColor(ContextCompat.getColorStateList(context, R.color.widgetsColor))
+                mAlbum.setTextColor(ContextCompat.getColorStateList(context, R.color.widgetsColor))
+                mArtist.setTextColor(ContextCompat.getColorStateList(context, R.color.widgetsColor))
+            }*/
+
+        }
+        Log.d("MMM", "updateNormalizedRange: $normalizedRange")
     }
 
     private fun normalize(currentValue: Float, minValue: Float, maxValue: Float): Float {

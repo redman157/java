@@ -80,6 +80,15 @@ object MusicOrg {
         return sortedAlbums
     }
 
+    fun saveCurrentSong( latestSong: Music?, launchedBy: String){
+        latestSong?.let {music ->
+            val toSave = music.toSavedMusic(0, launchedBy)
+            if (mPreferences.currentPlayedSong != toSave) {
+                mPreferences.currentPlayedSong = toSave
+            }
+        }
+    }
+
     fun saveLatestSong(
         latestSong: Music?,
         mediaPlayerHolder: MediaPlayerHolder,

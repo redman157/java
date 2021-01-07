@@ -9,7 +9,8 @@ object Constants {
     const val NOW_PLAY_DIALOG_FRAGMENT: String = "NOW_PLAY_DIALOG_FRAGMENT"
     const val LIST_DIALOG_FRAGMENT: String = "LIST_DIALOG_FRAGMENT"
     const val PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 2588
-
+    const val DATABASE_NAME = "music-db"
+    const val MUSIC_DATA_FILENAME = "musics.json"
     // on list ended option
     const val CONTINUE = "0"
     // Notification

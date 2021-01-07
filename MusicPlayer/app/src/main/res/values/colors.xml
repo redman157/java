@@ -18,7 +18,7 @@
     <color name="red_alpha_100">#EC3131</color>
     <color name="silver_chalice">#A9A9A9</color>
     <color name="light_grey">#C5C5C5</color>
-
+    <color name="tab_layout_color">#66FFFFFF</color>
 // theme color 800
     <color name="secondary_red">#ff5f52</color>
     <color name="secondary_pink">#e35183</color>
@@ -39,6 +39,7 @@
     <color name="secondary_brown">#7b5e57</color>
     <color name="secondary_grey">#6d6d6d</color>
     <color name="secondary_blue_grey">#62727b</color>
+    <color name="secondary_default">#2C2C2C</color>
 
 // theme color 500
     <color name="primary_red">#f44336</color>
@@ -60,7 +61,7 @@
     <color name="primary_brown">#795548</color>
     <color name="primary_grey">#9e9e9e</color>
     <color name="primary_blue_grey">#607d8b</color>
-
+    <color name="primary_default">#000000</color>
 
 // effect color 100
     <color name="effect_red">#FFCDD2</color>

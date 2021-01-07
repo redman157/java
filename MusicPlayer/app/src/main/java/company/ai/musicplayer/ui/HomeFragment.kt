@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.recyclical.datasource.emptyDataSource
 import com.afollestad.recyclical.setup
 import com.afollestad.recyclical.withItem
-import company.ai.musicplayer.MusicViewModel
+import company.ai.musicplayer.database.MusicViewModel
 import company.ai.musicplayer.MusicsViewHolder
 import company.ai.musicplayer.R
 import company.ai.musicplayer.controller.UIControlInterface
@@ -29,6 +29,7 @@ import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.utils.Constants
 import company.ai.musicplayer.utils.ListsHelper
 import kotlinx.android.synthetic.main.custom_preference_category.*
+import kotlinx.android.synthetic.main.fragment_home.*
 
 
 /**
@@ -76,7 +77,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun initializeToolbar() {
-        mBinding.toolbarContainer.toolbar.apply {
+        mBinding.toolbar.apply {
             popupTheme = R.style.AppTheme_CustomActionBar
             title = this@HomeFragment.getString(R.string.app_name)
             inflateMenu(R.menu.main)
@@ -85,6 +86,11 @@ class HomeFragment : Fragment() {
         }
 
     }
+
+    private val onScrollChangedListener = ViewTreeObserver.OnScrollChangedListener {
+        mBinding.swipeRefreshLayout.isEnabled = mBinding.nestScrollView.scrollY == 0
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // If not handled by drawerToggle, home needs to be handled by returning to previous
@@ -157,10 +163,11 @@ class HomeFragment : Fragment() {
         mLinearPlayer1 = mBinding.linearPlayer1
         mLinearPlayer2 = mBinding.linearPlayer2
         mRecentlyAdd = mBinding.recyclerRecentlyAdd
-        mBinding.refreshData.apply {
+
+        mBinding.swipeRefreshLayout.apply {
             setColorSchemeColors(fetchAccentColor())
             setOnRefreshListener {
-                mBinding.refreshData.isRefreshing = false
+                this.isRefreshing = false
                 mMusicViewModel.syncMusic(requireActivity().application)
                 setMusicDataSource(ListsHelper.recentlyMusic)
                 requireActivity().supportFragmentManager.addFragment(
@@ -193,7 +200,7 @@ class HomeFragment : Fragment() {
                             item.artist,
                             item.album
                         )
-                        icon.imageByPicasso(item.albumID)
+                        icon.setImageBitmap(item.getAlbumArt(requireContext()))
                     }
                     onClick {
                         mUIControlInterface.onSongSelected(

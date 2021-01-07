@@ -3,7 +3,11 @@ package company.ai.musicplayer;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -14,8 +18,13 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 
 import com.squareup.picasso.Picasso;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import android.graphics.Canvas;
 
 import company.ai.musicplayer.models.Music;
 
@@ -84,15 +93,47 @@ public class CollapsingProfileHeaderView extends CoordinatorLayout {
     }
 
     public void applyAttributes(Music musicModel) {
-        Picasso.get()
+/*        Picasso.get()
                 .load(getSongUri(musicModel.getAlbumID()))
                 .placeholder(R.drawable.ic_music_note)
                 .resize(400, 400)
                 .onlyScaleDown()
-                .into(mImageProfile);
+                .into(mImageProfile);*/
+        mImageProfile.setImageBitmap(getAlbumArt(musicModel, context));
         mTextTitle.setText(musicModel.getDisplayName().substring(0, musicModel.getDisplayName().length() - 4).split("-")[0]);
         mTextArtist.setText(musicModel.getAlbum());
         mTextAlbums.setText(musicModel.getArtist());
+    }
+
+    public Bitmap getAlbumArt(Music music, Context context){
+        Bitmap bitmap = null;
+        Uri uri = null;
+        try {
+            if (music.getAlbumID() != null){
+                uri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), music.getAlbumID());
+                bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+                return bitmap;
+            }else {
+                bitmap = getLargeIcon(context);
+            }
+        }catch (IOException e ){
+            if (e instanceof FileNotFoundException){
+                bitmap = getLargeIcon(context);
+            }
+        }
+        return bitmap;
+    }
+
+    //https://gist.github.com/Gnzlt/6ddc846ef68c587d559f1e1fcd0900d3
+    private Bitmap getLargeIcon(Context context) {
+        Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_music_note);
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 
     public int getProfileDrawable() {

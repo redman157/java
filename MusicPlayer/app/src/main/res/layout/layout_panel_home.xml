@@ -24,7 +24,6 @@
 
         <RelativeLayout
             app:ignore="NamespaceTypo"
-            android:background="?back_ground_sliding"
             android:elevation="3dp"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">

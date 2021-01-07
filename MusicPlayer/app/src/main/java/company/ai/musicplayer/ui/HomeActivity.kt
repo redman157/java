@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import company.ai.musicplayer.MusicViewModel
+import company.ai.musicplayer.database.MusicViewModel
 import company.ai.musicplayer.adapters.QueueAdapter
 import company.ai.musicplayer.R
 import company.ai.musicplayer.controller.MediaControllerInterface
@@ -37,6 +37,7 @@ import company.ai.musicplayer.player.MediaPlayerHolder
 import company.ai.musicplayer.player.MediaPlayerInterface
 import company.ai.musicplayer.service.PlayerService
 import company.ai.musicplayer.utils.*
+import company.ai.musicplayer.utils.MusicOrg.saveCurrentSong
 import kotlinx.android.synthetic.main.dialog_media.*
 import kotlin.system.exitProcess
 
@@ -63,7 +64,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
     private val mMusicViewModel: MusicViewModel by viewModels()
     private var mBundle: Bundle? = null
 
-    lateinit var songOri: Music
+    var songOri: Music? = null
     private lateinit var mQueueAdapter: QueueAdapter
     // Colors
     val mResolvedAccentColor by lazy { ThemeHelper.resolveThemeAccent(this) }
@@ -134,6 +135,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
             mHomeBinding.layoutMain.songProgress.progress = pos
         }
 
+        override fun onShuffle() {
+            onShuffleSongs(currentListMusic!!.toMutableList(), currentLaunchedBy)
+        }
+
         override fun onResumeOrPause() {
             resumeOrPause()
             mMediaPlayerHolder.setStatusPlaying()
@@ -141,6 +146,17 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
 
         override fun onCancelDialog() {
             mMediaPlayerHolder.mediaPlayerInterface = mMediaPlayerInterface
+            val fragment = supportFragmentManager.findFragmentByTag(Constants.TAG_FRAGMENT)
+            if (fragment is LibraryFragment){
+                (fragment).setUpHeader(mMediaPlayerHolder.currentSong.first!!)
+            }
+
+
+        }
+
+        override fun onEqualizer() {
+            openEqualizer()
+
         }
 
         override fun onSkip(isNext: Boolean) {
@@ -151,21 +167,18 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        try {
-            super.onCreate(savedInstanceState)
-        }catch (e :Exception){
-            Log.d("VVV","${e.javaClass.simpleName}")
-            Log.d("VVV","${e.message}")
-            e.printStackTrace()
-        }
+        sRestoreSettingsFragment =
+            savedInstanceState?.getBoolean(Constants.RESTORE_SETTINGS_FRAGMENT)
+                ?: intent.getBooleanExtra(Constants.RESTORE_SETTINGS_FRAGMENT, false)
+        Log.d("AAA", if (savedInstanceState == null) "null" else "khác null")
+        Log.d("AAA","sRestoreSettingsFragment: ${sRestoreSettingsFragment}")
+        super.onCreate(savedInstanceState)
         setTheme(ThemeHelper.getAccentedTheme().first)
         mHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(mHomeBinding.root)
         initView()
         assignView()
 
-        sRestoreSettingsFragment =
-            savedInstanceState?.getBoolean(Constants.RESTORE_SETTINGS_FRAGMENT) ?: intent.getBooleanExtra(Constants.RESTORE_SETTINGS_FRAGMENT, false)
         if (PermissionHelper.hasToAskStoragePermission(this)) {
             PermissionHelper.manageAskForReadStoragePermission(
                 activity = this, uiControlInterface = this
@@ -226,6 +239,15 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         baseBackPressed()
     }
 
+    private fun openEqualizer(){
+        mMediaPlayerHolder.mediaPlayerInterface = mMediaPlayerInterface
+        if(!EqualizerHelper.hasEqualizer(this)){
+            supportFragmentManager.addFragment(EqFragment.newInstance(), Constants.TAG_FRAGMENT, isSettingsFragment)
+        }else{
+            mMediaPlayerHolder.openEqualizer(this)
+        }
+    }
+
     private fun baseBackPressed() {
         // Otherwise, it may return to the previous fragment stack
         val fragmentManager = supportFragmentManager
@@ -259,7 +281,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         mLayoutMain.btnHome.setOnClickListener(this)
         mLayoutMain.imgPlayPause.setOnClickListener(this)
         mLayoutMain.linearNext.setOnClickListener(this)
-
     }
 
     public fun saveInstance(bundle: Bundle){
@@ -338,12 +359,12 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
             mLayoutMain.btnHome -> {
                 mLayoutMain.textHome.setTextColor(mResolvedAccentColor)
                 mLayoutMain.textLibrary.setTextColor(ContextCompat.getColor(this, R.color.black))
-                supportFragmentManager.addFragment(HomeFragment.newInstance(), Constants.TAG_FRAGMENT, isSettingsFragment)
+                supportFragmentManager.addFragment(HomeFragment.newInstance(), Constants.TAG_FRAGMENT, true)
             }
             mLayoutMain.btnLibrary -> {
                 mLayoutMain.textHome.setTextColor(ContextCompat.getColor(this, R.color.black))
                 mLayoutMain.textLibrary.setTextColor(mResolvedAccentColor)
-                supportFragmentManager.addFragment(LibraryFragment.newInstance(), Constants.TAG_FRAGMENT, isSettingsFragment)
+                supportFragmentManager.addFragment(LibraryFragment.newInstance(), Constants.TAG_FRAGMENT, true)
             }
             mLayoutMain.imgPlayPause -> {
                 resumeOrPause()
@@ -503,7 +524,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
 
     private fun setUiCurrentSong(song: Music?){
         song?.let {
-            mLayoutMain.textTitle.text = it.displayName
+            mLayoutMain.textTitle.text = it.displayName!!.split("-")[0]
             mLayoutMain.textSuptitle.text =  getString(
                 R.string.artist_and_album,
                 it.artist,
@@ -626,9 +647,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         sAppearanceChanged = true
         synchronized(saveSongToPref()) {
             AppCompatDelegate.setDefaultNightMode(
-                ThemeHelper.getDefaultNightMode(
-                    this
-                )
+                ThemeHelper.getDefaultNightMode(this)
             )
         }
     }
@@ -645,6 +664,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
                 if (!isPlay) isPlay = true
                 if (isQueue) setQueueEnabled(false)
                 startPlayback(song, songs, launchedBy)
+
                 setStatusPlaying()
             }
         }else{
@@ -653,7 +673,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
     }
 
     override fun onShuffleSongs(songs: MutableList<Music>?, launchedBy: String) {
-
+        val randomNumber = (0 until songs?.size!!).getRandom()
+        songs.shuffle()
+        val song = songs[randomNumber]
+        onSongSelected(song = song, songs = songs, launchedBy = launchedBy)
     }
 
     override fun onLovedSongsUpdate(clear: Boolean) {
@@ -662,7 +685,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
 
     override fun onCloseActivity(fragment: Fragment) {
         Log.d("VVV","onCloseActivity: Enter")
-        if (fragment is SettingsFragment){
+        if (fragment is SettingsFragment || fragment is EqFragment){
             supportFragmentManager.addFragment(HomeFragment.newInstance(), Constants.TAG_FRAGMENT, true)
         }
     }
@@ -698,9 +721,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         }
     }
 
-    override fun onGetEqualizer(): Triple<Equalizer, BassBoost, Virtualizer> {
-        TODO("Not yet implemented")
-    }
+    override fun onGetEqualizer(): Triple<Equalizer, BassBoost, Virtualizer> = mMediaPlayerHolder.getEqualizer()
 
     override fun onEnableEqualizer(isEnabled: Boolean) {
 

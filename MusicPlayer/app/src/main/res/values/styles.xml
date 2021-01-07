@@ -5,13 +5,21 @@
 <!--        <item name="colorPrimary">@color/widgetsColor</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/accentColor</item>-->
-
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorSurface">@color/black</item>
         <item name="android:textColor">@color/widgetsColor</item>
-        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:colorBackground">@color/windowBackground</item>
+    </style>
+
+    <!-- This will set the fade in animation on all the activities by default -->
+    <style name="WindowAnimationTransition">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
     <!-- show menu popup exact below actionbar-->
@@ -19,7 +27,7 @@
         <item name="android:windowDisablePreview">true</item>
         <item name="overlapAnchor">false</item>
         <item name="android:dropDownVerticalOffset">5.0dp</item>
-        <!--<item name="android:popupBackground">#FFF</item>-->
+        <item name="android:popupBackground">@color/white</item>
     </style>
 
     <style name="AppTheme.TabLayout" parent="android:Widget">
@@ -39,7 +47,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
@@ -61,9 +69,7 @@
 
     <!-- MyCustomButton -->
     <style name="MyCustomButton" parent="Widget.AppCompat.Button">
-        <item name="android:textColor">?attr/select_enable</item>
         <item name="android:textSize">@dimen/_13sdp</item>
-        <item name="android:background">?attr/back_ground_button</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:gravity">center</item>
     </style>
@@ -90,7 +96,7 @@
     </style>
 
     <!--Toolbar pop up-->
-    <style name="toolBarStyle" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="toolBarStyle" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/black</item>
@@ -99,6 +105,7 @@
 
     <style name="popupStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:background">@color/white</item>
+
         <item name="overlapAnchor">false</item>
         <item name="android:dropDownVerticalOffset">0dp</item>
     </style>
@@ -116,6 +123,7 @@
     <style name="ToolbarStyle.Subtitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle" />
     <style name="ToolbarStyle.Title" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textStyle">bold</item>
+
     </style>
 
     <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">

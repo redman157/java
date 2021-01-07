@@ -20,6 +20,7 @@ import company.ai.musicplayer.ListViewHolder
 import company.ai.musicplayer.R
 import company.ai.musicplayer.controller.UIControlInterface
 import company.ai.musicplayer.databinding.FragmentSampleBinding
+import company.ai.musicplayer.extensions.getAlbumArt
 import company.ai.musicplayer.extensions.imageByPicasso
 import company.ai.musicplayer.extensions.toFormattedDuration
 import company.ai.musicplayer.models.Music
@@ -128,7 +129,7 @@ class SampleFragment : DialogFragment {
                     withItem<Music, ListViewHolder>(R.layout.item_select_music){
                         onBind(::ListViewHolder){ _, item ->
                             title.text = item.displayName
-                            image.imageByPicasso(item.albumID)
+                            image.setImageBitmap(item.getAlbumArt(requireContext()))
                         }
                         onClick {
                             mUIControlInterface.onSongSelected(item, list, launchedBy)

@@ -274,6 +274,7 @@ class MediaPlayerHolder(private val playerService: PlayerService): MediaPlayer.O
         mPlayingAlbumSongs = songs
     }
 
+
     private fun updateMediaSessionMetaData() {
         val mediaMediaPlayerCompat = MediaMetadataCompat.Builder().apply {
             putLong(

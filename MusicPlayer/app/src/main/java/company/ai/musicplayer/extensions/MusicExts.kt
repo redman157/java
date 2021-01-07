@@ -17,12 +17,14 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 
 fun Long.toContentUri(): Uri = ContentUris.withAppendedId(
     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
     this
 )
+fun IntRange.getRandom() = Random.nextInt(start, endInclusive + 1)
 
 fun String.toMusic(allMusic: MutableList<Music>?): Music? {
     for (index in allMusic!!){
@@ -97,6 +99,7 @@ fun Music.getCover(context: Context): Bitmap? {
     }
 }
 
+
 fun Music.getAlbumArt(context: Context): Bitmap {
     var bitmap: Bitmap? = null
     try {
@@ -139,24 +142,30 @@ private fun getLargeIcon(context: Context): Bitmap {
 
 fun Music.toSavedMusic(playerPosition: Int, launchedBy: String) =
     SavedMusic(
-        artist,
-        title,
-        displayName,
-        year,
-        playerPosition,
-        duration,
-        album,
-        launchedBy
+        displayName = displayName,
+        artist = artist,
+        album = album,
+        year = year,
+        track = track,
+        title = title,
+        duration = duration,
+        albumID = albumID,
+        relativePath = relativePath,
+        id = id,
+        startFrom = playerPosition,
+        launchedBy = launchedBy
     )
 
-fun SavedMusic.toMusic(playerPosition: Int, launchedBy: String) =
-    SavedMusic(
-        artist,
-        title,
-        displayName,
-        year,
-        playerPosition,
-        duration,
-        album,
-        launchedBy
+fun SavedMusic.toMusic() =
+    Music(
+        displayName = displayName,
+        artist = artist,
+        album = album,
+        year = year,
+        track = track,
+        title = title,
+        duration = duration,
+        albumID = albumID,
+        relativePath = relativePath,
+        id = id
     )

@@ -8,6 +8,7 @@
 
     <TextView
         android:id="@+id/item_tl_text_home"
+        android:textColor="@color/windowBackground"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

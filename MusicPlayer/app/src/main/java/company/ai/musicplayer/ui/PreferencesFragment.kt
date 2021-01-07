@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.customListAdapter
 import com.afollestad.materialdialogs.list.getRecyclerView
-import company.ai.musicplayer.MusicViewModel
+import company.ai.musicplayer.database.MusicViewModel
 import company.ai.musicplayer.R
 import company.ai.musicplayer.adapters.AccentsAdapter
 import company.ai.musicplayer.controller.UIControlInterface
@@ -44,6 +44,7 @@ class PreferencesFragment: PreferenceFragmentCompat(), SharedPreferences.OnShare
         } catch (e: ClassCastException) {
             e.printStackTrace()
         }
+
     }
 
     override fun onResume() {

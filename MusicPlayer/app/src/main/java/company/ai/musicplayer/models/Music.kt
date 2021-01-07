@@ -1,22 +1,38 @@
 package company.ai.musicplayer.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
+import company.ai.musicplayer.models.Music.Companion.TABLE_NAME
+import company.ai.musicplayer.models.Music.Companion.TITLE
 import java.io.Serializable
 
-@Entity(tableName = "musics")
+@Entity(tableName = TABLE_NAME,
+    foreignKeys = [ForeignKey(
+        entity = Director::class,
+        parentColumns = ["did"],
+        childColumns = [TITLE],
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(TITLE)]
+)
 data class Music(
-    @PrimaryKey @ColumnInfo val displayName: String?,
-    @ColumnInfo val artist: String?,
-    @ColumnInfo val album: String?,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = TITLE) val displayName: String?,
+    @ColumnInfo(name = ARTIST)val artist: String?,
+    @ColumnInfo(name = ALBUM)val album: String?,
     val year: Int,
     val track: Int,
     val title: String?,
-    @ColumnInfo val duration: Long,
-    @ColumnInfo val albumID: Long?,
+    val duration: Long,
+    val albumID: Long?,
     val relativePath: String?,
-    val id: Long?
-) : Serializable
+    @ColumnInfo(name = "album_id")val id: Long?
+) : Serializable{
+    companion object {
+        const val TABLE_NAME = "music_tb"
+        const val TITLE = "name_music"
+        const val ARTIST = "artist"
+        const val ALBUM = "album"
+    }
+}
 
 

@@ -15,8 +15,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.*
 import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.afollestad.recyclical.datasource.emptyDataSource
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import company.ai.musicplayer.*
 import company.ai.musicplayer.controller.LibrarySelectInterface
 import company.ai.musicplayer.controller.UIControlInterface
@@ -51,7 +54,7 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
     }
 
     private lateinit var mBinding: FragmentLibraryBinding
-    private lateinit var mViewPager: ViewPager
+    private lateinit var mViewPager: ViewPager2
     private lateinit var mTabLayout: TabLayout
     private lateinit var mHeaderView: CollapsingProfileHeaderView
     private lateinit var mFragments: ArrayList<MusicControllerListFragment>
@@ -108,7 +111,7 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
         mHeaderView.requestLayout()
         mViewPager = mBinding.viewPager
         mTabLayout = mBinding.tabController
-
+        addFragment()
         val music = (activity as HomeActivity).mMediaPlayerHolder.currentSong.first!!
         setUpHeader(music)
     }
@@ -123,9 +126,10 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
         mBinding.imgAlbumId.setImageBitmap(music.getAlbumArt(requireContext()))
     }
 
-    private fun setupViewPager(viewPager: ViewPager){
-        val pagerAdapter = ScreenSlidePagerAdapter((activity as FragmentActivity).supportFragmentManager)
+    private fun setupViewPager(viewPager: ViewPager2){
+        val pagerAdapter = ScreenSlidePagerAdapter((activity as FragmentActivity))
         viewPager.apply {
+
             offscreenPageLimit = 4.minus(1)
             adapter = pagerAdapter
             currentItem = 0
@@ -133,21 +137,38 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
 
         mTabLayout.apply {
             tabIconTint = ColorStateList.valueOf(mResolvedAlphaAccentColor)
-            setupWithViewPager(viewPager)
-            for (index in 0 until this.tabCount) {
+//            setupWithViewPager(viewPager)
+           /* for (index in 0 until this.tabCount) {
                 this.getTabAt(index)?.customView = viewPager.selectTab(index);
-            }
+            }*/
+            TabLayoutMediator(this, viewPager){
+                tab, position ->
+                    tab.customView = viewPager.selectTab(position)
+                    viewPager.setCurrentItem(tab.position, true)
+
+            }.attach()
+
+//            setTabLayoutEnabled(pagerAdapter)
             addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
-                   for (i in 0 until mTabLayout.tabCount) {
+                    Log.d("XXX", "vị trí: "+tab.position.toString())
+                    val view: View = tab.customView!!
+                    val title = view.findViewById<TextView>(R.id.item_tl_text_home)
+                    val color = mResolvedAccentColor
+                    title.setTextColor(color)
+/*                   for (i in 0 until mTabLayout.tabCount) {
                        val view: View = mTabLayout.getTabAt(i)?.customView!!
                        val title = view.findViewById<TextView>(R.id.item_tl_text_home)
                        val color = if (i == tab.position) mResolvedAccentColor else ContextCompat.getColor(requireContext(),R.color.windowBackground)
                        title.setTextColor(color)
-                   }
+                   }*/
                 }
 
                 override fun onTabUnselected(tab: TabLayout.Tab) {
+                    val view: View = tab.customView!!
+                    val title = view.findViewById<TextView>(R.id.item_tl_text_home)
+                    val color = ContextCompat.getColor(requireContext(),R.color.windowBackground)
+                    title.setTextColor(color)
 
                 }
 
@@ -158,7 +179,8 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
         }
     }
 
-    private fun ViewPager.selectTab(position: Int): View {
+
+    private fun ViewPager2.selectTab(position: Int): View {
         val view: View = LayoutInflater.from(context).inflate(R.layout.item_tablayout_home, null)
         val title = view.findViewById<TextView>(R.id.item_tl_text_home)
         if (position == 0)
@@ -178,7 +200,7 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
         return titles
     }
 
-    private inner class ScreenSlidePagerAdapter(fa: FragmentManager): FragmentStatePagerAdapter (fa, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+ /*  private inner class ScreenSlidePagerAdapter(fa: FragmentManager): FragmentStateAdapter(fa, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         override fun getCount(): Int = 4
 
@@ -191,7 +213,7 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
             when (fragmentIndex) {
                 0 -> {
                     return BlankFragment.newInstance(Constants.ALL_MUSIC_VIEW)
-                 /*   if (mMusicsFragment == null) {
+                    if (mMusicsFragment == null) {
                         mMusicsFragment =
                             MusicControllerListFragment.newInstance(
                                 Constants.ALL_MUSIC_VIEW,
@@ -199,11 +221,11 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
                                 mSelectMusicInterface
                             )
                     }
-                    return mMusicsFragment as MusicControllerListFragment*/
+                    return mMusicsFragment as MusicControllerListFragment
                 }
                 1 -> {
                     return BlankFragment.newInstance(Constants.ALBUM_VIEW)
-                /*    if (mAlbumsFragment == null) {
+                    if (mAlbumsFragment == null) {
                         mAlbumsFragment =
                             MusicControllerListFragment.newInstance(
                                 Constants.ALBUM_VIEW,
@@ -211,11 +233,11 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
                                 mSelectMusicInterface
                             )
                     }
-                    return mAlbumsFragment as MusicControllerListFragment*/
+                    return mAlbumsFragment as MusicControllerListFragment
                 }
                 2 -> {
                     return BlankFragment.newInstance(Constants.ARTIST_VIEW)
-              /*      if (mArtistsFragment == null) {
+                    if (mArtistsFragment == null) {
                         mArtistsFragment =
                             MusicControllerListFragment.newInstance(
                                 Constants.ARTIST_VIEW,
@@ -223,11 +245,11 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
                                 mSelectMusicInterface
                             )
                     }
-                    return mArtistsFragment as MusicControllerListFragment*/
+                    return mArtistsFragment as MusicControllerListFragment
                 }
                 3 -> {
                     return BlankFragment.newInstance(Constants.FOLDER_VIEW)
-                   /* if (mFoldersFragment == null) {
+                    if (mFoldersFragment == null) {
                         mFoldersFragment =
                             MusicControllerListFragment.newInstance(
                                 Constants.FOLDER_VIEW,
@@ -235,11 +257,11 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
                                 mSelectMusicInterface
                             )
                     }
-                    return mFoldersFragment as MusicControllerListFragment*/
+                    return mFoldersFragment as MusicControllerListFragment
                 }
                 else -> {
                     return  MusicControllerListFragment.newInstance(Constants.ALL_MUSIC_VIEW)
-                  /*  if (mMusicsFragment == null) {
+                    if (mMusicsFragment == null) {
                         mMusicsFragment =
                             MusicControllerListFragment.newInstance(
                                 Constants.ALL_MUSIC_VIEW,
@@ -247,7 +269,47 @@ class LibraryFragment : Fragment(), LibrarySelectInterface {
                                 mSelectMusicInterface
                             )
                     }
-                    return mMusicsFragment as MusicControllerListFragment*/
+                    return mMusicsFragment as MusicControllerListFragment
+                }
+            }
+        }
+    }*/
+    private lateinit var mActiveFragments: ArrayList<Fragment>
+    private fun addFragment(){
+
+        mActiveFragments = ArrayList()
+        mActiveFragments.add(BlankFragment.newInstance(Constants.ALL_MUSIC_VIEW))
+        mActiveFragments.add(BlankFragment.newInstance(Constants.ALBUM_VIEW))
+        mActiveFragments.add(BlankFragment.newInstance(Constants.ARTIST_VIEW))
+        mActiveFragments.add(BlankFragment.newInstance(Constants.FOLDER_VIEW))
+
+    }
+    // ViewPager2 adapter class
+    private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+
+        override fun getItemCount(): Int = 4
+
+        override fun createFragment(position: Int): Fragment =
+            initFragmentAtPosition(position)
+
+
+        private fun initFragmentAtPosition(fragmentIndex: Int): Fragment {
+            when (fragmentIndex) {
+                0 -> {
+                    return mActiveFragments[0]
+                }
+
+                1 -> {
+                    return mActiveFragments[1]
+                }
+                2 -> {
+                    return mActiveFragments[2]
+                }
+                3 -> {
+                    return mActiveFragments[3]
+                }
+                else -> {
+                    return mActiveFragments[0]
                 }
             }
         }

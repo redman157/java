@@ -84,7 +84,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
     private SharedPrefsUtils mSharedPrefsUtils;
     private boolean isMore;
     private String nameChoose;
-    private STATE state;
     private ChooseMusicAdapter mChooseMusicAdapter;
     public final static String FRAGMENT_TAG = "fragment_tag";
     public BottomSheetHelper bottomSheetHelper;
@@ -159,7 +158,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
 
         initializeToolbar();
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             getSupportActionBar().setTitle(R.string.app_name);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fl_placeholder ,
@@ -206,6 +205,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
         mToolBar = findViewById(R.id.toolbar);
+
         mLayoutPlaceHolder = findViewById(R.id.fl_placeholder);
         mAppBarLayout = findViewById(R.id.appBarLayout);
         mLayoutMedia = findViewById(R.id.layout_main_media);
@@ -510,39 +510,6 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
-    @Override
-    public void OnStateChange(STATE state) {
-        // thay trang thái
-        switch (state){
-            case DONE:
-                if (this.state == STATE.OPEN){
-                    mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
-                }else if (this.state == STATE.CLOSE){
-                    mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
-                }
-                mSlidingUpPanelLayout.setTouchEnabled(true);
-                break;
-            case DRAWING:
-                mSlidingUpPanelLayout.setTouchEnabled(false);
-                break;
-            case CONTROL:
-                break;
-            case PROCESS:
-                break;
-        }
-    }
-
-    @Override
-    public void IsClose(STATE state) {
-        this.state = state;
-        if (state == STATE.OPEN){
-            mSlidingUpPanelLayout.setPanelState(PanelState.HIDDEN);
-
-        }else if (state == STATE.CLOSE){
-            mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
-        }
-
-    }
 
     // Panel change state
     @Override

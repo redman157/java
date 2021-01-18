@@ -1,28 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_searchBtn"
-        android:orderInCategory="100"
-        app:showAsAction="ifRoom"
 
-        android:icon="@drawable/ic_search_black_24dp"
-        android:title="@string/search"/>
-
-    <item
-        android:id="@+id/sleep_timer"
-        android:orderInCategory="200"
-        app:showAsAction="never"
-        android:title="Set Sleep Timer"/>
-
-    <item
-        android:id="@+id/sync"
-        android:orderInCategory="200"
-        app:showAsAction="never"
-        android:title="Sync Music" />
 
     <item android:id="@+id/changeTheme"
         android:orderInCategory="200"
-        app:showAsAction="never"
+        app:showAsAction="always"
         android:title="Change Theme"/>
 
 </menu>

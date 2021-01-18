@@ -73,96 +73,8 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
     private boolean sThemeInverted;
     private int mItemToOpenWhenDrawerCloses = -1;
     private SharedPrefsUtils mSharedPrefsUtils ;
-    public abstract void OnStateChange( STATE state);
-    public abstract void IsClose(STATE state);
-    public enum STATE{
-        OPEN, CLOSE, DONE, PROCESS, CONTROL, DRAWING
-    }
+
     private QueueManager mQueueManager;
-    public ActionBarDrawerToggle getDrawerToggle() {
-        return mDrawerToggle;
-    }
-
-    private final DrawerLayout.DrawerListener mDrawerListener = new DrawerLayout.DrawerListener() {
-        @Override
-        public void onDrawerClosed(View drawerView) {
-            state = STATE.CLOSE;
-
-            IsClose(state);
-            if (mDrawerToggle != null) {
-                mDrawerToggle.onDrawerClosed(drawerView);
-            }
-            if (mItemToOpenWhenDrawerCloses >= 0) {
-                Bundle extras = ActivityOptions.makeCustomAnimation(
-                    ActionBarCastActivity.this, R.anim.fadein, R.anim.fadeout).toBundle();
-
-                Class activityClass = null;
-                switch (mItemToOpenWhenDrawerCloses) {
-                    case R.id.navigation_library:
-                        activityClass = SettingsFragment.class;
-                        break;
-                    case R.id.navigation_home:
-                        activityClass = HomeFragment.class;
-                        break;
-                }
-                if (activityClass != null) {
-                    startActivity(new Intent(ActionBarCastActivity.this, activityClass), extras);
-                    finish();
-                }
-            }
-        }
-
-        @Override
-        public void onDrawerStateChanged(int newState) {
-            STATE state = null;
-            switch (newState){
-                // 0 - DONE
-                // 1 - Thao tac vuot
-                // 2 - tha theo huong di (open or close)
-                case 0:
-                    state = STATE.DONE;
-                    imgBack.setClickable(true);
-                    break;
-                case 1:
-                    state = STATE.PROCESS;
-                    imgBack.setClickable(false);
-                    break;
-                case 2:
-                    state = STATE.CONTROL;
-                    imgBack.setClickable(false);
-                    break;
-            }
-            OnStateChange(state);
-            if (mDrawerToggle != null) {
-                mDrawerToggle.onDrawerStateChanged(newState);
-            }
-        }
-
-        @Override
-        public void onDrawerSlide(View drawerView, float slideOffset) {
-            if (mDrawerToggle != null){
-                mDrawerToggle.onDrawerSlide(drawerView, slideOffset);
-                if (state != STATE.DRAWING){
-                    OnStateChange(STATE.DRAWING);
-                }
-            }
-        }
-
-        @Override
-        public void onDrawerOpened(View drawerView) {
-            state = STATE.OPEN;
-            imgBack.setClickable(true);
-            IsClose(state);
-            if (mDrawerToggle != null) {
-                mDrawerToggle.onDrawerOpened(drawerView);
-            }
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setTitle(R.string.app_name);
-            }
-        }
-    };
-
-    private STATE state;
     private ImageView imgBack;
 
     private final FragmentManager.OnBackStackChangedListener mBackStackChangedListener =
@@ -240,22 +152,6 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
             return true;
         }
         switch (item.getItemId()) {
-            case android.R.id.home:
-
-                break;
-            case R.id.action_searchBtn:
-//                startActivity(new Intent(this, SearchActivity.class));
-                break;
-            case R.id.sleep_timer:
-//                startActivity(new Intent(this, TimerActivity.class));
-                break;
-            case R.id.sync:
-                Intent intent = new Intent(this, SplashActivity.class)
-                        .putExtra(Constants.VALUE.SYNC,
-                        true);
-                startActivity(intent);
-
-                break;
             case R.id.changeTheme:
                 final Dialog dialog = new Dialog(this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -457,33 +353,7 @@ public abstract class ActionBarCastActivity extends AppCompatActivity {
         mToolbar.inflateMenu(R.menu.main);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
-        if (mDrawerLayout != null) {
-            NavigationView navigationView = findViewById(R.id.nav_view);
-            if (navigationView == null) {
-                throw new IllegalStateException("Layout requires a NavigationView " +
-                        "with id 'nav_view'");
-            }
-
-            View headerView = navigationView.getHeaderView(0);
-            imgBack = headerView.findViewById(R.id.nav_back);
-            imgBack.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (state == STATE.OPEN) {
-                        mDrawerLayout.closeDrawers();
-                    }
-                }
-            });
-            // Create an ActionBarDrawerToggle that will handle opening/closing of the drawer:
-            mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                mToolbar, R.string.open_content_drawer, R.string.close_content_drawer);
-            mDrawerLayout.setDrawerListener(mDrawerListener);
-            populateDrawerItems(navigationView);
-            setSupportActionBar(mToolbar);
-            updateDrawerToggle();
-        } else {
-            setSupportActionBar(mToolbar);
-        }
+        setSupportActionBar(mToolbar);
 
         mToolbarInitialized = true;
     }

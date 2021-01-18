@@ -1,17 +1,42 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+buildscript {
+    repositories {
+        jcenter()
+        google()
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.0.2'
+    }
+}
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    buildToolsVersion '29.0.3'
     defaultConfig {
-        applicationId "com.music.android"
+        applicationId "com.android.music_player"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+  /*  buildFeatures {
+        viewBinding = true
+    }*/
+
     buildTypes {
         release {
             minifyEnabled false
@@ -21,15 +46,18 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    implementation 'com.intuit.sdp:sdp-android:1.0.6'
-    //noinspection GradleCompatible
-    implementation 'com.android.support:appcompat-v7:28.0.0'
     //noinspection GradleCompatible
     implementation 'com.android.support:design:28.0.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+   /* //noinspection GradleCompatible
+    //noinspection GradleCompatible
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+
     //noinspection GradleCompatible
     implementation 'com.android.support:support-v4:28.0.0'
     //noinspection GradleCompatible
@@ -38,10 +66,10 @@ dependencies {
     implementation 'com.android.support:support-media-compat:28.0.0'
     //noinspection GradleCompatible
     implementation 'com.android.support:recyclerview-v7:28.0.0'
-    //noinspection GradleCompatible
+    //noinspection GradleCompatible*/
     implementation 'com.android.support:mediarouter-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.android.support.constraint:constraint-layout:2.0.4'
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.jenzz:materialpreference:1.3'
     implementation('com.squareup.picasso:picasso:2.71828') {
         exclude group: "com.android.support"
@@ -49,17 +77,19 @@ dependencies {
 
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:0.7.0'
     implementation 'com.xgc1986.android:parallaxpagertransformer:1.0.3'
-
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
     // animation play pause
-    implementation 'me.zhanghai.android.materialplaypausedrawable:library:1.0.0'
+//    implementation 'com.simplecityapps:recyclerview-fastscroll:1.0.18'
+    implementation 'com.google.android.material:material:1.3.0-alpha03'
+
+    implementation "androidx.core:core-ktx:1.3.2"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 
-    // android test
-    androidTestImplementation "com.android.support.test:runner:1.0.2"
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-
+    implementation 'jp.wasabeef:blurry:2.1.1'
+//    implementation 'com.github.navasmdc:MaterialDesign:1.5@aar'
+    // ViewModel and LiveData
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
 
 }

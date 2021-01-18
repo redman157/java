@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:weightSum="10"
+    android:minWidth="@dimen/_250sdp"
+    android:background="?back_ground_dialog"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_weight="9"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+        <TextView
+            android:id="@+id/dialog_about_music_name"
+            android:textColor="?text_color"
+            android:textSize="@dimen/_20sdp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dialog_about_music_file_name"
+            android:textColor="?text_color"
+            android:textSize="@dimen/_12sdp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dialog_about_music_title"
+            android:textColor="?text_color"
+            android:textSize="@dimen/_12sdp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dialog_about_music_album"
+            android:textColor="?text_color"
+            android:textSize="@dimen/_12sdp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dialog_about_music_artist"
+            android:textColor="?text_color"
+            android:textSize="@dimen/_12sdp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dialog_about_music_time"
+            android:textColor="?text_color"
+            android:textSize="@dimen/_12sdp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/dialog_about_music_location"
+            android:textColor="?text_color"
+            android:textSize="@dimen/_12sdp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <Button
+        android:text="Done"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_gravity="right"
+        android:id="@+id/dialog_about_close"
+        android:layout_weight="1"
+        android:textColor="?select_enable"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"/>
+</LinearLayout>

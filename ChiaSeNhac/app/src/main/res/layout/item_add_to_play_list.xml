@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:id="@+id/linear_add_play_list"
+    android:background="@drawable/selection_item"
+    android:layout_height="wrap_content">
+    <TextView
+        android:padding="10dp"
+        android:id="@+id/text_play_list"
+        android:drawableLeft="@drawable/ic_music_notes_padded"
+        android:drawableTint="?attr/text_color"
+        android:drawablePadding="@dimen/_10sdp"
+        android:gravity="center|left"
+        android:layout_gravity="center"
+        android:textSize="@dimen/_14sdp"
+        android:textColor="?attr/text_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

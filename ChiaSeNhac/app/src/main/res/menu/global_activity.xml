@@ -6,7 +6,7 @@
         android:orderInCategory="100"
         app:showAsAction="ifRoom"
         android:title="@string/search"
-        android:icon="@drawable/ic_search_white_24dp"/>
+        android:icon="@drawable/ic_search_black_24dp"/>
 
     <item
         android:id="@+id/play_next"
@@ -21,6 +21,4 @@
         android:id="@+id/add_to_queue"
         app:showAsAction="never"
         android:title="Add to Queue"/>
-
-
 </menu>

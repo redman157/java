@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:padding="@dimen/_10sdp"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:background="?attr/selectableItemBackground"
+        android:id="@+id/item_ll_folder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_weight="1"
+                android:textSize="14sp"
+                android:gravity="left|center"
+                android:textColor="?attr/text_color"
+                android:id="@+id/item_text_title_folder"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+            <TextView
+                android:textSize="12sp"
+                android:gravity="left|center"
+                android:textColor="?attr/text_color"
+                android:layout_weight="1"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_width="match_parent"
+                android:id="@+id/item_text_info_folder"
+                android:layout_height="0dp"/>
+            <View
+                android:paddingTop="10dp"
+                android:layout_width="match_parent"
+                android:background="?attr/text_color"
+                android:layout_height="1dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

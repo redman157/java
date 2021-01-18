@@ -9,6 +9,66 @@
     <dimen name="appbar_padding">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
-
+    <dimen name="app_bar_height">@dimen/_150sdp</dimen>
     <dimen name="design_bottom_navigation_active_text_size" tools:override="true">14sp</dimen>
+
+    <dimen name="profile_image_margin_max">12dp</dimen>
+    <dimen name="profile_small_size">32dp</dimen>
+    <dimen name="profile_big_size">64dp</dimen>
+    <dimen name="profile_misc_padding">12dp</dimen>
+
+    <dimen name="popup_width">350dp</dimen>
+    <dimen name="popup_height">600dp</dimen>
+
+    <dimen name="_3dp">3dp</dimen>
+    <dimen name="_4dp">4dp</dimen>
+    <dimen name="_5dp">5dp</dimen>
+    <dimen name="_6dp">6dp</dimen>
+    <dimen name="_7dp">7dp</dimen>
+    <dimen name="_8dp">8dp</dimen>
+    <dimen name="_9dp">9dp</dimen>
+    <dimen name="_10dp">10dp</dimen>
+    <dimen name="_11dp">11dp</dimen>
+    <dimen name="_12dp">12dp</dimen>
+    <dimen name="_13dp">13dp</dimen>
+    <dimen name="_14dp">14dp</dimen>
+    <dimen name="_15dp">15dp</dimen>
+    <dimen name="_16dp">16dp</dimen>
+    <dimen name="_17dp">17dp</dimen>
+    <dimen name="_18dp">18dp</dimen>
+    <dimen name="_19dp">19dp</dimen>
+    <dimen name="_20dp">20dp</dimen>
+    <dimen name="_21dp">21dp</dimen>
+    <dimen name="_22dp">22dp</dimen>
+    <dimen name="_23dp">23dp</dimen>
+    <dimen name="_24dp">24dp</dimen>
+    <dimen name="_25dp">25dp</dimen>
+    <dimen name="_26dp">26dp</dimen>
+    <dimen name="_27dp">27dp</dimen>
+    <dimen name="_28dp">28dp</dimen>
+    <dimen name="_29dp">29dp</dimen>
+    <dimen name="_30dp">30dp</dimen>
+    <dimen name="_40dp">40dp</dimen>
+
+    <dimen name="_10sp">10sp</dimen>
+    <dimen name="_11sp">11sp</dimen>
+    <dimen name="_12sp">12sp</dimen>
+    <dimen name="_13sp">13sp</dimen>
+    <dimen name="_14sp">14sp</dimen>
+    <dimen name="_15sp">15sp</dimen>
+    <dimen name="_16sp">16sp</dimen>
+    <dimen name="_17sp">17sp</dimen>
+    <dimen name="_18sp">18sp</dimen>
+    <dimen name="_19sp">19sp</dimen>
+    <dimen name="_20sp">20sp</dimen>
+    <dimen name="_21sp">21sp</dimen>
+    <dimen name="_22sp">22sp</dimen>
+    <dimen name="_23sp">23sp</dimen>
+    <dimen name="_24sp">24sp</dimen>
+    <dimen name="_25sp">25sp</dimen>
+    <dimen name="_26sp">26sp</dimen>
+    <dimen name="_27sp">27sp</dimen>
+    <dimen name="_28sp">28sp</dimen>
+    <dimen name="_29sp">29sp</dimen>
+    <dimen name="_30sp">30sp</dimen>
 </resources>

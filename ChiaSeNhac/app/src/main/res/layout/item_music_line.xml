@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="?back_ground_app"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:background="@drawable/selection_item"
+        android:padding="4dp"
+        android:id="@+id/item_ll_music"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+        <androidx.cardview.widget.CardView
+            android:layout_margin="7dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="5dp"
+            card_view:cardPreventCornerOverlap = "false"
+            card_view:cardElevation="6dp">
+            <ImageView
+                android:id="@+id/item_img_music"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_library_music_accent_24dp"
+                android:scaleType="fitCenter"
+                android:layout_height="match_parent"/>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="9"
+            android:weightSum="10">
+            <LinearLayout
+                android:layout_weight="7.5"
+                android:layout_width="0dp"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_weight="1"
+                    android:textSize="@dimen/_13sdp"
+                    android:gravity="left|center"
+                    android:textColor="?text_color"
+                    android:id="@+id/item_text_title_music"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"/>
+                <TextView
+                    android:textSize="@dimen/_11sdp"
+                    android:gravity="left|center"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textColor="?text_color"
+                    android:layout_width="match_parent"
+                    android:id="@+id/item_text_artist_music"
+                    android:layout_height="0dp"/>
+
+                <View
+                    android:paddingTop="10dp"
+                    android:layout_width="match_parent"
+                    android:background="?text_color"
+                    android:layout_height="1dp"/>
+            </LinearLayout>
+            <TextView
+                android:id="@+id/item_text_time_music"
+                android:textSize="@dimen/_13sdp"
+                android:gravity="center"
+                android:layout_weight="1.5"
+                android:layout_width="0dp"
+                android:textColor="?text_color"
+                android:layout_height="match_parent"/>
+            <ImageButton
+                android:id="@+id/item_btn_music"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:layout_width="0dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_menu_dot_unenable"
+                android:tint="?text_color"
+                android:padding="@dimen/_5sdp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:layout_height="wrap_content"/>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

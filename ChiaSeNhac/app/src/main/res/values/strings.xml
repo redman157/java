@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="bad_id">Play a song first!</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="open_content_drawer">Open the main menu</string>
+    <string name="close_content_drawer">Close the main menu</string>
+    <string name="touch_to_cast">Touch to connect to a Google Cast device</string>
+    <string name="collapsing_profile_behavior" translatable="false">com.android.music_player.CollapsingProfileBehavior</string>
+    <string name="behavior" translatable="false">com.android.music_player.Behavior</string>
+    <string name="test_profile_image_desc">Profile Image</string>
     <string name="app_name">Music Application</string>
     <string name="app_version">v0.9.6 (August 12, 2019)</string>
+    <string name="notification_channel_id">com.android.music_player_channel</string>
     <string name="default_notification_channel_id">channel_music_playback</string>
     <string name="action_settings">Settings</string>
     <string name="action_timer">Set Sleep Time</string>
@@ -102,4 +111,23 @@
     <string name="artist_cap">ARTIST</string>
     <string name="recently_added_cap">RECENTLY ADDED</string>
     <string name="playlist_cap">PLAYLIST</string>
+
+    <!-- Allowed caller template -->
+    <string name="allowed_caller_log">
+        Caller has a valid certificate, but its package doesn\'t match any expected package for the
+        given certificate. To allow this caller, add the following to the allowed callers list:\n
+        <![CDATA[
+        <signature name=\"%1$s\" package=\"%2$s\">\n\t<key>%3$s</key>\n</signature>\n
+        ]]>
+    </string>
+
+    <string name="label_stop">Stop</string>
+    <string name="label_pause">Pause</string>
+    <string name="label_play">Play</string>
+    <string name="label_play_pause">Play and pause toggle</string>
+    <string name="label_previous">Previous track</string>
+    <string name="label_next">Next track</string>
+
+    <string name="svg_play_button">M0,0 L0,24 12,12 0,0 M12,0 L12,0 12,0 12,0</string>
+    <string name="svg_pause_button">M0,0 L0,24 1,24 1,0 M12,0 L12,24 13,24 13,0</string>
 </resources>

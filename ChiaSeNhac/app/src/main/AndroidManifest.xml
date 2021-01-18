@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.droidheat.musicplayer">
+    package="com.android.music_player">
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission-sdk-23 android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
@@ -24,20 +33,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:requestLegacyExternalStorage="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.RecentlyAllMusicActivity" />
-        <activity android:name=".activities.PlayActivity" />
-        <activity android:name=".activities.EqualizerActivity" />
-        <activity android:name=".activities.SettingsActivity" />
-        <activity android:name=".activities.TimerActivity" />
-        <activity android:name=".activities.SearchActivity" />
-        <activity android:name=".activities.HomeActivity"
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+
+        <activity android:name="com.android.music_player.activities.HomeActivity"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
+
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme" >
+
+            <!-- Use this intent filter to get voice searches, like "Play The Beatles" -->
+            <intent-filter>
+                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
-            android:name=".activities.SplashActivity"
+            android:name="com.android.music_player.activities.SplashActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
@@ -52,7 +67,7 @@
         </activity>
 
         <receiver
-            android:name=".MusicWidget4x1"
+            android:name="com.android.music_player.widget.MusicWidget4x1"
             android:label="Music Player">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -62,43 +77,27 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widgetprovider4x1" />
         </receiver>
-        <service android:name=".services.MediaPlayerService"
-            android:exported="false"
-            tools:ignore="ExtraText">
+
+        <service
+            android:name="com.android.music_player.services.MediaService"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="com.droidheat.musicplayer.action.IS_PLAY"/>
-                <action android:name="com.droidheat.musicplayer.action.SEEK"/>
-                <action android:name="com.droidheat.musicplayer.action.CLOSE" />
-                <action android:name="com.droidheat.musicplayer.action.PLAY_PAUSE" />
-                <action android:name="com.droidheat.musicplayer.action.PLAY" />
-                <action android:name="com.droidheat.musicplayer.action.REPEAT" />
-                <action android:name="com.droidheat.musicplayer.action.TRACK_PREV" />
-                <action android:name="com.droidheat.musicplayer.action.TRACK_NEXT" />
-                <action android:name="com.droidheat.musicplayer.action.PERSISTENT_NOTIFICATION" />
-                <action android:name="android.intent.action.HEADSET_PLUG" />
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-                <action android:name="android.media.browse.MediaBrowserService" />
+                <action android:name="android.media.browse.MediaBrowserService"/>
             </intent-filter>
         </service>
 
-        <service
-            android:name=".services.MusicPlayback"
-            android:exported="false">
+        <receiver android:name="androidx.media.session.MediaButtonReceiver">
             <intent-filter>
-                <action android:name="com.droidheat.musicplayer.action.CLOSE" />
-                <action android:name="com.droidheat.musicplayer.action.PLAY_PAUSE" />
-                <action android:name="com.droidheat.musicplayer.action.PLAY" />
-                <action android:name="com.droidheat.musicplayer.action.REPEAT" />
-                <action android:name="com.droidheat.musicplayer.action.TRACK_PREV" />
-                <action android:name="com.droidheat.musicplayer.action.TRACK_NEXT" />
-                <action android:name="com.droidheat.musicplayer.action.PERSISTENT_NOTIFICATION" />
-                <action android:name="android.intent.action.HEADSET_PLUG" />
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-                <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
-        </service>
+        </receiver>
+
+        <provider
+            android:name=".library.AlbumArtContentProvider"
+            android:authorities="com.android.music_player.library."
+            android:exported="true"/>
     </application>
 
 </manifest>

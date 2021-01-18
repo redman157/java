@@ -29,7 +29,7 @@
         <com.jenzz.materialpreference.CheckBoxPreference
             android:id="@+id/equalizer"
             android:key="turnEqualizer"
-            android:summary="Enable equalizer for songs"
+            android:summary="Enable equalizer for queueItems"
             android:title="Equalizer" />
 
     </com.jenzz.materialpreference.PreferenceCategory>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="OverlayThemeLime" parent="AppTheme">
+        <item name="select_enable">@color/red_A400</item>
+        <item name="back_ground_sliding">@color/light_grey</item>
+        <item name="back_ground_app">@color/white</item>
+        <item name="back_ground_title">@color/white</item>
+        <item name="back_ground_dialog">@color/white</item>
+        <item name="back_ground_button">@color/light_grey</item>
+        <item name="text_color">@color/black</item>
+        <item name="tint_color">@color/green_A400</item>
+        <item name="indicator_edit">@color/light_green</item>
+        <item name="progress_bar_enable">@color/green_A400</item>
+        <item name="progress_bar_unenable">@color/white</item>
+        <item name="thumb">@color/light_green</item>
+        <item name="popup_text_color">@color/light</item>
+
+        <item name="color_primary">@color/light_green</item>
+        <item name="color_primary_dark">@color/green</item>
+        <item name="accent_color">@color/green_A400</item>
+    </style>
+
+    <style name="OverlayThemeBlack" parent="AppTheme">
+        <item name="select_enable">@color/red_A400</item>
+        <item name="back_ground_sliding">@color/light_grey</item>
+        <item name="back_ground_app">@color/blackOpaque</item>
+        <item name="back_ground_title">@color/white</item>
+        <item name="back_ground_dialog">@color/blackOpaque</item>
+        <item name="back_ground_button">@color/light_grey</item>
+        <item name="text_color">@color/white</item>
+        <item name="tint_color">@color/blackOpaque</item>
+        <item name="indicator_edit">@color/light_grey</item>
+        <item name="progress_bar_enable">@color/blackOpaque</item>
+        <item name="progress_bar_unenable">@color/white</item>
+        <item name="thumb">@color/light_grey</item>
+        <item name="popup_text_color">@color/blackOpaque</item>
+
+        <item name="color_primary">@color/light_grey</item>
+        <item name="color_primary_dark">@color/blackOpaque</item>
+        <item name="accent_color">@color/black</item>
+    </style>
+
+    <style name="OverlayThemeWhite" parent="AppTheme">
+        <!--khi button choose-->
+        <item name="select_enable">@color/red_A400</item>
+        <!--backgroud sliding panel-->
+        <item name="back_ground_sliding">@color/blackOpaque</item>
+        <!--back ground toàn app-->
+        <item name="back_ground_app">@color/light</item>
+        <!--màu chữ của title playlist, music-->
+        <item name="back_ground_title">@color/black</item>
+        <!--back gorund của dialog -->
+        <item name="back_ground_dialog">@color/white</item>
+        <!--back ground cardview-->
+        <item name="back_ground_button">@color/light_grey</item>
+        <!--background chữ-->
+        <item name="text_color">@color/black</item>
+        <!--background của nút -->
+        <item name="tint_color">@color/white</item>
+        <!--indicator của editetxt-->
+        <item name="indicator_edit">@color/light_grey</item>
+        <!--progress đang chạy -->
+        <item name="progress_bar_enable">@color/white</item>
+        <!--progres con lại-->
+        <item name="progress_bar_unenable">@color/blackOpaque</item>
+        <!--cục thub của seekbar-->
+        <item name="thumb">@color/grey</item>
+        <!--cuộn của recycler view-->
+        <item name="popup_text_color">@color/white</item>
+
+        <item name="color_primary">@color/light_grey</item>
+        <item name="color_primary_dark">@color/blackOpaque</item>
+        <item name="accent_color">@color/white</item>
+    </style>
+
+    <style name="OverlayThemeBlue" parent="AppTheme">
+        <item name="select_enable">@color/red_A400</item>
+        <item name="back_ground_sliding">@color/light_grey</item>
+        <item name="back_ground_app">@color/white</item>
+        <item name="back_ground_title">@color/white</item>
+        <item name="back_ground_dialog">@color/white</item>
+        <item name="back_ground_button">@color/light_grey</item>
+        <item name="text_color">@color/black</item>
+        <item name="tint_color">@color/blue_A400</item>
+        <item name="indicator_edit">@color/light_blue_A400</item>
+        <item name="progress_bar_enable">@color/blue_A400</item>
+        <item name="progress_bar_unenable">@color/white</item>
+        <item name="thumb">@color/light_blue_A400</item>
+        <item name="popup_text_color">@color/light</item>
+
+        <item name="color_primary">@color/light_blue_A400</item>
+        <item name="color_primary_dark">@color/dark_blue</item>
+        <item name="accent_color">@color/blue_A400</item>
+    </style>
+
+    <style name="OverlayThemePurpe" parent="AppTheme">
+        <item name="select_enable">@color/red_A400</item>
+        <item name="back_ground_sliding">@color/light_grey</item>
+        <item name="back_ground_app">@color/white</item>
+        <item name="back_ground_title">@color/white</item>
+        <item name="back_ground_dialog">@color/white</item>
+        <item name="back_ground_button">@color/light_grey</item>
+        <item name="text_color">@color/black</item>
+        <item name="tint_color">@color/purple_A400</item>
+        <item name="indicator_edit">@color/purple_A400</item>
+        <item name="progress_bar_enable">@color/deep_purple_A400</item>
+        <item name="progress_bar_unenable">@color/white</item>
+        <item name="thumb">@color/purple</item>
+        <item name="popup_text_color">@color/light</item>
+
+        <item name="color_primary">@color/purple</item>
+        <item name="color_primary_dark">@color/deep_purple_A400</item>
+        <item name="accent_color">@color/purple_A400</item>
+    </style>
+
+    <style name="OverlayThemeOrange" parent="AppTheme">
+        <item name="select_enable">@color/red_A400</item>
+        <item name="back_ground_sliding">@color/light_grey</item>
+        <item name="back_ground_app">@color/white</item>
+        <item name="back_ground_title">@color/white</item>
+        <item name="back_ground_dialog">@color/white</item>
+        <item name="back_ground_button">@color/light_grey</item>
+        <item name="text_color">@color/black</item>
+        <item name="tint_color">@color/orange_A400</item>
+        <item name="indicator_edit">@color/orange</item>
+        <item name="progress_bar_enable">@color/orange_A400</item>
+        <item name="progress_bar_unenable">@color/white</item>
+        <item name="thumb">@color/orange</item>
+        <item name="popup_text_color">@color/light</item>
+
+        <item name="color_primary">@color/orange</item>
+        <item name="color_primary_dark">@color/deep_orange_A400</item>
+        <item name="accent_color">@color/orange_A400</item>
+    </style>
+
+
+    <style name="OverlayThemeCyan" parent="AppTheme">
+        <item name="select_enable">@color/red_A400</item>
+        <item name="back_ground_sliding">@color/light_grey</item>
+        <item name="back_ground_app">@color/white</item>
+        <item name="back_ground_title">@color/white</item>
+        <item name="back_ground_dialog">@color/white</item>
+        <item name="back_ground_button">@color/light_grey</item>
+        <item name="text_color">@color/black</item>
+        <item name="tint_color">@color/cyan_A400</item>
+        <item name="indicator_edit">@color/cyan</item>
+        <item name="progress_bar_enable">@color/cyan_A400</item>
+        <item name="progress_bar_unenable">@color/white</item>
+        <item name="thumb">@color/cyan</item>
+        <item name="popup_text_color">@color/light</item>
+
+        <item name="color_primary">@color/cyan</item>
+        <item name="color_primary_dark">@color/teal_A400</item>
+        <item name="accent_color">@color/cyan_A400</item>
+    </style>
+
+    <style name="OverlayThemeDeepPurple" parent="AppTheme">
+        <item name="select_enable">@color/red_A400</item>
+        <item name="back_ground_sliding">@color/light_grey</item>
+        <item name="back_ground_app">@color/white</item>
+        <item name="back_ground_title">@color/white</item>
+        <item name="back_ground_dialog">@color/white</item>
+        <item name="back_ground_button">@color/light_grey</item>
+        <item name="text_color">@color/black</item>
+        <item name="tint_color">@color/deep_purple_A400</item>
+        <item name="indicator_edit">@color/purple_A400</item>
+        <item name="progress_bar_enable">@color/purple</item>
+        <item name="progress_bar_unenable">@color/white</item>
+        <item name="thumb">@color/deep_purple_A400</item>
+        <item name="popup_text_color">@color/light</item>
+
+        <item name="color_primary">@color/purple_A400</item>
+        <item name="color_primary_dark">@color/purple</item>
+        <item name="accent_color">@color/deep_purple_A400</item>
+    </style>
+
+    <style name="OverlayThemeYellow" parent="AppTheme">
+        <item name="select_enable">@color/red_A400</item>
+        <item name="back_ground_sliding">@color/light_grey</item>
+        <item name="back_ground_app">@color/white</item>
+        <item name="back_ground_title">@color/white</item>
+        <item name="back_ground_dialog">@color/white</item>
+        <item name="back_ground_button">@color/light_grey</item>
+        <item name="text_color">@color/black</item>
+        <item name="tint_color">@color/yellow</item>
+        <item name="indicator_edit">@color/orange_A400</item>
+        <item name="progress_bar_enable">@color/deep_orange_A400</item>
+        <item name="progress_bar_unenable">@color/white</item>
+        <item name="thumb">@color/yellow</item>
+        <item name="popup_text_color">@color/light</item>
+
+        <item name="color_primary">@color/orange_A400</item>
+        <item name="color_primary_dark">@color/deep_orange_A400</item>
+        <item name="accent_color">@color/yellow</item>
+    </style>
+
+    <style name="OverlayThemeBrown" parent="AppTheme">
+        <item name="select_enable">@color/red_A400</item>
+        <item name="back_ground_sliding">@color/light_grey</item>
+        <item name="back_ground_app">@color/white</item>
+        <item name="back_ground_title">@color/white</item>
+        <item name="back_ground_dialog">@color/white</item>
+        <item name="back_ground_button">@color/light_grey</item>
+        <item name="text_color">@color/black</item>
+        <item name="tint_color">@color/brown_400</item>
+        <item name="indicator_edit">@color/blue_gray_400</item>
+        <item name="progress_bar_enable">@color/light_grey</item>
+        <item name="progress_bar_unenable">@color/white</item>
+        <item name="thumb">@color/brown_400</item>
+        <item name="popup_text_color">@color/light</item>
+
+        <item name="color_primary">@color/light_grey</item>
+        <item name="color_primary_dark">@color/blue_gray_400</item>
+        <item name="accent_color">@color/brown_400</item>
+    </style>
+</resources>

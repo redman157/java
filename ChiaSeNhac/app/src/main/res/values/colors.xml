@@ -2,12 +2,15 @@
 <resources>
     <color name="ic_launcher_background">#00ffffff</color>
 
+
+
     <!-- Standardized Colors -->
 
     <color name="blackOpaque">#99000000</color>
-    <color name="whiteOpaque">#bcFFFFFF</color>
+    <color name="whiteOpaque">#CCFFFFFF</color>
     <color name="whiteOpaqueX2">#aaFFFFFF</color>
     <color name="whiteOpaqueX4">#55FFFFFF</color>
+    <color name="whiteOpaqueX6">#1AFFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
     <color name="black">#000</color>
@@ -25,21 +28,44 @@
     <color name="yellow">#ffca28</color>
     <color name="purple">#ba68c8</color>
     <color name="red">#CC3C3C</color>
-    <color name="grey">#607d8b</color>
-
+    <color name="grey">#757575</color>
+    <color name="light_green">#ABE4C7</color>
+    <color name="thumbColor">#757575</color>
     <!-- App Theme -->
-
-    <color name="primaryColor">#000000</color>
-    <color name="primaryDark">#000000</color>
-    <color name="accentColor">#FFFFFF</color>
+    <color name="line">#ABAFAF</color>
+    <color name="fade_sliding_panel">#80000000</color>
+    <color name="primaryColor">@color/white</color>
+    <color name="primaryDark">#C5C5C5</color>
+    <color name="light_grey">#C5C5C5</color>
+    <color name="accentColor">@color/black</color>
     <color name="imageColorAlpha">#66000000</color>
     <color name="background">#000000</color>
     <color name="dialogBackground">#252525</color>
     <color name="progressBarBackground">#44ffffff</color>
     <color name="navigationBar">#000000</color>
-
     <color name="textColorTitle">#ffffff</color>
     <color name="textColorSubTitle">#999</color>
     <color name="unselected_text">#999</color>
     <color name="playerControlsBackground">@color/primaryDark</color>
+
+    <!--custom color-->
+    <color name="light">#FAFAFA</color>
+    <color name="inverted">#060606</color>
+    <color name="red_A400">#FF1744</color> <!-- LIGHT -->
+    <color name="pink_A400">#F50057</color> <!-- LIGHT -->
+    <color name="purple_A400">#D500F9</color> <!-- LIGHT -->
+    <color name="deep_purple_A400">#651FFF</color> <!-- LIGHT -->
+    <color name="indigo_A400">#3D5AFE</color> <!-- LIGHT -->
+    <color name="blue_A400">#2979FF</color> <!-- LIGHT -->
+    <color name="light_blue_A400">#00B0FF</color> <!-- DARK -->
+    <color name="cyan_A400">#00E5FF</color> <!-- DARK -->
+    <color name="teal_A400">#1DE9B6</color> <!-- DARK -->
+    <color name="green_A400">#00E676</color> <!-- DARK -->
+    <color name="amber_A400">#FFC400</color> <!-- DARK -->
+    <color name="orange_A400">#FF9100</color> <!-- DARK -->
+    <color name="deep_orange_A400">#FF3D00</color> <!-- LIGHT -->
+    <color name="brown_400">#8D6E63</color> <!-- LIGHT -->
+    <color name="gray_400">#BDBDBD</color> <!-- DARK -->
+    <color name="gray_800">#212121</color> <!-- LIGHT -->
+    <color name="blue_gray_400">#78909C</color> <!-- LIGHT -->
 </resources>

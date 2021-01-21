@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 
 import company.ai.musicplayer.R
+import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.models.SavedEqualizerSettings
 import company.ai.musicplayer.models.SavedMusic
 import java.lang.reflect.Type
@@ -25,7 +26,7 @@ class Preferences (context: Context){
 
     private val prefsLatestVolume = context.getString(R.string.latest_volume_pref)
     private val prefsLatestPlayedSong = context.getString(R.string.latest_played_song_pref)
-
+    private val prefsCurrentPlayedSong = context.getString(R.string.current_played_song_pref)
     private val prefsActiveFragments = context.getString(R.string.active_fragments_pref)
     val prefsActiveFragmentsDef = setOf(0, 1, 2, 3, 4)
 
@@ -50,6 +51,10 @@ class Preferences (context: Context){
     private val typeSavedEqualizerSettings = object : TypeToken<SavedEqualizerSettings>() {}.type
 
     private val prefsSavedEqualizerSettings = context.getString(R.string.saved_eq_settings)
+
+    private val prefsDeviceSongs = context.getString(R.string.device_songs_pref)
+    //device songs is a list of Music
+    private val typeDeviceSongs = object : TypeToken<MutableList<Music>>() {}.type
     var theme
         get() = mPrefs.getString(prefsTheme, prefsThemeDef)
         set(value) = mPrefs.edit().putString(prefsTheme, value).apply()
@@ -75,6 +80,13 @@ class Preferences (context: Context){
         set(value) = mPrefs.edit().putInt(prefsLatestVolume, value).apply()
 
     var latestPlayedSong: SavedMusic?
+        get() = getObject(
+            prefsLatestPlayedSong,
+            typeLastPlayedSong
+        )
+        set(value) = putObject(prefsLatestPlayedSong, value)
+
+    var currentPlayedSong: SavedMusic?
         get() = getObject(
             prefsLatestPlayedSong,
             typeLastPlayedSong
@@ -111,6 +123,25 @@ class Preferences (context: Context){
     var isHeadsetPlugEnabled
         get() = mPrefs.getBoolean(prefsHeadsetPlug, true)
         set(value) = mPrefs.edit().putBoolean(prefsHeadsetPlug, value).apply()
+
+    var artistsSorting
+        get() = mPrefs.getInt(prefsArtistsSorting, Constants.DESCENDING_SORTING)
+        set(value) = mPrefs.edit().putInt(prefsArtistsSorting, value).apply()
+
+    var foldersSorting
+        get() = mPrefs.getInt(prefsFoldersSorting, Constants.DEFAULT_SORTING)
+        set(value) = mPrefs.edit().putInt(prefsFoldersSorting, value).apply()
+
+    var albumsSorting
+        get() = mPrefs.getInt(prefsAlbumsSorting, Constants.DEFAULT_SORTING)
+        set(value) = mPrefs.edit().putInt(prefsAlbumsSorting, value).apply()
+
+    var deviceSongs: MutableList<Music>?
+        get() = getObject(
+            prefsDeviceSongs,
+            typeDeviceSongs
+        )
+        set(value) = putObject(prefsDeviceSongs, value)
 
     private val mGson = GsonBuilder().create()
     /**

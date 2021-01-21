@@ -1,21 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    
     <item
-        android:id="@+id/sleep_timer"
+        android:id="@+id/settings"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:title="Set Sleep Timer"/>
-
-    <item
-        android:id="@+id/sync"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="Sync Music" />
-
-    <item android:id="@+id/changeTheme"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="Change Theme"/>
-
+        android:title="Setting" />
 </menu>

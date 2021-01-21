@@ -1,0 +1,130 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <!--        <item name="colorPrimary">@color/widgetsColor</item>
+                <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+                <item name="colorAccent">@color/accentColor</item>-->
+        <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:colorBackground">@color/widgetsColor</item>
+    </style>
+
+    <!-- This will set the fade in animation on all the activities by default -->
+    <style name="WindowAnimationTransition">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
+    <!-- show menu popup exact below actionbar-->
+    <style name="OverflowMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:windowDisablePreview">true</item>
+        <item name="overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">5.0dp</item>
+        <item name="android:popupBackground">@color/black</item>
+        <!--<item name="android:popupBackground">#FFF</item>-->
+    </style>
+
+    <style name="AppTheme.TabLayout" parent="android:Widget">
+        <item name="tabPaddingStart">@dimen/_1sdp</item>
+        <item name="tabPaddingEnd">@dimen/_1sdp</item>
+        <item name="tabBackground">@drawable/custom_background_tab_layout</item>
+        <item name="tabSelectedTextColor">?attr/colorSecondary</item>
+        <item name="tabIndicatorColor">?attr/colorAccent</item>
+        <item name="tabIndicatorGravity">bottom</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabGravity">fill</item>
+        <item name="tabIndicatorHeight">@dimen/_2sdp</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- themTool bar -->
+    <style name="AppTheme.CustomActionBar" >
+        <item name="android:actionBarStyle">@style/MyHomeActionBar</item>
+        <item name="actionBarStyle">@style/MyHomeActionBar</item>
+        <item name="dialogTheme">@style/MyCustomDialog</item>
+        <item name="android:dialogTheme">@style/MyCustomDialog</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- MyCustomDialog -->
+    <style name="MyCustomDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:background">@drawable/custom_corner_dialog</item>
+        <item name="buttonStyle">@style/MyCustomButton</item>
+    </style>
+
+    <!-- MyCustomButton -->
+    <style name="MyCustomButton" parent="Widget.AppCompat.Button">
+        <item name="android:textSize">@dimen/_13sdp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="MyHomeActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="background">@color/colorPrimary</item>
+        <item name="android:displayOptions">showHome|homeAsUp|showTitle</item>
+        <item name="displayOptions">showHome|homeAsUp|showTitle</item>
+        <item name="android:icon">@android:color/transparent</item>
+        <item name="android:subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionMode.Title</item>
+        <item name="android:titleTextStyle">@style/TitleTextStyle</item>
+        <item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionMode.Title</item>
+        <item name="titleTextStyle">@style/TitleTextStyle</item>
+        <item name="android:logo">@null</item>
+        <item name="overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">-4.0dip</item>
+    </style>
+
+    <style name="TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <!--Toolbar pop up-->
+    <style name="toolBarStyle" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:tint">@color/white</item>
+    </style>
+
+    <style name="popupStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:background">@color/white</item>
+        <item name="overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">0dp</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="@style/Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+        <item name="colorAccent">@color/accentColor</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/background_corner_top</item>
+        <item name="android:textColor">@color/windowBackground</item>
+    </style>
+
+    <style name="ToolbarStyle.Subtitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle" />
+    <style name="ToolbarStyle.Title" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+</resources>

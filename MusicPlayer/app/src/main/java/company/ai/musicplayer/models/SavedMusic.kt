@@ -1,12 +1,16 @@
 package company.ai.musicplayer.models
 
 data class SavedMusic(
-    val artist: String?,
-    val title: String?,
     val displayName: String?,
-    val year: Int,
-    val startFrom: Int,
-    val duration: Long,
+    val artist: String?,
     val album: String?,
+    val year: Int,
+    val track: Int,
+    val title: String?,
+    val duration: Long,
+    val albumID: Long?,
+    val relativePath: String?,
+    val id: Long?,
+    val startFrom: Int,
     val launchedBy: String
 )

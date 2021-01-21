@@ -3,6 +3,7 @@ package company.ai.musicplayer.controller
 import android.media.audiofx.BassBoost
 import android.media.audiofx.Equalizer
 import android.media.audiofx.Virtualizer
+import androidx.fragment.app.Fragment
 import company.ai.musicplayer.models.Music
 
 interface UIControlInterface {
@@ -12,7 +13,7 @@ interface UIControlInterface {
     fun onSongSelected(song: Music?, songs: List<Music>?, launchedBy: String)
     fun onShuffleSongs(songs: MutableList<Music>?, launchedBy: String)
     fun onLovedSongsUpdate(clear: Boolean)
-    fun onCloseActivity()
+    fun onCloseActivity(fragment: Fragment)
     fun onAddToQueue(song: Music?)
     fun onAddToFilter(stringToFilter: String?)
     fun onDenyPermission()

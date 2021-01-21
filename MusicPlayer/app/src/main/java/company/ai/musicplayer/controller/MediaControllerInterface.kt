@@ -2,5 +2,9 @@ package company.ai.musicplayer.controller
 
 interface MediaControllerInterface{
     fun onCurrentPosition(pos : Int)
-    fun onDismissDialog()
+    fun onShuffle()
+    fun onResumeOrPause()
+    fun onCancelDialog()
+    fun onEqualizer()
+    fun onSkip(isNext: Boolean)
 }

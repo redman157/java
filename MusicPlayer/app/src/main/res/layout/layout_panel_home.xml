@@ -24,7 +24,6 @@
 
         <RelativeLayout
             app:ignore="NamespaceTypo"
-            android:background="?back_ground_sliding"
             android:elevation="3dp"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
@@ -135,7 +134,7 @@
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_centerVertical="true"
-                android:tint="?accent_color"
+                android:tint="?attr/colorAccent"
                 android:background="@drawable/selection_item"
                 android:clickable="true"
                 android:gravity="center_vertical|right"/>

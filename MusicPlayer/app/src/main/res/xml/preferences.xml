@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/selection_item"
     xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:enabled="false"
+        app:icon="@drawable/ic_database"
+        app:key="@string/found_songs_pref" />
     <PreferenceCategory
         app:layout="@layout/custom_preference_category"
         app:title="@string/category_ui">
@@ -31,6 +37,42 @@
             android:summary="@string/eq_pref_note_summary"
             app:title="@string/equalizer" />
 
+        <SwitchPreferenceCompat
+            android:summaryOff="@string/precise_volume_pref_summary_off"
+            app:defaultValue="true"
+            app:key="@string/precise_volume_pref"
+            app:summaryOn="@string/precise_volume_pref_summary_on"
+            app:title="@string/precise_volume_pref_title" />
 
+        <SwitchPreferenceCompat
+            android:summaryOff="@string/focus_pref_summary_off"
+            app:defaultValue="true"
+            app:key="@string/focus_pref"
+            app:summaryOn="@string/focus_pref_summary_on"
+            app:title="@string/focus_pref_title" />
+
+        <SwitchPreferenceCompat
+            android:summaryOff="@string/headset_pref_summary_off"
+            app:defaultValue="true"
+            app:key="@string/headset_pref"
+            app:summaryOn="@string/headset_pref_summary_on"
+            app:title="@string/headset_pref_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:layout="@layout/custom_preference_category"
+        app:title="@string/category_general">
+        <SeekBarPreference
+            android:defaultValue="10"
+            android:key="@string/fast_seeking_pref"
+            android:max="60"
+            android:summary="@string/fast_seeking_pref_summary"
+            android:title="@string/fast_seeking_pref_title"
+            app:min="5"
+            app:seekBarIncrement="5"
+            app:showSeekBarValue="true" />
+        <Preference
+            app:key="@string/filter_pref"
+            app:title="@string/filter_pref_title" />
     </PreferenceCategory>
 </androidx.preference.PreferenceScreen>

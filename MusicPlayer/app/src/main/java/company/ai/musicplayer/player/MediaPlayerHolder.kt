@@ -37,6 +37,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import kotlin.math.ln
+import kotlin.reflect.KProperty0
 
 /**
  * Exposes the functionality of the [MediaPlayer]
@@ -272,6 +273,7 @@ class MediaPlayerHolder(private val playerService: PlayerService): MediaPlayer.O
         currentSong = Pair(song, isFromQueue)
         mPlayingAlbumSongs = songs
     }
+
 
     private fun updateMediaSessionMetaData() {
         val mediaMediaPlayerCompat = MediaMetadataCompat.Builder().apply {
@@ -594,7 +596,7 @@ class MediaPlayerHolder(private val playerService: PlayerService): MediaPlayer.O
         }
     }
 
-    private fun repeat(updatePlaybackStatus: Boolean){
+    fun repeat(updatePlaybackStatus: Boolean){
         getRepeatMode()
         if (updatePlaybackStatus) updatePlaybackStatus(true)
         if (isPlaying) mMusicNotificationManager.updateRepeatIcon()
@@ -709,7 +711,6 @@ class MediaPlayerHolder(private val playerService: PlayerService): MediaPlayer.O
 
     /* Sets the volume of the media player */
     fun setPreciseVolume(percent: Int) {
-
         currentVolumeInPercent = percent
 
         if (isMediaPlayer) {
@@ -773,7 +774,7 @@ class MediaPlayerHolder(private val playerService: PlayerService): MediaPlayer.O
                             }
                         }
 
-                    Intent.ACTION_HEADSET_PLUG -> if (isCurrentSong && mPreferences.isHeadsetPlugEnabled) {
+                    Intent.ACTION_HEADSET_PLUG -> if (isCurrentSong && mPreferences.isHeadsetPlugEnabled){
                         when (intent.getIntExtra("state", -1)) {
                             // 0 means disconnected
                             HEADSET_DISCONNECTED -> if (isCurrentSong && mPreferences.isHeadsetPlugEnabled) {

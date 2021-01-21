@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import company.ai.musicplayer.R
-import company.ai.musicplayer.activiy.HomeActivity
+import company.ai.musicplayer.ui.HomeActivity
 import company.ai.musicplayer.extensions.getAlbumArt
 import company.ai.musicplayer.mPreferences
 import company.ai.musicplayer.service.PlayerService
@@ -104,11 +104,13 @@ class MusicNotificationManager(private val playerService: PlayerService){
     }
 
     fun updateNotification() {
-        mNotificationManager
-            .notify(
-                Constants.NOTIFICATION_ID,
-                mNotificationBuilder.build()
-            )
+        if (::mNotificationBuilder.isInitialized) {
+            mNotificationManager
+                .notify(
+                    Constants.NOTIFICATION_ID,
+                    mNotificationBuilder.build()
+                )
+        }
     }
 
     fun onUpdateDefaultAlbumArt(bitmapRes: Bitmap, updateNotification: Boolean) {

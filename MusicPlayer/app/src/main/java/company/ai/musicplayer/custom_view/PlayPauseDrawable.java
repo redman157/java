@@ -57,7 +57,7 @@ public class PlayPauseDrawable extends Drawable {
         final Resources res = context.getResources();
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(ContextCompat.getColor(context, R.color.black));
+        mPaint.setColor(color);
     }
 
     @Override

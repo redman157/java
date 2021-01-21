@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/app_bar_height"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:gravity="bottom"
+    android:elevation="@dimen/_8sdp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/image_player"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/header_rounded_box"
+        android:contentDescription="@string/test_profile_image_desc" />
+
+    <RelativeLayout
+        android:id="@+id/profileContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/app_bar_height"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text_title"
+            android:lines="1"
+            android:ellipsize="end"
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="@dimen/_7sdp"
+            android:textSize="@dimen/_13sdp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/text_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:textSize="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_7sdp"
+            android:ellipsize="end"
+            android:layout_below="@id/text_title"
+            android:textColor="?attr/colorOnSurface" />
+
+        <TextView
+            android:layout_marginEnd="@dimen/_7sdp"
+            android:id="@+id/text_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:drawablePadding="2sp"
+            android:paddingBottom="@dimen/profile_misc_padding"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="?attr/colorOnSurface"
+            android:maxLines="1"
+            android:ellipsize="end" />
+    </RelativeLayout>
+</LinearLayout>

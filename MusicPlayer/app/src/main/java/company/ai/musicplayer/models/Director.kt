@@ -10,8 +10,7 @@ import androidx.room.PrimaryKey
     tableName = Director.TABLE_NAME,
     indices = [Index(value = [Director.TITLE], unique = true)])
 data class Director(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = ID) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) val id: Int = 0,
     @ColumnInfo(name = TITLE) var displayName: String,
     @ColumnInfo(name = COUNT_LISTENER) var countListen: Int,
     @ColumnInfo(name = TYPE) var type: String) {

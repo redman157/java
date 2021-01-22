@@ -16,6 +16,7 @@ import company.ai.musicplayer.utils.Constants.DATABASE_NAME
 @Database(entities = [Music::class, Director::class], version = 1, exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun musicController(): MusicDao
+    abstract fun director(): DirectorDao
     companion object{
         // For Singleton instantiation
         @Volatile private var instance: AppDatabase? = null

@@ -18,7 +18,7 @@
     <color name="red_alpha_100">#EC3131</color>
     <color name="silver_chalice">#A9A9A9</color>
     <color name="light_grey">#C5C5C5</color>
-    <color name="tab_layout_color">#66FFFFFF</color>
+    <color name="tab_layout_color">#C5C5C5</color>
 // theme color 800
     <color name="secondary_red">#ff5f52</color>
     <color name="secondary_pink">#e35183</color>

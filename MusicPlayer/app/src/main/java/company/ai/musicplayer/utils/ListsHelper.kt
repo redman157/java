@@ -4,6 +4,7 @@ import android.util.Log
 import company.ai.musicplayer.mPreferences
 import company.ai.musicplayer.models.Music
 import java.util.*
+import kotlin.Comparator
 
 object ListsHelper {
     var recentlyMusic: MutableList<Music> = mutableListOf()
@@ -77,11 +78,28 @@ object ListsHelper {
 
         return if (mPreferences.deviceSongs != null){
             Log.d("XXX","enter if")
-            Log.d("XXX","${mPreferences.deviceSongs!![0].displayName}")
-            Log.d("XXX","${mPreferences.deviceSongs!!.size}")
+            Log.d("XXX","deviceSongs: ${mPreferences.deviceSongs!!.size}")
+            Log.d("XXX", "allMusics: ${allMusics.size}")
             //https://www.techiedelight.com/difference-between-two-lists-kotlin/
-            val difference = allMusics.minus(mPreferences.deviceSongs!!.toHashSet())
+            val deviceMusic = mPreferences.deviceSongs!!
+            deviceMusic.sortBy { it.displayName }
+            allMusics.sortBy { it.displayName }
+            val difference = deviceMusic.filterNot { allMusics.contains(it) }
+            Log.d("XXX","${difference.size}")
             recentlyMusic = difference.toMutableList()
+          /*  if (deviceMusic.size == allMusics.size) {
+                val difference = deviceMusic.filterNot { allMusics.contains(it) }
+                Log.d("XXX","${difference.size}")
+                recentlyMusic = difference.toMutableList()
+            }else{
+                if (deviceMusic.size < allMusics.size){
+                    val a = HashSet<Music>(deviceMusic).containsAll(allMusics)
+                }else{
+
+                }
+            }*/
+
+            Log.d("XXX", "recentlyMusic: ${recentlyMusic.size}")
             return recentlyMusic
         }else{
             Log.d("XXX","enter else")
@@ -89,6 +107,8 @@ object ListsHelper {
             allMusics
         }
     }
+
+
 
     fun<T> isEqual(first: MutableList<T>, second: MutableList<T>): Boolean {
 

@@ -64,7 +64,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutines_version"
 
 // Support
-
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
@@ -110,10 +109,10 @@ dependencies {
     //https://github.com/google/gson/blob/master/CHANGELOG.md
     implementation "com.google.code.gson:gson:$rootProject.gson_version"
 
-    implementation "androidx.room:room-runtime:$rootProject.room_version"
-
     // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-runtime:$rootProject.room_version"
     implementation "androidx.room:room-ktx:$rootProject.room_version"
+    kapt "androidx.room:room-compiler:$room_version"
     // optional - Test helpers
     testImplementation "androidx.room:room-testing:$rootProject.room_version"
 }

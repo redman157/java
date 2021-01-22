@@ -4,28 +4,23 @@ import androidx.room.*
 import company.ai.musicplayer.models.Music
 import kotlinx.coroutines.flow.Flow
 
-/*
 @Dao
 interface MusicDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(music: Music)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(musics: MutableList<Music>)
+
     @Query("SELECT * FROM music_tb ORDER BY name_music ASC")
-    fun getAlphabetizedMusic(): LiveData<List<Music>>
+    suspend fun getAlphabetizedMusic(): MutableList<Music>
 
     @Delete
-    suspend fun delete(nameMusic: String)
+    suspend fun delete(music: Music)
 
     @Query("DELETE FROM music_tb")
-    fun deleteTable()
+    suspend fun deleteTable()
 
     @Query("SELECT * FROM music_tb WHERE name_music = :nameMusic")
-    fun getMusic(nameMusic: String): Flow<Music>
-
-//    @Update
-    suspend fun update(music: Music)
-
-//    @Query("SELECT most FROM common WHERE most = (SELECT MAX(most) FROM common)")
-    fun getMusicMost(): Flow<Music>
+    suspend fun getMusic(nameMusic: String): Music
 }
-*/

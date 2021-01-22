@@ -81,7 +81,7 @@ fun Int.toFormattedYear(resources: Resources) =
     }
 
 fun Music.getCover(context: Context): Bitmap? {
-    val contentUri = id?.toContentUri()
+    val contentUri = audioId?.toContentUri()
     val retriever = MediaMetadataRetriever()
     return try {
         retriever.setDataSource(context, contentUri)
@@ -151,7 +151,7 @@ fun Music.toSavedMusic(playerPosition: Int, launchedBy: String) =
         duration = duration,
         albumID = albumID,
         relativePath = relativePath,
-        id = id,
+        audioId = audioId,
         startFrom = playerPosition,
         launchedBy = launchedBy
     )
@@ -167,5 +167,5 @@ fun SavedMusic.toMusic() =
         duration = duration,
         albumID = albumID,
         relativePath = relativePath,
-        id = id
+        audioId = audioId
     )

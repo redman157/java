@@ -1,9 +1,11 @@
 package company.ai.musicplayer.utils
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.ContentResolver
 import android.content.res.Resources
 import android.provider.MediaStore
+import company.ai.musicplayer.R
 import company.ai.musicplayer.extensions.toFormattedYear
 import company.ai.musicplayer.extensions.toSavedMusic
 import company.ai.musicplayer.mPreferences
@@ -11,6 +13,7 @@ import company.ai.musicplayer.models.Album
 import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.models.SavedMusic
 import company.ai.musicplayer.player.MediaPlayerHolder
+import java.io.File
 
 object MusicOrg {
     @JvmStatic
@@ -21,6 +24,90 @@ object MusicOrg {
         } else {
             MediaStore.Audio.AudioColumns.DATA
         }
+
+    @JvmStatic
+    fun queryForMusic(application: Application): MutableList<Music>? {
+        try {
+            val musicList: MutableList<Music> = mutableListOf()
+            val musicCursor = getMusicCursor(
+                    application.contentResolver
+                )
+            // Query the storage for music files
+            musicCursor?.use { cursor ->
+                val idIndex =
+                    cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns._ID)
+                val artistIndex =
+                    cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ARTIST)
+                val yearIndex =
+                    cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.YEAR)
+                val trackIndex =
+                    cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.TRACK)
+                val titleIndex =
+                    cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.TITLE)
+                val displayNameIndex =
+                    cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.DISPLAY_NAME)
+                val durationIndex =
+                    cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.DURATION)
+                val albumIndex =
+                    cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ALBUM)
+                val albumIdIndex =
+                    cursor.getColumnIndexOrThrow(MediaStore.Audio.AudioColumns.ALBUM_ID)
+                val relativePathIndex =
+                    cursor.getColumnIndexOrThrow(MusicOrg.getPathColumn())
+
+                while (cursor.moveToNext()) {
+                    // Now loop through the music files
+                    val audioId = cursor.getLong(idIndex)
+                    val audioArtist = cursor.getString(artistIndex)
+                    val audioYear = cursor.getInt(yearIndex)
+                    val audioTrack = cursor.getInt(trackIndex)
+                    val audioTitle = cursor.getString(titleIndex)
+                    val audioDisplayName = cursor.getString(displayNameIndex)
+                    val audioDuration = cursor.getLong(durationIndex)
+                    val audioAlbum = cursor.getString(albumIndex)
+                    val audioAlbumId = cursor.getString(albumIdIndex)
+                    val audioRelativePath = cursor.getString(relativePathIndex)
+
+                    val audioFolderName =
+                        if (VersioningHelper.isQ()) {
+                            audioRelativePath ?: application.getString(R.string.slash)
+                        } else {
+                            val returnedPath = File(audioRelativePath).parentFile?.name
+                                ?: application.getString(R.string.slash)
+                            if (returnedPath != "0") {
+                                returnedPath
+                            } else {
+                                application.getString(
+                                    R.string.slash
+                                )
+                            }
+                        }
+
+                    // Add the current music to the list
+                    musicList.add(
+                        Music(
+                            displayName = audioDisplayName,
+                            artist = audioArtist,
+                            album = audioAlbum,
+                            year = audioYear,
+                            track = audioTrack,
+                            title = audioTitle,
+                            duration = audioDuration,
+                            albumID = audioAlbumId.toLong(),
+                            relativePath = audioFolderName,
+                            audioId = audioId
+                        )
+                    )
+
+                }
+            }
+            return musicList
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
 
     @JvmStatic
     @SuppressLint("InlinedApi")

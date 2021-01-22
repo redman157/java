@@ -9,11 +9,11 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import company.ai.musicplayer.MusicDatabaseWorker
 import company.ai.musicplayer.models.Common
+import company.ai.musicplayer.models.Director
 import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.utils.Constants.DATABASE_NAME
 
-/*
-@Database(entities = [Music::class, Common::class], version = 1, exportSchema = false)
+@Database(entities = [Music::class, Director::class], version = 1, exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun musicController(): MusicDao
     companion object{
@@ -39,4 +39,4 @@ abstract class AppDatabase: RoomDatabase() {
         }
     }
 
-}*/
+}

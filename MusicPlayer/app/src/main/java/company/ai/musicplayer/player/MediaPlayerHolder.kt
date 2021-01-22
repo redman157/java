@@ -673,7 +673,7 @@ class MediaPlayerHolder(private val playerService: PlayerService): MediaPlayer.O
                 if (sFocusEnabled && isPlay) tryToGetAudioFocus()
                 if (mPreferences.isPreciseVolumeEnabled) setPreciseVolume(currentVolumeInPercent)
             }
-            song?.id?.toContentUri()?.let { uri ->
+            song?.audioId.toContentUri()?.let { uri ->
                 mediaPlayer.setDataSource(playerService, uri)
             }
             Log.d("BBB",this.javaClass.simpleName + ": ${song?.displayName}")

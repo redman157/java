@@ -1,11 +1,9 @@
 package company.ai.musicplayer.ui
 
 import android.app.AlertDialog
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.content.pm.PackageManager
+import android.location.LocationListener
 import android.media.audiofx.BassBoost
 import android.media.audiofx.Equalizer
 import android.media.audiofx.Virtualizer
@@ -22,9 +20,11 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.OnLifecycleEvent
 import company.ai.musicplayer.database.MusicViewModel
 import company.ai.musicplayer.adapters.QueueAdapter
 import company.ai.musicplayer.R
+import company.ai.musicplayer.controller.HandleLifecycles
 import company.ai.musicplayer.controller.MediaControllerInterface
 import company.ai.musicplayer.controller.UIControlInterface
 import company.ai.musicplayer.databinding.*
@@ -37,7 +37,6 @@ import company.ai.musicplayer.player.MediaPlayerHolder
 import company.ai.musicplayer.player.MediaPlayerInterface
 import company.ai.musicplayer.service.PlayerService
 import company.ai.musicplayer.utils.*
-import company.ai.musicplayer.utils.MusicOrg.saveCurrentSong
 import kotlinx.android.synthetic.main.dialog_media.*
 import kotlin.system.exitProcess
 
@@ -165,26 +164,35 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         }
     }
 
+    lateinit var myLocationListener: HandleLifecycles
+    override fun onStart() {
+        super.onStart()
+        myLocationListener.start()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        sRestoreSettingsFragment =
-            savedInstanceState?.getBoolean(Constants.RESTORE_SETTINGS_FRAGMENT)
-                ?: intent.getBooleanExtra(Constants.RESTORE_SETTINGS_FRAGMENT, false)
-        Log.d("AAA", if (savedInstanceState == null) "null" else "khác null")
-        Log.d("AAA","sRestoreSettingsFragment: ${sRestoreSettingsFragment}")
-        super.onCreate(savedInstanceState)
-        setTheme(ThemeHelper.getAccentedTheme().first)
-        mHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
-        setContentView(mHomeBinding.root)
-        initView()
-        assignView()
+        myLocationListener = HandleLifecycles(this){ location ->
+            sRestoreSettingsFragment =
+                savedInstanceState?.getBoolean(Constants.RESTORE_SETTINGS_FRAGMENT)
+                    ?: intent.getBooleanExtra(Constants.RESTORE_SETTINGS_FRAGMENT, false)
 
-        if (PermissionHelper.hasToAskStoragePermission(this)) {
-            PermissionHelper.manageAskForReadStoragePermission(
-                activity = this, uiControlInterface = this
-            )
-        } else {
-            doBindService()
+            Log.d("AAA", if (savedInstanceState == null) "null" else "khác null")
+            Log.d("AAA","sRestoreSettingsFragment: ${sRestoreSettingsFragment}")
+            super.onCreate(savedInstanceState)
+            setTheme(ThemeHelper.getAccentedTheme().first)
+            mHomeBinding = ActivityHomeBinding.inflate(layoutInflater)
+            setContentView(mHomeBinding.root)
+            initView()
+            assignView()
+
+            if (PermissionHelper.hasToAskStoragePermission(this)) {
+                PermissionHelper.manageAskForReadStoragePermission(
+                    activity = this, uiControlInterface = this
+                )
+            } else {
+                doBindService()
+            }
         }
     }
 
@@ -201,8 +209,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
         }
     }
 
+
     override fun onStop(){
         super.onStop()
+        myLocationListener.stop()
     }
 
     override fun onResume() {
@@ -328,11 +338,11 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener, UIControlInterfa
                 mediaPlayerInterface = mMediaPlayerInterface
                 setStatusPlayed()
             }
-
             mMusicViewModel.mDeviceMusic.observe(
                 this@HomeActivity,
                 Observer<MutableList<Music>?> { returnedMusic ->
-                    finishSetup(returnedMusic) }
+                    finishSetup(returnedMusic)
+                }
             )
             mMusicViewModel.getDeviceMusic()
         }

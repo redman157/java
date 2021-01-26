@@ -9,7 +9,7 @@ import java.io.Serializable
         entity = Director::class,
         parentColumns = [Director.TITLE],
         childColumns = [Music.TITLE],
-        onDelete = ForeignKey.CASCADE
+        onDelete = ForeignKey.CASCADE,
     )],
     indices = [Index(Music.TITLE)]
 )

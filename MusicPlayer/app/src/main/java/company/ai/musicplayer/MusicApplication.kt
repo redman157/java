@@ -24,7 +24,7 @@ class MusicApplication: Application(){
     override fun onCreate() {
         super.onCreate()
         prefs = Preferences(applicationContext)
-        database = AppDatabase.getInstance(this)
+//        database = AppDatabase.getInstance(this)
         AppCompatDelegate.setDefaultNightMode(ThemeHelper.getDefaultNightMode(applicationContext))
     }
 }

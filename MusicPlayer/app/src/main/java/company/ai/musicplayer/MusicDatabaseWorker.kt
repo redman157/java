@@ -3,6 +3,7 @@ package company.ai.musicplayer
 import android.app.Activity
 import android.content.Context
 import android.util.JsonReader
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import company.ai.musicplayer.database.AppDatabase
@@ -16,7 +17,8 @@ class MusicDatabaseWorker(
     workerParams: WorkerParameters): CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result = coroutineScope {
         try{
-            AppDatabase.getInstance(context = context).musicController().insertAll(MusicOrg.queryForMusic((context as Activity).application)!!)
+//            AppDatabase.getInstance(context = context).musicController().insertAll(MusicOrg.queryForMusic((context as Activity).application)!!)
+            Log.d("FFF", "enter")
             Result.success()
         }catch (e: Exception){
             e.printStackTrace()

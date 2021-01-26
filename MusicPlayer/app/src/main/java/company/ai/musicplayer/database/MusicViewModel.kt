@@ -1,20 +1,15 @@
 package company.ai.musicplayer.database
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.content.res.Resources
-import android.provider.MediaStore
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import company.ai.musicplayer.R
 import company.ai.musicplayer.models.Album
 import company.ai.musicplayer.models.Music
 import company.ai.musicplayer.utils.ListsHelper
 import company.ai.musicplayer.utils.MusicOrg
-import company.ai.musicplayer.utils.VersioningHelper
 import kotlinx.coroutines.*
-import java.io.File
 
 class MusicViewModel(application: Application): AndroidViewModel(application){
 
@@ -22,6 +17,8 @@ class MusicViewModel(application: Application): AndroidViewModel(application){
      * This is the job for all coroutines started by this ViewModel.
      * Cancelling this job will cancel all coroutines started by this ViewModel.
      */
+
+    private val mMusicDao: MusicDao = AppDatabase.getInstance(application = application).musicDao()
     private val mViewModelJob = SupervisorJob()
     private val mHandler = CoroutineExceptionHandler{ _, exception ->
         exception.printStackTrace()
